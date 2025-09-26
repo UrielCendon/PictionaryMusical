@@ -50,12 +50,19 @@ namespace PictionaryMusicalCliente
 
         private void BotonEntrarInvitado(object sender, RoutedEventArgs e)
         {
-
+            UnirsePartidaInvitado ventana = new UnirsePartidaInvitado();
+            ventana.ShowDialog();
         }
 
         private void BotonCrearCuenta(object sender, RoutedEventArgs e)
         {
             CrearCuenta ventana = new CrearCuenta();
+            ventana.ShowDialog();
+        }
+
+        private void LabelOlvidasteContraseña(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            VerificarCodigo ventana = new VerificarCodigo();
             ventana.ShowDialog();
         }
     }

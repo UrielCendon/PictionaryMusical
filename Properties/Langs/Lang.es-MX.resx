@@ -350,4 +350,64 @@ aciertan o cuando se acaba el tiempo.
   <data name="perfilTextoGuardarCambios" xml:space="preserve">
     <value>GUARDAR CAMBIOS</value>
   </data>
+  <data name="cambiarContraseñaTextoIngresaNuevaContraseña" xml:space="preserve">
+    <value>Ingrese la nueva contraseña: 
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoConfirmeContraseña" xml:space="preserve">
+    <value>Confirme su contraseña
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoCodigoVerificacion" xml:space="preserve">
+    <value>Ingrese el código de verificación enviado a su correo:
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoVerificar" xml:space="preserve">
+    <value>VERIFICAR</value>
+  </data>
+  <data name="cambiarContraseñaTextoReenviarCodigo" xml:space="preserve">
+    <value>REENVIAR CÓDIGO</value>
+  </data>
+  <data name="partidaAdminTextoIniciarPartida" xml:space="preserve">
+    <value>¡INICIAR PARTIDA!&#x8;</value>
+  </data>
+  <data name="globalTextoInvitar" xml:space="preserve">
+    <value>INVITAR</value>
+  </data>
+  <data name="partidaTextoChat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="partidaTextoCodigo" xml:space="preserve">
+    <value>Código:</value>
+  </data>
+  <data name="partidaAdminTextoInvitarCorreo" xml:space="preserve">
+    <value>&#x8;INVITAR AL CORREO</value>
+  </data>
+  <data name="partidaTextoRonda" xml:space="preserve">
+    <value>Ronda:</value>
+  </data>
+  <data name="expulsarTextoExpulsarJugador" xml:space="preserve">
+    <value>EXPULSAR JUGADOR</value>
+  </data>
+  <data name="expulsarTextoConfirmacion" xml:space="preserve">
+    <value>¿Está seguro de querer expulsar a ?</value>
+  </data>
+  <data name="expulsarTextoExpulsar" xml:space="preserve">
+    <value>EXPULSAR</value>
+  </data>
+  <data name="expulsarTextoRazonExpulsion" xml:space="preserve">
+    <value>Añade la razón de la expulsión…</value>
+  </data>
+  <data name="invitarAmigosTextoInvitarAmigos" xml:space="preserve">
+    <value>INVITAR AMIGOS</value>
+  </data>
+  <data name="invitarAmigosTextoInvitado" xml:space="preserve">
+    <value>INVITADO</value>
+  </data>
+  <data name="ajustesPartidaTextoSalirPartida" xml:space="preserve">
+    <value>SALIR DE LA PARTIDA</value>
+  </data>
+  <data name="salirPartidaTextoConfirmación" xml:space="preserve">
+    <value>¿Está seguro de querer salir de la partida?</value>
+  </data>
 </root>

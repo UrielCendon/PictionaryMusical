@@ -51,7 +51,9 @@ namespace PictionaryMusicalCliente
 
         private void BotonJugar(object sender, RoutedEventArgs e)
         {
-
+            VentanaJuego ventanaJuego = new VentanaJuego();
+            ventanaJuego.Show();
+            this.Close();
         }
 
         private void BotonInvitaciones(object sender, RoutedEventArgs e)

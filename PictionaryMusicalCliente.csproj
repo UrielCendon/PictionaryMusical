@@ -55,11 +55,43 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AjustesPartida.xaml.cs">
+      <DependentUpon>AjustesPartida.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ConfirmacionSalirPartida.xaml.cs">
+      <DependentUpon>ConfirmacionSalirPartida.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExpulsarJugador.xaml.cs">
+      <DependentUpon>ExpulsarJugador.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InvitarAmigos.xaml.cs">
+      <DependentUpon>InvitarAmigos.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SeleccionarAvatar.xaml.cs">
+      <DependentUpon>SeleccionarAvatar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UnirsePartidaInvitado.xaml.cs">
+      <DependentUpon>UnirsePartidaInvitado.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VentanaJuego.xaml.cs">
+      <DependentUpon>VentanaJuego.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VerificarCodigo.xaml.cs">
+      <DependentUpon>VerificarCodigo.xaml</DependentUpon>
+    </Compile>
     <Page Include="Ajustes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AjustesPartida.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="BuscarAmigo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CambioContrasena.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -75,11 +107,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ConfirmacionSalirPartida.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CrearCuenta.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EliminarAmigo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExpulsarJugador.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -91,11 +131,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="InvitarAmigos.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Perfil.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SeleccionarAvatar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Solicitudes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UnirsePartidaInvitado.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VentanaJuego.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -112,6 +168,9 @@
     </Compile>
     <Compile Include="BuscarAmigo.xaml.cs">
       <DependentUpon>BuscarAmigo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CambioContrasena.xaml.cs">
+      <DependentUpon>CambioContrasena.xaml</DependentUpon>
     </Compile>
     <Compile Include="CerrarSesion.xaml.cs">
       <DependentUpon>CerrarSesion.xaml</DependentUpon>
@@ -144,6 +203,10 @@
       <DependentUpon>VentanaPrincipal.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="VerificarCodigo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

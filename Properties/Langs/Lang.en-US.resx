@@ -348,4 +348,64 @@
   <data name="perfilTextoGuardarCambios" xml:space="preserve">
     <value>SAVE CHANGES</value>
   </data>
+  <data name="cambiarContraseñaTextoIngresaNuevaContraseña" xml:space="preserve">
+    <value>Enter your new password:
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoConfirmeContraseña" xml:space="preserve">
+    <value>Confirm your password:
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoCodigoVerificacion" xml:space="preserve">
+    <value>Enter the verification code sent to your email:
+</value>
+  </data>
+  <data name="cambiarContraseñaTextoVerificar" xml:space="preserve">
+    <value>VERIFY</value>
+  </data>
+  <data name="cambiarContraseñaTextoReenviarCodigo" xml:space="preserve">
+    <value>RESEND CODE</value>
+  </data>
+  <data name="partidaAdminTextoIniciarPartida" xml:space="preserve">
+    <value>START GAME!</value>
+  </data>
+  <data name="globalTextoInvitar" xml:space="preserve">
+    <value>INVITE</value>
+  </data>
+  <data name="partidaTextoChat" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="partidaTextoCodigo" xml:space="preserve">
+    <value>Code:</value>
+  </data>
+  <data name="partidaAdminTextoInvitarCorreo" xml:space="preserve">
+    <value>INVITE BY E-MAIL</value>
+  </data>
+  <data name="partidaTextoRonda" xml:space="preserve">
+    <value>Round:</value>
+  </data>
+  <data name="expulsarTextoExpulsarJugador" xml:space="preserve">
+    <value>KICK PLAYER</value>
+  </data>
+  <data name="expulsarTextoConfirmacion" xml:space="preserve">
+    <value>Are you sure you want to kick _?</value>
+  </data>
+  <data name="expulsarTextoExpulsar" xml:space="preserve">
+    <value>KICK </value>
+  </data>
+  <data name="expulsarTextoRazonExpulsion" xml:space="preserve">
+    <value>Add the reason for the expulsion...</value>
+  </data>
+  <data name="invitarAmigosTextoInvitarAmigos" xml:space="preserve">
+    <value>INVITE FRIENDS</value>
+  </data>
+  <data name="invitarAmigosTextoInvitado" xml:space="preserve">
+    <value>INVITED</value>
+  </data>
+  <data name="ajustesPartidaTextoSalirPartida" xml:space="preserve">
+    <value>LEAVE GAME</value>
+  </data>
+  <data name="salirPartidaTextoConfirmación" xml:space="preserve">
+    <value>Are you sure you want to leave the game?</value>
+  </data>
 </root>
