@@ -12,10 +12,9 @@
                 Padding="20" CornerRadius="3"
                 HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Width="300">
-
                 <TextBlock
                            FontFamily="Comic Sans MS" FontSize="22" FontWeight="Bold"
-                           TextAlignment="Center" Margin="0,0,0,4" Width="152" Height="65"><Run Text="SALIR DE LA "/><LineBreak/><Run Text="PARTIDA"/></TextBlock>
+                           TextAlignment="Center" Width="282" Height="50"><Run Text="{x:Static language:Lang.ajustesPartidaTextoSalirPartida}"/></TextBlock>
                 <TextBlock Text="{x:Static language:Lang.salirPartidaTextoConfirmación}"
                            FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold"
                            TextAlignment="Center" Margin="0,0,0,10"/>
