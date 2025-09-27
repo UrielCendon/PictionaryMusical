@@ -87,10 +87,10 @@
                             <!-- Herramientas -->
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="0,0,8,0">
                                 <ToggleButton x:Name="tbtnLapiz" Content="✏️" Width="40" Height="32" Margin="0,0,4,0"
-                                        Click="tbtnLapiz_Click"/>
-                                <ToggleButton x:Name="tbtnBorrador" Content="🩹" Width="40" Height="32" Margin="0,0,4,0"
-                                        Click="tbtnBorrador_Click"/>
-                                <Button x:Name="btnLimpiar" Content="🧼" Width="40" Height="32" Margin="0,0,4,0"
+                                        Cursor="Hand" Click="tbtnLapiz_Click"/>
+                                <ToggleButton x:Name="tbtnBorrador" Content="🧼" Width="40" Height="32" Margin="0,0,4,0"
+                                        Cursor="Hand" Click="tbtnBorrador_Click"/>
+                                <Button x:Name="btnLimpiar" Content="🧹" Width="40" Height="32" Margin="0,0,4,0"
                                         Click="btnBorrar_Click"/>
 
                             </StackPanel>

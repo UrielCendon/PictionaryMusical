@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Media;
+using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente
 {
@@ -47,7 +48,7 @@ namespace PictionaryMusicalCliente
             ActualizarEraserShape();
 
             botonIniciarPartida.IsEnabled = false;
-            botonIniciarPartida.Content = "Partida en curso";
+            botonIniciarPartida.Content = LangResources.Lang.partidaTextoPartidaEnCurso;
         }
 
         private void SetTool(bool isPencil)

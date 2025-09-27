@@ -408,4 +408,7 @@
   <data name="salirPartidaTextoConfirmación" xml:space="preserve">
     <value>Are you sure you want to leave the game?</value>
   </data>
+  <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
+    <value>Ongoing game</value>
+  </data>
 </root>
