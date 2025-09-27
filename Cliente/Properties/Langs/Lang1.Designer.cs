@@ -682,6 +682,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Partida en curso.
+        /// </summary>
+        public static string partidaTextoPartidaEnCurso {
+            get {
+                return ResourceManager.GetString("partidaTextoPartidaEnCurso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ronda:.
         /// </summary>
         public static string partidaTextoRonda {

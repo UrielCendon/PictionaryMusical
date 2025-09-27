@@ -410,4 +410,7 @@ aciertan o cuando se acaba el tiempo.
   <data name="salirPartidaTextoConfirmación" xml:space="preserve">
     <value>¿Está seguro de querer salir de la partida?</value>
   </data>
+  <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
+    <value>Partida en curso</value>
+  </data>
 </root>
