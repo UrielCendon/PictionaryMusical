@@ -33,5 +33,11 @@ namespace PictionaryMusicalCliente
         {
             this.Close();
         }
+
+        private void LabelSeleccionarAvatar(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            SeleccionarAvatar seleccionarAvatar = new SeleccionarAvatar();
+            seleccionarAvatar.ShowDialog();
+        }
     }
 }

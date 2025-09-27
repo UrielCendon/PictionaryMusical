@@ -254,5 +254,25 @@
     <Resource Include="Resources\instagram.png" />
     <Resource Include="Resources\x_logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\ACDC.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Alex Syntek.jpg" />
+    <Resource Include="Resources\Anuel AA.jpg" />
+    <Resource Include="Resources\Bad Bunny.jpg" />
+    <Resource Include="Resources\Britney spears.jpg" />
+    <Resource Include="Resources\Bruno Mars.jpg" />
+    <Resource Include="Resources\Drake.jpg" />
+    <Resource Include="Resources\Guns N Roses.jpg" />
+    <Resource Include="Resources\J Balvin.jpg" />
+    <Resource Include="Resources\Jose Jose.jpg" />
+    <Resource Include="Resources\Kanye West.jpg" />
+    <Resource Include="Resources\Luis Miguel.jpg" />
+    <Resource Include="Resources\Mariah Carey.jpg" />
+    <Resource Include="Resources\Taylor Swift.jpg" />
+    <Resource Include="Resources\The Weeknd.jpg" />
+    <Resource Include="Resources\Travis Scott.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

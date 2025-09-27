@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
         Title="{x:Static language:Lang.globalTextoSeleccionarAvatar}"
-        Height="460" Width="380"
+        Height="415" Width="390"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent">
 
@@ -11,21 +11,39 @@
         <Border Background="White" BorderBrush="Gray" BorderThickness="2"
                 Padding="20" CornerRadius="3">
             <StackPanel>
-                <ListBox x:Name="listaAvatares" BorderThickness="0" SelectionMode="Single">
+                <!-- ===== Avatares en 4x4 ===== -->
+                <ListBox x:Name="listaAvatares"
+                         BorderThickness="0"
+                         SelectionMode="Single">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <!-- 4 columnas × 4 filas -->
+                            <UniformGrid Columns="4" Rows="4"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="8" CornerRadius="40" BorderBrush="LightGray" BorderThickness="1">
-                                <Image Source="{Binding}" Width="72" Height="72" Stretch="UniformToFill"/>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
+
+                    <!-- Avatares (64x64) -->
+                    <ListBox.Items>
+                        <Image Source="Resources/ACDC.jpg"            Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Alex Syntek.jpg"     Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Anuel AA.jpg"        Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Bad Bunny.jpg"       Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Britney spears.jpg"  Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Bruno Mars.jpg"      Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Drake.jpg"           Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Guns N Roses.jpg"    Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/J Balvin.jpg"        Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Jose Jose.jpg"       Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Kanye West.jpg"      Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Luis Miguel.jpg"     Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Mariah Carey.jpg"    Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Taylor Swift.jpg"    Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/The Weeknd.jpg"      Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                        <Image Source="Resources/Travis Scott.jpg"    Width="64" Height="64" Margin="5" Cursor="Hand"/>
+                    </ListBox.Items>
                 </ListBox>
 
+                <!-- Botón Aceptar -->
                 <Button x:Name="botonAceptarSeleccionAvatar"
                         Content="{x:Static language:Lang.globalTextoAceptar}"
                         Margin="0,14,0,0" Height="40" Width="140"
@@ -37,4 +55,5 @@
         </Border>
     </Grid>
 </Window>
+
 

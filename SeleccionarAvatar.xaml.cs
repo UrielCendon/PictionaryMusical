@@ -26,7 +26,7 @@ namespace PictionaryMusicalCliente
 
         private void BotonAceptarSeleccionAvatar(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
     }
 }

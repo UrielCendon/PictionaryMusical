@@ -47,7 +47,9 @@
                         <Ellipse Width="60" Height="60" Stroke="Black" StrokeThickness="1"/>
                         <Label Content="{x:Static language:Lang.globalTextoSeleccionarAvatar}"
                                Foreground="Blue" Cursor="Hand"
-                               FontFamily="Comic Sans MS" HorizontalAlignment="Center"/>
+                               FontFamily="Comic Sans MS" HorizontalAlignment="Center"
+                               MouseLeftButtonUp="LabelSeleccionarAvatar"/>
+
                     </StackPanel>
                 </Grid>
 
