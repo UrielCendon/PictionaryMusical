@@ -12,6 +12,6 @@ namespace Datos.EF
         private readonly BaseDatosPruebaEntities1 _contexto;
         public AvatarRepositorio(BaseDatosPruebaEntities1 contexto) => _contexto = contexto;
         IEnumerable<Logica.Entidades.Avatar> IAvatarRepositorio.ObtenerTodos() =>
-        _contexto.Avatar.Select(avatar => new Logica.Entidades.Avatar{ id = avatar.idAvatar, nombre = avatar.Nombre_Avatar, rutaRelativa = avatar.Avatar_Ruta }).ToList();
+        _contexto.Avatar.Select(avatar => new Logica.Entidades.Avatar{ Id = avatar.idAvatar, Nombre = avatar.Nombre_Avatar, RutaRelativa = avatar.Avatar_Ruta }).ToList();
     }
 }

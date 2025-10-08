@@ -21,9 +21,9 @@ namespace Logica.Funciones
             _repoAvatar.ObtenerTodos()
                        .Select(avatar => new AvatarDTO
                        {
-                           Id = avatar.id,
-                           Nombre = avatar.nombre,
-                           RutaRelativa = avatar.rutaRelativa
+                           Id = avatar.Id,
+                           Nombre = avatar.Nombre,
+                           RutaRelativa = avatar.RutaRelativa
                        })
                        .ToList();
     }

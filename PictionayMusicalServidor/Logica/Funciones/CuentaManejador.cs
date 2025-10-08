@@ -22,12 +22,12 @@ namespace Logica.Funciones
         {
             var cuenta = new CuentaUsuario
             {
-                correo = nuevaCuenta.correo,
-                usuario = nuevaCuenta.usuario,
-                nombre = nuevaCuenta.nombre,
-                apellido = nuevaCuenta.apellido,
-                avatarId = nuevaCuenta.avatarId,
-                contraseñaHash = BCrypt.Net.BCrypt.HashPassword(nuevaCuenta.contraseña)
+                Correo = nuevaCuenta.Correo,
+                Usuario = nuevaCuenta.Usuario,
+                Nombre = nuevaCuenta.Nombre,
+                Apellido = nuevaCuenta.Apellido,
+                AvatarId = nuevaCuenta.AvatarId,
+                ContrasenaHash = BCrypt.Net.BCrypt.HashPassword(nuevaCuenta.Contrasena)
             };
             return _repoCuenta.Registrar(cuenta);
         }

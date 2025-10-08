@@ -11,16 +11,16 @@ namespace Servicios.Contratos.DTOs
     public class NuevaCuentaDTO
     {
         [DataMember] 
-        public string correo { get; set; }
+        public string Correo { get; set; }
         [DataMember] 
-        public string contraseña { get; set; }
+        public string Contrasena { get; set; }
         [DataMember] 
-        public string usuario { get; set; }
+        public string Usuario { get; set; }
         [DataMember] 
-        public string nombre { get; set; }
+        public string Nombre { get; set; }
         [DataMember] 
-        public string apellido { get; set; }
+        public string Apellido { get; set; }
         [DataMember] 
-        public int avatarId { get; set; }
+        public int AvatarId { get; set; }
     }
 }

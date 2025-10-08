@@ -8,8 +8,8 @@ namespace Logica.Entidades
 {
     public class CuentaUsuario
     {
-        public string correo, usuario, nombre, apellido;
-        public int avatarId;
-        public string contraseñaHash;
+        public string Correo, Usuario, Nombre, Apellido;
+        public int AvatarId;
+        public string ContrasenaHash;
     }
 }

@@ -8,8 +8,8 @@ namespace Logica.Entidades
 {
     public class Avatar
     {
-        public int id { get; set; }
-        public string nombre { get; set; }
-        public string rutaRelativa { get; set; }
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+        public string RutaRelativa { get; set; }
     }
 }

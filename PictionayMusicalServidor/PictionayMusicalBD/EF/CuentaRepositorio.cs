@@ -20,18 +20,18 @@ namespace Datos.EF
 
             var jugador = new Jugador
             {
-                Nombre = cuenta.nombre,
-                Apellido = cuenta.apellido,
-                Correo = cuenta.correo,
-                Avatar_idAvatar = cuenta.avatarId,
+                Nombre = cuenta.Nombre,
+                Apellido = cuenta.Apellido,
+                Correo = cuenta.Correo,
+                Avatar_idAvatar = cuenta.AvatarId,
                 Clasificacion_idClasificacion = clasificacion.idClasificacion
             };
             _contexto.Jugador.Add(jugador); _contexto.SaveChanges();
 
             var usuario = new Usuario
             {
-                Nombre_Usuario = cuenta.usuario,
-                Contrasena = cuenta.contraseñaHash,
+                Nombre_Usuario = cuenta.Usuario,
+                Contrasena = cuenta.ContrasenaHash,
                 Jugador_idJugador = jugador.idJugador
             };
             _contexto.Usuario.Add(usuario); _contexto.SaveChanges();
