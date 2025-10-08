@@ -8,8 +8,8 @@
     <ProjectGuid>{985EE861-0E91-4F61-9090-ABF706083EEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PictionayMusicalBD</RootNamespace>
-    <AssemblyName>PictionayMusicalBD</AssemblyName>
+    <RootNamespace>Datos</RootNamespace>
+    <AssemblyName>Datos</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -80,7 +80,8 @@
     <Compile Include="Clasificacion.cs">
       <DependentUpon>BasePictionayMusical.tt</DependentUpon>
     </Compile>
-    <Compile Include="Class1.cs" />
+    <Compile Include="EF\AvatarRepositorio.cs" />
+    <Compile Include="EF\CuentaRepositorio.cs" />
     <Compile Include="Expulsion.cs">
       <DependentUpon>BasePictionayMusical.tt</DependentUpon>
     </Compile>
@@ -129,6 +130,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Logica\Logica.csproj">
+      <Project>{c6f501cd-1724-4374-82fa-d221f3004df3}</Project>
+      <Name>Logica</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

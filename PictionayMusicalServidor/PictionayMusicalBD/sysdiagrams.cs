@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PictionayMusicalBD
+namespace Datos
 {
     using System;
     using System.Collections.Generic;

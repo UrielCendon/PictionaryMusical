@@ -37,6 +37,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -55,155 +57,165 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AjustesPartida.xaml.cs">
+    <Compile Include="Vista\AjustesPartida.xaml.cs">
       <DependentUpon>AjustesPartida.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ConfirmacionSalirPartida.xaml.cs">
+    <Compile Include="Vista\ConfirmacionSalirPartida.xaml.cs">
       <DependentUpon>ConfirmacionSalirPartida.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExpulsarJugador.xaml.cs">
+    <Compile Include="Connected Services\PictionaryServidorServicioAvatares\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\PictionaryServidorServicioCuenta\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\ExpulsarJugador.xaml.cs">
       <DependentUpon>ExpulsarJugador.xaml</DependentUpon>
     </Compile>
-    <Compile Include="InvitarAmigos.xaml.cs">
+    <Compile Include="Vista\InvitarAmigos.xaml.cs">
       <DependentUpon>InvitarAmigos.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SeleccionarAvatar.xaml.cs">
+    <Compile Include="Vista\SeleccionarAvatar.xaml.cs">
       <DependentUpon>SeleccionarAvatar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UnirsePartidaInvitado.xaml.cs">
+    <Compile Include="Vista\UnirsePartidaInvitado.xaml.cs">
       <DependentUpon>UnirsePartidaInvitado.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VentanaJuego.xaml.cs">
+    <Compile Include="Vista\VentanaJuego.xaml.cs">
       <DependentUpon>VentanaJuego.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VerificarCodigo.xaml.cs">
+    <Compile Include="Vista\VerificarCodigo.xaml.cs">
       <DependentUpon>VerificarCodigo.xaml</DependentUpon>
     </Compile>
-    <Page Include="Ajustes.xaml">
+    <Page Include="Vista\Ajustes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AjustesPartida.xaml">
+    <Page Include="Vista\AjustesPartida.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BuscarAmigo.xaml">
+    <Page Include="Vista\BuscarAmigo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CambioContrasena.xaml">
+    <Page Include="Vista\CambioContrasena.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CerrarSesion.xaml">
+    <Page Include="Vista\CerrarSesion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Clasificacion.xaml">
+    <Page Include="Vista\Clasificacion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ComoJugar.xaml">
+    <Page Include="Vista\ComoJugar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ConfirmacionSalirPartida.xaml">
+    <Page Include="Vista\ConfirmacionSalirPartida.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CrearCuenta.xaml">
+    <Page Include="Vista\CrearCuenta.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EliminarAmigo.xaml">
+    <Page Include="Vista\EliminarAmigo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExpulsarJugador.xaml">
+    <Page Include="Vista\ExpulsarJugador.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="InicioSesion.xaml">
+    <Page Include="Vista\InicioSesion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Invitaciones.xaml">
+    <Page Include="Vista\Invitaciones.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="InvitarAmigos.xaml">
+    <Page Include="Vista\InvitarAmigos.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Perfil.xaml">
+    <Page Include="Vista\Perfil.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SeleccionarAvatar.xaml">
+    <Page Include="Vista\SeleccionarAvatar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Solicitudes.xaml">
+    <Page Include="Vista\Solicitudes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UnirsePartidaInvitado.xaml">
+    <Page Include="Vista\UnirsePartidaInvitado.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VentanaJuego.xaml">
+    <Page Include="Vista\VentanaJuego.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VentanaPrincipal.xaml">
+    <Page Include="Vista\VentanaPrincipal.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Ajustes.xaml.cs">
+    <Compile Include="Vista\Ajustes.xaml.cs">
       <DependentUpon>Ajustes.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BuscarAmigo.xaml.cs">
+    <Compile Include="Vista\BuscarAmigo.xaml.cs">
       <DependentUpon>BuscarAmigo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CambioContrasena.xaml.cs">
+    <Compile Include="Vista\CambioContrasena.xaml.cs">
       <DependentUpon>CambioContrasena.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CerrarSesion.xaml.cs">
+    <Compile Include="Vista\CerrarSesion.xaml.cs">
       <DependentUpon>CerrarSesion.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Clasificacion.xaml.cs">
+    <Compile Include="Vista\Clasificacion.xaml.cs">
       <DependentUpon>Clasificacion.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ComoJugar.xaml.cs">
+    <Compile Include="Vista\ComoJugar.xaml.cs">
       <DependentUpon>ComoJugar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CrearCuenta.xaml.cs">
+    <Compile Include="Vista\CrearCuenta.xaml.cs">
       <DependentUpon>CrearCuenta.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EliminarAmigo.xaml.cs">
+    <Compile Include="Vista\EliminarAmigo.xaml.cs">
       <DependentUpon>EliminarAmigo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="InicioSesion.xaml.cs">
+    <Compile Include="Vista\InicioSesion.xaml.cs">
       <DependentUpon>InicioSesion.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Invitaciones.xaml.cs">
+    <Compile Include="Vista\Invitaciones.xaml.cs">
       <DependentUpon>Invitaciones.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Perfil.xaml.cs">
+    <Compile Include="Vista\Perfil.xaml.cs">
       <DependentUpon>Perfil.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Solicitudes.xaml.cs">
+    <Compile Include="Vista\Solicitudes.xaml.cs">
       <DependentUpon>Solicitudes.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VentanaPrincipal.xaml.cs">
+    <Compile Include="Vista\VentanaPrincipal.xaml.cs">
       <DependentUpon>VentanaPrincipal.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="VerificarCodigo.xaml">
+    <Page Include="Vista\VerificarCodigo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -240,6 +252,29 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\Avatares.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\Avatares1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\Avatares2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\CatalogoAvatares.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\PictionaryMusicalCliente.PictionaryServidorServicioAvatares.AvatarDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\Cuenta.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\Cuenta1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\Cuenta2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\CuentaManejador.wsdl" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -249,30 +284,64 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\discord.png" />
-    <Resource Include="Resources\facebook.png" />
-    <Resource Include="Resources\instagram.png" />
-    <Resource Include="Resources\x_logo.png" />
+    <Resource Include="Recursos\discord.png" />
+    <Resource Include="Recursos\facebook.png" />
+    <Resource Include="Recursos\instagram.png" />
+    <Resource Include="Recursos\x_logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\ACDC.jpg" />
+    <Resource Include="Recursos\ACDC.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Alex Syntek.jpg" />
-    <Resource Include="Resources\Anuel AA.jpg" />
-    <Resource Include="Resources\Bad Bunny.jpg" />
-    <Resource Include="Resources\Britney spears.jpg" />
-    <Resource Include="Resources\Bruno Mars.jpg" />
-    <Resource Include="Resources\Drake.jpg" />
-    <Resource Include="Resources\Guns N Roses.jpg" />
-    <Resource Include="Resources\J Balvin.jpg" />
-    <Resource Include="Resources\Jose Jose.jpg" />
-    <Resource Include="Resources\Kanye West.jpg" />
-    <Resource Include="Resources\Luis Miguel.jpg" />
-    <Resource Include="Resources\Mariah Carey.jpg" />
-    <Resource Include="Resources\Taylor Swift.jpg" />
-    <Resource Include="Resources\The Weeknd.jpg" />
-    <Resource Include="Resources\Travis Scott.jpg" />
+    <Resource Include="Recursos\Drake.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioAvatares\" />
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCuenta\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCuenta\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioAvatares\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Recursos\Aleks_Syntek.jpg" />
+    <Resource Include="Recursos\Anuel_AA.jpg" />
+    <Resource Include="Recursos\Bad_Bunny.jpg" />
+    <Resource Include="Recursos\Britney_Spears.jpg" />
+    <Resource Include="Recursos\Bruno_Mars.jpg" />
+    <Resource Include="Recursos\Guns_N_Roses.jpg" />
+    <Resource Include="Recursos\Jose_Jose.jpg" />
+    <Resource Include="Recursos\J_Balvin.jpg" />
+    <Resource Include="Recursos\Kanye_West.jpg" />
+    <Resource Include="Recursos\Luis_Miguel.jpg" />
+    <Resource Include="Recursos\Mariah_Carey.jpg" />
+    <Resource Include="Recursos\Taylor_Swift.jpg" />
+    <Resource Include="Recursos\The_Weeknd.jpg" />
+    <Resource Include="Recursos\Travis_Scott.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
