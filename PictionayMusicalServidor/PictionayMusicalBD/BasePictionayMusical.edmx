@@ -4,19 +4,19 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="BaseDatosPruebaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="BaseDatosPruebaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Artista">
           <Key>
             <PropertyRef Name="idArtista" />
           </Key>
-          <Property Name="idArtista" Type="int" Nullable="false" />
+          <Property Name="idArtista" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre_Artista" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Avatar">
           <Key>
             <PropertyRef Name="idAvatar" />
           </Key>
-          <Property Name="idAvatar" Type="int" Nullable="false" />
+          <Property Name="idAvatar" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Avatar_Ruta" Type="varchar(max)" />
           <Property Name="Nombre_Avatar" Type="varchar" MaxLength="50" />
         </EntityType>
@@ -24,7 +24,7 @@
           <Key>
             <PropertyRef Name="idCancion" />
           </Key>
-          <Property Name="idCancion" Type="int" Nullable="false" />
+          <Property Name="idCancion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Cancion_Ruta" Type="varchar(max)" Nullable="false" />
           <Property Name="Idioma" Type="varchar" MaxLength="50" Nullable="false" />
@@ -35,7 +35,7 @@
           <Key>
             <PropertyRef Name="idClasificacion" />
           </Key>
-          <Property Name="idClasificacion" Type="int" Nullable="false" />
+          <Property Name="idClasificacion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Puntos_Ganados" Type="int" />
           <Property Name="Rondas_Ganadas" Type="int" />
         </EntityType>
@@ -43,7 +43,7 @@
           <Key>
             <PropertyRef Name="idExpulsion" />
           </Key>
-          <Property Name="idExpulsion" Type="int" Nullable="false" />
+          <Property Name="idExpulsion" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Causa" Type="varchar(max)" Nullable="false" />
           <Property Name="Fecha" Type="date" Nullable="false" />
           <Property Name="Jugador_idJugador" Type="int" Nullable="false" />
@@ -52,14 +52,14 @@
           <Key>
             <PropertyRef Name="idGenero" />
           </Key>
-          <Property Name="idGenero" Type="int" Nullable="false" />
+          <Property Name="idGenero" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre_Genero" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Jugador">
           <Key>
             <PropertyRef Name="idJugador" />
           </Key>
-          <Property Name="idJugador" Type="int" Nullable="false" />
+          <Property Name="idJugador" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Apellido" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Correo" Type="varchar" MaxLength="50" Nullable="false" />
@@ -70,7 +70,7 @@
           <Key>
             <PropertyRef Name="idRedSocial" />
           </Key>
-          <Property Name="idRedSocial" Type="int" Nullable="false" />
+          <Property Name="idRedSocial" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nickname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Tipo" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Jugador_idJugador" Type="int" Nullable="false" />
@@ -100,7 +100,7 @@ advertencia 6002: La tabla o vista 'BaseDatosPrueba.dbo.Solicitud' no tiene defi
           <Key>
             <PropertyRef Name="idUsuario" />
           </Key>
-          <Property Name="idUsuario" Type="int" Nullable="false" />
+          <Property Name="idUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Nombre_Usuario" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Contrasena" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Jugador_idJugador" Type="int" Nullable="false" />
@@ -268,8 +268,7 @@ advertencia 6002: La tabla o vista 'BaseDatosPrueba.dbo.Solicitud' no tiene defi
             <End Role="Usuario" EntitySet="Usuario" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="BaseDatosPruebaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
