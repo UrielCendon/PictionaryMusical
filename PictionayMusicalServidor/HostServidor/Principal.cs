@@ -35,6 +35,7 @@ namespace HostServidor
                 hostCuenta.Open();
                 hostAvatares.Open();
                 Bitacora.Info("Host arriba. Enter para salir.");
+                Console.WriteLine("Host arriba. Enter para salir.");
                 Console.ReadLine();
             }
             catch (AddressAccessDeniedException ex)
