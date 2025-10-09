@@ -5,7 +5,7 @@
         Title="{x:Static language:Lang.globalTextoIngreseCodigoPartida}"
         Height="300" Width="300"
         WindowStartupLocation="CenterScreen"
-        AllowsTransparency="True" WindowStyle="None" Background="Transparent">
+        AllowsTransparency="True" WindowStyle="None" Background="Transparent" Cursor="">
 
     <Grid>
         <Border Background="White" BorderBrush="Gray" BorderThickness="2"

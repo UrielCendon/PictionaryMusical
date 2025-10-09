@@ -166,7 +166,7 @@
     <value>Nombre</value>
   </data>
   <data name="globalTextoSeleccionarAvatar" xml:space="preserve">
-    <value>Seleccionar un avatar</value>
+    <value>Selecciona un avatar</value>
   </data>
   <data name="globalTextoUsuario" xml:space="preserve">
     <value>Usuario</value>
@@ -412,5 +412,8 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
     <value>Partida en curso</value>
+  </data>
+  <data name="alertaAviso" xml:space="preserve">
+    <value>Aviso</value>
   </data>
 </root>

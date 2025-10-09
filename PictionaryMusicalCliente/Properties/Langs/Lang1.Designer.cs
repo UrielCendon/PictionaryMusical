@@ -79,6 +79,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Aviso.
+        /// </summary>
+        public static string alertaAviso {
+            get {
+                return ResourceManager.GetString("alertaAviso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ENVIAR SOLICITUD.
         /// </summary>
         public static string buscarAmigoTextoEnviaSolicitud {
