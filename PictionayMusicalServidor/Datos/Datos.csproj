@@ -63,6 +63,7 @@
     <Compile Include="Modelo\Avatar.cs">
       <DependentUpon>BasePictionaryMusical.tt</DependentUpon>
     </Compile>
+    <Compile Include="Modelo\BaseDatosPruebaEntities1.cs" />
     <Compile Include="Modelo\BasePictionaryMusical.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -106,6 +107,7 @@
     <Compile Include="Modelo\Usuario.cs">
       <DependentUpon>BasePictionaryMusical.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utilidades\Conexion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -133,9 +135,7 @@
       <LastGenOutput>BasePictionaryMusical.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utilidades\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
