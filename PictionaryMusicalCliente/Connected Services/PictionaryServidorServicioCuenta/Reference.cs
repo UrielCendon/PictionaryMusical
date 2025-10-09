@@ -23,22 +23,22 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string apellidoField;
+        private string ApellidoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private int avatarIdField;
+        private int AvatarIdField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string contraseñaField;
+        private string ContrasenaField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string correoField;
+        private string CorreoField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string nombreField;
+        private string NombreField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string usuarioField;
+        private string UsuarioField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -51,79 +51,79 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string apellido {
+        public string Apellido {
             get {
-                return this.apellidoField;
+                return this.ApellidoField;
             }
             set {
-                if ((object.ReferenceEquals(this.apellidoField, value) != true)) {
-                    this.apellidoField = value;
-                    this.RaisePropertyChanged("apellido");
+                if ((object.ReferenceEquals(this.ApellidoField, value) != true)) {
+                    this.ApellidoField = value;
+                    this.RaisePropertyChanged("Apellido");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public int avatarId {
+        public int AvatarId {
             get {
-                return this.avatarIdField;
+                return this.AvatarIdField;
             }
             set {
-                if ((this.avatarIdField.Equals(value) != true)) {
-                    this.avatarIdField = value;
-                    this.RaisePropertyChanged("avatarId");
+                if ((this.AvatarIdField.Equals(value) != true)) {
+                    this.AvatarIdField = value;
+                    this.RaisePropertyChanged("AvatarId");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string contraseña {
+        public string Contrasena {
             get {
-                return this.contraseñaField;
+                return this.ContrasenaField;
             }
             set {
-                if ((object.ReferenceEquals(this.contraseñaField, value) != true)) {
-                    this.contraseñaField = value;
-                    this.RaisePropertyChanged("contraseña");
+                if ((object.ReferenceEquals(this.ContrasenaField, value) != true)) {
+                    this.ContrasenaField = value;
+                    this.RaisePropertyChanged("Contrasena");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string correo {
+        public string Correo {
             get {
-                return this.correoField;
+                return this.CorreoField;
             }
             set {
-                if ((object.ReferenceEquals(this.correoField, value) != true)) {
-                    this.correoField = value;
-                    this.RaisePropertyChanged("correo");
+                if ((object.ReferenceEquals(this.CorreoField, value) != true)) {
+                    this.CorreoField = value;
+                    this.RaisePropertyChanged("Correo");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string nombre {
+        public string Nombre {
             get {
-                return this.nombreField;
+                return this.NombreField;
             }
             set {
-                if ((object.ReferenceEquals(this.nombreField, value) != true)) {
-                    this.nombreField = value;
-                    this.RaisePropertyChanged("nombre");
+                if ((object.ReferenceEquals(this.NombreField, value) != true)) {
+                    this.NombreField = value;
+                    this.RaisePropertyChanged("Nombre");
                 }
             }
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public string usuario {
+        public string Usuario {
             get {
-                return this.usuarioField;
+                return this.UsuarioField;
             }
             set {
-                if ((object.ReferenceEquals(this.usuarioField, value) != true)) {
-                    this.usuarioField = value;
-                    this.RaisePropertyChanged("usuario");
+                if ((object.ReferenceEquals(this.UsuarioField, value) != true)) {
+                    this.UsuarioField = value;
+                    this.RaisePropertyChanged("Usuario");
                 }
             }
         }

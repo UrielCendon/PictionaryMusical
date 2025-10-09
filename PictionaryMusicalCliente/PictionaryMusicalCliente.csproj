@@ -57,6 +57,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Modelo\ObjetoAvatar.cs" />
+    <Compile Include="Modelo\SolicitudRegistrarUsuario.cs" />
+    <Compile Include="Servicios\DialogService.cs" />
+    <Compile Include="Servicios\ServidorProxy.cs" />
+    <Compile Include="VistaModelo\CrearCuenta.cs" />
     <Compile Include="Vista\AjustesPartida.xaml.cs">
       <DependentUpon>AjustesPartida.xaml</DependentUpon>
     </Compile>
@@ -90,6 +95,9 @@
     </Compile>
     <Compile Include="Vista\VerificarCodigo.xaml.cs">
       <DependentUpon>VerificarCodigo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\Avisos.xaml.cs">
+      <DependentUpon>Avisos.xaml</DependentUpon>
     </Compile>
     <Page Include="Vista\Ajustes.xaml">
       <SubType>Designer</SubType>
@@ -216,6 +224,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Vista\VerificarCodigo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Vista\Avisos.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
