@@ -92,13 +92,13 @@
     <Folder Include="Utilidades\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PictionayMusicalBD\Datos.csproj">
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Datos\Datos.csproj">
       <Project>{985ee861-0e91-4f61-9090-abf706083eeb}</Project>
       <Name>Datos</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -68,7 +68,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PictionayMusicalBD\Datos.csproj">
+    <ProjectReference Include="..\Datos\Datos.csproj">
       <Project>{985ee861-0e91-4f61-9090-abf706083eeb}</Project>
       <Name>Datos</Name>
     </ProjectReference>
