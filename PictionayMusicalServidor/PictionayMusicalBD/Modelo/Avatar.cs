@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Datos
+namespace Datos.Modelo
 {
     using System;
     using System.Collections.Generic;

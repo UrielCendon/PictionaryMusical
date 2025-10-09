@@ -58,10 +58,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Logica\Logica.csproj">
-      <Project>{c6f501cd-1724-4374-82fa-d221f3004df3}</Project>
-      <Name>Logica</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PictionayMusicalBD\Datos.csproj">
       <Project>{985ee861-0e91-4f61-9090-abf706083eeb}</Project>
       <Name>Datos</Name>

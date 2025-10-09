@@ -7,21 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Datos
+namespace Datos.Modelo
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Artista
+    public partial class Genero
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Artista()
+        public Genero()
         {
             this.Cancion = new HashSet<Cancion>();
         }
     
-        public int idArtista { get; set; }
-        public string Nombre_Artista { get; set; }
+        public int idGenero { get; set; }
+        public string Nombre_Genero { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cancion> Cancion { get; set; }

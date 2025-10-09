@@ -7,18 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Datos
+namespace Datos.Modelo
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Solicitud
+    public partial class Expulsion
     {
-        public byte[] Estado { get; set; }
+        public int idExpulsion { get; set; }
+        public string Causa { get; set; }
+        public System.DateTime Fecha { get; set; }
         public int Jugador_idJugador { get; set; }
-        public int Jugador_idJugador1 { get; set; }
     
         public virtual Jugador Jugador { get; set; }
-        public virtual Jugador Jugador1 { get; set; }
     }
 }

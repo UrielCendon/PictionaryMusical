@@ -7,18 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Datos
+namespace Datos.Modelo
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class Usuario
+    public partial class sysdiagrams
     {
-        public int idUsuario { get; set; }
-        public string Nombre_Usuario { get; set; }
-        public string Contrasena { get; set; }
-        public int Jugador_idJugador { get; set; }
-    
-        public virtual Jugador Jugador { get; set; }
+        public string name { get; set; }
+        public int principal_id { get; set; }
+        public int diagram_id { get; set; }
+        public Nullable<int> version { get; set; }
+        public byte[] definition { get; set; }
     }
 }
