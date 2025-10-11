@@ -13,7 +13,7 @@
                 HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel Width="280" VerticalAlignment="Center">
 
-                <TextBlock Text="{x:Static language:Lang.cambiarContraseñaTextoCodigoVerificacion}"
+                <TextBlock x:Name="textoDescripcion" Text="{x:Static language:Lang.cambiarContraseñaTextoCodigoVerificacion}"
                            TextWrapping="Wrap" TextAlignment="Center"
                            FontFamily="Comic Sans MS" FontSize="16" FontWeight="Bold" />
 

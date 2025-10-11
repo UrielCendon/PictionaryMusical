@@ -22,6 +22,8 @@ namespace HostServidor
                 Bitacora.Fatal("Excepción no controlada.", (Exception)e.ExceptionObject);
 
             using (var hostCuenta = new ServiceHost(typeof(Servicios.Servicios.CuentaManejador)))
+            using (var hostCodigo = new ServiceHost(typeof(Servicios.Servicios.CodigoVerificacionManejador)))
+            using (var hostReenvio = new ServiceHost(typeof(Servicios.Servicios.ReenviarCodigoVerificacionManejador)))
             using (var hostAvatares = new ServiceHost(typeof(Servicios.Servicios.CatalogoAvatares)))
             {
                 try
@@ -30,6 +32,16 @@ namespace HostServidor
                     Bitacora.Info("Servicio Cuenta iniciado.");
                     foreach (var ep in hostCuenta.Description.Endpoints)
                         Bitacora.Info($"Cuenta -> {ep.Address} ({ep.Binding.Name})");
+
+                    hostCodigo.Open();
+                    Bitacora.Info("Servicio Código de Verificación iniciado.");
+                    foreach (var ep in hostCodigo.Description.Endpoints)
+                        Bitacora.Info($"Código -> {ep.Address} ({ep.Binding.Name})");
+
+                    hostReenvio.Open();
+                    Bitacora.Info("Servicio Reenvío Código iniciado.");
+                    foreach (var ep in hostReenvio.Description.Endpoints)
+                        Bitacora.Info($"Reenvío -> {ep.Address} ({ep.Binding.Name})");
 
                     hostAvatares.Open();
                     Bitacora.Info("Servicio Avatares iniciado.");
@@ -46,6 +58,8 @@ namespace HostServidor
                 finally
                 {
                     CerrarFormaSegura(hostAvatares);
+                    CerrarFormaSegura(hostReenvio);
+                    CerrarFormaSegura(hostCodigo);
                     CerrarFormaSegura(hostCuenta);
                     Bitacora.Info("Host detenido.");
                 }

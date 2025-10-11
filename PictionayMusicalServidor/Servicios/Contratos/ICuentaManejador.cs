@@ -1,10 +1,5 @@
-﻿using Servicios.Contratos.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Servicios.Contratos.DTOs;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios.Contratos
 {
@@ -12,6 +7,6 @@ namespace Servicios.Contratos
     public interface ICuentaManejador
     {
         [OperationContract]
-        bool RegistrarCuenta(NuevaCuentaDTO nuevaCuenta);
+        ResultadoRegistroCuentaDTO RegistrarCuenta(NuevaCuentaDTO nuevaCuenta);
     }
 }

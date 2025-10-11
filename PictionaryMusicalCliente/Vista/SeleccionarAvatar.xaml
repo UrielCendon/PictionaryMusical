@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
         Title="{x:Static language:Lang.globalTextoSeleccionarAvatar}"
-        Height="415" Width="390"
+        Height="450" Width="420"
         WindowStartupLocation="CenterScreen"
-        AllowsTransparency="True" WindowStyle="None" Background="Transparent">
+        AllowsTransparency="True" WindowStyle="None" 
+        Background="Transparent" Cursor="">
 
     <Grid>
         <Border Background="White" BorderBrush="Gray" BorderThickness="2"

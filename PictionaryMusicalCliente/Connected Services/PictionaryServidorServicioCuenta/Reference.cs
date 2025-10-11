@@ -18,7 +18,7 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
     [System.Runtime.Serialization.DataContractAttribute(Name="NuevaCuentaDTO", Namespace="http://schemas.datacontract.org/2004/07/Servicios.Contratos.DTOs")]
     [System.SerializableAttribute()]
     public partial class NuevaCuentaDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
+
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
@@ -137,16 +137,109 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
             }
         }
     }
+
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ResultadoRegistroCuentaDTO", Namespace="http://schemas.datacontract.org/2004/07/Servicios.Contratos.DTOs")]
+    [System.SerializableAttribute()]
+    public partial class ResultadoRegistroCuentaDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool CorreoYaRegistradoField;
+
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string MensajeField;
+
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool RegistroExitosoField;
+
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private bool UsuarioYaRegistradoField;
+
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool CorreoYaRegistrado {
+            get {
+                return this.CorreoYaRegistradoField;
+            }
+            set {
+                if ((this.CorreoYaRegistradoField.Equals(value) != true)) {
+                    this.CorreoYaRegistradoField = value;
+                    this.RaisePropertyChanged("CorreoYaRegistrado");
+                }
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string Mensaje {
+            get {
+                return this.MensajeField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.MensajeField, value) != true)) {
+                    this.MensajeField = value;
+                    this.RaisePropertyChanged("Mensaje");
+                }
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool RegistroExitoso {
+            get {
+                return this.RegistroExitosoField;
+            }
+            set {
+                if ((this.RegistroExitosoField.Equals(value) != true)) {
+                    this.RegistroExitosoField = value;
+                    this.RaisePropertyChanged("RegistroExitoso");
+                }
+            }
+        }
+
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public bool UsuarioYaRegistrado {
+            get {
+                return this.UsuarioYaRegistradoField;
+            }
+            set {
+                if ((this.UsuarioYaRegistradoField.Equals(value) != true)) {
+                    this.UsuarioYaRegistradoField = value;
+                    this.RaisePropertyChanged("UsuarioYaRegistrado");
+                }
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="PictionaryServidorServicioCuenta.ICuentaManejador")]
-    public interface ICuentaManejador {
+    public partial interface ICuentaManejador {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/RegistrarCuenta", ReplyAction="http://tempuri.org/ICuentaManejador/RegistrarCuentaResponse")]
-        bool RegistrarCuenta(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta);
-        
+        PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ResultadoRegistroCuentaDTO RegistrarCuenta(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta);
+
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/RegistrarCuenta", ReplyAction="http://tempuri.org/ICuentaManejador/RegistrarCuentaResponse")]
-        System.Threading.Tasks.Task<bool> RegistrarCuentaAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta);
+        System.Threading.Tasks.Task<PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ResultadoRegistroCuentaDTO> RegistrarCuentaAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -176,11 +269,11 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
                 base(binding, remoteAddress) {
         }
         
-        public bool RegistrarCuenta(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta) {
+        public PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ResultadoRegistroCuentaDTO RegistrarCuenta(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta) {
             return base.Channel.RegistrarCuenta(nuevaCuenta);
         }
-        
-        public System.Threading.Tasks.Task<bool> RegistrarCuentaAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta) {
+
+        public System.Threading.Tasks.Task<PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ResultadoRegistroCuentaDTO> RegistrarCuentaAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.NuevaCuentaDTO nuevaCuenta) {
             return base.Channel.RegistrarCuentaAsync(nuevaCuenta);
         }
     }

@@ -62,8 +62,6 @@ namespace PictionaryMusicalCliente
 
         private void LabelOlvidasteContraseña(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            VerificarCodigo ventana = new VerificarCodigo();
-            ventana.ShowDialog();
         }
     }
 }

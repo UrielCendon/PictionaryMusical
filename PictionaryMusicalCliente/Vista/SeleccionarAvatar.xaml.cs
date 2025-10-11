@@ -1,17 +1,20 @@
-﻿using PictionaryMusicalCliente.Modelo;
-using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Modelo.Catalogos;
 
 namespace PictionaryMusicalCliente
 {
     public partial class SeleccionarAvatar : Window
     {
-        public int? AvatarSeleccionadoId { get; private set; }
+        public ObjetoAvatar AvatarSeleccionado { get; private set; }
+        public ImageSource AvatarSeleccionadoImagen { get; private set; }
 
         public SeleccionarAvatar()
         {
@@ -19,43 +22,110 @@ namespace PictionaryMusicalCliente
             Loaded += SeleccionarAvatar_Loaded;
         }
 
-        private async void SeleccionarAvatar_Loaded(object sender, RoutedEventArgs e)
+        private void SeleccionarAvatar_Loaded(object sender, RoutedEventArgs e) =>
+            MostrarAvataresEnLista(CatalogoAvataresLocales.ObtenerAvatares());
+
+        private void MostrarAvataresEnLista(IReadOnlyCollection<ObjetoAvatar> avatares)
         {
-            List<PictionaryMusicalCliente.Modelo.ObjetoAvatar> avatares;
-            using (var proxy = new ServidorProxy())
+            listaAvatares.Items.Clear();
+
+            if (avatares == null || avatares.Count == 0)
             {
-                avatares = await proxy.ObtenerAvataresAsync();
+                return;
             }
 
-
-            // Asumiendo que tienes un ListBox llamado "listaAvatares"
-            listaAvatares.Items.Clear();
-            foreach (var a in avatares)
+            foreach (ObjetoAvatar avatar in avatares)
             {
-                var img = new Image
+                ImageSource imagenAvatar = CrearImagenParaAvatar(avatar);
+
+                var imagenControl = new Image
                 {
                     Width = 72,
                     Height = 72,
-                    Source = string.IsNullOrEmpty(a.ImagenUriAbsoluta) ? null : new BitmapImage(new System.Uri(a.ImagenUriAbsoluta))
+                    Margin = new Thickness(5),
+                    Cursor = Cursors.Hand,
+                    Source = imagenAvatar
                 };
-                var item = new ListBoxItem { Content = img, Tag = a.Id, ToolTip = a.Nombre };
-                listaAvatares.Items.Add(item);
+
+                var itemLista = new ListBoxItem
+                {
+                    Content = imagenControl,
+                    Tag = avatar,
+                    ToolTip = avatar.Nombre
+                };
+
+                listaAvatares.Items.Add(itemLista);
             }
+        }
+
+        private static ImageSource CrearImagenParaAvatar(ObjetoAvatar avatar)
+        {
+            if (avatar == null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(avatar.ImagenUriAbsoluta)
+                && Uri.TryCreate(avatar.ImagenUriAbsoluta, UriKind.Absolute, out Uri uriRemota))
+            {
+                return new BitmapImage(uriRemota);
+            }
+
+            if (!string.IsNullOrWhiteSpace(avatar.RutaRelativa))
+            {
+                string rutaNormalizada = NormalizarRutaLocal(avatar.RutaRelativa);
+
+                if (Uri.TryCreate($"pack://application:,,,/{rutaNormalizada}", UriKind.Absolute, out Uri uriRecurso))
+                {
+                    try
+                    {
+                        return new BitmapImage(uriRecurso);
+                    }
+                    catch
+                    {
+                        // Ignorado para intentar con la ruta relativa simple.
+                    }
+                }
+
+                try
+                {
+                    return new BitmapImage(new Uri($"/{rutaNormalizada}", UriKind.Relative));
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        private static string NormalizarRutaLocal(string ruta)
+        {
+            if (string.IsNullOrWhiteSpace(ruta))
+            {
+                return null;
+            }
+
+            string rutaNormalizada = ruta
+                .TrimStart('/')
+                .Replace('\\', '/');
+
+            return rutaNormalizada;
         }
 
         private void BotonAceptarSeleccionAvatar(object sender, RoutedEventArgs e)
         {
-            if (listaAvatares.SelectedItem is ListBoxItem li && li.Tag is int id)
+            if (listaAvatares.SelectedItem is ListBoxItem itemSeleccionado && itemSeleccionado.Tag is ObjetoAvatar avatar)
             {
-                AvatarSeleccionadoId = id;
+                AvatarSeleccionado = avatar;
+                AvatarSeleccionadoImagen = CrearImagenParaAvatar(avatar);
                 DialogResult = true;
                 Close();
+                return;
             }
-            else
-            {
-                new Avisos(Lang.globalTextoSeleccionarAvatar).ShowDialog();
-            }
+
+            new Avisos(Lang.globalTextoSeleccionarAvatar).ShowDialog();
         }
     }
 }
-

@@ -57,8 +57,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Modelo\Catalogos\CatalogoAvataresLocales.cs" />
     <Compile Include="Modelo\ObjetoAvatar.cs" />
+    <Compile Include="Modelo\ResultadoRegistroCuenta.cs" />
+    <Compile Include="Modelo\ResultadoSolicitudCodigo.cs" />
+    <Compile Include="Modelo\SolicitudConfirmarCodigo.cs" />
     <Compile Include="Modelo\SolicitudRegistrarUsuario.cs" />
+    <Compile Include="Modelo\SolicitudReenviarCodigo.cs" />
     <Compile Include="Servicios\DialogService.cs" />
     <Compile Include="Servicios\ServidorProxy.cs" />
     <Compile Include="VistaModelo\CrearCuenta.cs" />
@@ -78,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\PictionaryServidorServicioCuenta\VerificacionExtensions.cs" />
     <Compile Include="Vista\ExpulsarJugador.xaml.cs">
       <DependentUpon>ExpulsarJugador.xaml</DependentUpon>
     </Compile>
@@ -277,6 +293,22 @@
     <None Include="Connected Services\PictionaryServidorServicioAvatares\PictionaryMusicalCliente.PictionaryServidorServicioAvatares.AvatarDTO.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacionManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\PictionaryMusicalCliente.PictionaryServidorServicioCodigoVerificacion.ResultadoRegistroCuentaDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\PictionaryMusicalCliente.PictionaryServidorServicioCodigoVerificacion.ResultadoSolicitudCodigoDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\PictionaryServidorServicioCuenta\Cuenta.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -287,6 +319,16 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\PictionaryServidorServicioCuenta\CuentaManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenviarCodigoVerificacionManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenvioCodigoVerificacion.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenvioCodigoVerificacion1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenvioCodigoVerificacion2.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -312,7 +354,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioAvatares\" />
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\" />
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCuenta\" />
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\PictionaryServidorServicioCuenta\configuration91.svcinfo" />
@@ -338,7 +382,9 @@
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.disco" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Recursos\Aleks_Syntek.jpg" />
     <Resource Include="Recursos\Anuel_AA.jpg" />
@@ -354,6 +400,33 @@
     <Resource Include="Recursos\Taylor_Swift.jpg" />
     <Resource Include="Recursos\The_Weeknd.jpg" />
     <Resource Include="Recursos\Travis_Scott.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenvioCodigoVerificacion.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

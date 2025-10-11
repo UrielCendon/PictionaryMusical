@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using Servicios.Contratos.DTOs;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios.Contratos
 {
     [ServiceContract]
     public interface IReenviarCodigoVerificacionManejador
     {
+        [OperationContract]
+        ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoVerificacionDTO solicitud);
     }
 }
