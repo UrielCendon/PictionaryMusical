@@ -57,7 +57,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Connected Services\PictionaryServidorServicioCambioContrasena\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\PictionaryServidorServicioInicioSesion\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -69,11 +79,20 @@
     </Compile>
     <Compile Include="Modelo\Catalogos\CatalogoAvataresLocales.cs" />
     <Compile Include="Modelo\ObjetoAvatar.cs" />
+    <Compile Include="Modelo\ResultadoInicioSesion.cs" />
+    <Compile Include="Modelo\ResultadoOperacion.cs" />
     <Compile Include="Modelo\ResultadoRegistroCuenta.cs" />
     <Compile Include="Modelo\ResultadoSolicitudCodigo.cs" />
+    <Compile Include="Modelo\ResultadoSolicitudRecuperacion.cs" />
+    <Compile Include="Modelo\SolicitudActualizarContrasena.cs" />
     <Compile Include="Modelo\SolicitudConfirmarCodigo.cs" />
+    <Compile Include="Modelo\SolicitudConfirmarCodigoRecuperacion.cs" />
+    <Compile Include="Modelo\SolicitudInicioSesion.cs" />
+    <Compile Include="Modelo\SolicitudRecuperarCuenta.cs" />
     <Compile Include="Modelo\SolicitudRegistrarUsuario.cs" />
     <Compile Include="Modelo\SolicitudReenviarCodigo.cs" />
+    <Compile Include="Modelo\SolicitudReenviarCodigoRecuperacion.cs" />
+    <Compile Include="Modelo\UsuarioAutenticado.cs" />
     <Compile Include="Servicios\DialogService.cs" />
     <Compile Include="Servicios\ServidorProxy.cs" />
     <Compile Include="VistaModelo\CrearCuenta.cs" />
@@ -293,6 +312,25 @@
     <None Include="Connected Services\PictionaryServidorServicioAvatares\PictionaryMusicalCliente.PictionaryServidorServicioAvatares.AvatarDTO.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\CambiarContrasena.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\CambiarContrasena1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\CambiarContrasena2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\CambiarContrasenaManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\PictionaryMusicalCliente.PictionaryServidorServicioCambioContrasena.ResultadoOperacionDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\PictionaryMusicalCliente.PictionaryServidorServicioCambioContrasena.ResultadoSolicitudCodigoDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\PictionaryMusicalCliente.PictionaryServidorServicioCambioContrasena.ResultadoSolicitudRecuperacionDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -319,6 +357,19 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\PictionaryServidorServicioCuenta\CuentaManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesionManejador.wsdl" />
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\PictionaryMusicalCliente.PictionaryServidorServicioInicioSesion.ResultadoInicioSesionDTO.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenviarCodigoVerificacionManejador.wsdl" />
     <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\ReenvioCodigoVerificacion.xsd">
       <SubType>Designer</SubType>
@@ -354,8 +405,10 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioAvatares\" />
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCambioContrasena\" />
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\" />
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioCuenta\" />
+    <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioInicioSesion\" />
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\" />
   </ItemGroup>
   <ItemGroup>
@@ -424,6 +477,36 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\PictionaryServidorServicioReenvioCodigoVerificacion\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioInicioSesion\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\CambiarContrasena.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCambioContrasena\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

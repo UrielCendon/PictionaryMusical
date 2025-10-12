@@ -19,5 +19,8 @@ namespace Servicios.Contratos.DTOs
 
         [DataMember]
         public bool UsuarioYaRegistrado { get; set; }
+
+        [DataMember]
+        public string TokenRecuperacion { get; set; }
     }
 }

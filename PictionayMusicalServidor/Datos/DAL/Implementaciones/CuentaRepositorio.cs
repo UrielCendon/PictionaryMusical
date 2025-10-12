@@ -1,6 +1,8 @@
 using Datos.DAL.Interfaces;
 using Datos.Modelo;
 using Datos.Utilidades;
+using System;
+using System.Data.Entity;
 using System.Linq;
 
 namespace Datos.DAL.Implementaciones
@@ -52,6 +54,64 @@ namespace Datos.DAL.Implementaciones
             using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
             {
                 return contexto.Usuario.Any(u => u.Nombre_Usuario == usuario);
+            }
+        }
+
+        public bool TryObtenerCuentaPorIdentificador(string identificador, out int idUsuario, out string correo)
+        {
+            idUsuario = 0;
+            correo = null;
+
+            if (string.IsNullOrWhiteSpace(identificador))
+            {
+                return false;
+            }
+
+            string filtro = identificador.Trim();
+
+            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
+            {
+                var usuario = contexto.Usuario
+                    .Include(u => u.Jugador)
+                    .FirstOrDefault(u => u.Nombre_Usuario == filtro || u.Jugador.Correo == filtro);
+
+                if (usuario == null)
+                {
+                    return false;
+                }
+
+                bool coincideUsuario = string.Equals(usuario.Nombre_Usuario, filtro, StringComparison.Ordinal);
+                bool coincideCorreo = string.Equals(usuario.Jugador?.Correo, filtro, StringComparison.Ordinal);
+
+                if (!coincideUsuario && !coincideCorreo)
+                {
+                    return false;
+                }
+
+                idUsuario = usuario.idUsuario;
+                correo = usuario.Jugador?.Correo;
+                return true;
+            }
+        }
+
+        public bool ActualizarContrasena(int idUsuario, string contrasenaHash)
+        {
+            if (idUsuario <= 0 || string.IsNullOrWhiteSpace(contrasenaHash))
+            {
+                return false;
+            }
+
+            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
+            {
+                var usuario = contexto.Usuario.FirstOrDefault(u => u.idUsuario == idUsuario);
+
+                if (usuario == null)
+                {
+                    return false;
+                }
+
+                usuario.Contrasena = contrasenaHash;
+                return contexto.SaveChanges() > 0;
             }
         }
     }

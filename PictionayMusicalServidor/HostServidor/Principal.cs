@@ -25,6 +25,8 @@ namespace HostServidor
             using (var hostCodigo = new ServiceHost(typeof(Servicios.Servicios.CodigoVerificacionManejador)))
             using (var hostReenvio = new ServiceHost(typeof(Servicios.Servicios.ReenviarCodigoVerificacionManejador)))
             using (var hostAvatares = new ServiceHost(typeof(Servicios.Servicios.CatalogoAvatares)))
+            using (var hostInicioSesion = new ServiceHost(typeof(Servicios.Servicios.InicioSesionManejador)))
+            using (var hostCambioContrasena = new ServiceHost(typeof(Servicios.Servicios.CambiarContrasenaManejador)))
             {
                 try
                 {
@@ -48,6 +50,16 @@ namespace HostServidor
                     foreach (var ep in hostAvatares.Description.Endpoints)
                         Bitacora.Info($"Avatares -> {ep.Address} ({ep.Binding.Name})");
 
+                    hostInicioSesion.Open();
+                    Bitacora.Info("Servicio Inicio sesion.");
+                    foreach (var ep in hostInicioSesion.Description.Endpoints)
+                        Bitacora.Info($"Avatares -> {ep.Address} ({ep.Binding.Name})");
+
+                    hostCambioContrasena.Open();
+                    Bitacora.Info("Servicio Cambio contraseña iniciado.");
+                    foreach (var ep in hostCambioContrasena.Description.Endpoints)
+                        Bitacora.Info($"CambioContraseña -> {ep.Address} ({ep.Binding.Name})");
+
                     Console.WriteLine("Servicios arriba. ENTER para salir.");
                     Console.ReadLine();
                 }
@@ -61,6 +73,8 @@ namespace HostServidor
                     CerrarFormaSegura(hostReenvio);
                     CerrarFormaSegura(hostCodigo);
                     CerrarFormaSegura(hostCuenta);
+                    CerrarFormaSegura(hostInicioSesion);
+                    CerrarFormaSegura(hostCambioContrasena);
                     Bitacora.Info("Host detenido.");
                 }
             }

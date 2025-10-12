@@ -9,15 +9,24 @@ namespace PictionaryMusicalCliente
 {
     public partial class VerificarCodigo : Window
     {
-        private readonly string _tokenVerificacion;
+        private string _tokenVerificacion;
         private readonly string _correoDestino;
         private readonly string _textoOriginalReenviar;
         private readonly DispatcherTimer _temporizador;
+        private readonly Func<string, Task<ResultadoOperacion>> _confirmarCodigoFunc;
+        private readonly Func<Task<ResultadoSolicitudCodigo>> _solicitarReenvioFunc;
+        private readonly string _descripcionPersonalizada;
         private DateTime _siguienteReenvioPermitido;
 
-        public bool RegistroCompletado { get; private set; }
+        public bool OperacionCompletada { get; private set; }
+        public bool RegistroCompletado => OperacionCompletada;
 
-        public VerificarCodigo(string tokenVerificacion, string correoDestino)
+        public VerificarCodigo(
+            string tokenVerificacion,
+            string correoDestino,
+            Func<string, Task<ResultadoOperacion>> confirmarCodigoAsync = null,
+            Func<Task<ResultadoSolicitudCodigo>> reenviarCodigoAsync = null,
+            string descripcionPersonalizada = null)
         {
             if (string.IsNullOrWhiteSpace(tokenVerificacion))
             {
@@ -29,17 +38,30 @@ namespace PictionaryMusicalCliente
             _tokenVerificacion = tokenVerificacion;
             _correoDestino = correoDestino ?? string.Empty;
             _textoOriginalReenviar = botonReenviarCodigo.Content?.ToString() ?? "Reenviar código";
-            _temporizador = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
+            _temporizador = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _temporizador.Tick += TemporizadorTick;
 
-            RegistroCompletado = false;
+            _confirmarCodigoFunc = confirmarCodigoAsync ?? ConfirmarCodigoRegistroAsync;
+            _solicitarReenvioFunc = reenviarCodigoAsync ?? ReenviarCodigoRegistroAsync;
+            _descripcionPersonalizada = descripcionPersonalizada;
+            OperacionCompletada = false;
             _siguienteReenvioPermitido = DateTime.UtcNow.AddMinutes(1);
-            textoDescripcion.Text = string.IsNullOrWhiteSpace(_correoDestino)
-                ? "Ingresa el código de verificación que enviamos a tu correo."
-                : $"Ingresa el código de verificación enviado a {_correoDestino}.";
+
+            if (!string.IsNullOrWhiteSpace(_descripcionPersonalizada))
+            {
+                textoDescripcion.Text = _descripcionPersonalizada;
+            }
+            else
+            {
+                textoDescripcion.Text = string.IsNullOrWhiteSpace(_correoDestino)
+                    ? "Ingresa el código de verificación que enviamos a tu correo."
+                    : $"Ingresa el código de verificación enviado a {_correoDestino}.";
+            }
+
+            if (_solicitarReenvioFunc == null)
+            {
+                botonReenviarCodigo.Visibility = Visibility.Collapsed;
+            }
 
             ActualizarEstadoReenvio();
         }
@@ -59,7 +81,13 @@ namespace PictionaryMusicalCliente
 
             try
             {
-                ResultadoRegistroCuenta resultado = await ConfirmarCodigoAsync(codigoIngresado);
+                if (_confirmarCodigoFunc == null)
+                {
+                    new Avisos("La validación del código no está disponible en este momento.").ShowDialog();
+                    return;
+                }
+
+                ResultadoOperacion resultado = await _confirmarCodigoFunc(codigoIngresado);
 
                 if (resultado == null)
                 {
@@ -67,10 +95,13 @@ namespace PictionaryMusicalCliente
                     return;
                 }
 
-                if (resultado.RegistroExitoso)
+                if (resultado.OperacionExitosa)
                 {
-                    new Avisos(resultado.Mensaje ?? "Registro completado exitosamente.").ShowDialog();
-                    RegistroCompletado = true;
+                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
+                        ? "Código verificado correctamente."
+                        : resultado.Mensaje;
+                    new Avisos(mensaje).ShowDialog();
+                    OperacionCompletada = true;
                     Close();
                     return;
                 }
@@ -87,7 +118,7 @@ namespace PictionaryMusicalCliente
             }
             finally
             {
-                if (!RegistroCompletado)
+                if (!OperacionCompletada)
                 {
                     botonVerificarCodigo.IsEnabled = true;
                 }
@@ -96,7 +127,7 @@ namespace PictionaryMusicalCliente
 
         private async void BotonReenviarCodigo(object sender, RoutedEventArgs e)
         {
-            await SolicitarNuevoCodigoAsync();
+            await ManejarReenvioCodigoAsync();
         }
 
         private void BotonCancelarCodigo(object sender, RoutedEventArgs e)
@@ -104,7 +135,23 @@ namespace PictionaryMusicalCliente
             Close();
         }
 
-        private async Task<ResultadoRegistroCuenta> ConfirmarCodigoAsync(string codigo)
+        private async Task<ResultadoOperacion> ConfirmarCodigoRegistroAsync(string codigo)
+        {
+            ResultadoRegistroCuenta resultado = await ConfirmarCodigoRegistroCoreAsync(codigo);
+
+            if (resultado == null)
+            {
+                return null;
+            }
+
+            return new ResultadoOperacion
+            {
+                OperacionExitosa = resultado.RegistroExitoso,
+                Mensaje = resultado.Mensaje ?? (resultado.RegistroExitoso ? "Registro completado exitosamente." : null)
+            };
+        }
+
+        private async Task<ResultadoRegistroCuenta> ConfirmarCodigoRegistroCoreAsync(string codigo)
         {
             using (var proxy = new ServidorProxy())
             {
@@ -118,9 +165,22 @@ namespace PictionaryMusicalCliente
             }
         }
 
-        private async Task SolicitarNuevoCodigoAsync()
+        private async Task<ResultadoSolicitudCodigo> ReenviarCodigoRegistroAsync()
         {
-            if (!botonReenviarCodigo.IsEnabled)
+            using (var proxy = new ServidorProxy())
+            {
+                var solicitud = new SolicitudReenviarCodigo
+                {
+                    TokenVerificacion = _tokenVerificacion
+                };
+
+                return await proxy.ReenviarCodigoVerificacionAsync(solicitud);
+            }
+        }
+
+        private async Task ManejarReenvioCodigoAsync()
+        {
+            if (!botonReenviarCodigo.IsEnabled || _solicitarReenvioFunc == null)
             {
                 return;
             }
@@ -129,35 +189,34 @@ namespace PictionaryMusicalCliente
 
             try
             {
-                using (var proxy = new ServidorProxy())
+                ResultadoSolicitudCodigo resultado = await _solicitarReenvioFunc();
+
+                if (resultado == null)
                 {
-                    var solicitud = new SolicitudReenviarCodigo
-                    {
-                        TokenVerificacion = _tokenVerificacion
-                    };
-
-                    ResultadoSolicitudCodigo resultado = await proxy.ReenviarCodigoVerificacionAsync(solicitud);
-
-                    if (resultado == null)
-                    {
-                        new Avisos("No se pudo solicitar un nuevo código. Intente nuevamente.").ShowDialog();
-                        return;
-                    }
-
-                    if (resultado.CodigoEnviado)
-                    {
-                        new Avisos(resultado.Mensaje ?? "Se envió un nuevo código a su correo electrónico.").ShowDialog();
-                        _siguienteReenvioPermitido = DateTime.UtcNow.AddMinutes(1);
-                        ActualizarEstadoReenvio();
-                        return;
-                    }
-
-                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                        ? "No es posible reenviar el código todavía."
-                        : resultado.Mensaje;
-
-                    new Avisos(mensaje).ShowDialog();
+                    new Avisos("No se pudo solicitar un nuevo código. Intente nuevamente.").ShowDialog();
+                    return;
                 }
+
+                if (resultado.CodigoEnviado)
+                {
+                    if (!string.IsNullOrWhiteSpace(resultado.TokenVerificacion))
+                    {
+                        _tokenVerificacion = resultado.TokenVerificacion;
+                    }
+
+                    _siguienteReenvioPermitido = DateTime.UtcNow.AddMinutes(1);
+                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
+                        ? "Se envió un nuevo código a su correo electrónico."
+                        : resultado.Mensaje;
+                    new Avisos(mensaje).ShowDialog();
+                    return;
+                }
+
+                string mensajeError = string.IsNullOrWhiteSpace(resultado.Mensaje)
+                    ? "No es posible reenviar el código todavía."
+                    : resultado.Mensaje;
+
+                new Avisos(mensajeError).ShowDialog();
             }
             catch (Exception)
             {
@@ -176,6 +235,17 @@ namespace PictionaryMusicalCliente
 
         private void ActualizarEstadoReenvio()
         {
+            if (_solicitarReenvioFunc == null)
+            {
+                botonReenviarCodigo.IsEnabled = false;
+                botonReenviarCodigo.Content = _textoOriginalReenviar;
+                if (_temporizador.IsEnabled)
+                {
+                    _temporizador.Stop();
+                }
+                return;
+            }
+
             DateTime ahora = DateTime.UtcNow;
             if (ahora >= _siguienteReenvioPermitido)
             {
@@ -197,16 +267,6 @@ namespace PictionaryMusicalCliente
             {
                 _temporizador.Start();
             }
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            if (_temporizador.IsEnabled)
-            {
-                _temporizador.Stop();
-            }
-
-            base.OnClosed(e);
         }
     }
 }

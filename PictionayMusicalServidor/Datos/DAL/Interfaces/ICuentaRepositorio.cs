@@ -9,5 +9,9 @@ namespace Datos.DAL.Interfaces
         bool ExisteCorreo(string correo);
 
         bool ExisteUsuario(string usuario);
+
+        bool TryObtenerCuentaPorIdentificador(string identificador, out int idUsuario, out string correo);
+
+        bool ActualizarContrasena(int idUsuario, string contrasenaHash);
     }
 }

@@ -61,10 +61,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contratos\DTOs\AvatarDTO.cs" />
+    <Compile Include="Contratos\DTOs\ConfirmarCodigoRecuperacionDTO.cs" />
     <Compile Include="Contratos\DTOs\ConfirmarCodigoVerificacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\CredencialesInicioSesionDTO.cs" />
     <Compile Include="Contratos\DTOs\NuevaCuentaDTO.cs" />
     <Compile Include="Contratos\DTOs\ReenviarCodigoVerificacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\SolicitudReenviarCodigoRecuperacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\SolicitudRecuperarCuentaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ActualizarContrasenaDTO.cs" />
     <Compile Include="Contratos\DTOs\ResultadoRegistroCuentaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoInicioSesionDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoSolicitudRecuperacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoOperacionDTO.cs" />
     <Compile Include="Contratos\DTOs\ResultadoSolicitudCodigoDTO.cs" />
     <Compile Include="Contratos\DTOs\UsuarioDTO.cs" />
     <Compile Include="Contratos\IAmigosManejador.cs" />
@@ -94,9 +102,15 @@
     <Compile Include="Servicios\CodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\CodigoVerificacionServicio.cs" />
     <Compile Include="Servicios\CuentaManejador.cs" />
+    <Compile Include="Servicios\InicioSesionManejador.cs" />
     <Compile Include="Servicios\CuentaRegistroServicio.cs" />
+    <Compile Include="Servicios\InicioSesionServicio.cs" />
     <Compile Include="Servicios\CodigoVerificacion\RegistroCuentaPendiente.cs" />
     <Compile Include="Servicios\CodigoVerificacion\RegistroCuentaPendienteStore.cs" />
+    <Compile Include="Servicios\CambiarContrasenaManejador.cs" />
+    <Compile Include="Servicios\RecuperacionCuentaPendiente.cs" />
+    <Compile Include="Servicios\RecuperacionCuentaServicio.cs" />
+    <Compile Include="Servicios\RecuperacionCuentaStore.cs" />
     <Compile Include="Servicios\ReenviarCodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\Notificaciones\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Notificaciones\ICodigoVerificacionNotificador.cs" />
