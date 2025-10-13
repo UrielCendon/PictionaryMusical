@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Sesiones;
+using PictionaryMusicalCliente.Utilidades;
+using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente
 {
@@ -50,9 +52,26 @@ namespace PictionaryMusicalCliente
             string identificador = bloqueTextoUsuario.Text;
             string contrasena = bloqueContrasenaContrasena.Password;
 
-            if (string.IsNullOrWhiteSpace(identificador) || string.IsNullOrWhiteSpace(contrasena))
+            RestablecerEstadoCampo(bloqueTextoUsuario);
+            RestablecerEstadoCampo(bloqueContrasenaContrasena);
+
+            bool hayCamposInvalidos = false;
+
+            if (string.IsNullOrWhiteSpace(identificador))
             {
-                new Avisos("Ingrese el usuario o correo y la contraseña.").ShowDialog();
+                hayCamposInvalidos = true;
+                MarcarCampoInvalido(bloqueTextoUsuario);
+            }
+
+            if (string.IsNullOrWhiteSpace(contrasena))
+            {
+                hayCamposInvalidos = true;
+                MarcarCampoInvalido(bloqueContrasenaContrasena);
+            }
+
+            if (hayCamposInvalidos)
+            {
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoCamposInvalidosGenerico);
                 return;
             }
 
@@ -79,7 +98,7 @@ namespace PictionaryMusicalCliente
 
                     if (resultado == null)
                     {
-                        new Avisos("No se obtuvo respuesta del servidor. Intente más tarde.").ShowDialog();
+                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
                         return;
                     }
 
@@ -93,28 +112,35 @@ namespace PictionaryMusicalCliente
                         return;
                     }
 
-                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                        ? Properties.Langs.Lang.errorTextoCredencialesTitulo
-                        : resultado.Mensaje;
+                    string mensaje = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        Properties.Langs.Lang.errorTextoCredencialesTitulo);
 
-                    new Avisos(mensaje).ShowDialog();
+                    AvisoHelper.Mostrar(mensaje);
                 }
+            }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    LangResources.Lang.errorTextoServidorInicioSesion);
+                AvisoHelper.Mostrar(mensaje);
             }
             catch (EndpointNotFoundException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor tardó demasiado en responder. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
             }
             catch (CommunicationException)
             {
-                new Avisos("Ocurrió un problema de comunicación con el servidor. Intente de nuevo.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException)
             {
-                new Avisos("No fue posible preparar la solicitud de inicio de sesión.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {
@@ -143,9 +169,12 @@ namespace PictionaryMusicalCliente
         {
             string identificador = bloqueTextoUsuario.Text?.Trim();
 
+            RestablecerEstadoCampo(bloqueTextoUsuario);
+
             if (string.IsNullOrWhiteSpace(identificador))
             {
-                new Avisos("Ingrese el usuario o correo registrado para recuperar la contraseña.").ShowDialog();
+                MarcarCampoInvalido(bloqueTextoUsuario);
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoCamposInvalidosGenerico);
                 bloqueTextoUsuario.Focus();
                 return;
             }
@@ -171,25 +200,25 @@ namespace PictionaryMusicalCliente
 
                     if (resultado == null)
                     {
-                        new Avisos("No se pudo iniciar la recuperación de contraseña. Intente nuevamente.").ShowDialog();
+                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoIniciarRecuperacion);
                         return;
                     }
 
                     if (!resultado.CuentaEncontrada)
                     {
-                        string mensajeCuenta = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                            ? "No se encontró una cuenta con el usuario o correo proporcionado."
-                            : resultado.Mensaje;
-                        new Avisos(mensajeCuenta).ShowDialog();
+                        string mensajeCuenta = MensajeServidorHelper.Localizar(
+                            resultado.Mensaje,
+                            LangResources.Lang.errorTextoCuentaNoRegistrada);
+                        AvisoHelper.Mostrar(mensajeCuenta);
                         return;
                     }
 
                     if (!resultado.CodigoEnviado || string.IsNullOrWhiteSpace(resultado.TokenRecuperacion))
                     {
-                        string mensajeCodigo = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                            ? "No fue posible enviar el código de verificación. Intente más tarde."
-                            : resultado.Mensaje;
-                        new Avisos(mensajeCodigo).ShowDialog();
+                        string mensajeCodigo = MensajeServidorHelper.Localizar(
+                            resultado.Mensaje,
+                            LangResources.Lang.errorTextoEnvioCodigoVerificacionMasTarde);
+                        AvisoHelper.Mostrar(mensajeCodigo);
                         return;
                     }
 
@@ -229,7 +258,7 @@ namespace PictionaryMusicalCliente
                         correoDestino,
                         ConfirmarCodigoAsync,
                         ReenviarCodigoAsync,
-                        "Ingresa el código que enviamos para restablecer tu contraseña.");
+                        LangResources.Lang.avisoTextoCodigoDescripcionRecuperacion);
 
                     ventanaVerificacion.ShowDialog();
 
@@ -247,21 +276,28 @@ namespace PictionaryMusicalCliente
                     }
                 }
             }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    LangResources.Lang.errorTextoServidorInicioRecuperacion);
+                AvisoHelper.Mostrar(mensaje);
+            }
             catch (EndpointNotFoundException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor tardó demasiado en responder. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
             }
             catch (CommunicationException)
             {
-                new Avisos("Ocurrió un problema de comunicación con el servidor. Intente de nuevo.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException)
             {
-                new Avisos("No fue posible procesar la solicitud de recuperación. Intente de nuevo.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {
@@ -272,6 +308,28 @@ namespace PictionaryMusicalCliente
 
                 Mouse.OverrideCursor = null;
             }
+        }
+
+        private static void RestablecerEstadoCampo(Control control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            control.ClearValue(Control.BorderBrushProperty);
+            control.ClearValue(Control.BorderThicknessProperty);
+        }
+
+        private static void MarcarCampoInvalido(Control control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            control.BorderBrush = Brushes.Red;
+            control.BorderThickness = new Thickness(2);
         }
     }
 }

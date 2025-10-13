@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Servicios;
+using PictionaryMusicalCliente.Utilidades;
+using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente
 {
@@ -31,14 +33,14 @@ namespace PictionaryMusicalCliente
         {
             if (string.IsNullOrWhiteSpace(tokenVerificacion))
             {
-                throw new ArgumentException("El token de verificación es obligatorio.", nameof(tokenVerificacion));
+                throw new ArgumentException(LangResources.Lang.errorTextoTokenVerificacionObligatorio, nameof(tokenVerificacion));
             }
 
             InitializeComponent();
 
             _tokenVerificacion = tokenVerificacion;
             _correoDestino = correoDestino ?? string.Empty;
-            _textoOriginalReenviar = botonReenviarCodigo.Content?.ToString() ?? "Reenviar código";
+            _textoOriginalReenviar = botonReenviarCodigo.Content?.ToString() ?? LangResources.Lang.cambiarContraseñaTextoReenviarCodigo;
             _temporizador = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _temporizador.Tick += TemporizadorTick;
 
@@ -55,8 +57,8 @@ namespace PictionaryMusicalCliente
             else
             {
                 textoDescripcion.Text = string.IsNullOrWhiteSpace(_correoDestino)
-                    ? "Ingresa el código de verificación que enviamos a tu correo."
-                    : $"Ingresa el código de verificación enviado a {_correoDestino}.";
+                    ? LangResources.Lang.avisoTextoCodigoDescripcionGenerica
+                    : string.Format(LangResources.Lang.avisoTextoCodigoDescripcionCorreo, _correoDestino);
             }
 
             if (_solicitarReenvioFunc == null)
@@ -73,7 +75,7 @@ namespace PictionaryMusicalCliente
 
             if (string.IsNullOrWhiteSpace(codigoIngresado))
             {
-                new Avisos("Ingrese el código de verificación enviado a su correo.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoCodigoVerificacionRequerido);
                 bloqueTextoCodigoVerificacion.Focus();
                 return;
             }
@@ -84,7 +86,7 @@ namespace PictionaryMusicalCliente
             {
                 if (_confirmarCodigoFunc == null)
                 {
-                    new Avisos("La validación del código no está disponible en este momento.").ShowDialog();
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoValidacionCodigoNoDisponible);
                     return;
                 }
 
@@ -92,42 +94,49 @@ namespace PictionaryMusicalCliente
 
                 if (resultado == null)
                 {
-                    new Avisos("No se pudo verificar el código. Intente nuevamente.").ShowDialog();
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoVerificarCodigo);
                     return;
                 }
 
                 if (resultado.OperacionExitosa)
                 {
-                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                        ? "Código verificado correctamente."
-                        : resultado.Mensaje;
-                    new Avisos(mensaje).ShowDialog();
+                    string mensaje = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.avisoTextoCodigoVerificadoCorrecto);
+                    AvisoHelper.Mostrar(mensaje);
                     OperacionCompletada = true;
                     Close();
                     return;
                 }
 
-                string mensajeError = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                    ? "El código ingresado no es correcto o ha expirado."
-                    : resultado.Mensaje;
+                string mensajeError = MensajeServidorHelper.Localizar(
+                    resultado.Mensaje,
+                    LangResources.Lang.errorTextoCodigoIncorrectoExpirado);
 
-                new Avisos(mensajeError).ShowDialog();
+                AvisoHelper.Mostrar(mensajeError);
+            }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    LangResources.Lang.errorTextoServidorValidarCodigo);
+                AvisoHelper.Mostrar(mensaje);
             }
             catch (EndpointNotFoundException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor tardó demasiado en responder. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
             }
             catch (CommunicationException)
             {
-                new Avisos("Ocurrió un problema de comunicación con el servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException)
             {
-                new Avisos("La solicitud de verificación no es válida. Intente nuevamente.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoSolicitudVerificacionInvalida);
             }
             finally
             {
@@ -160,7 +169,9 @@ namespace PictionaryMusicalCliente
             return new ResultadoOperacion
             {
                 OperacionExitosa = resultado.RegistroExitoso,
-                Mensaje = resultado.Mensaje ?? (resultado.RegistroExitoso ? "Registro completado exitosamente." : null)
+                Mensaje = MensajeServidorHelper.Localizar(
+                    resultado.Mensaje,
+                    resultado.RegistroExitoso ? LangResources.Lang.avisoTextoRegistroCompletado : null)
             };
         }
 
@@ -206,7 +217,7 @@ namespace PictionaryMusicalCliente
 
                 if (resultado == null)
                 {
-                    new Avisos("No se pudo solicitar un nuevo código. Intente nuevamente.").ShowDialog();
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoSolicitarNuevoCodigo);
                     return;
                 }
 
@@ -218,34 +229,41 @@ namespace PictionaryMusicalCliente
                     }
 
                     _siguienteReenvioPermitido = DateTime.UtcNow.AddMinutes(1);
-                    string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                        ? "Se envió un nuevo código a su correo electrónico."
-                        : resultado.Mensaje;
-                    new Avisos(mensaje).ShowDialog();
+                    string mensaje = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.avisoTextoCodigoReenviado);
+                    AvisoHelper.Mostrar(mensaje);
                     return;
                 }
 
-                string mensajeError = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                    ? "No es posible reenviar el código todavía."
-                    : resultado.Mensaje;
+                string mensajeError = MensajeServidorHelper.Localizar(
+                    resultado.Mensaje,
+                    LangResources.Lang.avisoTextoReenvioCodigoNoDisponible);
 
-                new Avisos(mensajeError).ShowDialog();
+                AvisoHelper.Mostrar(mensajeError);
+            }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    LangResources.Lang.errorTextoServidorReenviarCodigo);
+                AvisoHelper.Mostrar(mensaje);
             }
             catch (EndpointNotFoundException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor tardó demasiado en responder. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
             }
             catch (CommunicationException)
             {
-                new Avisos("Ocurrió un problema de comunicación con el servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException)
             {
-                new Avisos("No fue posible procesar la solicitud de reenvío. Intente nuevamente.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {

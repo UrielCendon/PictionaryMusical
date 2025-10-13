@@ -1,7 +1,9 @@
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Servicios;
+using PictionaryMusicalCliente.Utilidades;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +16,7 @@ namespace PictionaryMusicalCliente
     public partial class Clasificacion : Window
     {
         private readonly IDialogService _dialogService;
+        private List<EntradaClasificacion> _clasificacionOriginal;
 
         public Clasificacion()
         {
@@ -37,9 +40,16 @@ namespace PictionaryMusicalCliente
             {
                 using (var proxy = new ServidorProxy())
                 {
-                    List<EntradaClasificacion> clasificacion = await proxy.ObtenerClasificacionAsync();
-                    TablaClasificacion.ItemsSource = clasificacion;
+                    _clasificacionOriginal = await proxy.ObtenerClasificacionAsync();
+                    TablaClasificacion.ItemsSource = _clasificacionOriginal;
                 }
+            }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    "El servidor reportó un error al obtener la clasificación.");
+                _dialogService.Aviso(mensaje);
             }
             catch (CommunicationException ex)
             {
@@ -53,6 +63,32 @@ namespace PictionaryMusicalCliente
             {
                 _dialogService.Aviso(ex.Message);
             }
+        }
+
+        private void OrdenarPorRondas(object sender, RoutedEventArgs e)
+        {
+            if (_clasificacionOriginal == null)
+            {
+                return;
+            }
+
+            TablaClasificacion.ItemsSource = _clasificacionOriginal
+                .OrderByDescending(entrada => entrada.RondasGanadas)
+                .ThenByDescending(entrada => entrada.Puntos)
+                .ToList();
+        }
+
+        private void OrdenarPorPuntos(object sender, RoutedEventArgs e)
+        {
+            if (_clasificacionOriginal == null)
+            {
+                return;
+            }
+
+            TablaClasificacion.ItemsSource = _clasificacionOriginal
+                .OrderByDescending(entrada => entrada.Puntos)
+                .ThenByDescending(entrada => entrada.RondasGanadas)
+                .ToList();
         }
     }
 }

@@ -20,12 +20,12 @@
     <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
     <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
     <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
     <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
-    </data>
+  </data>
                 
     There are any number of "resheader" rows that contain simple 
     name/value pairs.
@@ -127,7 +127,7 @@
     <value>Registration complete</value>
   </data>
   <data name="errorTextoBaseDeDatosTitulo" xml:space="preserve">
-    <value>Database Error</value>
+    <value>There was a database error</value>
   </data>
   <data name="errorTextoBaseDeDatosMensaje" xml:space="preserve">
     <value>An error occurred while saving data:</value>
@@ -336,6 +336,12 @@
   <data name="clasificacionTextoTotalPuntos" xml:space="preserve">
     <value>Total points</value>
   </data>
+  <data name="clasificacionTextoOrdenarRondas" xml:space="preserve">
+    <value>Sort by rounds</value>
+  </data>
+  <data name="clasificacionTextoOrdenarPuntos" xml:space="preserve">
+    <value>Sort by points</value>
+  </data>
   <data name="perfilTextoMiPerfil" xml:space="preserve">
     <value>MY PROFILE</value>
   </data>
@@ -411,7 +417,229 @@
   <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
     <value>Ongoing game</value>
   </data>
-  <data name="alertaAviso" xml:space="preserve">
-    <value>Warning</value>
+  <data name="alertaTextoAviso" xml:space="preserve">
+    <value>WARNING</value>
+  </data>
+  <data name="avisoTextoCodigoDescripcionCambio" xml:space="preserve">
+    <value>Enter the code we sent to confirm the password change.</value>
+  </data>
+  <data name="avisoTextoCodigoDescripcionCorreo" xml:space="preserve">
+    <value>Enter the verification code sent to {0}.</value>
+  </data>
+  <data name="avisoTextoCodigoDescripcionGenerica" xml:space="preserve">
+    <value>Enter the verification code we sent to your e-mail.</value>
+  </data>
+  <data name="avisoTextoCodigoDescripcionRecuperacion" xml:space="preserve">
+    <value>Enter the code we sent to reset your password.</value>
+  </data>
+  <data name="avisoTextoCodigoReenviado" xml:space="preserve">
+    <value>A new code was sent to your e-mail.</value>
+  </data>
+  <data name="avisoTextoCodigoVerificadoCorrecto" xml:space="preserve">
+    <value>Code verified successfully.</value>
+  </data>
+  <data name="avisoTextoContrasenaActualizada" xml:space="preserve">
+    <value>The password was updated successfully.</value>
+  </data>
+  <data name="avisoTextoPerfilActualizado" xml:space="preserve">
+    <value>Profile information was updated successfully.</value>
+  </data>
+  <data name="avisoTextoReenvioCodigoNoDisponible" xml:space="preserve">
+    <value>It is not possible to resend the code yet.</value>
+  </data>
+  <data name="avisoTextoRegistroCompletado" xml:space="preserve">
+    <value>Registration completed successfully.</value>
+  </data>
+  <data name="avisoTextoServidorTiempoSesion" xml:space="preserve">
+    <value>The server took too long to respond. The current session data will be shown.</value>
+  </data>
+  <data name="avisoTextoComunicacionServidorSesion" xml:space="preserve">
+    <value>A communication issue occurred with the server. The current session data will be displayed.</value>
+  </data>
+  <data name="errorTextoActualizarContrasena" xml:space="preserve">
+    <value>The password could not be updated. Please try again.</value>
+  </data>
+  <data name="errorTextoActualizarPerfil" xml:space="preserve">
+    <value>The profile could not be updated. Please try again.</value>
+  </data>
+  <data name="errorTextoCampoLongitudMaxima" xml:space="preserve">
+    <value>The {0} must not exceed {1} characters.</value>
+  </data>
+  <data name="errorTextoCodigoIncorrectoExpirado" xml:space="preserve">
+    <value>The code you entered is incorrect or has expired.</value>
+  </data>
+  <data name="errorTextoCodigoVerificacionRequerido" xml:space="preserve">
+    <value>Enter the verification code that was sent to your e-mail.</value>
+  </data>
+  <data name="errorTextoContrasenaFormato" xml:space="preserve">
+    <value>The password must be 8 to 15 characters long and include at least one uppercase letter, one number, and one special character.</value>
+  </data>
+  <data name="errorTextoConfirmacionContrasenaRequerida" xml:space="preserve">
+    <value>Enter and confirm the new password.</value>
+  </data>
+  <data name="errorTextoContrasenasNoCoinciden" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="errorTextoCorreoInvalido" xml:space="preserve">
+    <value>Enter a valid e-mail address.</value>
+  </data>
+  <data name="errorTextoCuentaNoEncontradaSesion" xml:space="preserve">
+    <value>The account associated with the current session was not found.</value>
+  </data>
+  <data name="errorTextoCuentaNoRegistrada" xml:space="preserve">
+    <value>No account was found with the provided username or e-mail.</value>
+  </data>
+  <data name="errorTextoDeterminarUsuarioCambioContrasena" xml:space="preserve">
+    <value>The current user could not be determined to change the password.</value>
+  </data>
+  <data name="errorTextoEnvioCodigoVerificacionDatos" xml:space="preserve">
+    <value>The verification code could not be sent. Check the information and try again.</value>
+  </data>
+  <data name="errorTextoEnvioCodigoVerificacionMasTarde" xml:space="preserve">
+    <value>The verification code could not be sent. Please try again later.</value>
+  </data>
+  <data name="errorTextoProcesarSolicitudVerificacion" xml:space="preserve">
+    <value>We couldn't process the verification request. Please try again.</value>
+  </data>
+  <data name="avisoTextoCodigoEnviado" xml:space="preserve">
+    <value>We sent a verification code to your e-mail.</value>
+  </data>
+  <data name="errorTextoSolicitudVerificacionActiva" xml:space="preserve">
+    <value>We couldn't find an active verification request.</value>
+  </data>
+  <data name="errorTextoSolicitudVerificacionVigente" xml:space="preserve">
+    <value>There is no active verification request.</value>
+  </data>
+  <data name="errorTextoCuentaDatosNoDisponibles" xml:space="preserve">
+    <value>The account data is not available.</value>
+  </data>
+  <data name="errorTextoRegistrarCuentaMasTarde" xml:space="preserve">
+    <value>We couldn't register the account. Please try again later.</value>
+  </data>
+  <data name="errorTextoCredencialesIncorrectas" xml:space="preserve">
+    <value>The credentials you entered are incorrect.</value>
+  </data>
+  <data name="errorTextoSolicitudRecuperacionInvalida" xml:space="preserve">
+    <value>The recovery request is not valid.</value>
+  </data>
+  <data name="errorTextoSolicitudRecuperacionActiva" xml:space="preserve">
+    <value>We couldn't find an active recovery request.</value>
+  </data>
+  <data name="errorTextoCodigoExpiradoSolicitarNuevo" xml:space="preserve">
+    <value>The verification code has expired. Please request a new one.</value>
+  </data>
+  <data name="avisoTextoCodigoVerificadoCambio" xml:space="preserve">
+    <value>Code verified successfully. You can continue with the password change.</value>
+  </data>
+  <data name="errorTextoSolicitudRecuperacionVigente" xml:space="preserve">
+    <value>There is no active recovery request.</value>
+  </data>
+  <data name="errorTextoSolicitudActualizacionObligatoria" xml:space="preserve">
+    <value>An update request is required.</value>
+  </data>
+  <data name="errorTextoIdentificadorUsuarioInvalido" xml:space="preserve">
+    <value>The user identifier is invalid.</value>
+  </data>
+  <data name="errorTextoNombreObligatorioLongitud" xml:space="preserve">
+    <value>Name is required and must not exceed 50 characters.</value>
+  </data>
+  <data name="errorTextoApellidoObligatorioLongitud" xml:space="preserve">
+    <value>Last name is required and must not exceed 50 characters.</value>
+  </data>
+  <data name="errorTextoUsuarioNoEncontrado" xml:space="preserve">
+    <value>The specified user was not found.</value>
+  </data>
+  <data name="errorTextoJugadorNoExiste" xml:space="preserve">
+    <value>No player is associated with the specified user.</value>
+  </data>
+  <data name="errorTextoAvatarNoExiste" xml:space="preserve">
+    <value>The selected avatar does not exist.</value>
+  </data>
+  <data name="errorTextoErrorProcesarSolicitud" xml:space="preserve">
+    <value>There was a problem processing the request.</value>
+  </data>
+  <data name="errorTextoIdentificarAvatar" xml:space="preserve">
+    <value>The selected avatar could not be identified. Please try again.</value>
+  </data>
+  <data name="errorTextoIdentificadorRecuperacionRequerido" xml:space="preserve">
+    <value>Enter the registered username or e-mail to recover the password.</value>
+  </data>
+  <data name="errorTextoIdentificadorRedSocialLongitud" xml:space="preserve">
+    <value>The {0} handle must not exceed {1} characters.</value>
+  </data>
+  <data name="errorTextoIniciarCambioContrasena" xml:space="preserve">
+    <value>The password change process could not be started. Please try again.</value>
+  </data>
+  <data name="errorTextoIniciarRecuperacion" xml:space="preserve">
+    <value>The password recovery process could not be started. Please try again.</value>
+  </data>
+  <data name="errorTextoPerfilActualizarInformacion" xml:space="preserve">
+    <value>The updated profile information could not be obtained.</value>
+  </data>
+  <data name="errorTextoPrepararSolicitudCambioContrasena" xml:space="preserve">
+    <value>An error occurred while preparing the password change request.</value>
+  </data>
+  <data name="errorTextoSeleccionAvatarValido" xml:space="preserve">
+    <value>Select a valid avatar before saving the changes.</value>
+  </data>
+  <data name="errorTextoServidorActualizarContrasena" xml:space="preserve">
+    <value>There was an error while updating the password.</value>
+  </data>
+  <data name="errorTextoServidorActualizarPerfil" xml:space="preserve">
+    <value>There was an error while updating the profile.</value>
+  </data>
+  <data name="errorTextoServidorCodigoVerificacion" xml:space="preserve">
+    <value>There was an error while requesting the verification code.</value>
+  </data>
+  <data name="errorTextoServidorInformacionAvatar" xml:space="preserve">
+    <value>Information for the selected avatar could not be obtained.</value>
+  </data>
+  <data name="errorTextoServidorInicioRecuperacion" xml:space="preserve">
+    <value>There was an error while starting the password recovery.</value>
+  </data>
+  <data name="errorTextoServidorInicioSesion" xml:space="preserve">
+    <value>There was an error while signing in.</value>
+  </data>
+  <data name="errorTextoServidorNoDisponible" xml:space="preserve">
+    <value>There was a communication problem with the server. Please try again later.</value>
+  </data>
+  <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
+    <value>There was an error while retrieving the profile information.</value>
+  </data>
+  <data name="errorTextoServidorReenviarCodigo" xml:space="preserve">
+    <value>There was an error while resending the code.</value>
+  </data>
+  <data name="errorTextoServidorSolicitudCambioContrasena" xml:space="preserve">
+    <value>There was an error while requesting the password change.</value>
+  </data>
+  <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
+    <value>The server took too long to respond. Please try again later.</value>
+  </data>
+  <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
+    <value>There was an error while validating the code.</value>
+  </data>
+  <data name="errorTextoSolicitarNuevoCodigo" xml:space="preserve">
+    <value>A new code could not be requested. Please try again.</value>
+  </data>
+  <data name="errorTextoTokenRecuperacionObligatorio" xml:space="preserve">
+    <value>The recovery token is required.</value>
+  </data>
+  <data name="errorTextoTiempoEsperaCodigo" xml:space="preserve">
+    <value>You must wait {0} seconds before requesting a new code.</value>
+  </data>
+  <data name="errorTextoTokenVerificacionObligatorio" xml:space="preserve">
+    <value>The verification token is required.</value>
+  </data>
+  <data name="errorTextoVerificarCodigo" xml:space="preserve">
+    <value>The code could not be verified. Please try again.</value>
+  </data>
+  <data name="errorTextoValidacionCodigoNoDisponible" xml:space="preserve">
+    <value>Code validation is not available at this time.</value>
+  </data>
+  <data name="errorTextoSolicitudVerificacionInvalida" xml:space="preserve">
+    <value>The verification request is not valid. Please try again.</value>
+  </data>
+  <data name="errorTextoCamposInvalidosGenerico" xml:space="preserve">
+    <value>There are invalid or empty fields, please verify your information.</value>
   </data>
 </root>

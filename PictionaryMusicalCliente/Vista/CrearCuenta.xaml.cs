@@ -1,13 +1,15 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Servicios;
+using PictionaryMusicalCliente.Utilidades;
 
 namespace PictionaryMusicalCliente
 {
@@ -46,6 +48,12 @@ namespace PictionaryMusicalCliente
             textoErrorUsuario.Visibility = Visibility.Collapsed;
             textoErrorCorreo.Visibility = Visibility.Collapsed;
 
+            RestablecerEstadoCampo(bloqueTextoUsuario);
+            RestablecerEstadoCampo(bloqueTextoCorreo);
+            RestablecerEstadoCampo(bloqueTextoNombre);
+            RestablecerEstadoCampo(bloqueTextoApellido);
+            RestablecerEstadoCampo(bloqueContrasenaContrasena);
+
             if (!ValidarCamposObligatorios(usuario, correo, nombre, apellido, contrasena))
             {
                 return;
@@ -53,21 +61,23 @@ namespace PictionaryMusicalCliente
 
             if (!PatronCorreoValido.IsMatch(correo))
             {
-                new Avisos("Ingrese un correo electrónico válido.").ShowDialog();
+                MarcarCampoInvalido(bloqueTextoCorreo);
+                AvisoHelper.Mostrar(Lang.errorTextoCorreoInvalido);
                 bloqueTextoCorreo.Focus();
                 return;
             }
 
             if (!PatronContrasenaValida.IsMatch(contrasena))
             {
-                new Avisos("La contraseña debe tener de 8 a 15 caracteres con al menos una mayúscula, un número y un carácter especial.").ShowDialog();
+                MarcarCampoInvalido(bloqueContrasenaContrasena);
+                AvisoHelper.Mostrar(Lang.errorTextoContrasenaFormato);
                 bloqueContrasenaContrasena.Focus();
                 return;
             }
 
             if (_avatarSeleccionado == null)
             {
-                new Avisos(Lang.globalTextoSeleccionarAvatar).ShowDialog();
+                AvisoHelper.Mostrar(Lang.globalTextoSeleccionarAvatar);
                 return;
             }
 
@@ -75,7 +85,7 @@ namespace PictionaryMusicalCliente
 
             if (!avatarId.HasValue)
             {
-                new Avisos("No se pudo identificar el avatar seleccionado. Intente nuevamente.").ShowDialog();
+                AvisoHelper.Mostrar(Lang.errorTextoIdentificarAvatar);
                 return;
             }
 
@@ -98,25 +108,33 @@ namespace PictionaryMusicalCliente
                     resultadoCodigo = await proxy.SolicitarCodigoVerificacionAsync(solicitud);
                 }
             }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    Lang.errorTextoServidorCodigoVerificacion);
+                AvisoHelper.Mostrar(mensaje);
+                return;
+            }
             catch (CommunicationException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(Lang.errorTextoServidorNoDisponible);
                 return;
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor tardó demasiado en responder. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(Lang.errorTextoServidorTiempoAgotado);
                 return;
             }
             catch (InvalidOperationException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(Lang.errorTextoServidorNoDisponible);
                 return;
             }
 
             if (resultadoCodigo == null)
             {
-                new Avisos("Ocurrió un problema al procesar la solicitud.").ShowDialog();
+                AvisoHelper.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
 
@@ -125,11 +143,14 @@ namespace PictionaryMusicalCliente
 
             if (!resultadoCodigo.CodigoEnviado)
             {
-                string mensajeError = string.IsNullOrWhiteSpace(resultadoCodigo.Mensaje)
-                    ? "No se pudo enviar el código de verificación. Verifique la información e intente de nuevo."
-                    : resultadoCodigo.Mensaje;
+                if (!resultadoCodigo.UsuarioYaRegistrado && !resultadoCodigo.CorreoYaRegistrado)
+                {
+                    string mensajeError = MensajeServidorHelper.Localizar(
+                        resultadoCodigo.Mensaje,
+                        Lang.errorTextoEnvioCodigoVerificacionDatos);
 
-                new Avisos(mensajeError).ShowDialog();
+                    AvisoHelper.Mostrar(mensajeError);
+                }
                 return;
             }
 
@@ -146,38 +167,63 @@ namespace PictionaryMusicalCliente
 
         private bool ValidarCamposObligatorios(string usuario, string correo, string nombre, string apellido, string contrasena)
         {
+            bool hayError = false;
+            Control primerCampo = null;
+
             if (string.IsNullOrWhiteSpace(usuario))
             {
-                new Avisos("Ingrese un nombre de usuario.").ShowDialog();
-                bloqueTextoUsuario.Focus();
-                return false;
+                hayError = true;
+                if (primerCampo == null)
+                {
+                    primerCampo = bloqueTextoUsuario;
+                }
+                MarcarCampoInvalido(bloqueTextoUsuario);
             }
 
             if (string.IsNullOrWhiteSpace(nombre))
             {
-                new Avisos("Ingrese el nombre del jugador.").ShowDialog();
-                bloqueTextoNombre.Focus();
-                return false;
+                hayError = true;
+                if (primerCampo == null)
+                {
+                    primerCampo = bloqueTextoNombre;
+                }
+                MarcarCampoInvalido(bloqueTextoNombre);
             }
 
             if (string.IsNullOrWhiteSpace(apellido))
             {
-                new Avisos("Ingrese el apellido del jugador.").ShowDialog();
-                bloqueTextoApellido.Focus();
-                return false;
+                hayError = true;
+                if (primerCampo == null)
+                {
+                    primerCampo = bloqueTextoApellido;
+                }
+                MarcarCampoInvalido(bloqueTextoApellido);
             }
 
             if (string.IsNullOrWhiteSpace(correo))
             {
-                new Avisos("Ingrese un correo electrónico.").ShowDialog();
-                bloqueTextoCorreo.Focus();
-                return false;
+                hayError = true;
+                if (primerCampo == null)
+                {
+                    primerCampo = bloqueTextoCorreo;
+                }
+                MarcarCampoInvalido(bloqueTextoCorreo);
             }
 
             if (string.IsNullOrWhiteSpace(contrasena))
             {
-                new Avisos("Ingrese una contraseña.").ShowDialog();
-                bloqueContrasenaContrasena.Focus();
+                hayError = true;
+                if (primerCampo == null)
+                {
+                    primerCampo = bloqueContrasenaContrasena;
+                }
+                MarcarCampoInvalido(bloqueContrasenaContrasena);
+            }
+
+            if (hayError)
+            {
+                AvisoHelper.Mostrar(Lang.errorTextoCamposInvalidosGenerico);
+                primerCampo?.Focus();
                 return false;
             }
 
@@ -228,9 +274,28 @@ namespace PictionaryMusicalCliente
                     }
                 }
             }
-            catch
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
             {
-                return null;
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    Lang.errorTextoServidorInformacionAvatar);
+                AvisoHelper.Mostrar(mensaje);
+            }
+            catch (EndpointNotFoundException)
+            {
+                AvisoHelper.Mostrar(Lang.errorTextoServidorNoDisponible);
+            }
+            catch (TimeoutException)
+            {
+                AvisoHelper.Mostrar(Lang.errorTextoServidorTiempoAgotado);
+            }
+            catch (CommunicationException)
+            {
+                AvisoHelper.Mostrar(Lang.errorTextoServidorNoDisponible);
+            }
+            catch (InvalidOperationException)
+            {
+                AvisoHelper.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
             }
 
             return null;
@@ -298,6 +363,28 @@ namespace PictionaryMusicalCliente
             return string.IsNullOrWhiteSpace(rutaNormalizada)
                 ? null
                 : rutaNormalizada.ToLowerInvariant();
+        }
+
+        private static void RestablecerEstadoCampo(Control control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            control.ClearValue(Control.BorderBrushProperty);
+            control.ClearValue(Control.BorderThicknessProperty);
+        }
+
+        private static void MarcarCampoInvalido(Control control)
+        {
+            if (control == null)
+            {
+                return;
+            }
+
+            control.BorderBrush = Brushes.Red;
+            control.BorderThickness = new Thickness(2);
         }
     }
 }

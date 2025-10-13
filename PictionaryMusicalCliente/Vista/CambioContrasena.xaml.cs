@@ -1,10 +1,12 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Servicios;
+using PictionaryMusicalCliente.Utilidades;
+using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente
 {
@@ -18,7 +20,7 @@ namespace PictionaryMusicalCliente
         {
             if (string.IsNullOrWhiteSpace(tokenRecuperacion))
             {
-                throw new ArgumentException("El token de recuperación es obligatorio.", nameof(tokenRecuperacion));
+                throw new ArgumentException(LangResources.Lang.errorTextoTokenRecuperacionObligatorio, nameof(tokenRecuperacion));
             }
 
             InitializeComponent();
@@ -33,13 +35,13 @@ namespace PictionaryMusicalCliente
 
             if (string.IsNullOrWhiteSpace(nuevaContrasena) || string.IsNullOrWhiteSpace(confirmacion))
             {
-                new Avisos("Ingrese y confirme la nueva contraseña.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoConfirmacionContrasenaRequerida);
                 return;
             }
 
             if (!string.Equals(nuevaContrasena, confirmacion, StringComparison.Ordinal))
             {
-                new Avisos("Las contraseñas no coinciden.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoContrasenasNoCoinciden);
                 bloqueContrasenaNueva.Clear();
                 bloqueContrasenaConfirmacion.Clear();
                 bloqueContrasenaNueva.Focus();
@@ -48,7 +50,7 @@ namespace PictionaryMusicalCliente
 
             if (!PatronContrasenaValida.IsMatch(nuevaContrasena))
             {
-                new Avisos("La contraseña debe tener de 8 a 15 caracteres con al menos una mayúscula, un número y un carácter especial.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoContrasenaFormato);
                 bloqueContrasenaNueva.Focus();
                 return;
             }
@@ -70,44 +72,51 @@ namespace PictionaryMusicalCliente
 
                     if (resultado == null)
                     {
-                        new Avisos("No se pudo actualizar la contraseña. Intente nuevamente.").ShowDialog();
+                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoActualizarContrasena);
                         return;
                     }
 
                     if (resultado.OperacionExitosa)
                     {
                         ContrasenaActualizada = true;
-                        string mensaje = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                            ? "La contraseña se actualizó correctamente."
-                            : resultado.Mensaje;
-                        new Avisos(mensaje).ShowDialog();
+                        string mensaje = MensajeServidorHelper.Localizar(
+                            resultado.Mensaje,
+                            LangResources.Lang.avisoTextoContrasenaActualizada);
+                        AvisoHelper.Mostrar(mensaje);
                         DialogResult = true;
                         Close();
                         return;
                     }
 
-                    string mensajeError = string.IsNullOrWhiteSpace(resultado.Mensaje)
-                        ? "No fue posible actualizar la contraseña."
-                        : resultado.Mensaje;
+                    string mensajeError = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.errorTextoActualizarContrasena);
 
-                    new Avisos(mensajeError).ShowDialog();
+                    AvisoHelper.Mostrar(mensajeError);
                 }
+            }
+            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            {
+                string mensaje = ErrorServicioHelper.ObtenerMensaje(
+                    ex,
+                    LangResources.Lang.errorTextoServidorActualizarContrasena);
+                AvisoHelper.Mostrar(mensaje);
             }
             catch (EndpointNotFoundException)
             {
-                new Avisos("No se pudo contactar al servidor. Intente más tarde.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException)
             {
-                new Avisos("El servidor no respondió a tiempo. Intente nuevamente.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
             }
             catch (CommunicationException)
             {
-                new Avisos("Ocurrió un problema de comunicación con el servidor.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException)
             {
-                new Avisos("Ocurrió un error al preparar la solicitud de cambio de contraseña.").ShowDialog();
+                AvisoHelper.Mostrar(LangResources.Lang.errorTextoPrepararSolicitudCambioContrasena);
             }
             finally
             {
