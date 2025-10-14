@@ -4,7 +4,6 @@ using Servicios.Servicios.Utilidades;
 using System;
 using System.Configuration;
 using System.Net.Mail;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Servicios.Servicios
@@ -17,16 +16,18 @@ namespace Servicios.Servicios
         private static readonly TimeSpan DuracionCodigo = TimeSpan.FromMinutes(5);
         private static readonly TimeSpan TiempoEsperaReenvio = TimeSpan.FromMinutes(1);
 
-        public CodigoVerificacionServicio(ICuentaRepositorio repositorioCuenta, ICodigoVerificacionNotificador notificador)
+        public CodigoVerificacionServicio(
+            IJugadorRepositorio jugadorRepositorio,
+            IUsuarioRepositorio usuarioRepositorio,
+            IClasificacionRepositorio clasificacionRepositorio,
+            ICodigoVerificacionNotificador notificador)
         {
-            if (repositorioCuenta == null)
-            {
-                throw new ArgumentNullException(nameof(repositorioCuenta));
-            }
-
             _notificador = notificador ?? throw new ArgumentNullException(nameof(notificador));
             _registroStore = RegistroCuentaPendienteStore.Instancia;
-            _cuentaRegistroServicio = new CuentaRegistroServicio(repositorioCuenta);
+            _cuentaRegistroServicio = new CuentaRegistroServicio(
+                jugadorRepositorio ?? throw new ArgumentNullException(nameof(jugadorRepositorio)),
+                usuarioRepositorio ?? throw new ArgumentNullException(nameof(usuarioRepositorio)),
+                clasificacionRepositorio ?? throw new ArgumentNullException(nameof(clasificacionRepositorio)));
         }
 
         public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
@@ -57,7 +58,7 @@ namespace Servicios.Servicios
 
             _registroStore.RemoverPorCorreoOUsuario(nuevaCuenta.Correo, nuevaCuenta.Usuario);
 
-            string codigo = GenerarCodigoVerificacion();
+            string codigo = CodigoVerificacionGenerator.GenerarCodigo();
             var registroPendiente = RegistroCuentaPendiente.Crear(nuevaCuenta, codigo, DuracionCodigo, ahora);
 
             if (!_registroStore.TryAdd(registroPendiente))
@@ -104,13 +105,13 @@ namespace Servicios.Servicios
             }
 
             resultado.CodigoEnviado = true;
-            resultado.TokenVerificacion = registroPendiente.Token;
+            resultado.TokenCodigo = registroPendiente.Token;
             resultado.Mensaje = "Se envió un código de verificación al correo proporcionado.";
 
             return resultado;
         }
 
-        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoVerificacionDTO solicitud)
+        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoDTO solicitud)
         {
             if (solicitud == null)
             {
@@ -126,21 +127,8 @@ namespace Servicios.Servicios
                 Mensaje = "La solicitud de verificación no es válida."
             };
 
-            if (string.IsNullOrWhiteSpace(solicitud.TokenVerificacion))
+            if (!TryObtenerRegistro(solicitud.TokenCodigo, ahora, resultado, out RegistroCuentaPendiente registro))
             {
-                return resultado;
-            }
-
-            if (!_registroStore.TryGet(solicitud.TokenVerificacion, out RegistroCuentaPendiente registro))
-            {
-                resultado.Mensaje = "No se encontró una solicitud de verificación activa.";
-                return resultado;
-            }
-
-            if (registro.EstaExpirado(ahora))
-            {
-                _registroStore.TryRemove(solicitud.TokenVerificacion);
-                resultado.Mensaje = "El código de verificación ha expirado. Inicie el proceso nuevamente.";
                 return resultado;
             }
 
@@ -150,7 +138,7 @@ namespace Servicios.Servicios
                 return resultado;
             }
 
-            string nuevoCodigo = GenerarCodigoVerificacion();
+            string nuevoCodigo = CodigoVerificacionGenerator.GenerarCodigo();
             registro.ActualizarCodigo(nuevoCodigo, DuracionCodigo, ahora);
 
             try
@@ -187,13 +175,13 @@ namespace Servicios.Servicios
             }
 
             resultado.CodigoEnviado = true;
-            resultado.TokenVerificacion = solicitud.TokenVerificacion;
+            resultado.TokenCodigo = solicitud.TokenCodigo;
             resultado.Mensaje = "Se envió un nuevo código de verificación.";
 
             return resultado;
         }
 
-        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmarCodigoVerificacionDTO confirmacion)
+        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmarCodigoDTO confirmacion)
         {
             if (confirmacion == null)
             {
@@ -209,21 +197,13 @@ namespace Servicios.Servicios
                 Mensaje = "El código de verificación es inválido."
             };
 
-            if (string.IsNullOrWhiteSpace(confirmacion.TokenVerificacion) || string.IsNullOrWhiteSpace(confirmacion.CodigoIngresado))
+            if (!TryObtenerRegistro(confirmacion.TokenCodigo, ahora, null, out RegistroCuentaPendiente registro))
             {
                 return resultado;
             }
 
-            if (!_registroStore.TryGet(confirmacion.TokenVerificacion, out RegistroCuentaPendiente registro))
+            if (string.IsNullOrWhiteSpace(confirmacion.CodigoIngresado))
             {
-                resultado.Mensaje = "No hay una solicitud de verificación vigente.";
-                return resultado;
-            }
-
-            if (registro.EstaExpirado(ahora))
-            {
-                _registroStore.TryRemove(confirmacion.TokenVerificacion);
-                resultado.Mensaje = "El código de verificación ha expirado.";
                 return resultado;
             }
 
@@ -237,28 +217,46 @@ namespace Servicios.Servicios
 
             if (resultado.RegistroExitoso)
             {
-                _registroStore.TryRemove(confirmacion.TokenVerificacion);
+                _registroStore.TryRemove(confirmacion.TokenCodigo);
             }
 
             return resultado;
         }
 
-        private static string GenerarCodigoVerificacion()
-        {
-            var bytes = new byte[4];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(bytes);
-            }
-
-            int valor = BitConverter.ToInt32(bytes, 0) & int.MaxValue;
-            int codigo = valor % 1000000;
-            return codigo.ToString("D6");
-        }
-
         private Task EjecutarEnvioCodigoAsync(string correoDestino, string codigo)
         {
             return _notificador.EnviarCodigoAsync(correoDestino, codigo);
+        }
+
+        private bool TryObtenerRegistro(string token, DateTime ahora, ResultadoSolicitudCodigoDTO resultado, out RegistroCuentaPendiente registro)
+        {
+            registro = null;
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return false;
+            }
+
+            if (!_registroStore.TryGet(token, out registro))
+            {
+                if (resultado != null)
+                {
+                    resultado.Mensaje = "No se encontró una solicitud de verificación activa.";
+                }
+                return false;
+            }
+
+            if (registro.EstaExpirado(ahora))
+            {
+                _registroStore.TryRemove(token);
+                if (resultado != null)
+                {
+                    resultado.Mensaje = "El código de verificación ha expirado. Inicie el proceso nuevamente.";
+                }
+                return false;
+            }
+
+            return true;
         }
     }
 }
