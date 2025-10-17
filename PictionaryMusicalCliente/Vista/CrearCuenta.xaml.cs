@@ -1,23 +1,18 @@
 ﻿using System;
 using System.ServiceModel;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Utilidades;
+using AvataresSrv = PictionaryMusicalCliente.PictionaryServidorServicioAvatares;
+using CodigoVerificacionSrv = PictionaryMusicalCliente.PictionaryServidorServicioCodigoVerificacion;
 
 namespace PictionaryMusicalCliente
 {
     public partial class CrearCuenta : Window
     {
-        private static readonly Regex PatronCorreoValido = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.Compiled);
-        private static readonly Regex PatronContrasenaValida = new Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$", RegexOptions.Compiled);
-
         private ObjetoAvatar _avatarSeleccionado;
 
         public CrearCuenta()
@@ -39,41 +34,74 @@ namespace PictionaryMusicalCliente
 
         private async void Boton_CrearCuenta(object sender, RoutedEventArgs e)
         {
-            string usuario = bloqueTextoUsuario.Text?.Trim();
-            string correo = bloqueTextoCorreo.Text?.Trim();
-            string nombre = bloqueTextoNombre.Text?.Trim();
-            string apellido = bloqueTextoApellido.Text?.Trim();
-            string contrasena = bloqueContrasenaContrasena.Password;
-
             textoErrorUsuario.Visibility = Visibility.Collapsed;
             textoErrorCorreo.Visibility = Visibility.Collapsed;
 
-            RestablecerEstadoCampo(bloqueTextoUsuario);
-            RestablecerEstadoCampo(bloqueTextoCorreo);
-            RestablecerEstadoCampo(bloqueTextoNombre);
-            RestablecerEstadoCampo(bloqueTextoApellido);
-            RestablecerEstadoCampo(bloqueContrasenaContrasena);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoUsuario);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoCorreo);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoNombre);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoApellido);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueContrasenaContrasena);
 
-            if (!ValidarCamposObligatorios(usuario, correo, nombre, apellido, contrasena))
+            ValidacionEntradaHelper.ResultadoValidacion resultadoUsuario = ValidacionEntradaHelper.ValidarUsuario(bloqueTextoUsuario.Text);
+
+            if (!resultadoUsuario.EsValido)
             {
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoUsuario);
+                AvisoHelper.Mostrar(resultadoUsuario.MensajeError);
+                bloqueTextoUsuario.Focus();
                 return;
             }
 
-            if (!PatronCorreoValido.IsMatch(correo))
+            string usuario = resultadoUsuario.ValorNormalizado;
+
+            ValidacionEntradaHelper.ResultadoValidacion resultadoNombre = ValidacionEntradaHelper.ValidarNombre(bloqueTextoNombre.Text);
+
+            if (!resultadoNombre.EsValido)
             {
-                MarcarCampoInvalido(bloqueTextoCorreo);
-                AvisoHelper.Mostrar(Lang.errorTextoCorreoInvalido);
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoNombre);
+                AvisoHelper.Mostrar(resultadoNombre.MensajeError);
+                bloqueTextoNombre.Focus();
+                return;
+            }
+
+            string nombre = resultadoNombre.ValorNormalizado;
+
+            ValidacionEntradaHelper.ResultadoValidacion resultadoApellido = ValidacionEntradaHelper.ValidarApellido(bloqueTextoApellido.Text);
+
+            if (!resultadoApellido.EsValido)
+            {
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoApellido);
+                AvisoHelper.Mostrar(resultadoApellido.MensajeError);
+                bloqueTextoApellido.Focus();
+                return;
+            }
+
+            string apellido = resultadoApellido.ValorNormalizado;
+
+            ValidacionEntradaHelper.ResultadoValidacion resultadoCorreo = ValidacionEntradaHelper.ValidarCorreo(bloqueTextoCorreo.Text);
+
+            if (!resultadoCorreo.EsValido)
+            {
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoCorreo);
+                AvisoHelper.Mostrar(resultadoCorreo.MensajeError);
                 bloqueTextoCorreo.Focus();
                 return;
             }
 
-            if (!PatronContrasenaValida.IsMatch(contrasena))
+            string correo = resultadoCorreo.ValorNormalizado;
+
+            ValidacionEntradaHelper.ResultadoValidacion resultadoContrasena = ValidacionEntradaHelper.ValidarContrasena(bloqueContrasenaContrasena.Password);
+
+            if (!resultadoContrasena.EsValido)
             {
-                MarcarCampoInvalido(bloqueContrasenaContrasena);
-                AvisoHelper.Mostrar(Lang.errorTextoContrasenaFormato);
+                ControlVisualHelper.MarcarCampoInvalido(bloqueContrasenaContrasena);
+                AvisoHelper.Mostrar(resultadoContrasena.MensajeError);
                 bloqueContrasenaContrasena.Focus();
                 return;
             }
+
+            string contrasena = resultadoContrasena.ValorNormalizado;
 
             if (_avatarSeleccionado == null)
             {
@@ -89,26 +117,23 @@ namespace PictionaryMusicalCliente
                 return;
             }
 
-            var solicitud = new SolicitudRegistrarUsuario
+            var solicitud = new CodigoVerificacionSrv.NuevaCuentaDTO
             {
                 Usuario = usuario,
                 Correo = correo,
                 Nombre = nombre,
                 Apellido = apellido,
-                ContrasenaPlano = contrasena,
+                Contrasena = contrasena,
                 AvatarId = avatarId.Value
             };
 
-            ResultadoSolicitudCodigo resultadoCodigo;
+            CodigoVerificacionSrv.ResultadoSolicitudCodigoDTO resultadoCodigo;
 
             try
             {
-                using (var proxy = new ServidorProxy())
-                {
-                    resultadoCodigo = await proxy.SolicitarCodigoVerificacionAsync(solicitud);
-                }
+                resultadoCodigo = await CodigoVerificacionServicioHelper.SolicitarCodigoRegistroAsync(solicitud);
             }
-            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            catch (FaultException ex)
             {
                 string mensaje = ErrorServicioHelper.ObtenerMensaje(
                     ex,
@@ -165,81 +190,11 @@ namespace PictionaryMusicalCliente
 
         private void Boton_Cancelar(object sender, RoutedEventArgs e) => Close();
 
-        private bool ValidarCamposObligatorios(string usuario, string correo, string nombre, string apellido, string contrasena)
-        {
-            bool hayError = false;
-            Control primerCampo = null;
-
-            if (string.IsNullOrWhiteSpace(usuario))
-            {
-                hayError = true;
-                if (primerCampo == null)
-                {
-                    primerCampo = bloqueTextoUsuario;
-                }
-                MarcarCampoInvalido(bloqueTextoUsuario);
-            }
-
-            if (string.IsNullOrWhiteSpace(nombre))
-            {
-                hayError = true;
-                if (primerCampo == null)
-                {
-                    primerCampo = bloqueTextoNombre;
-                }
-                MarcarCampoInvalido(bloqueTextoNombre);
-            }
-
-            if (string.IsNullOrWhiteSpace(apellido))
-            {
-                hayError = true;
-                if (primerCampo == null)
-                {
-                    primerCampo = bloqueTextoApellido;
-                }
-                MarcarCampoInvalido(bloqueTextoApellido);
-            }
-
-            if (string.IsNullOrWhiteSpace(correo))
-            {
-                hayError = true;
-                if (primerCampo == null)
-                {
-                    primerCampo = bloqueTextoCorreo;
-                }
-                MarcarCampoInvalido(bloqueTextoCorreo);
-            }
-
-            if (string.IsNullOrWhiteSpace(contrasena))
-            {
-                hayError = true;
-                if (primerCampo == null)
-                {
-                    primerCampo = bloqueContrasenaContrasena;
-                }
-                MarcarCampoInvalido(bloqueContrasenaContrasena);
-            }
-
-            if (hayError)
-            {
-                AvisoHelper.Mostrar(Lang.errorTextoCamposInvalidosGenerico);
-                primerCampo?.Focus();
-                return false;
-            }
-
-            return true;
-        }
-
         private void MostrarAvatarSeleccionado()
         {
-            if (_avatarSeleccionado == null)
-            {
-                imagenAvatarSeleccionado.ImageSource = null;
-                return;
-            }
-
-            ImageSource imagen = ObtenerImagenDesdeAvatar(_avatarSeleccionado);
-            imagenAvatarSeleccionado.ImageSource = imagen;
+            imagenAvatarSeleccionado.ImageSource = _avatarSeleccionado == null
+                ? null
+                : AvatarImagenHelper.CrearImagen(_avatarSeleccionado);
         }
 
         private async Task<int?> ObtenerIdAvatarSeleccionadoAsync()
@@ -249,32 +204,32 @@ namespace PictionaryMusicalCliente
                 return null;
             }
 
-            string rutaSeleccionada = NormalizarRutaParaComparacion(_avatarSeleccionado.RutaRelativa);
+            string rutaSeleccionada = AvatarRutaHelper.NormalizarRutaParaComparacion(_avatarSeleccionado.RutaRelativa);
 
             try
             {
-                using (var proxy = new ServidorProxy())
+                var cliente = new AvataresSrv.CatalogoAvataresClient("BasicHttpBinding_ICatalogoAvatares");
+                AvataresSrv.AvatarDTO[] avatares = await WcfClientHelper.UsarAsync(
+                    cliente,
+                    c => c.ObtenerAvataresDisponiblesAsync());
+
+                if (avatares == null)
                 {
-                    var avatares = await proxy.ObtenerAvataresAsync();
+                    return null;
+                }
 
-                    if (avatares == null)
+                foreach (AvataresSrv.AvatarDTO avatar in avatares)
+                {
+                    string rutaAvatar = AvatarRutaHelper.NormalizarRutaParaComparacion(avatar?.RutaRelativa);
+
+                    if (!string.IsNullOrEmpty(rutaAvatar)
+                        && string.Equals(rutaAvatar, rutaSeleccionada, StringComparison.OrdinalIgnoreCase))
                     {
-                        return null;
-                    }
-
-                    foreach (ObjetoAvatar avatar in avatares)
-                    {
-                        string rutaAvatar = NormalizarRutaParaComparacion(avatar.RutaRelativa);
-
-                        if (!string.IsNullOrEmpty(rutaAvatar)
-                            && string.Equals(rutaAvatar, rutaSeleccionada, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return avatar.Id;
-                        }
+                        return avatar.Id;
                     }
                 }
             }
-            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            catch (FaultException ex)
             {
                 string mensaje = ErrorServicioHelper.ObtenerMensaje(
                     ex,
@@ -301,90 +256,6 @@ namespace PictionaryMusicalCliente
             return null;
         }
 
-        private static ImageSource ObtenerImagenDesdeAvatar(ObjetoAvatar avatar)
-        {
-            if (avatar == null)
-            {
-                return null;
-            }
 
-            if (!string.IsNullOrWhiteSpace(avatar.ImagenUriAbsoluta)
-                && Uri.TryCreate(avatar.ImagenUriAbsoluta, UriKind.Absolute, out Uri uriRemota))
-            {
-                return new BitmapImage(uriRemota);
-            }
-
-            if (!string.IsNullOrWhiteSpace(avatar.RutaRelativa))
-            {
-                string rutaNormalizada = NormalizarRutaLocal(avatar.RutaRelativa);
-
-                if (Uri.TryCreate($"pack://application:,,,/{rutaNormalizada}", UriKind.Absolute, out Uri uriRecurso))
-                {
-                    try
-                    {
-                        return new BitmapImage(uriRecurso);
-                    }
-                    catch
-                    {
-                        // Se intentará con la ruta relativa simple.
-                    }
-                }
-
-                try
-                {
-                    return new BitmapImage(new Uri($"/{rutaNormalizada}", UriKind.Relative));
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-
-            return null;
-        }
-
-        private static string NormalizarRutaLocal(string ruta)
-        {
-            if (string.IsNullOrWhiteSpace(ruta))
-            {
-                return null;
-            }
-
-            string rutaNormalizada = ruta
-                .TrimStart('/')
-                .Replace('\\', '/');
-
-            return rutaNormalizada;
-        }
-
-        private static string NormalizarRutaParaComparacion(string ruta)
-        {
-            string rutaNormalizada = NormalizarRutaLocal(ruta);
-            return string.IsNullOrWhiteSpace(rutaNormalizada)
-                ? null
-                : rutaNormalizada.ToLowerInvariant();
-        }
-
-        private static void RestablecerEstadoCampo(Control control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            control.ClearValue(Control.BorderBrushProperty);
-            control.ClearValue(Control.BorderThicknessProperty);
-        }
-
-        private static void MarcarCampoInvalido(Control control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            control.BorderBrush = Brushes.Red;
-            control.BorderThickness = new Thickness(2);
-        }
     }
 }

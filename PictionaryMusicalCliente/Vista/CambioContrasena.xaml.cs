@@ -1,18 +1,15 @@
 ﻿using System;
 using System.ServiceModel;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using PictionaryMusicalCliente.Modelo;
-using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Utilidades;
 using LangResources = PictionaryMusicalCliente.Properties.Langs;
+using CambioContrasenaSrv = PictionaryMusicalCliente.PictionaryServidorServicioCambioContrasena;
 
 namespace PictionaryMusicalCliente
 {
     public partial class CambioContrasena : Window
     {
-        private static readonly Regex PatronContrasenaValida = new Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,15}$", RegexOptions.Compiled);
         private readonly string _tokenCodigo;
         public bool ContrasenaActualizada { get; private set; }
 
@@ -48,54 +45,60 @@ namespace PictionaryMusicalCliente
                 return;
             }
 
-            if (!PatronContrasenaValida.IsMatch(nuevaContrasena))
+            ValidacionEntradaHelper.ResultadoValidacion resultadoContrasena = ValidacionEntradaHelper.ValidarContrasena(nuevaContrasena);
+
+            if (!resultadoContrasena.EsValido)
             {
-                AvisoHelper.Mostrar(LangResources.Lang.errorTextoContrasenaFormato);
+                AvisoHelper.Mostrar(resultadoContrasena.MensajeError);
                 bloqueContrasenaNueva.Focus();
                 return;
             }
+
+            nuevaContrasena = resultadoContrasena.ValorNormalizado;
 
             botonConfirmarContrasena.IsEnabled = false;
             Mouse.OverrideCursor = Cursors.Wait;
 
             try
             {
-                using (var proxy = new ServidorProxy())
+                var solicitud = new CambioContrasenaSrv.ActualizarContrasenaDTO
                 {
-                    var solicitud = new SolicitudActualizarContrasena
-                    {
-                        TokenCodigo = _tokenCodigo,
-                        NuevaContrasena = nuevaContrasena
-                    };
+                    TokenCodigo = _tokenCodigo,
+                    NuevaContrasena = nuevaContrasena
+                };
 
-                    ResultadoOperacion resultado = await proxy.ActualizarContrasenaAsync(solicitud);
+                var cliente = new CambioContrasenaSrv.CambiarContrasenaManejadorClient(
+                    "BasicHttpBinding_ICambiarContrasenaManejador");
 
-                    if (resultado == null)
-                    {
-                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoActualizarContrasena);
-                        return;
-                    }
+                CambioContrasenaSrv.ResultadoOperacionDTO resultado = await WcfClientHelper.UsarAsync(
+                    cliente,
+                    c => c.ActualizarContrasenaAsync(solicitud));
 
-                    if (resultado.OperacionExitosa)
-                    {
-                        ContrasenaActualizada = true;
-                        string mensaje = MensajeServidorHelper.Localizar(
-                            resultado.Mensaje,
-                            LangResources.Lang.avisoTextoContrasenaActualizada);
-                        AvisoHelper.Mostrar(mensaje);
-                        DialogResult = true;
-                        Close();
-                        return;
-                    }
-
-                    string mensajeError = MensajeServidorHelper.Localizar(
-                        resultado.Mensaje,
-                        LangResources.Lang.errorTextoActualizarContrasena);
-
-                    AvisoHelper.Mostrar(mensajeError);
+                if (resultado == null)
+                {
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoActualizarContrasena);
+                    return;
                 }
+
+                if (resultado.OperacionExitosa)
+                {
+                    ContrasenaActualizada = true;
+                    string mensaje = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.avisoTextoContrasenaActualizada);
+                    AvisoHelper.Mostrar(mensaje);
+                    DialogResult = true;
+                    Close();
+                    return;
+                }
+
+                string mensajeError = MensajeServidorHelper.Localizar(
+                    resultado.Mensaje,
+                    LangResources.Lang.errorTextoActualizarContrasena);
+
+                AvisoHelper.Mostrar(mensajeError);
             }
-            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            catch (FaultException ex)
             {
                 string mensaje = ErrorServicioHelper.ObtenerMensaje(
                     ex,

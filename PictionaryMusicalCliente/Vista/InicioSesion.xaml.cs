@@ -10,14 +10,14 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PictionaryMusicalCliente.Modelo;
-using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Sesiones;
 using PictionaryMusicalCliente.Utilidades;
 using LangResources = PictionaryMusicalCliente.Properties.Langs;
+using CodigoVerificacionSrv = PictionaryMusicalCliente.PictionaryServidorServicioCodigoVerificacion;
+using ReenvioSrv = PictionaryMusicalCliente.PictionaryServidorServicioReenvioCodigoVerificacion;
+using InicioSesionSrv = PictionaryMusicalCliente.PictionaryServidorServicioInicioSesion;
 
 namespace PictionaryMusicalCliente
 {
@@ -49,31 +49,31 @@ namespace PictionaryMusicalCliente
 
         private async void BotonEntrar(object sender, RoutedEventArgs e)
         {
-            string identificador = bloqueTextoUsuario.Text;
-            string contrasena = bloqueContrasenaContrasena.Password;
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoUsuario);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueContrasenaContrasena);
+            ValidacionEntradaHelper.ResultadoValidacion resultadoIdentificador = ValidacionEntradaHelper.ValidarIdentificadorInicioSesion(bloqueTextoUsuario.Text);
 
-            RestablecerEstadoCampo(bloqueTextoUsuario);
-            RestablecerEstadoCampo(bloqueContrasenaContrasena);
-
-            bool hayCamposInvalidos = false;
-
-            if (string.IsNullOrWhiteSpace(identificador))
+            if (!resultadoIdentificador.EsValido)
             {
-                hayCamposInvalidos = true;
-                MarcarCampoInvalido(bloqueTextoUsuario);
-            }
-
-            if (string.IsNullOrWhiteSpace(contrasena))
-            {
-                hayCamposInvalidos = true;
-                MarcarCampoInvalido(bloqueContrasenaContrasena);
-            }
-
-            if (hayCamposInvalidos)
-            {
-                AvisoHelper.Mostrar(LangResources.Lang.errorTextoCamposInvalidosGenerico);
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoUsuario);
+                AvisoHelper.Mostrar(resultadoIdentificador.MensajeError);
+                bloqueTextoUsuario.Focus();
                 return;
             }
+
+            string identificadorNormalizado = resultadoIdentificador.ValorNormalizado;
+
+            ValidacionEntradaHelper.ResultadoValidacion resultadoContrasena = ValidacionEntradaHelper.ValidarContrasena(bloqueContrasenaContrasena.Password);
+
+            if (!resultadoContrasena.EsValido)
+            {
+                ControlVisualHelper.MarcarCampoInvalido(bloqueContrasenaContrasena);
+                AvisoHelper.Mostrar(resultadoContrasena.MensajeError);
+                bloqueContrasenaContrasena.Focus();
+                return;
+            }
+
+            string contrasena = resultadoContrasena.ValorNormalizado;
 
             Button boton = sender as Button;
 
@@ -86,40 +86,43 @@ namespace PictionaryMusicalCliente
 
             try
             {
-                using (var proxy = new ServidorProxy())
+                var solicitud = new InicioSesionSrv.CredencialesInicioSesionDTO
                 {
-                    var solicitud = new SolicitudInicioSesion
-                    {
-                        Identificador = identificador.Trim(),
-                        Contrasena = contrasena
-                    };
+                    Identificador = identificadorNormalizado,
+                    Contrasena = contrasena
+                };
 
-                    ResultadoInicioSesion resultado = await proxy.IniciarSesionAsync(solicitud);
+                var cliente = new InicioSesionSrv.InicioSesionManejadorClient(
+                    "BasicHttpBinding_IInicioSesionManejador");
 
-                    if (resultado == null)
-                    {
-                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
-                        return;
-                    }
+                InicioSesionSrv.ResultadoInicioSesionDTO resultado = await WcfClientHelper.UsarAsync(
+                    cliente,
+                    c => c.IniciarSesionAsync(solicitud));
 
-                    if (resultado.InicioSesionExitoso)
-                    {
-                        SesionUsuarioActual.Instancia.EstablecerUsuario(resultado.Usuario);
-                        VentanaPrincipal ventana = new VentanaPrincipal();
-                        Application.Current.MainWindow = ventana;
-                        ventana.Show();
-                        this.Close();
-                        return;
-                    }
-
-                    string mensaje = MensajeServidorHelper.Localizar(
-                        resultado.Mensaje,
-                        Properties.Langs.Lang.errorTextoCredencialesTitulo);
-
-                    AvisoHelper.Mostrar(mensaje);
+                if (resultado == null)
+                {
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoServidorTiempoAgotado);
+                    return;
                 }
+
+                if (resultado.InicioSesionExitoso)
+                {
+                    UsuarioAutenticado usuario = UsuarioMapper.CrearDesde(resultado.Usuario);
+                    SesionUsuarioActual.Instancia.EstablecerUsuario(usuario);
+                    VentanaPrincipal ventana = new VentanaPrincipal();
+                    Application.Current.MainWindow = ventana;
+                    ventana.Show();
+                    this.Close();
+                    return;
+                }
+
+                string mensaje = MensajeServidorHelper.Localizar(
+                    resultado.Mensaje,
+                    Properties.Langs.Lang.errorTextoCredencialesTitulo);
+
+                AvisoHelper.Mostrar(mensaje);
             }
-            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            catch (FaultException ex)
             {
                 string mensaje = ErrorServicioHelper.ObtenerMensaje(
                     ex,
@@ -167,17 +170,19 @@ namespace PictionaryMusicalCliente
 
         private async void LabelOlvidasteContraseña(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            string identificador = bloqueTextoUsuario.Text?.Trim();
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoUsuario);
 
-            RestablecerEstadoCampo(bloqueTextoUsuario);
+            ValidacionEntradaHelper.ResultadoValidacion resultadoIdentificador = ValidacionEntradaHelper.ValidarIdentificadorInicioSesion(bloqueTextoUsuario.Text);
 
-            if (string.IsNullOrWhiteSpace(identificador))
+            if (!resultadoIdentificador.EsValido)
             {
-                MarcarCampoInvalido(bloqueTextoUsuario);
-                AvisoHelper.Mostrar(LangResources.Lang.errorTextoCamposInvalidosGenerico);
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoUsuario);
+                AvisoHelper.Mostrar(resultadoIdentificador.MensajeError);
                 bloqueTextoUsuario.Focus();
                 return;
             }
+
+            string identificador = resultadoIdentificador.ValorNormalizado;
 
             Label etiqueta = sender as Label;
             if (etiqueta != null)
@@ -189,94 +194,91 @@ namespace PictionaryMusicalCliente
 
             try
             {
-                using (var proxy = new ServidorProxy())
+                CodigoVerificacionSrv.ResultadoSolicitudRecuperacionDTO resultado = await CodigoVerificacionServicioHelper.SolicitarCodigoRecuperacionAsync(identificador);
+
+                if (resultado == null)
                 {
-                    var solicitud = new SolicitudRecuperarCuenta
-                    {
-                        Identificador = identificador
-                    };
+                    AvisoHelper.Mostrar(LangResources.Lang.errorTextoIniciarRecuperacion);
+                    return;
+                }
 
-                    ResultadoSolicitudRecuperacion resultado = await proxy.SolicitarCodigoRecuperacionAsync(solicitud);
+                if (!resultado.CuentaEncontrada)
+                {
+                    string mensajeCuenta = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.errorTextoCuentaNoRegistrada);
+                    AvisoHelper.Mostrar(mensajeCuenta);
+                    return;
+                }
 
-                    if (resultado == null)
-                    {
-                        AvisoHelper.Mostrar(LangResources.Lang.errorTextoIniciarRecuperacion);
-                        return;
-                    }
+                if (!resultado.CodigoEnviado || string.IsNullOrWhiteSpace(resultado.TokenCodigo))
+                {
+                    string mensajeCodigo = MensajeServidorHelper.Localizar(
+                        resultado.Mensaje,
+                        LangResources.Lang.errorTextoEnvioCodigoVerificacionMasTarde);
+                    AvisoHelper.Mostrar(mensajeCodigo);
+                    return;
+                }
 
-                    if (!resultado.CuentaEncontrada)
-                    {
-                        string mensajeCuenta = MensajeServidorHelper.Localizar(
-                            resultado.Mensaje,
-                            LangResources.Lang.errorTextoCuentaNoRegistrada);
-                        AvisoHelper.Mostrar(mensajeCuenta);
-                        return;
-                    }
+                string tokenCodigo = resultado.TokenCodigo;
+                string correoDestino = resultado.CorreoDestino;
 
-                    if (!resultado.CodigoEnviado || string.IsNullOrWhiteSpace(resultado.TokenCodigo))
-                    {
-                        string mensajeCodigo = MensajeServidorHelper.Localizar(
-                            resultado.Mensaje,
-                            LangResources.Lang.errorTextoEnvioCodigoVerificacionMasTarde);
-                        AvisoHelper.Mostrar(mensajeCodigo);
-                        return;
-                    }
-
-                    string tokenCodigo = resultado.TokenCodigo;
-                    string correoDestino = resultado.CorreoDestino;
-
-                    async Task<ResultadoOperacion> ConfirmarCodigoAsync(string codigo)
-                    {
-                        var confirmacion = new SolicitudConfirmarCodigo
-                        {
-                            TokenCodigo = tokenCodigo,
-                            Codigo = codigo
-                        };
-
-                        return await proxy.ConfirmarCodigoRecuperacionAsync(confirmacion);
-                    }
-
-                    async Task<ResultadoSolicitudCodigo> ReenviarCodigoAsync()
-                    {
-                        var reenvio = new SolicitudReenviarCodigo
-                        {
-                            TokenCodigo = tokenCodigo
-                        };
-
-                        ResultadoSolicitudCodigo resultadoReenvio = await proxy.ReenviarCodigoRecuperacionAsync(reenvio);
-
-                        if (resultadoReenvio != null && !string.IsNullOrWhiteSpace(resultadoReenvio.TokenCodigo))
-                        {
-                            tokenCodigo = resultadoReenvio.TokenCodigo;
-                        }
-
-                        return resultadoReenvio;
-                    }
-
-                    var ventanaVerificacion = new VerificarCodigo(
+                async Task<VerificarCodigo.ConfirmacionResultado> ConfirmarCodigoAsync(string codigo)
+                {
+                    CodigoVerificacionSrv.ResultadoOperacionDTO resultadoConfirmacion = await CodigoVerificacionServicioHelper.ConfirmarCodigoRecuperacionAsync(
                         tokenCodigo,
-                        correoDestino,
-                        ConfirmarCodigoAsync,
-                        ReenviarCodigoAsync,
-                        LangResources.Lang.avisoTextoCodigoDescripcionRecuperacion);
+                        codigo);
 
-                    ventanaVerificacion.ShowDialog();
-
-                    if (!ventanaVerificacion.OperacionCompletada)
+                    if (resultadoConfirmacion == null)
                     {
-                        return;
+                        return null;
                     }
 
-                    var ventanaCambio = new CambioContrasena(tokenCodigo, identificador);
-                    bool? resultadoCambio = ventanaCambio.ShowDialog();
+                    return new VerificarCodigo.ConfirmacionResultado(
+                        resultadoConfirmacion.OperacionExitosa,
+                        resultadoConfirmacion.Mensaje);
+                }
 
-                    if (ventanaCambio.ContrasenaActualizada || resultadoCambio == true)
+                async Task<VerificarCodigo.ReenvioResultado> ReenviarCodigoAsync()
+                {
+                    ReenvioSrv.ResultadoSolicitudCodigoDTO resultadoReenvio = await CodigoVerificacionServicioHelper.ReenviarCodigoRecuperacionAsync(tokenCodigo);
+
+                    if (resultadoReenvio != null && !string.IsNullOrWhiteSpace(resultadoReenvio.TokenCodigo))
                     {
-                        bloqueContrasenaContrasena.Clear();
+                        tokenCodigo = resultadoReenvio.TokenCodigo;
                     }
+
+                    return resultadoReenvio == null
+                        ? null
+                        : new VerificarCodigo.ReenvioResultado(
+                            resultadoReenvio.CodigoEnviado,
+                            resultadoReenvio.Mensaje,
+                            resultadoReenvio.TokenCodigo);
+                }
+
+                var ventanaVerificacion = new VerificarCodigo(
+                    tokenCodigo,
+                    correoDestino,
+                    ConfirmarCodigoAsync,
+                    ReenviarCodigoAsync,
+                    LangResources.Lang.avisoTextoCodigoDescripcionRecuperacion);
+
+                ventanaVerificacion.ShowDialog();
+
+                if (!ventanaVerificacion.OperacionCompletada)
+                {
+                    return;
+                }
+
+                var ventanaCambio = new CambioContrasena(tokenCodigo, identificador);
+                bool? resultadoCambio = ventanaCambio.ShowDialog();
+
+                if (ventanaCambio.ContrasenaActualizada || resultadoCambio == true)
+                {
+                    bloqueContrasenaContrasena.Clear();
                 }
             }
-            catch (FaultException<ServidorProxy.ErrorDetalleServicio> ex)
+            catch (FaultException ex)
             {
                 string mensaje = ErrorServicioHelper.ObtenerMensaje(
                     ex,
@@ -310,26 +312,5 @@ namespace PictionaryMusicalCliente
             }
         }
 
-        private static void RestablecerEstadoCampo(Control control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            control.ClearValue(Control.BorderBrushProperty);
-            control.ClearValue(Control.BorderThicknessProperty);
-        }
-
-        private static void MarcarCampoInvalido(Control control)
-        {
-            if (control == null)
-            {
-                return;
-            }
-
-            control.BorderBrush = Brushes.Red;
-            control.BorderThickness = new Thickness(2);
-        }
     }
 }
