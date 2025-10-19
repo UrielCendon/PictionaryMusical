@@ -1,48 +1,30 @@
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
+using System;
 using Datos.DAL.Interfaces;
 using Datos.Modelo;
-using Datos.Utilidades;
 
 namespace Datos.DAL.Implementaciones
 {
     public class ClasificacionRepositorio : IClasificacionRepositorio
     {
-        private const int MaximoPorDefecto = 10;
+        private readonly BaseDatosPruebaEntities1 contexto;
+
+        public ClasificacionRepositorio(BaseDatosPruebaEntities1 contexto)
+        {
+            this.contexto = contexto ?? throw new ArgumentNullException(nameof(contexto));
+        }
 
         public Clasificacion CrearClasificacionInicial()
         {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
+            var clasificacion = new Clasificacion
             {
-                var clasificacion = new Clasificacion
-                {
-                    Puntos_Ganados = 0,
-                    Rondas_Ganadas = 0
-                };
+                Puntos_Ganados = 0,
+                Rondas_Ganadas = 0
+            };
 
-                contexto.Clasificacion.Add(clasificacion);
-                contexto.SaveChanges();
+            contexto.Clasificacion.Add(clasificacion);
+            contexto.SaveChanges();
 
-                return clasificacion;
-            }
-        }
-
-        public IList<Usuario> ObtenerTopJugadores(int limite)
-        {
-            int cantidadSolicitada = limite <= 0 ? MaximoPorDefecto : limite;
-
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
-            {
-                return contexto.Usuario
-                    .Include(u => u.Jugador.Clasificacion)
-                    .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
-                    .OrderByDescending(u => u.Jugador.Clasificacion.Puntos_Ganados ?? 0)
-                    .ThenByDescending(u => u.Jugador.Clasificacion.Rondas_Ganadas ?? 0)
-                    .ThenBy(u => u.Nombre_Usuario)
-                    .Take(cantidadSolicitada)
-                    .ToList();
-            }
+            return clasificacion;
         }
     }
 }

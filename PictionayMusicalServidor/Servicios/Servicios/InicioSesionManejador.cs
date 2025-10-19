@@ -1,68 +1,127 @@
-using Datos.DAL.Implementaciones;
-using Datos.DAL.Interfaces;
 using Servicios.Contratos;
 using Servicios.Contratos.DTOs;
+using Datos.Modelo;
+using Datos.Utilidades;
 using System;
-using System.Data;
+using System.Data.Entity;
+using System.Linq;
 using log4net;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace Servicios.Servicios
 {
     public class InicioSesionManejador : IInicioSesionManejador
     {
-        private readonly InicioSesionServicio _servicio;
-        private static readonly ILog Bitacora = LogManager.GetLogger(typeof(InicioSesionManejador));
-
-        public InicioSesionManejador()
-            : this(new UsuarioRepositorio(), new RedSocialRepositorio())
-        {
-        }
-
-        public InicioSesionManejador(
-            IUsuarioRepositorio usuarioRepositorio,
-            IRedSocialRepositorio redSocialRepositorio)
-        {
-            if (usuarioRepositorio == null)
-            {
-                throw new ArgumentNullException(nameof(usuarioRepositorio));
-            }
-
-            if (redSocialRepositorio == null)
-            {
-                throw new ArgumentNullException(nameof(redSocialRepositorio));
-            }
-
-            _servicio = new InicioSesionServicio(usuarioRepositorio, redSocialRepositorio);
-        }
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(InicioSesionManejador));
 
         public ResultadoInicioSesionDTO IniciarSesion(CredencialesInicioSesionDTO credenciales)
         {
-            Bitacora.Info("Solicitud para iniciar sesión recibida.");
+            if (credenciales == null)
+            {
+                throw new ArgumentNullException(nameof(credenciales));
+            }
+
+            string identificador = credenciales.Identificador?.Trim();
+            string contrasena = credenciales.Contrasena ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(identificador) || string.IsNullOrEmpty(contrasena))
+            {
+                return new ResultadoInicioSesionDTO
+                {
+                    CuentaNoEncontrada = true,
+                    Mensaje = "Credenciales inválidas"
+                };
+            }
 
             try
             {
-                return _servicio.IniciarSesion(credenciales);
-            }
-            catch (ArgumentNullException ex)
-            {
-                Bitacora.Warn("Las credenciales proporcionadas son inválidas.", ex);
-                throw FabricaFallaServicio.Crear("SOLICITUD_INVALIDA", "Los datos proporcionados no son válidos para iniciar sesión.", "Solicitud inválida.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Bitacora.Error("Operación inválida al intentar iniciar sesión.", ex);
-                throw FabricaFallaServicio.Crear("OPERACION_INVALIDA", "No fue posible completar el inicio de sesión.", "Operación inválida en la capa de datos.");
-            }
-            catch (DataException ex)
-            {
-                Bitacora.Error("Error en la base de datos al iniciar sesión.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_BASE_DATOS", "Ocurrió un problema al iniciar sesión.", "Fallo en la base de datos.");
+                using (var contexto = CrearContexto())
+                {
+                    Usuario usuario = BuscarUsuarioPorIdentificador(contexto, identificador);
+
+                    if (usuario == null)
+                    {
+                        return new ResultadoInicioSesionDTO
+                        {
+                            CuentaNoEncontrada = true,
+                            Mensaje = null
+                        };
+                    }
+
+                    if (!BCryptNet.Verify(contrasena, usuario.Contrasena))
+                    {
+                        return new ResultadoInicioSesionDTO
+                        {
+                            ContrasenaIncorrecta = true,
+                            Mensaje = "Credenciales incorrectas."
+                        };
+                    }
+
+                    return new ResultadoInicioSesionDTO
+                    {
+                        InicioSesionExitoso = true,
+                        Usuario = MapearUsuario(usuario)
+                    };
+                }
             }
             catch (Exception ex)
             {
-                Bitacora.Fatal("Error inesperado al iniciar sesión.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_NO_CONTROLADO", "Ocurrió un error inesperado al iniciar sesión.", "Error interno del servidor.");
+                Logger.Error("Error al iniciar sesión", ex);
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    Mensaje = ex.Message
+                };
             }
+        }
+
+        private static BaseDatosPruebaEntities1 CrearContexto()
+        {
+            string conexion = Conexion.ObtenerConexion();
+            return string.IsNullOrWhiteSpace(conexion)
+                ? new BaseDatosPruebaEntities1()
+                : new BaseDatosPruebaEntities1(conexion);
+        }
+
+        private static Usuario BuscarUsuarioPorIdentificador(BaseDatosPruebaEntities1 contexto, string identificador)
+        {
+            var usuariosPorNombre = contexto.Usuario
+                .Include(u => u.Jugador.Avatar)
+                .Where(u => u.Nombre_Usuario == identificador)
+                .ToList();
+
+            Usuario usuario = usuariosPorNombre
+                .FirstOrDefault(u => string.Equals(u.Nombre_Usuario, identificador, StringComparison.Ordinal));
+
+            if (usuario != null)
+            {
+                return usuario;
+            }
+
+            var usuariosPorCorreo = contexto.Usuario
+                .Include(u => u.Jugador.Avatar)
+                .Where(u => u.Jugador.Correo == identificador)
+                .ToList();
+
+            return usuariosPorCorreo
+                .FirstOrDefault(u => string.Equals(u.Jugador?.Correo, identificador, StringComparison.Ordinal));
+        }
+
+        private static UsuarioDTO MapearUsuario(Usuario usuario)
+        {
+            Jugador jugador = usuario.Jugador;
+
+            return new UsuarioDTO
+            {
+                IdUsuario = usuario.idUsuario,
+                JugadorId = jugador?.idJugador ?? 0,
+                NombreUsuario = usuario.Nombre_Usuario,
+                Nombre = jugador?.Nombre,
+                Apellido = jugador?.Apellido,
+                Correo = jugador?.Correo,
+                AvatarId = jugador?.Avatar_idAvatar ?? 0,
+                AvatarRutaRelativa = jugador?.Avatar?.Avatar_Ruta
+            };
         }
     }
 }

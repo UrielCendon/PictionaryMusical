@@ -9,15 +9,15 @@ namespace Servicios.Contratos.DTOs
         public bool CodigoEnviado { get; set; }
 
         [DataMember]
-        public string Mensaje { get; set; }
-
-        [DataMember]
-        public string TokenCodigo { get; set; }
+        public bool UsuarioYaRegistrado { get; set; }
 
         [DataMember]
         public bool CorreoYaRegistrado { get; set; }
 
         [DataMember]
-        public bool UsuarioYaRegistrado { get; set; }
+        public string Mensaje { get; set; }
+
+        [DataMember]
+        public string TokenCodigo { get; set; }
     }
 }

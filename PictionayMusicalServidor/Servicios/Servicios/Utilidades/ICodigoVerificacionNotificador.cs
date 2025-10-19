@@ -4,6 +4,6 @@ namespace Servicios.Servicios.Utilidades
 {
     public interface ICodigoVerificacionNotificador
     {
-        Task EnviarCodigoAsync(string correoDestino, string codigoGenerado);
+        Task<bool> NotificarAsync(string correoDestino, string codigo, string usuarioDestino);
     }
 }

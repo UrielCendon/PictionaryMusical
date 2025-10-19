@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Dialogos;
 using PictionaryMusicalCliente.Servicios.Wcf;
@@ -9,41 +12,39 @@ namespace PictionaryMusicalCliente
 {
     public partial class CrearCuenta : Window
     {
-        private readonly VistaModelo.Cuentas.CrearCuentaVistaModelo _vistaModelo;
+        private readonly CrearCuentaVistaModelo _vistaModelo;
 
         public CrearCuenta()
         {
             InitializeComponent();
 
-            IDialogService dialogService = new DialogService();
             var codigoVerificacionService = new CodigoVerificacionService();
-            var avatarService = new AvatarService();
-            ISeleccionarAvatarService seleccionarAvatarService = new SeleccionarAvatarDialogService();
-            IVerificarCodigoDialogService verificarCodigoDialogService = new VerificarCodigoDialogService();
+            var cuentaService = new CuentaService();
+            var seleccionarAvatarService = new SeleccionarAvatarDialogService();
+            var verificarCodigoDialogService = new VerificarCodigoDialogService();
 
-            _vistaModelo = new VistaModelo.Cuentas.CrearCuentaVistaModelo(
-                dialogService,
+            _vistaModelo = new CrearCuentaVistaModelo(
                 codigoVerificacionService,
-                avatarService,
+                cuentaService,
                 seleccionarAvatarService,
                 verificarCodigoDialogService);
 
-            _vistaModelo.SolicitarCerrar += (_, __) => Close();
-            _vistaModelo.ValidacionCamposProcesada += VistaModelo_ValidacionCamposProcesada;
-            DataContext = _vistaModelo;
+            _vistaModelo.CerrarAccion = Close;
+            _vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
+            _vistaModelo.MostrarMensaje = AvisoHelper.Mostrar;
 
-            Closed += (_, __) => _vistaModelo.ValidacionCamposProcesada -= VistaModelo_ValidacionCamposProcesada;
+            DataContext = _vistaModelo;
         }
 
         private void PasswordBoxChanged(object sender, RoutedEventArgs e)
         {
-            if (_vistaModelo != null)
+            if (sender is PasswordBox passwordBox)
             {
-                _vistaModelo.Contrasena = bloqueContrasena.Password;
+                _vistaModelo.Contrasena = passwordBox.Password;
             }
         }
 
-        private void VistaModelo_ValidacionCamposProcesada(object sender, VistaModelo.Cuentas.CrearCuentaVistaModelo.ValidacionCamposEventArgs e)
+        private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
             ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoUsuario);
             ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoNombre);
@@ -51,34 +52,32 @@ namespace PictionaryMusicalCliente
             ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoCorreo);
             ControlVisualHelper.RestablecerEstadoCampo(bloqueContrasena);
 
-            if (e == null)
+            if (camposInvalidos == null)
             {
                 return;
             }
 
-            VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada camposInvalidos = e.CamposInvalidos;
-
-            if (camposInvalidos.HasFlag(VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada.Usuario))
+            if (camposInvalidos.Contains(nameof(_vistaModelo.Usuario)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueTextoUsuario);
             }
 
-            if (camposInvalidos.HasFlag(VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada.Nombre))
+            if (camposInvalidos.Contains(nameof(_vistaModelo.Nombre)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueTextoNombre);
             }
 
-            if (camposInvalidos.HasFlag(VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada.Apellido))
+            if (camposInvalidos.Contains(nameof(_vistaModelo.Apellido)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueTextoApellido);
             }
 
-            if (camposInvalidos.HasFlag(VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada.Correo))
+            if (camposInvalidos.Contains(nameof(_vistaModelo.Correo)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueTextoCorreo);
             }
 
-            if (camposInvalidos.HasFlag(VistaModelo.Cuentas.CrearCuentaVistaModelo.CampoEntrada.Contrasena))
+            if (camposInvalidos.Contains(nameof(_vistaModelo.Contrasena)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueContrasena);
             }

@@ -4,14 +4,8 @@ namespace Datos.DAL.Interfaces
 
     public interface IUsuarioRepositorio
     {
-        bool ExisteUsuario(string usuario);
+        bool ExisteNombreUsuario(string nombreUsuario);
 
-        Usuario CrearUsuario(int jugadorId, string usuario, string contrasenaHash);
-
-        Usuario ObtenerUsuarioPorIdentificador(string identificador);
-
-        Usuario ObtenerUsuarioPorId(int idUsuario);
-
-        bool ActualizarContrasena(int idUsuario, string contrasenaHash);
+        Usuario CrearUsuario(Usuario usuario);
     }
 }

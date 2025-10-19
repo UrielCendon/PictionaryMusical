@@ -1,26 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Servicios.Contratos.DTOs
 {
     [DataContract]
     public class NuevaCuentaDTO
     {
-        [DataMember] 
-        public string Correo { get; set; }
-        [DataMember] 
-        public string Contrasena { get; set; }
-        [DataMember] 
+        [DataMember(IsRequired = true)]
         public string Usuario { get; set; }
-        [DataMember] 
+
+        [DataMember(IsRequired = true)]
+        public string Correo { get; set; }
+
+        [DataMember(IsRequired = true)]
         public string Nombre { get; set; }
-        [DataMember] 
+
+        [DataMember(IsRequired = true)]
         public string Apellido { get; set; }
-        [DataMember] 
-        public int AvatarId { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string Contrasena { get; set; }
+
+        [DataMember(IsRequired = true)]
+        public string AvatarRutaRelativa { get; set; }
+
     }
 }

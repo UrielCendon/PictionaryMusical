@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -13,109 +14,78 @@ namespace PictionaryMusicalCliente
 {
     public partial class Perfil : Window
     {
-        private readonly PerfilVistaModelo _vistaModelo;
-
         public Perfil()
         {
             InitializeComponent();
 
-            IDialogService dialogService = new DialogService();
             IPerfilService perfilService = new PerfilService();
             ISeleccionarAvatarService seleccionarAvatarService = new SeleccionarAvatarDialogService();
-            IRecuperacionCuentaDialogService recuperacionCuentaDialogService = new RecuperacionCuentaDialogService();
+            ICambioContrasenaService cambioContrasenaService = new CambioContrasenaService();
+            IVerificarCodigoDialogService verificarCodigoDialogService = new VerificarCodigoDialogService();
+            IRecuperacionCuentaDialogService recuperacionCuentaDialogService =
+                new RecuperacionCuentaDialogService(verificarCodigoDialogService);
 
-            _vistaModelo = new PerfilVistaModelo(
-                dialogService,
+            var vistaModelo = new PerfilVistaModelo(
                 perfilService,
                 seleccionarAvatarService,
-                recuperacionCuentaDialogService);
+                cambioContrasenaService,
+                recuperacionCuentaDialogService)
+            {
+                CerrarAccion = Close
+            };
 
-            _vistaModelo.SolicitarCerrar += VistaModelo_SolicitarCerrar;
-            _vistaModelo.ValidacionCamposProcesada += VistaModelo_ValidacionCamposProcesada;
+            vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
 
-            DataContext = _vistaModelo;
-
-            Closed += Perfil_Closed;
+            DataContext = vistaModelo;
         }
 
         private async void Perfil_Loaded(object sender, RoutedEventArgs e)
         {
-            if (_vistaModelo != null)
+            if (DataContext is PerfilVistaModelo vistaModelo)
             {
-                await _vistaModelo.InicializarAsync();
-            }
-        }
-
-        private void VistaModelo_SolicitarCerrar(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void VistaModelo_ValidacionCamposProcesada(object sender, PerfilVistaModelo.ValidacionCamposEventArgs e)
-        {
-            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoNombre);
-            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoApellido);
-
-            if (e == null)
-            {
-                return;
-            }
-
-            if (e.CamposInvalidos.HasFlag(PerfilVistaModelo.CampoEntrada.Nombre))
-            {
-                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoNombre);
-            }
-
-            if (e.CamposInvalidos.HasFlag(PerfilVistaModelo.CampoEntrada.Apellido))
-            {
-                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoApellido);
+                await vistaModelo.CargarPerfilAsync().ConfigureAwait(true);
             }
         }
 
         private void PopupRedSocial_Opened(object sender, EventArgs e)
         {
-            if (sender is Popup popup)
+            if (sender is Popup popup && popup.Child is Border border && border.Child is TextBox textBox)
             {
-                TextBox campo = ObtenerTextBoxDesdePopup(popup);
-
-                if (campo != null)
-                {
-                    campo.Focus();
-                    campo.CaretIndex = campo.Text?.Length ?? 0;
-                }
+                textBox.Focus();
+                textBox.CaretIndex = textBox.Text?.Length ?? 0;
             }
         }
 
         private void RedSocialTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is TextBox texto && texto.Tag is ToggleButton toggle)
+            if (sender is TextBox textBox && textBox.Tag is ToggleButton toggle)
             {
-                if (e.Key != Key.Enter && e.Key != Key.Escape)
+                if (e.Key == Key.Enter || e.Key == Key.Return || e.Key == Key.Escape)
                 {
-                    return;
+                    toggle.IsChecked = false;
+                    e.Handled = true;
                 }
-
-                toggle.IsChecked = false;
-                e.Handled = true;
             }
         }
 
-        private static TextBox ObtenerTextBoxDesdePopup(Popup popup)
+        private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
-            if (popup?.Child is Border borde && borde.Child is TextBox texto)
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoNombre);
+            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoApellido);
+
+            if (camposInvalidos == null)
             {
-                return texto;
+                return;
             }
 
-            return null;
-        }
-
-        private void Perfil_Closed(object sender, EventArgs e)
-        {
-            if (_vistaModelo != null)
+            if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Nombre)))
             {
-                _vistaModelo.SolicitarCerrar -= VistaModelo_SolicitarCerrar;
-                _vistaModelo.ValidacionCamposProcesada -= VistaModelo_ValidacionCamposProcesada;
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoNombre);
+            }
+
+            if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Apellido)))
+            {
+                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoApellido);
             }
         }
     }

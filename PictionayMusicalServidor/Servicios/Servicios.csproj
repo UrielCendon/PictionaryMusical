@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,6 +39,12 @@
     <Reference Include="BCrypt.Net-Next, Version=4.0.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
       <HintPath>..\packages\BCrypt.Net-Next.4.0.3\lib\net472\BCrypt.Net-Next.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
     </Reference>
@@ -43,6 +52,7 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -65,22 +75,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Contratos\DTOs\AvatarDTO.cs" />
-    <Compile Include="Contratos\DTOs\ClasificacionUsuarioDTO.cs" />
-    <Compile Include="Contratos\DTOs\ConfirmarCodigoDTO.cs" />
-    <Compile Include="Contratos\DTOs\CredencialesInicioSesionDTO.cs" />
-    <Compile Include="Contratos\DTOs\ActualizarPerfilDTO.cs" />
-    <Compile Include="Contratos\DTOs\NuevaCuentaDTO.cs" />
-    <Compile Include="Contratos\DTOs\ReenviarCodigoDTO.cs" />
-    <Compile Include="Contratos\DTOs\SolicitudRecuperarCuentaDTO.cs" />
-    <Compile Include="Contratos\DTOs\ActualizarContrasenaDTO.cs" />
-    <Compile Include="Contratos\DTOs\ResultadoRegistroCuentaDTO.cs" />
-    <Compile Include="Contratos\DTOs\ResultadoInicioSesionDTO.cs" />
-    <Compile Include="Contratos\DTOs\ResultadoSolicitudRecuperacionDTO.cs" />
-    <Compile Include="Contratos\DTOs\ResultadoOperacionDTO.cs" />
-    <Compile Include="Contratos\DTOs\ResultadoSolicitudCodigoDTO.cs" />
-    <Compile Include="Contratos\DTOs\ErrorDetalleServicioDTO.cs" />
-    <Compile Include="Contratos\DTOs\UsuarioDTO.cs" />
     <Compile Include="Contratos\IAmigosManejador.cs" />
     <Compile Include="Contratos\ICambiarContrasenaManejador.cs" />
     <Compile Include="Contratos\ICatalogoAvatares.cs" />
@@ -100,27 +94,33 @@
     <Compile Include="Contratos\IListaAmigosManejador.cs" />
     <Compile Include="Contratos\INotificacionManejador.cs" />
     <Compile Include="Contratos\IPerfilManejador.cs" />
-    <Compile Include="Contratos\IReenviarCodigoVerificacionManejador.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="Contratos\ISalirSalaManager.cs" />
+    <Compile Include="Contratos\DTOs\ActualizarContrasenaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ClasificacionUsuarioDTO.cs" />
+    <Compile Include="Contratos\DTOs\ConfirmarCodigoDTO.cs" />
+    <Compile Include="Contratos\DTOs\CredencialesInicioSesionDTO.cs" />
+    <Compile Include="Contratos\DTOs\NuevaCuentaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ReenviarCodigoDTO.cs" />
+    <Compile Include="Contratos\DTOs\ReenviarCodigoVerificacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoInicioSesionDTO.cs" />
+    <Compile Include="Contratos\DTOs\ActualizarPerfilDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoOperacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoRegistroCuentaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoSolicitudCodigoDTO.cs" />
+    <Compile Include="Contratos\DTOs\ResultadoSolicitudRecuperacionDTO.cs" />
+    <Compile Include="Contratos\DTOs\SolicitudRecuperarCuentaDTO.cs" />
+    <Compile Include="Contratos\DTOs\UsuarioDTO.cs" />
+    <Compile Include="Contratos\DTOs\AvatarDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\CatalogoAvatares.cs" />
     <Compile Include="Servicios\ClasificacionManejador.cs" />
     <Compile Include="Servicios\CodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\CodigoVerificacionServicio.cs" />
     <Compile Include="Servicios\CuentaManejador.cs" />
-    <Compile Include="Servicios\FabricaFallaServicio.cs" />
     <Compile Include="Servicios\InicioSesionManejador.cs" />
-    <Compile Include="Servicios\CuentaRegistroServicio.cs" />
-    <Compile Include="Servicios\InicioSesionServicio.cs" />
-    <Compile Include="Servicios\RegistroCuentaPendiente.cs" />
-    <Compile Include="Servicios\RegistroCuentaPendienteStore.cs" />
     <Compile Include="Servicios\CambiarContrasenaManejador.cs" />
-    <Compile Include="Servicios\RecuperacionCuentaPendiente.cs" />
-    <Compile Include="Servicios\CodigoRecuperacionServicio.cs" />
     <Compile Include="Servicios\PerfilManejador.cs" />
-    <Compile Include="Servicios\RecuperacionCuentaStore.cs" />
-    <Compile Include="Servicios\ReenviarCodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\Utilidades\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\ICodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\CodigoVerificacionGenerator.cs" />
@@ -129,6 +129,7 @@
   <ItemGroup />
   <ItemGroup />
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -138,4 +139,12 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este proyecto hace referencia a los paquetes NuGet que faltan en este equipo. Use la restauración de paquetes NuGet para descargarlos. Para obtener más información, consulte http://go.microsoft.com/fwlink/?LinkID=322105. El archivo que falta es {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
 </Project>

@@ -1,262 +1,580 @@
-using Datos.DAL.Interfaces;
+using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using Datos.Modelo;
+using Datos.Utilidades;
 using Servicios.Contratos.DTOs;
 using Servicios.Servicios.Utilidades;
-using System;
-using System.Configuration;
-using System.Net.Mail;
-using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Servicios.Servicios
 {
-    internal class CodigoVerificacionServicio
+    internal static class CodigoVerificacionServicio
     {
-        private readonly ICodigoVerificacionNotificador _notificador;
-        private readonly RegistroCuentaPendienteStore _registroStore;
-        private readonly CuentaRegistroServicio _cuentaRegistroServicio;
-        private static readonly TimeSpan DuracionCodigo = TimeSpan.FromMinutes(5);
-        private static readonly TimeSpan TiempoEsperaReenvio = TimeSpan.FromMinutes(1);
+        private const int MinutosExpiracionCodigo = 5;
+        private const string MensajeErrorEnvioCodigo = "No fue posible enviar el código de verificación.";
 
-        public CodigoVerificacionServicio(
-            IJugadorRepositorio jugadorRepositorio,
-            IUsuarioRepositorio usuarioRepositorio,
-            IClasificacionRepositorio clasificacionRepositorio,
-            ICodigoVerificacionNotificador notificador)
+        private static readonly ConcurrentDictionary<string, SolicitudCodigoPendiente> Solicitudes =
+            new ConcurrentDictionary<string, SolicitudCodigoPendiente>();
+
+        private static readonly ConcurrentDictionary<string, byte> VerificacionesConfirmadas =
+            new ConcurrentDictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
+
+        private static readonly ConcurrentDictionary<string, SolicitudRecuperacionPendiente> SolicitudesRecuperacion =
+            new ConcurrentDictionary<string, SolicitudRecuperacionPendiente>();
+
+        private static ICodigoVerificacionNotificador _notificador = new CorreoCodigoVerificacionNotificador();
+
+        public static void ConfigurarNotificador(ICodigoVerificacionNotificador notificador)
         {
-            _notificador = notificador ?? throw new ArgumentNullException(nameof(notificador));
-            _registroStore = RegistroCuentaPendienteStore.Instancia;
-            _cuentaRegistroServicio = new CuentaRegistroServicio(
-                jugadorRepositorio ?? throw new ArgumentNullException(nameof(jugadorRepositorio)),
-                usuarioRepositorio ?? throw new ArgumentNullException(nameof(usuarioRepositorio)),
-                clasificacionRepositorio ?? throw new ArgumentNullException(nameof(clasificacionRepositorio)));
+            _notificador = notificador ?? new CorreoCodigoVerificacionNotificador();
         }
 
-        public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
+        public static ResultadoSolicitudCodigoDTO SolicitarCodigo(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
                 throw new ArgumentNullException(nameof(nuevaCuenta));
             }
 
-            DateTime ahora = DateTime.UtcNow;
-            _registroStore.LimpiarExpirados(ahora);
-
-            var resultadoValidacion = new ResultadoRegistroCuentaDTO();
-            bool informacionValida = _cuentaRegistroServicio.ValidarNuevaCuenta(nuevaCuenta, resultadoValidacion);
-
-            var resultado = new ResultadoSolicitudCodigoDTO
+            using (var contexto = CrearContexto())
             {
-                CodigoEnviado = false,
-                Mensaje = resultadoValidacion.Mensaje,
-                CorreoYaRegistrado = resultadoValidacion.CorreoYaRegistrado,
-                UsuarioYaRegistrado = resultadoValidacion.UsuarioYaRegistrado
+                bool usuarioRegistrado = contexto.Usuario.Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+                bool correoRegistrado = contexto.Jugador.Any(j => j.Correo == nuevaCuenta.Correo);
+
+                if (usuarioRegistrado || correoRegistrado)
+                {
+                    return new ResultadoSolicitudCodigoDTO
+                    {
+                        CodigoEnviado = false,
+                        UsuarioYaRegistrado = usuarioRegistrado,
+                        CorreoYaRegistrado = correoRegistrado,
+                        Mensaje = null
+                    };
+                }
+            }
+
+            string token = TokenGenerator.GenerarToken();
+            string codigo = CodigoVerificacionGenerator.GenerarCodigo();
+            NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
+
+            bool enviado = EnviarCorreoVerificacion(datosCuenta, codigo);
+            if (!enviado)
+            {
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajeErrorEnvioCodigo
+                };
+            }
+
+            var solicitud = new SolicitudCodigoPendiente
+            {
+                DatosCuenta = datosCuenta,
+                Codigo = codigo,
+                Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo)
             };
 
-            if (!informacionValida)
-            {
-                return resultado;
-            }
+            Solicitudes[token] = solicitud;
 
-            _registroStore.RemoverPorCorreoOUsuario(nuevaCuenta.Correo, nuevaCuenta.Usuario);
-
-            string codigo = CodigoVerificacionGenerator.GenerarCodigo();
-            var registroPendiente = RegistroCuentaPendiente.Crear(nuevaCuenta, codigo, DuracionCodigo, ahora);
-
-            if (!_registroStore.TryAdd(registroPendiente))
+            return new ResultadoSolicitudCodigoDTO
             {
-                resultado.Mensaje = "No fue posible procesar la solicitud de verificación.";
-                return resultado;
-            }
-
-            try
-            {
-                EjecutarEnvioCodigoAsync(registroPendiente.Correo, codigo).GetAwaiter().GetResult();
-            }
-            catch (SmtpException ex)
-            {
-                _registroStore.TryRemove(registroPendiente.Token);
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo enviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (InvalidOperationException ex)
-            {
-                _registroStore.TryRemove(registroPendiente.Token);
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo enviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (FormatException ex)
-            {
-                _registroStore.TryRemove(registroPendiente.Token);
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo enviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (ConfigurationErrorsException ex)
-            {
-                _registroStore.TryRemove(registroPendiente.Token);
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo enviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-
-            resultado.CodigoEnviado = true;
-            resultado.TokenCodigo = registroPendiente.Token;
-            resultado.Mensaje = "Se envió un código de verificación al correo proporcionado.";
-
-            return resultado;
+                CodigoEnviado = true,
+                TokenCodigo = token
+            };
         }
 
-        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoDTO solicitud)
+        public static ResultadoSolicitudCodigoDTO ReenviarCodigo(ReenviarCodigoVerificacionDTO solicitud)
         {
             if (solicitud == null)
             {
                 throw new ArgumentNullException(nameof(solicitud));
             }
 
-            DateTime ahora = DateTime.UtcNow;
-            _registroStore.LimpiarExpirados(ahora);
-
-            var resultado = new ResultadoSolicitudCodigoDTO
+            if (!Solicitudes.TryGetValue(solicitud.TokenCodigo, out SolicitudCodigoPendiente existente))
             {
-                CodigoEnviado = false,
-                Mensaje = "La solicitud de verificación no es válida."
-            };
-
-            if (!TryObtenerRegistro(solicitud.TokenCodigo, ahora, resultado, out RegistroCuentaPendiente registro))
-            {
-                return resultado;
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = "Solicitud no encontrada"
+                };
             }
 
-            if (!registro.PuedeReenviar(ahora, TiempoEsperaReenvio, out int segundosRestantes))
-            {
-                resultado.Mensaje = $"Debe esperar {segundosRestantes} segundos para solicitar un nuevo código.";
-                return resultado;
-            }
+            string codigoAnterior = existente.Codigo;
+            DateTime expiracionAnterior = existente.Expira;
 
             string nuevoCodigo = CodigoVerificacionGenerator.GenerarCodigo();
-            registro.ActualizarCodigo(nuevoCodigo, DuracionCodigo, ahora);
+            existente.Codigo = nuevoCodigo;
+            existente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
 
-            try
+            bool enviado = EnviarCorreoVerificacion(existente.DatosCuenta, nuevoCodigo);
+            if (!enviado)
             {
-                EjecutarEnvioCodigoAsync(registro.Correo, nuevoCodigo).GetAwaiter().GetResult();
-            }
-            catch (SmtpException ex)
-            {
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo reenviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (InvalidOperationException ex)
-            {
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo reenviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (FormatException ex)
-            {
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo reenviar el código de verificación."
-                    : ex.Message;
-                return resultado;
-            }
-            catch (ConfigurationErrorsException ex)
-            {
-                resultado.Mensaje = string.IsNullOrWhiteSpace(ex.Message)
-                    ? "No se pudo reenviar el código de verificación."
-                    : ex.Message;
-                return resultado;
+                existente.Codigo = codigoAnterior;
+                existente.Expira = expiracionAnterior;
+
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajeErrorEnvioCodigo
+                };
             }
 
-            resultado.CodigoEnviado = true;
-            resultado.TokenCodigo = solicitud.TokenCodigo;
-            resultado.Mensaje = "Se envió un nuevo código de verificación.";
-
-            return resultado;
+            return new ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = true,
+                TokenCodigo = solicitud.TokenCodigo
+            };
         }
 
-        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmarCodigoDTO confirmacion)
+        public static ResultadoRegistroCuentaDTO ConfirmarCodigo(ConfirmarCodigoDTO confirmacion)
         {
             if (confirmacion == null)
             {
                 throw new ArgumentNullException(nameof(confirmacion));
             }
 
-            DateTime ahora = DateTime.UtcNow;
-            _registroStore.LimpiarExpirados(ahora);
-
-            var resultado = new ResultadoRegistroCuentaDTO
+            if (!Solicitudes.TryGetValue(confirmacion.TokenCodigo, out SolicitudCodigoPendiente pendiente))
             {
-                RegistroExitoso = false,
-                Mensaje = "El código de verificación es inválido."
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = "Solicitud no encontrada"
+                };
+            }
+
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                Solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = "Código expirado"
+                };
+            }
+
+            if (!string.Equals(pendiente.Codigo, confirmacion.CodigoIngresado, StringComparison.OrdinalIgnoreCase))
+            {
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = "Código incorrecto"
+                };
+            }
+
+            Solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
+
+            string clave = ObtenerClave(pendiente.DatosCuenta.Usuario, pendiente.DatosCuenta.Correo);
+            VerificacionesConfirmadas[clave] = 0;
+
+            return new ResultadoRegistroCuentaDTO
+            {
+                RegistroExitoso = true
+            };
+        }
+
+        public static ResultadoSolicitudRecuperacionDTO SolicitarCodigoRecuperacion(SolicitudRecuperarCuentaDTO solicitud)
+        {
+            if (solicitud == null)
+            {
+                throw new ArgumentNullException(nameof(solicitud));
+            }
+
+            string identificador = solicitud.Identificador?.Trim();
+            if (string.IsNullOrWhiteSpace(identificador))
+            {
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CuentaEncontrada = false,
+                    CodigoEnviado = false,
+                    Mensaje = "Identificador requerido"
+                };
+            }
+
+            using (var contexto = CrearContexto())
+            {
+                Usuario usuario = BuscarUsuarioPorIdentificador(contexto, identificador);
+
+                if (usuario == null)
+                {
+                    return new ResultadoSolicitudRecuperacionDTO
+                    {
+                        CuentaEncontrada = false,
+                        CodigoEnviado = false,
+                        Mensaje = null
+                    };
+                }
+
+                LimpiarSolicitudesRecuperacion(usuario.idUsuario);
+
+                string token = TokenGenerator.GenerarToken();
+                string codigo = CodigoVerificacionGenerator.GenerarCodigo();
+
+                var pendiente = new SolicitudRecuperacionPendiente
+                {
+                    UsuarioId = usuario.idUsuario,
+                    Correo = usuario.Jugador?.Correo,
+                    NombreUsuario = usuario.Nombre_Usuario,
+                    Nombre = usuario.Jugador?.Nombre,
+                    Apellido = usuario.Jugador?.Apellido,
+                    AvatarRutaRelativa = usuario.Jugador?.Avatar?.Avatar_Ruta,
+                    Codigo = codigo,
+                    Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo),
+                    Confirmado = false
+                };
+
+                bool enviado = EnviarCorreoRecuperacion(pendiente, codigo);
+                if (!enviado)
+                {
+                    return new ResultadoSolicitudRecuperacionDTO
+                    {
+                        CuentaEncontrada = true,
+                        CodigoEnviado = false,
+                        Mensaje = MensajeErrorEnvioCodigo
+                    };
+                }
+
+                SolicitudesRecuperacion[token] = pendiente;
+
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CuentaEncontrada = true,
+                    CodigoEnviado = true,
+                    CorreoDestino = pendiente.Correo,
+                    TokenCodigo = token
+                };
+            }
+        }
+
+        public static ResultadoSolicitudCodigoDTO ReenviarCodigoRecuperacion(ReenviarCodigoDTO solicitud)
+        {
+            if (solicitud == null)
+            {
+                throw new ArgumentNullException(nameof(solicitud));
+            }
+
+            if (!SolicitudesRecuperacion.TryGetValue(solicitud.TokenCodigo, out SolicitudRecuperacionPendiente pendiente))
+            {
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = "Solicitud no encontrada"
+                };
+            }
+
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                SolicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out _);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = "Código expirado"
+                };
+            }
+
+            string codigoAnterior = pendiente.Codigo;
+            DateTime expiracionAnterior = pendiente.Expira;
+            bool confirmadoAnterior = pendiente.Confirmado;
+
+            string nuevoCodigo = CodigoVerificacionGenerator.GenerarCodigo();
+            pendiente.Codigo = nuevoCodigo;
+            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
+            pendiente.Confirmado = false;
+
+            bool enviado = EnviarCorreoRecuperacion(pendiente, nuevoCodigo);
+            if (!enviado)
+            {
+                pendiente.Codigo = codigoAnterior;
+                pendiente.Expira = expiracionAnterior;
+                pendiente.Confirmado = confirmadoAnterior;
+
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajeErrorEnvioCodigo
+                };
+            }
+
+            return new ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = true,
+                TokenCodigo = solicitud.TokenCodigo
+            };
+        }
+
+        public static ResultadoOperacionDTO ConfirmarCodigoRecuperacion(ConfirmarCodigoDTO confirmacion)
+        {
+            if (confirmacion == null)
+            {
+                throw new ArgumentNullException(nameof(confirmacion));
+            }
+
+            if (!SolicitudesRecuperacion.TryGetValue(confirmacion.TokenCodigo, out SolicitudRecuperacionPendiente pendiente))
+            {
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Solicitud no encontrada"
+                };
+            }
+
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                SolicitudesRecuperacion.TryRemove(confirmacion.TokenCodigo, out _);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Código expirado"
+                };
+            }
+
+            if (!string.Equals(pendiente.Codigo, confirmacion.CodigoIngresado, StringComparison.OrdinalIgnoreCase))
+            {
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Código incorrecto"
+                };
+            }
+
+            pendiente.Confirmado = true;
+            pendiente.Codigo = null;
+            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
+
+            return new ResultadoOperacionDTO
+            {
+                OperacionExitosa = true
+            };
+        }
+
+        public static ResultadoOperacionDTO ActualizarContrasena(ActualizarContrasenaDTO solicitud)
+        {
+            if (solicitud == null)
+            {
+                throw new ArgumentNullException(nameof(solicitud));
+            }
+
+            if (!SolicitudesRecuperacion.TryGetValue(solicitud.TokenCodigo, out SolicitudRecuperacionPendiente pendiente))
+            {
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Solicitud no encontrada"
+                };
+            }
+
+            if (!pendiente.Confirmado)
+            {
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Código no confirmado"
+                };
+            }
+
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                SolicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out _);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = "Solicitud expirada"
+                };
+            }
+
+            try
+            {
+                using (var contexto = CrearContexto())
+                {
+                    Usuario usuario = contexto.Usuario.FirstOrDefault(u => u.idUsuario == pendiente.UsuarioId);
+
+                    if (usuario == null)
+                    {
+                        return new ResultadoOperacionDTO
+                        {
+                            OperacionExitosa = false,
+                            Mensaje = "Usuario no encontrado"
+                        };
+                    }
+
+                    usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(solicitud.NuevaContrasena);
+                    contexto.SaveChanges();
+                }
+
+                SolicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out _);
+
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = ex.Message
+                };
+            }
+        }
+
+        public static bool EstaVerificacionConfirmada(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (nuevaCuenta == null)
+            {
+                return false;
+            }
+
+            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
+            return VerificacionesConfirmadas.ContainsKey(clave);
+        }
+
+        public static void LimpiarVerificacion(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (nuevaCuenta == null)
+            {
+                return;
+            }
+
+            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
+            VerificacionesConfirmadas.TryRemove(clave, out _);
+        }
+
+        private static bool EnviarCorreoVerificacion(NuevaCuentaDTO nuevaCuenta, string codigo)
+        {
+            if (nuevaCuenta == null || string.IsNullOrWhiteSpace(codigo))
+            {
+                return false;
+            }
+
+            try
+            {
+                var tarea = _notificador?.NotificarAsync(nuevaCuenta.Correo, codigo, nuevaCuenta.Usuario);
+                if (tarea == null)
+                {
+                    return false;
+                }
+
+                return tarea.GetAwaiter().GetResult();
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static BaseDatosPruebaEntities1 CrearContexto()
+        {
+            string conexion = Conexion.ObtenerConexion();
+            return string.IsNullOrWhiteSpace(conexion)
+                ? new BaseDatosPruebaEntities1()
+                : new BaseDatosPruebaEntities1(conexion);
+        }
+
+        private static void LimpiarSolicitudesRecuperacion(int usuarioId)
+        {
+            var registros = SolicitudesRecuperacion
+                .Where(pair => pair.Value.UsuarioId == usuarioId)
+                .ToList();
+
+            foreach (var registro in registros)
+            {
+                SolicitudesRecuperacion.TryRemove(registro.Key, out _);
+            }
+        }
+
+        private static Usuario BuscarUsuarioPorIdentificador(BaseDatosPruebaEntities1 contexto, string identificador)
+        {
+            var usuariosPorNombre = contexto.Usuario
+                .Include(u => u.Jugador)
+                .Include(u => u.Jugador.Avatar)
+                .Where(u => u.Nombre_Usuario == identificador)
+                .ToList();
+
+            Usuario usuario = usuariosPorNombre
+                .FirstOrDefault(u => string.Equals(u.Nombre_Usuario, identificador, StringComparison.Ordinal));
+
+            if (usuario != null)
+            {
+                return usuario;
+            }
+
+            var usuariosPorCorreo = contexto.Usuario
+                .Include(u => u.Jugador)
+                .Include(u => u.Jugador.Avatar)
+                .Where(u => u.Jugador.Correo == identificador)
+                .ToList();
+
+            return usuariosPorCorreo
+                .FirstOrDefault(u => string.Equals(u.Jugador?.Correo, identificador, StringComparison.Ordinal));
+        }
+
+        private static bool EnviarCorreoRecuperacion(SolicitudRecuperacionPendiente pendiente, string codigo)
+        {
+            if (pendiente == null)
+            {
+                return false;
+            }
+
+            var datos = new NuevaCuentaDTO
+            {
+                Usuario = pendiente.NombreUsuario,
+                Nombre = pendiente.Nombre,
+                Apellido = pendiente.Apellido,
+                Correo = pendiente.Correo,
+                Contrasena = string.Empty,
+                AvatarRutaRelativa = pendiente.AvatarRutaRelativa
             };
 
-            if (!TryObtenerRegistro(confirmacion.TokenCodigo, ahora, null, out RegistroCuentaPendiente registro))
-            {
-                return resultado;
-            }
-
-            if (string.IsNullOrWhiteSpace(confirmacion.CodigoIngresado))
-            {
-                return resultado;
-            }
-
-            if (!registro.CodigoCoincide(confirmacion.CodigoIngresado))
-            {
-                resultado.Mensaje = "El código ingresado no es correcto.";
-                return resultado;
-            }
-
-            resultado = _cuentaRegistroServicio.RegistrarCuentaPendiente(registro);
-
-            if (resultado.RegistroExitoso)
-            {
-                _registroStore.TryRemove(confirmacion.TokenCodigo);
-            }
-
-            return resultado;
+            return EnviarCorreoVerificacion(datos, codigo);
         }
 
-        private Task EjecutarEnvioCodigoAsync(string correoDestino, string codigo)
+        private static NuevaCuentaDTO CopiarCuenta(NuevaCuentaDTO original)
         {
-            return _notificador.EnviarCodigoAsync(correoDestino, codigo);
+            return new NuevaCuentaDTO
+            {
+                Usuario = original.Usuario,
+                Correo = original.Correo,
+                Nombre = original.Nombre,
+                Apellido = original.Apellido,
+                Contrasena = original.Contrasena,
+                AvatarRutaRelativa = original.AvatarRutaRelativa
+            };
         }
 
-        private bool TryObtenerRegistro(string token, DateTime ahora, ResultadoSolicitudCodigoDTO resultado, out RegistroCuentaPendiente registro)
+        private static string ObtenerClave(string usuario, string correo)
         {
-            registro = null;
+            return ($"{usuario}|{correo}").ToLowerInvariant();
+        }
 
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return false;
-            }
+        private class SolicitudCodigoPendiente
+        {
+            public NuevaCuentaDTO DatosCuenta { get; set; }
 
-            if (!_registroStore.TryGet(token, out registro))
-            {
-                if (resultado != null)
-                {
-                    resultado.Mensaje = "No se encontró una solicitud de verificación activa.";
-                }
-                return false;
-            }
+            public string Codigo { get; set; }
 
-            if (registro.EstaExpirado(ahora))
-            {
-                _registroStore.TryRemove(token);
-                if (resultado != null)
-                {
-                    resultado.Mensaje = "El código de verificación ha expirado. Inicie el proceso nuevamente.";
-                }
-                return false;
-            }
+            public DateTime Expira { get; set; }
+        }
 
-            return true;
+        private class SolicitudRecuperacionPendiente
+        {
+            public int UsuarioId { get; set; }
+
+            public string Correo { get; set; }
+
+            public string NombreUsuario { get; set; }
+
+            public string Nombre { get; set; }
+
+            public string Apellido { get; set; }
+
+            public string AvatarRutaRelativa { get; set; }
+
+            public string Codigo { get; set; }
+
+            public DateTime Expira { get; set; }
+
+            public bool Confirmado { get; set; }
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using Datos.Modelo;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Datos.Modelo;
 
 namespace Datos.DAL.Interfaces
 {
     public interface IAvatarRepositorio
     {
+        bool ExisteAvatar(int avatarId);
+
         IEnumerable<Avatar> ObtenerAvatares();
 
-        bool ExisteAvatar(int avatarId);
+        Avatar ObtenerAvatarPorRuta(string rutaRelativa);
     }
 }

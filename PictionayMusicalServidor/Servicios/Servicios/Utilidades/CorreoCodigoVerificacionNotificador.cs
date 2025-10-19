@@ -10,59 +10,124 @@ namespace Servicios.Servicios.Utilidades
     public class CorreoCodigoVerificacionNotificador : ICodigoVerificacionNotificador
     {
         private const string AsuntoPredeterminado = "Código de verificación";
-        private const string PlantillaMensaje = "Tu código de verificación es {0}. Este código expira en 5 minutos.";
 
-        public async Task EnviarCodigoAsync(string correoDestino, string codigoGenerado)
+        public async Task<bool> NotificarAsync(string correoDestino, string codigo, string usuarioDestino)
         {
-            if (string.IsNullOrWhiteSpace(correoDestino))
+            if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigo))
             {
-                throw new ArgumentException("El correo destino es requerido.", nameof(correoDestino));
+                return false;
             }
 
-            string remitente = ConfigurationManager.AppSettings["Correo.Remitente.Direccion"];
-            string nombreRemitente = ConfigurationManager.AppSettings["Correo.Remitente.Nombre"];
-            string host = ConfigurationManager.AppSettings["Correo.Smtp.Host"];
-            string puertoCadena = ConfigurationManager.AppSettings["Correo.Smtp.Puerto"];
-            string usuario = ConfigurationManager.AppSettings["Correo.Smtp.Usuario"];
-            string contrasena = ConfigurationManager.AppSettings["Correo.Smtp.Contrasena"];
-            string habilitarSslCadena = ConfigurationManager.AppSettings["Correo.Smtp.HabilitarSsl"];
+            string remitente = ObtenerConfiguracion(
+                "CorreoRemitente",
+                "Correo.Remitente.Direccion");
+            string contrasena = ObtenerConfiguracion(
+                "CorreoPassword",
+                "Correo.Smtp.Contrasena");
+            string host = ObtenerConfiguracion(
+                "CorreoHost",
+                "Correo.Smtp.Host");
+            string usuarioSmtp = ObtenerConfiguracion(
+                "CorreoUsuario",
+                "Correo.Smtp.Usuario");
+            string puertoConfigurado = ObtenerConfiguracion(
+                "CorreoPuerto",
+                "Correo.Smtp.Puerto");
+            string asunto = ObtenerConfiguracion(
+                "CorreoAsunto",
+                "Correo.Codigo.Asunto") ?? AsuntoPredeterminado;
+
+            bool.TryParse(
+                ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl"),
+                out bool habilitarSsl);
 
             if (string.IsNullOrWhiteSpace(remitente) || string.IsNullOrWhiteSpace(host))
             {
-                throw new InvalidOperationException("La configuración de correo electrónico no está completa.");
+                return false;
             }
 
-            if (!int.TryParse(puertoCadena, out int puerto))
+            if (string.IsNullOrWhiteSpace(usuarioSmtp))
             {
-                puerto = 25;
+                usuarioSmtp = remitente;
             }
 
-            bool habilitarSsl = true;
-            if (!string.IsNullOrWhiteSpace(habilitarSslCadena))
+            if (!int.TryParse(puertoConfigurado, out int puerto))
             {
-                bool.TryParse(habilitarSslCadena, out habilitarSsl);
+                puerto = 587;
             }
 
-            using (var mensaje = new MailMessage())
-            {
-                mensaje.From = new MailAddress(remitente, string.IsNullOrWhiteSpace(nombreRemitente) ? remitente : nombreRemitente, Encoding.UTF8);
-                mensaje.To.Add(new MailAddress(correoDestino));
-                mensaje.Subject = AsuntoPredeterminado;
-                mensaje.Body = string.Format(PlantillaMensaje, codigoGenerado);
-                mensaje.BodyEncoding = Encoding.UTF8;
-                mensaje.SubjectEncoding = Encoding.UTF8;
+            string cuerpo = ConstruirCuerpoMensaje(usuarioDestino, codigo);
 
-                using (var cliente = new SmtpClient(host, puerto))
+            try
+            {
+                using (var mensaje = new MailMessage(remitente, correoDestino, asunto, cuerpo))
                 {
-                    cliente.EnableSsl = habilitarSsl;
-                    if (!string.IsNullOrWhiteSpace(usuario))
-                    {
-                        cliente.Credentials = new NetworkCredential(usuario, contrasena);
-                    }
+                    mensaje.IsBodyHtml = false;
 
-                    await cliente.SendMailAsync(mensaje).ConfigureAwait(false);
+                    using (var cliente = new SmtpClient(host, puerto))
+                    {
+                        cliente.EnableSsl = habilitarSsl;
+
+                        if (!string.IsNullOrWhiteSpace(contrasena))
+                        {
+                            cliente.Credentials = new NetworkCredential(usuarioSmtp, contrasena);
+                        }
+
+                        await cliente.SendMailAsync(mensaje).ConfigureAwait(false);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static string ObtenerConfiguracion(params string[] claves)
+        {
+            if (claves == null)
+            {
+                return null;
+            }
+
+            foreach (string clave in claves)
+            {
+                if (string.IsNullOrWhiteSpace(clave))
+                {
+                    continue;
+                }
+
+                string valor = ConfigurationManager.AppSettings[clave];
+                if (!string.IsNullOrWhiteSpace(valor))
+                {
+                    return valor;
                 }
             }
+
+            return null;
+        }
+
+        private static string ConstruirCuerpoMensaje(string usuarioDestino, string codigo)
+        {
+            var builder = new StringBuilder();
+
+            if (!string.IsNullOrWhiteSpace(usuarioDestino))
+            {
+                builder.AppendLine($"Hola {usuarioDestino},");
+            }
+            else
+            {
+                builder.AppendLine("Hola,");
+            }
+
+            builder.AppendLine();
+            builder.AppendLine($"Tu código de verificación es: {codigo}");
+            builder.AppendLine();
+            builder.AppendLine("Si no solicitaste este código puedes ignorar este mensaje.");
+
+            return builder.ToString();
         }
     }
 }

@@ -464,16 +464,25 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("errorTextoCodigoExpiradoSolicitarNuevo", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Busca una cadena traducida similar a El código ingresado no es correcto o ha expirado..
+        ///   Busca una cadena traducida similar a El código enviado expiró..
         /// </summary>
-        public static string errorTextoCodigoIncorrectoExpirado {
+        public static string avisoTextoCodigoExpirado {
             get {
-                return ResourceManager.GetString("errorTextoCodigoIncorrectoExpirado", resourceCulture);
+                return ResourceManager.GetString("avisoTextoCodigoExpirado", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a El código ingresado es incorrecto..
+        /// </summary>
+        public static string errorTextoCodigoIncorrecto {
+            get {
+                return ResourceManager.GetString("errorTextoCodigoIncorrecto", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a Ingrese el código de verificación enviado a su correo..
         /// </summary>
@@ -554,7 +563,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("errorTextoCredencialesTitulo", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a Los datos de la cuenta no están disponibles..
         /// </summary>
@@ -563,7 +572,16 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("errorTextoCuentaDatosNoDisponibles", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a La cuenta o usuario no se encontró, verifique el dato ingresado..
+        /// </summary>
+        public static string errorTextoCuentaNoEncontradaInicioSesion {
+            get {
+                return ResourceManager.GetString("errorTextoCuentaNoEncontradaInicioSesion", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a No se encontró la cuenta asociada a la sesión actual..
         /// </summary>
