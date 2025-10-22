@@ -82,7 +82,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                     UsuarioId = solicitud.UsuarioId,
                     Nombre = solicitud.Nombre,
                     Apellido = solicitud.Apellido,
-                    AvatarId = solicitud.AvatarId,
+                    AvatarRutaRelativa = solicitud.AvatarRutaRelativa,
                     Instagram = solicitud.Instagram,
                     Facebook = solicitud.Facebook,
                     X = solicitud.X,
@@ -98,11 +98,9 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                     return null;
                 }
 
-                return new ResultadoOperacion
-                {
-                    OperacionExitosa = resultado.OperacionExitosa,
-                    Mensaje = resultado.Mensaje
-                };
+                return resultado.OperacionExitosa
+                    ? ResultadoOperacion.Exitoso(resultado.Mensaje)
+                    : ResultadoOperacion.Fallo(resultado.Mensaje);
             }
             catch (FaultException ex)
             {

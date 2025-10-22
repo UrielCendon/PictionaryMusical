@@ -5,10 +5,10 @@ namespace Servicios.Contratos.DTOs
     [DataContract]
     public class ActualizarContrasenaDTO
     {
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string TokenCodigo { get; set; }
 
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string NuevaContrasena { get; set; }
     }
 }

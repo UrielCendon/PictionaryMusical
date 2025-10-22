@@ -1,75 +1,44 @@
+using System;
+using System.Linq;
 using Datos.DAL.Interfaces;
 using Datos.Modelo;
-using Datos.Utilidades;
-using System.Data.Entity;
-using System.Linq;
 
 namespace Datos.DAL.Implementaciones
 {
     public class UsuarioRepositorio : IUsuarioRepositorio
     {
-        public bool ExisteUsuario(string usuario)
+        private readonly BaseDatosPruebaEntities1 contexto;
+
+        public UsuarioRepositorio(BaseDatosPruebaEntities1 contexto)
         {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
-            {
-                return contexto.Usuario.Any(u => u.Nombre_Usuario == usuario);
-            }
+            this.contexto = contexto ?? throw new ArgumentNullException(nameof(contexto));
         }
 
-        public Usuario CrearUsuario(int jugadorId, string usuario, string contrasenaHash)
+        public bool ExisteNombreUsuario(string nombreUsuario)
         {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
-            {
-                var entidad = new Usuario
-                {
-                    Nombre_Usuario = usuario,
-                    Contrasena = contrasenaHash,
-                    Jugador_idJugador = jugadorId
-                };
-
-                contexto.Usuario.Add(entidad);
-                contexto.SaveChanges();
-
-                return entidad;
-            }
+            return contexto.Usuario.Any(u => u.Nombre_Usuario == nombreUsuario);
         }
 
-        public Usuario ObtenerUsuarioPorIdentificador(string identificador)
+        public Usuario CrearUsuario(Usuario usuario)
         {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
+            if (usuario == null)
             {
-                return contexto.Usuario
-                    .Include(u => u.Jugador)
-                    .FirstOrDefault(u =>
-                        u.Nombre_Usuario == identificador ||
-                        (u.Jugador != null && u.Jugador.Correo == identificador));
+                throw new ArgumentNullException(nameof(usuario));
             }
+
+            var entidad = contexto.Usuario.Add(usuario);
+            contexto.SaveChanges();
+            return entidad;
         }
 
-        public Usuario ObtenerUsuarioPorId(int idUsuario)
+        public Usuario ObtenerPorNombreUsuario(string nombreUsuario)
         {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                return contexto.Usuario
-                    .Include(u => u.Jugador)
-                    .FirstOrDefault(u => u.idUsuario == idUsuario);
+                throw new ArgumentException("El nombre de usuario es obligatorio.", nameof(nombreUsuario));
             }
-        }
 
-        public bool ActualizarContrasena(int idUsuario, string contrasenaHash)
-        {
-            using (var contexto = new BaseDatosPruebaEntities1(Conexion.ObtenerConexion()))
-            {
-                var usuario = contexto.Usuario.FirstOrDefault(u => u.idUsuario == idUsuario);
-
-                if (usuario == null)
-                {
-                    return false;
-                }
-
-                usuario.Contrasena = contrasenaHash;
-                return contexto.SaveChanges() > 0;
-            }
+            return contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == nombreUsuario);
         }
     }
 }

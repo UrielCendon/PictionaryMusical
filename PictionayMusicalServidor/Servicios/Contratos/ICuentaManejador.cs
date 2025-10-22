@@ -1,5 +1,5 @@
-using Servicios.Contratos.DTOs;
 using System.ServiceModel;
+using Servicios.Contratos.DTOs;
 
 namespace Servicios.Contratos
 {
@@ -7,7 +7,15 @@ namespace Servicios.Contratos
     public interface ICuentaManejador
     {
         [OperationContract]
-        [FaultContract(typeof(ErrorDetalleServicioDTO))]
+        ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta);
+
+        [OperationContract]
+        ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoVerificacionDTO solicitud);
+
+        [OperationContract]
+        ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmarCodigoDTO confirmacion);
+
+        [OperationContract]
         ResultadoRegistroCuentaDTO RegistrarCuenta(NuevaCuentaDTO nuevaCuenta);
     }
 }

@@ -1,6 +1,6 @@
-using Servicios.Contratos.DTOs;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Servicios.Contratos.DTOs;
 
 namespace Servicios.Contratos
 {
@@ -8,7 +8,6 @@ namespace Servicios.Contratos
     public interface IClasificacionManejador
     {
         [OperationContract]
-        [FaultContract(typeof(ErrorDetalleServicioDTO))]
-        List<ClasificacionUsuarioDTO> ObtenerTopJugadores();
+        IList<ClasificacionUsuarioDTO> ObtenerTopJugadores();
     }
 }

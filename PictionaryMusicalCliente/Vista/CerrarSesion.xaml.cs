@@ -27,19 +27,20 @@ namespace PictionaryMusicalCliente
 
         private void BotonAceptar(object sender, RoutedEventArgs e)
         {
-            InicioSesion inicio = new InicioSesion();
-            SesionUsuarioActual.Instancia.Limpiar();
-            Application.Current.MainWindow = inicio;
-            inicio.Show();
+            var ventanasActivas = Application.Current.Windows.Cast<Window>().ToList();
 
-            this.Close();
+            SesionUsuarioActual.Instancia.CerrarSesion();
 
-            Window ventanaActual = this;
-            while(ventanaActual != null)
+            var inicioSesion = new InicioSesion();
+            Application.Current.MainWindow = inicioSesion;
+            inicioSesion.Show();
+
+            foreach (Window ventana in ventanasActivas)
             {
-                Window owner = ventanaActual.Owner;
-                ventanaActual.Close();
-                ventanaActual = owner;
+                if (ventana != inicioSesion)
+                {
+                    ventana.Close();
+                }
             }
         }
 

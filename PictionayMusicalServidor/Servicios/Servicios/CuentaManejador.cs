@@ -1,62 +1,138 @@
-using Datos.DAL.Implementaciones;
-using Datos.DAL.Interfaces;
 using Servicios.Contratos;
-using Servicios.Contratos.DTOs;
 using System;
-using System.Data;
 using log4net;
+using Servicios.Contratos.DTOs;
+using Datos.DAL.Implementaciones;
+using Datos.Modelo;
+using Datos.Utilidades;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace Servicios.Servicios
 {
     public class CuentaManejador : ICuentaManejador
     {
-        private readonly CuentaRegistroServicio _registroServicio;
-        private static readonly ILog Bitacora = LogManager.GetLogger(typeof(CuentaManejador));
-
-        public CuentaManejador()
-            : this(new JugadorRepositorio(), new UsuarioRepositorio(), new ClasificacionRepositorio())
-        {
-        }
-
-        public CuentaManejador(
-            IJugadorRepositorio jugadorRepositorio,
-            IUsuarioRepositorio usuarioRepositorio,
-            IClasificacionRepositorio clasificacionRepositorio)
-        {
-            _registroServicio = new CuentaRegistroServicio(
-                jugadorRepositorio ?? throw new ArgumentNullException(nameof(jugadorRepositorio)),
-                usuarioRepositorio ?? throw new ArgumentNullException(nameof(usuarioRepositorio)),
-                clasificacionRepositorio ?? throw new ArgumentNullException(nameof(clasificacionRepositorio)));
-        }
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(CuentaManejador));
 
         public ResultadoRegistroCuentaDTO RegistrarCuenta(NuevaCuentaDTO nuevaCuenta)
         {
-            Bitacora.Info("Solicitud para registrar una nueva cuenta recibida.");
+            if (nuevaCuenta == null)
+            {
+                throw new ArgumentNullException(nameof(nuevaCuenta));
+            }
+
+            if (!CodigoVerificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
+            {
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = "La cuenta no ha sido verificada."
+                };
+            }
 
             try
             {
-                return _registroServicio.RegistrarCuenta(nuevaCuenta);
-            }
-            catch (ArgumentNullException ex)
-            {
-                Bitacora.Warn("La información enviada para registrar la cuenta es inválida.", ex);
-                throw FabricaFallaServicio.Crear("SOLICITUD_INVALIDA", "Los datos de la cuenta no son válidos.", "Solicitud inválida.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Bitacora.Error("Operación inválida detectada al registrar la cuenta.", ex);
-                throw FabricaFallaServicio.Crear("OPERACION_INVALIDA", "No fue posible completar el registro de la cuenta.", "Operación inválida en la capa de datos.");
-            }
-            catch (DataException ex)
-            {
-                Bitacora.Error("Error en la base de datos al registrar la cuenta.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_BASE_DATOS", "Ocurrió un problema al registrar la cuenta.", "Fallo en la base de datos.");
+                using (var contexto = CrearContexto())
+                using (var transaccion = contexto.Database.BeginTransaction())
+                {
+                    var usuarioRepositorio = new UsuarioRepositorio(contexto);
+                    var jugadorRepositorio = new JugadorRepositorio(contexto);
+                    var clasificacionRepositorio = new ClasificacionRepositorio(contexto);
+                    var avatarRepositorio = new AvatarRepositorio(contexto);
+
+                    bool usuarioRegistrado = usuarioRepositorio.ExisteNombreUsuario(nuevaCuenta.Usuario);
+                    bool correoRegistrado = jugadorRepositorio.ExisteCorreo(nuevaCuenta.Correo);
+
+                    if (usuarioRegistrado || correoRegistrado)
+                    {
+                        return new ResultadoRegistroCuentaDTO
+                        {
+                            RegistroExitoso = false,
+                            UsuarioYaRegistrado = usuarioRegistrado,
+                            CorreoYaRegistrado = correoRegistrado,
+                            Mensaje = null
+                        };
+                    }
+
+                    if (string.IsNullOrWhiteSpace(nuevaCuenta.AvatarRutaRelativa))
+                    {
+                        return new ResultadoRegistroCuentaDTO
+                        {
+                            RegistroExitoso = false,
+                            Mensaje = "Avatar no válido."
+                        };
+                    }
+
+                    Avatar avatar = avatarRepositorio.ObtenerAvatarPorRuta(nuevaCuenta.AvatarRutaRelativa);
+
+                    if (avatar == null)
+                    {
+                        return new ResultadoRegistroCuentaDTO
+                        {
+                            RegistroExitoso = false,
+                            Mensaje = "Avatar no válido."
+                        };
+                    }
+
+                    var clasificacion = clasificacionRepositorio.CrearClasificacionInicial();
+
+                    var jugador = jugadorRepositorio.CrearJugador(new Jugador
+                    {
+                        Nombre = nuevaCuenta.Nombre,
+                        Apellido = nuevaCuenta.Apellido,
+                        Correo = nuevaCuenta.Correo,
+                        Avatar_idAvatar = avatar.idAvatar,
+                        Clasificacion_idClasificacion = clasificacion.idClasificacion
+                    });
+
+                    usuarioRepositorio.CrearUsuario(new Usuario
+                    {
+                        Nombre_Usuario = nuevaCuenta.Usuario,
+                        Contrasena = BCryptNet.HashPassword(nuevaCuenta.Contrasena),
+                        Jugador_idJugador = jugador.idJugador
+                    });
+
+                    transaccion.Commit();
+
+                    CodigoVerificacionServicio.LimpiarVerificacion(nuevaCuenta);
+
+                    return new ResultadoRegistroCuentaDTO
+                    {
+                        RegistroExitoso = true
+                    };
+                }
             }
             catch (Exception ex)
             {
-                Bitacora.Fatal("Error inesperado al registrar la cuenta.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_NO_CONTROLADO", "Ocurrió un error inesperado al registrar la cuenta.", "Error interno del servidor.");
+                Logger.Error("Error al registrar la cuenta", ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = ex.Message
+                };
             }
+        }
+
+        private static BaseDatosPruebaEntities1 CrearContexto()
+        {
+            string conexion = Conexion.ObtenerConexion();
+            return string.IsNullOrWhiteSpace(conexion)
+                ? new BaseDatosPruebaEntities1()
+                : new BaseDatosPruebaEntities1(conexion);
+        }
+
+        public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
+        {
+            return CodigoVerificacionServicio.SolicitarCodigo(nuevaCuenta);
+        }
+
+        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenviarCodigoVerificacionDTO solicitud)
+        {
+            return CodigoVerificacionServicio.ReenviarCodigo(solicitud);
+        }
+
+        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmarCodigoDTO confirmacion)
+        {
+            return CodigoVerificacionServicio.ConfirmarCodigo(confirmacion);
         }
     }
 }

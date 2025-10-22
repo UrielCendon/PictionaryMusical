@@ -18,12 +18,13 @@ namespace HostServidor
 
             using (var hostCuenta = new ServiceHost(typeof(Servicios.Servicios.CuentaManejador)))
             using (var hostCodigo = new ServiceHost(typeof(Servicios.Servicios.CodigoVerificacionManejador)))
-            using (var hostReenvio = new ServiceHost(typeof(Servicios.Servicios.ReenviarCodigoVerificacionManejador)))
             using (var hostAvatares = new ServiceHost(typeof(Servicios.Servicios.CatalogoAvatares)))
             using (var hostInicioSesion = new ServiceHost(typeof(Servicios.Servicios.InicioSesionManejador)))
             using (var hostCambioContrasena = new ServiceHost(typeof(Servicios.Servicios.CambiarContrasenaManejador)))
             using (var hostClasificacion = new ServiceHost(typeof(Servicios.Servicios.ClasificacionManejador)))
             using (var hostPerfil = new ServiceHost(typeof(Servicios.Servicios.PerfilManejador)))
+            using (var hostAmigos = new ServiceHost(typeof(Servicios.Servicios.AmigosManejador)))
+            using (var hostListaAmigos = new ServiceHost(typeof(Servicios.Servicios.ListaAmigosManejador)))
             {
                 try
                 {
@@ -39,13 +40,6 @@ namespace HostServidor
                     foreach (var ep in hostCodigo.Description.Endpoints)
                     {
                         Bitacora.Info($"Código -> {ep.Address} ({ep.Binding.Name})");
-                    }
-
-                    hostReenvio.Open();
-                    Bitacora.Info("Servicio Reenvío Código iniciado.");
-                    foreach (var ep in hostReenvio.Description.Endpoints)
-                    {
-                        Bitacora.Info($"Reenvío -> {ep.Address} ({ep.Binding.Name})");
                     }
 
                     hostAvatares.Open();
@@ -83,6 +77,20 @@ namespace HostServidor
                         Bitacora.Info($"Perfil -> {ep.Address} ({ep.Binding.Name})");
                     }
 
+                    hostAmigos.Open();
+                    Bitacora.Info("Servicio Amigos iniciado.");
+                    foreach (var ep in hostAmigos.Description.Endpoints)
+                    {
+                        Bitacora.Info($"Amigos -> {ep.Address} ({ep.Binding.Name})");
+                    }
+
+                    hostListaAmigos.Open();
+                    Bitacora.Info("Servicio Lista de amigos iniciado.");
+                    foreach (var ep in hostListaAmigos.Description.Endpoints)
+                    {
+                        Bitacora.Info($"ListaAmigos -> {ep.Address} ({ep.Binding.Name})");
+                    }
+
                     Console.WriteLine("Servicios arriba. ENTER para salir.");
                     Console.ReadLine();
                 }
@@ -105,13 +113,14 @@ namespace HostServidor
                 finally
                 {
                     CerrarFormaSegura(hostAvatares);
-                    CerrarFormaSegura(hostReenvio);
                     CerrarFormaSegura(hostCodigo);
                     CerrarFormaSegura(hostCuenta);
                     CerrarFormaSegura(hostInicioSesion);
                     CerrarFormaSegura(hostCambioContrasena);
                     CerrarFormaSegura(hostClasificacion);
                     CerrarFormaSegura(hostPerfil);
+                    CerrarFormaSegura(hostAmigos);
+                    CerrarFormaSegura(hostListaAmigos);
                     Bitacora.Info("Host detenido.");
                 }
             }

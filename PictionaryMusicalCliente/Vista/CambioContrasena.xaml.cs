@@ -1,123 +1,63 @@
-using System;
+using System.Collections.Generic;
 using System.Windows;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Dialogos;
-using PictionaryMusicalCliente.Servicios.Wcf;
+using System.Windows.Controls;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Cuentas;
-using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente
 {
     public partial class CambioContrasena : Window
     {
-        private readonly CambioContrasenaVistaModelo _vistaModelo;
-
-        public CambioContrasena(string tokenCodigo, string identificador)
+        public CambioContrasena()
         {
-            if (string.IsNullOrWhiteSpace(tokenCodigo))
-            {
-                throw new ArgumentException(LangResources.Lang.errorTextoTokenCodigoObligatorio, nameof(tokenCodigo));
-            }
-
-            _ = identificador;
-
             InitializeComponent();
-
-            IDialogService dialogService = new DialogService();
-            ICambioContrasenaService cambioContrasenaService = new CambioContrasenaService();
-
-            _vistaModelo = new CambioContrasenaVistaModelo(
-                dialogService,
-                cambioContrasenaService,
-                tokenCodigo);
-
-            _vistaModelo.SolicitarCerrar += VistaModelo_SolicitarCerrar;
-            _vistaModelo.ContrasenaActualizacionCompletada += VistaModelo_ContrasenaActualizacionCompletada;
-            _vistaModelo.ValidacionCamposProcesada += VistaModelo_ValidacionCamposProcesada;
-
-            DataContext = _vistaModelo;
-
-            Closed += CambioContrasena_Closed;
         }
 
-        public bool ContrasenaActualizada => _vistaModelo?.ContrasenaActualizada ?? false;
+        public void ConfigurarVistaModelo(CambioContrasenaVistaModelo vistaModelo)
+        {
+            if (vistaModelo == null)
+            {
+                return;
+            }
+
+            vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
+            DataContext = vistaModelo;
+        }
 
         private void ContrasenaNuevaPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (_vistaModelo != null)
+            if (DataContext is CambioContrasenaVistaModelo vistaModelo && sender is PasswordBox passwordBox)
             {
-                _vistaModelo.NuevaContrasena = bloqueContrasenaNueva.Password;
+                vistaModelo.NuevaContrasena = passwordBox.Password;
             }
         }
 
         private void ContrasenaConfirmacionPasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (_vistaModelo != null)
+            if (DataContext is CambioContrasenaVistaModelo vistaModelo && sender is PasswordBox passwordBox)
             {
-                _vistaModelo.ConfirmacionContrasena = bloqueContrasenaConfirmacion.Password;
+                vistaModelo.ConfirmacionContrasena = passwordBox.Password;
             }
         }
 
-        private void VistaModelo_ValidacionCamposProcesada(object sender, CambioContrasenaVistaModelo.ValidacionCamposEventArgs e)
+        private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
             ControlVisualHelper.RestablecerEstadoCampo(bloqueContrasenaNueva);
             ControlVisualHelper.RestablecerEstadoCampo(bloqueContrasenaConfirmacion);
 
-            if (e == null)
+            if (camposInvalidos == null)
             {
                 return;
             }
 
-            if (e.CamposLimpiar.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.NuevaContrasena))
-            {
-                bloqueContrasenaNueva.Clear();
-            }
-
-            if (e.CamposLimpiar.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.ConfirmacionContrasena))
-            {
-                bloqueContrasenaConfirmacion.Clear();
-            }
-
-            if (e.CamposInvalidos.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.NuevaContrasena))
+            if (camposInvalidos.Contains(nameof(CambioContrasenaVistaModelo.NuevaContrasena)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueContrasenaNueva);
             }
 
-            if (e.CamposInvalidos.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.ConfirmacionContrasena))
+            if (camposInvalidos.Contains(nameof(CambioContrasenaVistaModelo.ConfirmacionContrasena)))
             {
                 ControlVisualHelper.MarcarCampoInvalido(bloqueContrasenaConfirmacion);
-            }
-
-            if (e.CampoEnfoque.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.NuevaContrasena))
-            {
-                bloqueContrasenaNueva.Focus();
-            }
-            else if (e.CampoEnfoque.HasFlag(CambioContrasenaVistaModelo.CampoEntrada.ConfirmacionContrasena))
-            {
-                bloqueContrasenaConfirmacion.Focus();
-            }
-        }
-
-        private void VistaModelo_SolicitarCerrar(object sender, EventArgs e)
-        {
-            DialogResult = false;
-            Close();
-        }
-
-        private void VistaModelo_ContrasenaActualizacionCompletada(object sender, EventArgs e)
-        {
-            DialogResult = true;
-            Close();
-        }
-
-        private void CambioContrasena_Closed(object sender, EventArgs e)
-        {
-            if (_vistaModelo != null)
-            {
-                _vistaModelo.SolicitarCerrar -= VistaModelo_SolicitarCerrar;
-                _vistaModelo.ContrasenaActualizacionCompletada -= VistaModelo_ContrasenaActualizacionCompletada;
-                _vistaModelo.ValidacionCamposProcesada -= VistaModelo_ValidacionCamposProcesada;
             }
         }
     }

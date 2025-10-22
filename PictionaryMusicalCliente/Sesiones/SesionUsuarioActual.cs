@@ -1,64 +1,31 @@
 using System;
-using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Modelo.Cuentas;
 
 namespace PictionaryMusicalCliente.Sesiones
 {
     public sealed class SesionUsuarioActual
     {
-        private static readonly Lazy<SesionUsuarioActual> InstanciaUnica =
+        private static readonly Lazy<SesionUsuarioActual> InstanciaInterna =
             new Lazy<SesionUsuarioActual>(() => new SesionUsuarioActual());
-
-        private UsuarioAutenticado _usuario;
 
         private SesionUsuarioActual()
         {
         }
 
-        public static SesionUsuarioActual Instancia => InstanciaUnica.Value;
+        public static SesionUsuarioActual Instancia => InstanciaInterna.Value;
 
-        public event EventHandler SesionActualizada;
+        public UsuarioSesion Usuario { get; private set; }
 
-        public UsuarioAutenticado Usuario => _usuario;
+        public bool EstaAutenticado => Usuario != null;
 
-        public void EstablecerUsuario(UsuarioAutenticado usuario)
+        public void EstablecerUsuario(UsuarioSesion usuario)
         {
-            _usuario = usuario;
-            NotificarCambio();
+            Usuario = usuario ?? throw new ArgumentNullException(nameof(usuario));
         }
 
-        public void ActualizarDatosPersonales(
-            string nombre,
-            string apellido,
-            int avatarId,
-            string instagram,
-            string facebook,
-            string x,
-            string discord)
+        public void CerrarSesion()
         {
-            if (_usuario == null)
-            {
-                return;
-            }
-
-            _usuario.Nombre = nombre;
-            _usuario.Apellido = apellido;
-            _usuario.AvatarId = avatarId;
-            _usuario.Instagram = instagram;
-            _usuario.Facebook = facebook;
-            _usuario.X = x;
-            _usuario.Discord = discord;
-            NotificarCambio();
-        }
-
-        public void Limpiar()
-        {
-            _usuario = null;
-            NotificarCambio();
-        }
-
-        private void NotificarCambio()
-        {
-            SesionActualizada?.Invoke(this, EventArgs.Empty);
+            Usuario = null;
         }
     }
 }

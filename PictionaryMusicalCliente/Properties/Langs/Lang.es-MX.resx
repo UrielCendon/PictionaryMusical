@@ -253,6 +253,18 @@
   <data name="eliminarAmigoTextoEliminar" xml:space="preserve">
     <value>ELIMINAR AMIGO</value>
   </data>
+  <data name="amigosTextoSolicitudEnviada" xml:space="preserve">
+    <value>Solicitud de amistad enviada.</value>
+  </data>
+  <data name="amigosTextoSolicitudAceptada" xml:space="preserve">
+    <value>Solicitud de amistad aceptada.</value>
+  </data>
+  <data name="amigosTextoSolicitudCancelada" xml:space="preserve">
+    <value>Solicitud de amistad cancelada.</value>
+  </data>
+  <data name="amigosTextoAmigoEliminado" xml:space="preserve">
+    <value>Se eliminó al amigo de tu lista.</value>
+  </data>
   <data name="globalTextoInvitaciones" xml:space="preserve">
     <value>INVITACIONES</value>
   </data>
@@ -473,8 +485,11 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoCampoObligatorio" xml:space="preserve">
     <value>El {0} es obligatorio.</value>
   </data>
-  <data name="errorTextoCodigoIncorrectoExpirado" xml:space="preserve">
-    <value>El código ingresado no es correcto o ha expirado.</value>
+  <data name="avisoTextoCodigoExpirado" xml:space="preserve">
+    <value>El código enviado expiró.</value>
+  </data>
+  <data name="errorTextoCodigoIncorrecto" xml:space="preserve">
+    <value>El código ingresado es incorrecto.</value>
   </data>
   <data name="errorTextoCodigoVerificacionRequerido" xml:space="preserve">
     <value>Ingrese el código de verificación enviado a su correo.</value>
@@ -490,6 +505,9 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoCorreoInvalido" xml:space="preserve">
     <value>Ingrese un correo electrónico válido.</value>
+  </data>
+  <data name="errorTextoCuentaNoEncontradaInicioSesion" xml:space="preserve">
+    <value>La cuenta o usuario no se encontró, verifique el dato ingresado.</value>
   </data>
   <data name="errorTextoCuentaNoEncontradaSesion" xml:space="preserve">
     <value>No se encontró la cuenta asociada a la sesión actual.</value>

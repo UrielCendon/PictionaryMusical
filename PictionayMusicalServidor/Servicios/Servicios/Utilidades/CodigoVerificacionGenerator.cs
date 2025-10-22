@@ -1,21 +1,25 @@
 using System;
-using System.Security.Cryptography;
 
 namespace Servicios.Servicios.Utilidades
 {
     internal static class CodigoVerificacionGenerator
     {
-        public static string GenerarCodigo()
+        private static readonly Random Random = new Random();
+
+        public static string GenerarCodigo(int longitud = 6)
         {
-            var bytes = new byte[4];
-            using (var rng = RandomNumberGenerator.Create())
+            if (longitud <= 0)
             {
-                rng.GetBytes(bytes);
+                throw new ArgumentOutOfRangeException(nameof(longitud));
             }
 
-            int valor = BitConverter.ToInt32(bytes, 0) & int.MaxValue;
-            int codigo = valor % 1000000;
-            return codigo.ToString("D6");
+            lock (Random)
+            {
+                int max = (int)Math.Pow(10, longitud) - 1;
+                int min = (int)Math.Pow(10, longitud - 1);
+                int numero = Random.Next(min, max);
+                return numero.ToString();
+            }
         }
     }
 }

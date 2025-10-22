@@ -5,7 +5,7 @@ namespace Servicios.Contratos.DTOs
     [DataContract]
     public class ReenviarCodigoVerificacionDTO
     {
-        [DataMember]
-        public string TokenVerificacion { get; set; }
+        [DataMember(IsRequired = true)]
+        public string TokenCodigo { get; set; }
     }
 }

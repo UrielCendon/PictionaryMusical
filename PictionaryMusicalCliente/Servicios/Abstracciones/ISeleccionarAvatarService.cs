@@ -5,6 +5,6 @@ namespace PictionaryMusicalCliente.Servicios.Abstracciones
 {
     public interface ISeleccionarAvatarService
     {
-        Task<ObjetoAvatar> SeleccionarAsync();
+        Task<ObjetoAvatar> SeleccionarAvatarAsync(string avatarSeleccionadoRutaRelativa = null);
     }
 }

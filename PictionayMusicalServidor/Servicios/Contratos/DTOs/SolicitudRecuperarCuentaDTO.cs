@@ -5,7 +5,7 @@ namespace Servicios.Contratos.DTOs
     [DataContract]
     public class SolicitudRecuperarCuentaDTO
     {
-        [DataMember]
+        [DataMember(IsRequired = true)]
         public string Identificador { get; set; }
     }
 }

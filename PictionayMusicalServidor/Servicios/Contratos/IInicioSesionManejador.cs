@@ -1,5 +1,6 @@
-using Servicios.Contratos.DTOs;
+
 using System.ServiceModel;
+using Servicios.Contratos.DTOs;
 
 namespace Servicios.Contratos
 {
@@ -7,7 +8,6 @@ namespace Servicios.Contratos
     public interface IInicioSesionManejador
     {
         [OperationContract]
-        [FaultContract(typeof(ErrorDetalleServicioDTO))]
         ResultadoInicioSesionDTO IniciarSesion(CredencialesInicioSesionDTO credenciales);
     }
 }

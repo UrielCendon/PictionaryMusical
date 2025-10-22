@@ -1,301 +1,252 @@
 using System;
-using System.Data;
+using System.Data.Entity;
 using System.Linq;
 using System.ServiceModel;
 using Datos.DAL.Implementaciones;
-using Datos.DAL.Interfaces;
 using Datos.Modelo;
+using Datos.Utilidades;
 using Servicios.Contratos;
 using Servicios.Contratos.DTOs;
 using log4net;
 
 namespace Servicios.Servicios
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class PerfilManejador : IPerfilManejador
     {
-        private const int LongitudMaximaNombre = 50;
         private const int LongitudMaximaRedSocial = 50;
-
-        private readonly IUsuarioRepositorio _usuarioRepositorio;
-        private readonly IJugadorRepositorio _jugadorRepositorio;
-        private readonly IAvatarRepositorio _avatarRepositorio;
-        private readonly IRedSocialRepositorio _redSocialRepositorio;
-        private static readonly ILog Bitacora = LogManager.GetLogger(typeof(PerfilManejador));
-
-        public PerfilManejador()
-            : this(
-                new UsuarioRepositorio(),
-                new JugadorRepositorio(),
-                new AvatarRepositorio(),
-                new RedSocialRepositorio())
-        {
-        }
-
-        public PerfilManejador(
-            IUsuarioRepositorio usuarioRepositorio,
-            IJugadorRepositorio jugadorRepositorio,
-            IAvatarRepositorio avatarRepositorio,
-            IRedSocialRepositorio redSocialRepositorio)
-        {
-            _usuarioRepositorio = usuarioRepositorio ?? throw new ArgumentNullException(nameof(usuarioRepositorio));
-            _jugadorRepositorio = jugadorRepositorio ?? throw new ArgumentNullException(nameof(jugadorRepositorio));
-            _avatarRepositorio = avatarRepositorio ?? throw new ArgumentNullException(nameof(avatarRepositorio));
-            _redSocialRepositorio = redSocialRepositorio ?? throw new ArgumentNullException(nameof(redSocialRepositorio));
-        }
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(PerfilManejador));
 
         public UsuarioDTO ObtenerPerfil(int idUsuario)
         {
-            Bitacora.InfoFormat("Solicitud para obtener el perfil del usuario con identificador {0}.", idUsuario);
+            if (idUsuario <= 0)
+            {
+                throw new FaultException("Los datos proporcionados no son válidos para obtener el perfil.");
+            }
 
             try
             {
-                if (idUsuario <= 0)
+                using (BaseDatosPruebaEntities1 contexto = CrearContexto())
                 {
-                    Bitacora.Warn("Se recibió un identificador de usuario inválido para consultar el perfil.");
-                    return null;
+                    Usuario usuario = contexto.Usuario
+                        .Include(u => u.Jugador.Avatar)
+                        .Include(u => u.Jugador.RedSocial)
+                        .FirstOrDefault(u => u.idUsuario == idUsuario);
+
+                    if (usuario == null)
+                    {
+                        throw new FaultException("No se encontró el usuario especificado.");
+                    }
+
+                    Jugador jugador = usuario.Jugador;
+
+                    if (jugador == null)
+                    {
+                        throw new FaultException("No existe un jugador asociado al usuario especificado.");
+                    }
+
+                    RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
+
+                    return new UsuarioDTO
+                    {
+                        IdUsuario = usuario.idUsuario,
+                        JugadorId = jugador.idJugador,
+                        NombreUsuario = usuario.Nombre_Usuario,
+                        Nombre = jugador.Nombre,
+                        Apellido = jugador.Apellido,
+                        Correo = jugador.Correo,
+                        AvatarId = jugador.Avatar_idAvatar,
+                        AvatarRutaRelativa = jugador.Avatar?.Avatar_Ruta,
+                        Instagram = redSocial?.Instagram,
+                        Facebook = redSocial?.facebook,
+                        X = redSocial?.x,
+                        Discord = redSocial?.discord
+                    };
                 }
-
-                Usuario usuario = _usuarioRepositorio.ObtenerUsuarioPorId(idUsuario);
-
-                if (usuario == null)
-                {
-                    Bitacora.WarnFormat("No se encontró información de usuario para el identificador {0}.", idUsuario);
-                    return null;
-                }
-
-                Jugador jugador = usuario.Jugador;
-                RedSocial redSocial = null;
-
-                if (jugador != null)
-                {
-                    redSocial = _redSocialRepositorio.ObtenerPorJugadorId(jugador.idJugador);
-                }
-
-                return new UsuarioDTO
-                {
-                    IdUsuario = usuario.idUsuario,
-                    JugadorId = usuario.Jugador_idJugador,
-                    NombreUsuario = usuario.Nombre_Usuario,
-                    Nombre = jugador?.Nombre,
-                    Apellido = jugador?.Apellido,
-                    Correo = jugador?.Correo,
-                    AvatarId = jugador?.Avatar_idAvatar ?? 0,
-                    Instagram = redSocial?.Instagram,
-                    Facebook = redSocial?.facebook,
-                    X = redSocial?.x,
-                    Discord = redSocial?.discord
-                };
             }
-            catch (ArgumentNullException ex)
+            catch (FaultException)
             {
-                Bitacora.Warn("La información necesaria para obtener el perfil es nula.", ex);
-                throw FabricaFallaServicio.Crear("SOLICITUD_INVALIDA", "Los datos proporcionados no son válidos para obtener el perfil.", "Solicitud inválida.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Bitacora.Error("Se produjo una operación inválida al consultar el perfil.", ex);
-                throw FabricaFallaServicio.Crear("OPERACION_INVALIDA", "No fue posible obtener el perfil del usuario.", "Operación inválida en la capa de datos.");
-            }
-            catch (DataException ex)
-            {
-                Bitacora.Error("Ocurrió un error en la base de datos al obtener el perfil.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_BASE_DATOS", "Ocurrió un problema al consultar la información del perfil.", "Fallo en la base de datos.");
+                throw;
             }
             catch (Exception ex)
             {
-                Bitacora.Fatal("Error inesperado al obtener el perfil del usuario.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_NO_CONTROLADO", "Ocurrió un error inesperado al obtener el perfil.", "Error interno del servidor.");
+                Logger.Error("Error al obtener el perfil del usuario", ex);
+                throw new FaultException("Ocurrió un problema al consultar la información del perfil.");
             }
         }
 
         public ResultadoOperacionDTO ActualizarPerfil(ActualizarPerfilDTO solicitud)
         {
-            Bitacora.InfoFormat("Solicitud para actualizar el perfil del usuario {0}.", solicitud?.UsuarioId);
-
             if (solicitud == null)
             {
-                Bitacora.Warn("Se recibió una solicitud de actualización de perfil nula.");
-                return CrearResultado(false, "La solicitud de actualización es obligatoria.");
+                throw new FaultException("La solicitud de actualización es obligatoria.");
             }
 
             if (solicitud.UsuarioId <= 0)
             {
-                Bitacora.Warn("El identificador de usuario proporcionado es inválido.");
-                return CrearResultado(false, "El identificador de usuario es inválido.");
+                return CrearResultadoFallo("El identificador de usuario es inválido.");
             }
 
-            string nombreNormalizado = solicitud.Nombre?.Trim();
-            string apellidoNormalizado = solicitud.Apellido?.Trim();
-
-            if (!EsTextoValido(nombreNormalizado))
+            string nombre = solicitud.Nombre?.Trim();
+            if (string.IsNullOrWhiteSpace(nombre) || nombre.Length > 50)
             {
-                Bitacora.Warn("El nombre proporcionado no supera las validaciones establecidas.");
-                return CrearResultado(false, "El nombre es obligatorio y no debe exceder 50 caracteres.");
+                return CrearResultadoFallo("El nombre es obligatorio y no debe exceder 50 caracteres.");
             }
 
-            if (!EsTextoValido(apellidoNormalizado))
+            string apellido = solicitud.Apellido?.Trim();
+            if (string.IsNullOrWhiteSpace(apellido) || apellido.Length > 50)
             {
-                Bitacora.Warn("El apellido proporcionado no supera las validaciones establecidas.");
-                return CrearResultado(false, "El apellido es obligatorio y no debe exceder 50 caracteres.");
+                return CrearResultadoFallo("El apellido es obligatorio y no debe exceder 50 caracteres.");
             }
 
-            if (solicitud.AvatarId <= 0)
+            string rutaAvatar = solicitud.AvatarRutaRelativa?.Trim();
+            if (string.IsNullOrWhiteSpace(rutaAvatar))
             {
-                Bitacora.Warn("Se recibió un avatar inválido en la solicitud de actualización.");
-                return CrearResultado(false, "Selecciona un avatar válido.");
+                return CrearResultadoFallo("Selecciona un avatar válido.");
             }
 
-            string instagram = NormalizarRedSocial(solicitud.Instagram, "Instagram", out string errorRedInstagram);
-            if (!string.IsNullOrWhiteSpace(errorRedInstagram))
+            ResultadoOperacionDTO validacionRedes = ValidarRedesSociales(solicitud);
+            if (!validacionRedes.OperacionExitosa)
             {
-                Bitacora.Warn("La red social Instagram no es válida.");
-                return CrearResultado(false, errorRedInstagram);
-            }
-
-            string facebook = NormalizarRedSocial(solicitud.Facebook, "Facebook", out string errorRedFacebook);
-            if (!string.IsNullOrWhiteSpace(errorRedFacebook))
-            {
-                Bitacora.Warn("La red social Facebook no es válida.");
-                return CrearResultado(false, errorRedFacebook);
-            }
-
-            string x = NormalizarRedSocial(solicitud.X, "X", out string errorRedX);
-            if (!string.IsNullOrWhiteSpace(errorRedX))
-            {
-                Bitacora.Warn("La red social X no es válida.");
-                return CrearResultado(false, errorRedX);
-            }
-
-            string discord = NormalizarRedSocial(solicitud.Discord, "Discord", out string errorRedDiscord);
-            if (!string.IsNullOrWhiteSpace(errorRedDiscord))
-            {
-                Bitacora.Warn("La red social Discord no es válida.");
-                return CrearResultado(false, errorRedDiscord);
+                return validacionRedes;
             }
 
             try
             {
-                Usuario usuario = _usuarioRepositorio.ObtenerUsuarioPorId(solicitud.UsuarioId);
-
-                if (usuario == null)
+                using (BaseDatosPruebaEntities1 contexto = CrearContexto())
                 {
-                    Bitacora.WarnFormat("No se encontró el usuario {0} para actualizar el perfil.", solicitud.UsuarioId);
-                    return CrearResultado(false, "No se encontró el usuario especificado.");
+                    Usuario usuario = contexto.Usuario
+                        .Include(u => u.Jugador.RedSocial)
+                        .FirstOrDefault(u => u.idUsuario == solicitud.UsuarioId);
+
+                    if (usuario == null)
+                    {
+                        return CrearResultadoFallo("No se encontró el usuario especificado.");
+                    }
+
+                    Jugador jugador = usuario.Jugador;
+
+                    if (jugador == null)
+                    {
+                        return CrearResultadoFallo("No existe un jugador asociado al usuario especificado.");
+                    }
+
+                    var avatarRepositorio = new AvatarRepositorio(contexto);
+                    Avatar avatar = avatarRepositorio.ObtenerAvatarPorRuta(rutaAvatar);
+                    if (avatar == null)
+                    {
+                        return CrearResultadoFallo("El avatar seleccionado no existe.");
+                    }
+
+                    jugador.Nombre = nombre;
+                    jugador.Apellido = apellido;
+                    jugador.Avatar_idAvatar = avatar.idAvatar;
+
+                    RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
+                    if (redSocial == null)
+                    {
+                        redSocial = new RedSocial
+                        {
+                            Jugador_idJugador = jugador.idJugador
+                        };
+                        contexto.RedSocial.Add(redSocial);
+                        jugador.RedSocial.Add(redSocial);
+                    }
+
+                    redSocial.Instagram = NormalizarRedSocial(solicitud.Instagram);
+                    redSocial.facebook = NormalizarRedSocial(solicitud.Facebook);
+                    redSocial.x = NormalizarRedSocial(solicitud.X);
+                    redSocial.discord = NormalizarRedSocial(solicitud.Discord);
+
+                    contexto.SaveChanges();
+
+                    return new ResultadoOperacionDTO
+                    {
+                        OperacionExitosa = true,
+                        Mensaje = "Perfil actualizado correctamente."
+                    };
                 }
-
-                if (usuario.Jugador == null)
-                {
-                    Bitacora.WarnFormat("El usuario {0} no cuenta con un jugador asociado.", solicitud.UsuarioId);
-                    return CrearResultado(false, "No existe un jugador asociado al usuario especificado.");
-                }
-
-                if (!_avatarRepositorio.ExisteAvatar(solicitud.AvatarId))
-                {
-                    Bitacora.WarnFormat("El avatar {0} no existe en el catálogo.", solicitud.AvatarId);
-                    return CrearResultado(false, "El avatar seleccionado no existe.");
-                }
-
-                int jugadorId = usuario.Jugador_idJugador;
-
-                bool jugadorActualizado = _jugadorRepositorio.ActualizarPerfil(
-                    jugadorId,
-                    nombreNormalizado,
-                    apellidoNormalizado,
-                    solicitud.AvatarId);
-
-                if (!jugadorActualizado)
-                {
-                    Bitacora.WarnFormat("No se lograron persistir los cambios del perfil para el usuario {0}.", solicitud.UsuarioId);
-                    return CrearResultado(false, "No fue posible actualizar el perfil.");
-                }
-
-                bool redesActualizadas = _redSocialRepositorio.GuardarRedSocial(
-                    jugadorId,
-                    instagram,
-                    facebook,
-                    x,
-                    discord);
-
-                if (!redesActualizadas)
-                {
-                    Bitacora.WarnFormat("No fue posible actualizar las redes sociales del jugador {0}.", jugadorId);
-                    return CrearResultado(false, "No fue posible actualizar el perfil.");
-                }
-
-                Bitacora.InfoFormat("Perfil actualizado correctamente para el usuario {0}.", solicitud.UsuarioId);
-                return CrearResultado(true, "Perfil actualizado correctamente.");
-            }
-            catch (ArgumentNullException ex)
-            {
-                Bitacora.Warn("Se encontraron valores nulos al actualizar el perfil.", ex);
-                throw FabricaFallaServicio.Crear("SOLICITUD_INVALIDA", "Los datos proporcionados no son válidos para actualizar el perfil.", "Solicitud inválida.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                Bitacora.Error("Se produjo una operación inválida al actualizar el perfil.", ex);
-                throw FabricaFallaServicio.Crear("OPERACION_INVALIDA", "No fue posible actualizar el perfil del usuario.", "Operación inválida en la capa de datos.");
-            }
-            catch (DataException ex)
-            {
-                Bitacora.Error("Error de base de datos al intentar actualizar el perfil.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_BASE_DATOS", "Ocurrió un problema con la base de datos al actualizar el perfil.", "Fallo en la base de datos.");
             }
             catch (Exception ex)
             {
-                Bitacora.Fatal("Error inesperado al actualizar el perfil.", ex);
-                throw FabricaFallaServicio.Crear("ERROR_NO_CONTROLADO", "Ocurrió un error inesperado al actualizar el perfil.", "Error interno del servidor.");
+                Logger.Error("Error al actualizar el perfil", ex);
+                return CrearResultadoFallo("No fue posible actualizar el perfil.");
             }
         }
 
-        private static bool EsTextoValido(string valor)
+        private static BaseDatosPruebaEntities1 CrearContexto()
         {
-            return !string.IsNullOrWhiteSpace(valor) && valor.Length <= LongitudMaximaNombre;
+            string conexion = Conexion.ObtenerConexion();
+            return string.IsNullOrWhiteSpace(conexion)
+                ? new BaseDatosPruebaEntities1()
+                : new BaseDatosPruebaEntities1(conexion);
         }
 
-        private static string NormalizarRedSocial(string valor, string nombreRed, out string mensajeError)
+        private static ResultadoOperacionDTO ValidarRedesSociales(ActualizarPerfilDTO solicitud)
         {
-            mensajeError = null;
+            ResultadoOperacionDTO resultado = ValidarRedSocial("Instagram", solicitud.Instagram);
+            if (!resultado.OperacionExitosa)
+            {
+                return resultado;
+            }
 
+            resultado = ValidarRedSocial("Facebook", solicitud.Facebook);
+            if (!resultado.OperacionExitosa)
+            {
+                return resultado;
+            }
+
+            resultado = ValidarRedSocial("X", solicitud.X);
+            if (!resultado.OperacionExitosa)
+            {
+                return resultado;
+            }
+
+            return ValidarRedSocial("Discord", solicitud.Discord);
+        }
+
+        private static ResultadoOperacionDTO ValidarRedSocial(string nombre, string valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor))
+            {
+                return ResultadoOperacionExitoso();
+            }
+
+            string normalizado = valor.Trim();
+            if (normalizado.Length > LongitudMaximaRedSocial)
+            {
+                return CrearResultadoFallo(
+                    $"El identificador de {nombre} no debe exceder {LongitudMaximaRedSocial} caracteres.");
+            }
+
+            return ResultadoOperacionExitoso();
+        }
+
+        private static string NormalizarRedSocial(string valor)
+        {
             if (string.IsNullOrWhiteSpace(valor))
             {
                 return null;
             }
 
-            string texto = valor.Trim();
-
-            if (string.Equals(texto, "@", StringComparison.Ordinal))
-            {
-                return null;
-            }
-
-            if (texto.StartsWith("@", StringComparison.Ordinal))
-            {
-                string contenido = texto.Substring(1);
-
-                if (string.IsNullOrWhiteSpace(contenido))
-                {
-                    return null;
-                }
-            }
-
-            if (texto.Length > LongitudMaximaRedSocial)
-            {
-                mensajeError = $"El identificador de {nombreRed} no debe exceder {LongitudMaximaRedSocial} caracteres.";
-                return null;
-            }
-
-            return texto;
+            string normalizado = valor.Trim();
+            return normalizado.Length == 0 ? null : normalizado;
         }
 
-        private static ResultadoOperacionDTO CrearResultado(bool exito, string mensaje)
+        private static ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
         {
             return new ResultadoOperacionDTO
             {
-                OperacionExitosa = exito,
+                OperacionExitosa = false,
                 Mensaje = mensaje
             };
         }
 
+        private static ResultadoOperacionDTO ResultadoOperacionExitoso()
+        {
+            return new ResultadoOperacionDTO
+            {
+                OperacionExitosa = true
+            };
+        }
     }
 }

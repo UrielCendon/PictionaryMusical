@@ -4,6 +4,9 @@ namespace PictionaryMusicalCliente.Servicios.Abstracciones
 {
     public interface IVerificarCodigoDialogService
     {
-        Task<bool> MostrarDialogoAsync(string tokenCodigo, string correoDestino);
+        Task<Modelo.Cuentas.ResultadoRegistroCuenta> MostrarDialogoAsync(
+            string descripcion,
+            string tokenCodigo,
+            ICodigoVerificacionService codigoVerificacionService);
     }
 }
