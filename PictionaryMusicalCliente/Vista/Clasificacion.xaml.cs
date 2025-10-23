@@ -1,4 +1,5 @@
 using System.Windows;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Wcf;
 using PictionaryMusicalCliente.VistaModelo.Cuentas;
@@ -11,7 +12,7 @@ namespace PictionaryMusicalCliente
         {
             InitializeComponent();
 
-            IClasificacionService clasificacionService = new ClasificacionService();
+            IClasificacionServicio clasificacionService = new ClasificacionServicio();
 
             var vistaModelo = new ClasificacionVistaModelo(clasificacionService)
             {

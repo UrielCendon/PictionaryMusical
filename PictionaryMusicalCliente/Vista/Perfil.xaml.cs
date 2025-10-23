@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Dialogos;
 using PictionaryMusicalCliente.Servicios.Wcf;
@@ -18,18 +20,20 @@ namespace PictionaryMusicalCliente
         {
             InitializeComponent();
 
-            IPerfilService perfilService = new PerfilService();
-            ISeleccionarAvatarService seleccionarAvatarService = new SeleccionarAvatarDialogService();
-            ICambioContrasenaService cambioContrasenaService = new CambioContrasenaService();
-            IVerificarCodigoDialogService verificarCodigoDialogService = new VerificarCodigoDialogService();
-            IRecuperacionCuentaDialogService recuperacionCuentaDialogService =
-                new RecuperacionCuentaDialogService(verificarCodigoDialogService);
+            IPerfilServicio perfilService = new PerfilServicio();
+            IAvatarServicio avatarService = new AvatarServicio();
+            ISeleccionarAvatarServicio seleccionarAvatarService = new SeleccionarAvatarDialogoServicio(avatarService);
+            ICambioContrasenaServicio cambioContrasenaService = new CambioContrasenaServicio();
+            IVerificarCodigoDialogoServicio verificarCodigoDialogService = new VerificarCodigoDialogoServicio();
+            IRecuperacionCuentaServicio recuperacionCuentaDialogService =
+                new RecuperacionCuentaDialogoServicio(verificarCodigoDialogService);
 
             var vistaModelo = new PerfilVistaModelo(
                 perfilService,
                 seleccionarAvatarService,
                 cambioContrasenaService,
-                recuperacionCuentaDialogService)
+                recuperacionCuentaDialogService,
+                avatarService)
             {
                 CerrarAccion = Close
             };
@@ -70,8 +74,8 @@ namespace PictionaryMusicalCliente
 
         private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
-            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoNombre);
-            ControlVisualHelper.RestablecerEstadoCampo(bloqueTextoApellido);
+            ControlVisual.RestablecerEstadoCampo(bloqueTextoNombre);
+            ControlVisual.RestablecerEstadoCampo(bloqueTextoApellido);
 
             if (camposInvalidos == null)
             {
@@ -80,12 +84,12 @@ namespace PictionaryMusicalCliente
 
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Nombre)))
             {
-                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoNombre);
+                ControlVisual.MarcarCampoInvalido(bloqueTextoNombre);
             }
 
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Apellido)))
             {
-                ControlVisualHelper.MarcarCampoInvalido(bloqueTextoApellido);
+                ControlVisual.MarcarCampoInvalido(bloqueTextoApellido);
             }
         }
     }

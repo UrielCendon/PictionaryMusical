@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Idiomas;
@@ -11,19 +12,19 @@ namespace PictionaryMusicalCliente
 {
     public partial class VentanaPrincipal : Window
     {
-        private readonly IListaAmigosService _listaAmigosService;
-        private readonly IAmigosService _amigosService;
+        private readonly IListaAmigosServicio _listaAmigosService;
+        private readonly IAmigosServicio _amigosService;
         private readonly VentanaPrincipalVistaModelo _vistaModelo;
 
         public VentanaPrincipal()
         {
             InitializeComponent();
 
-            _listaAmigosService = new ListaAmigosService();
-            _amigosService = new AmigosService();
+            _listaAmigosService = new ListaAmigosServicio();
+            _amigosService = new AmigosServicio();
 
             _vistaModelo = new VentanaPrincipalVistaModelo(
-                LocalizacionService.Instancia,
+                LocalizacionServicio.Instancia,
                 _listaAmigosService,
                 _amigosService)
             {
@@ -36,10 +37,10 @@ namespace PictionaryMusicalCliente
                 ConfirmarEliminarAmigo = MostrarConfirmacionEliminar,
                 AbrirInvitaciones = () => MostrarDialogo(new Invitaciones()),
                 IniciarJuego = _ => MostrarVentanaJuego(),
-                UnirseSala = _ => AvisoHelper.Mostrar(Lang.errorTextoNoEncuentraPartida)
+                UnirseSala = _ => AvisoAyudante.Mostrar(Lang.errorTextoNoEncuentraPartida)
             };
 
-            _vistaModelo.MostrarMensaje = AvisoHelper.Mostrar;
+            _vistaModelo.MostrarMensaje = AvisoAyudante.Mostrar;
 
             DataContext = _vistaModelo;
 

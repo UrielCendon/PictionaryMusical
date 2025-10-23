@@ -5,22 +5,22 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using PictionaryMusicalCliente.Comandos;
-using PictionaryMusicalCliente.Modelo.Amigos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Sesiones;
 using PictionaryMusicalCliente.Utilidades;
+using DTOs = global::Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
     public class SolicitudesVistaModelo : BaseVistaModelo, IDisposable
     {
-        private readonly IAmigosService _amigosService;
+        private readonly IAmigosServicio _amigosService;
         private readonly string _usuarioActual;
         private bool _estaProcesando;
 
-        public SolicitudesVistaModelo(IAmigosService amigosService)
+        public SolicitudesVistaModelo(IAmigosServicio amigosService)
         {
             _amigosService = amigosService ?? throw new ArgumentNullException(nameof(amigosService));
             _usuarioActual = SesionUsuarioActual.Instancia.Usuario?.NombreUsuario ?? string.Empty;
@@ -78,12 +78,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             }
         }
 
-        private void AmigosService_SolicitudesActualizadas(object sender, IReadOnlyCollection<SolicitudAmistad> solicitudes)
+        private void AmigosService_SolicitudesActualizadas(object sender, IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
         {
             EjecutarEnDispatcher(() => ActualizarSolicitudes(solicitudes));
         }
 
-        private void ActualizarSolicitudes(IReadOnlyCollection<SolicitudAmistad> solicitudes)
+        private void ActualizarSolicitudes(IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
         {
             if (Solicitudes == null)
             {
@@ -99,13 +99,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             foreach (var solicitud in solicitudes)
             {
-                if (solicitud == null || !solicitud.EstaPendiente)
+                if (solicitud == null || solicitud.SolicitudAceptada)
                 {
                     continue;
                 }
 
-                string nombreMostrado = solicitud.ObtenerOtroUsuario(_usuarioActual);
-                bool puedeAceptar = solicitud.UsuarioEsReceptor(_usuarioActual);
+                bool esEmisorActual = string.Equals(solicitud.UsuarioEmisor, _usuarioActual, StringComparison.OrdinalIgnoreCase);
+                bool esReceptorActual = string.Equals(solicitud.UsuarioReceptor, _usuarioActual, StringComparison.OrdinalIgnoreCase);
+
+                if (!esEmisorActual && !esReceptorActual)
+                {
+                    continue;
+                }
+
+                string nombreMostrado = esEmisorActual ? solicitud.UsuarioReceptor : solicitud.UsuarioEmisor;
+                nombreMostrado = nombreMostrado?.Trim();
+
+                if (string.IsNullOrWhiteSpace(nombreMostrado))
+                {
+                    continue;
+                }
+
+                bool puedeAceptar = esReceptorActual;
 
                 Solicitudes.Add(new SolicitudAmistadEntrada(solicitud, nombreMostrado, puedeAceptar));
             }
@@ -126,11 +141,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     .ResponderSolicitudAsync(entrada.Solicitud.UsuarioEmisor, entrada.Solicitud.UsuarioReceptor)
                     .ConfigureAwait(true);
 
-                AvisoHelper.Mostrar(Lang.amigosTextoSolicitudAceptada);
+                AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudAceptada);
             }
-            catch (ServicioException ex)
+            catch (ExcepcionServicio ex)
             {
-                AvisoHelper.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {
@@ -153,11 +168,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     .EliminarAmigoAsync(entrada.Solicitud.UsuarioEmisor, entrada.Solicitud.UsuarioReceptor)
                     .ConfigureAwait(true);
 
-                AvisoHelper.Mostrar(Lang.amigosTextoSolicitudCancelada);
+                AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudCancelada);
             }
-            catch (ServicioException ex)
+            catch (ExcepcionServicio ex)
             {
-                AvisoHelper.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {
@@ -186,14 +201,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         public class SolicitudAmistadEntrada
         {
-            public SolicitudAmistadEntrada(SolicitudAmistad solicitud, string nombreUsuario, bool puedeAceptar)
+            public SolicitudAmistadEntrada(DTOs.SolicitudAmistadDTO solicitud, string nombreUsuario, bool puedeAceptar)
             {
                 Solicitud = solicitud ?? throw new ArgumentNullException(nameof(solicitud));
                 NombreUsuario = nombreUsuario;
                 PuedeAceptar = puedeAceptar;
             }
 
-            public SolicitudAmistad Solicitud { get; }
+            public DTOs.SolicitudAmistadDTO Solicitud { get; }
 
             public string NombreUsuario { get; }
 

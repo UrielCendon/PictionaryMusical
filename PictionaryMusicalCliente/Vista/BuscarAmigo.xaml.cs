@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Wcf;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
@@ -14,11 +15,11 @@ namespace PictionaryMusicalCliente
         private readonly BuscarAmigoVistaModelo _vistaModelo;
 
         public BuscarAmigo()
-            : this(new BuscarAmigoVistaModelo(new AmigosService()))
+            : this(new BuscarAmigoVistaModelo(new AmigosServicio()))
         {
         }
 
-        public BuscarAmigo(IAmigosService amigosService)
+        public BuscarAmigo(IAmigosServicio amigosService)
             : this(new BuscarAmigoVistaModelo(amigosService))
         {
         }
