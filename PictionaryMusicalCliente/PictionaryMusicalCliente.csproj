@@ -37,10 +37,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Datos">
-      <HintPath>..\PictionayMusicalServidor\Servicios\bin\Debug\Datos.dll</HintPath>
+      <HintPath>..\PictionaryMusicalServidor\Servicios\bin\Debug\Datos.dll</HintPath>
     </Reference>
     <Reference Include="Servicios">
-      <HintPath>..\PictionayMusicalServidor\Servicios\bin\Debug\Servicios.dll</HintPath>
+      <HintPath>..\PictionaryMusicalServidor\Servicios\bin\Debug\Servicios.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
