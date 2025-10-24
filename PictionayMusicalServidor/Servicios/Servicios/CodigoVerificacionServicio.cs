@@ -449,7 +449,7 @@ namespace Servicios.Servicios
 
             try
             {
-                var tarea = _notificador?.NotificarAsync(nuevaCuenta.Correo, codigo, nuevaCuenta.Usuario);
+                var tarea = _notificador?.NotificarAsincrono(nuevaCuenta.Correo, codigo, nuevaCuenta.Usuario);
                 if (tarea == null)
                 {
                     return false;
