@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Servicios.Contratos
 {
     [ServiceContract]
-    public interface ISalirSalaManager
+    public interface ISalidaSalaManager
     {
     }
 }

@@ -9,9 +9,9 @@ using Servicios.Contratos.DTOs;
 
 namespace Servicios.Servicios
 {
-    public class CatalogoAvatares : ICatalogoAvatares
+    public class CatalogoAvataresManejador : ICatalogoAvataresManejador
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(CatalogoAvatares));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoAvataresManejador));
 
         public AvatarDTO[] ObtenerAvataresDisponibles()
         {
@@ -23,7 +23,7 @@ namespace Servicios.Servicios
                     return repositorio.ObtenerAvatares()
                         .Select(a => new AvatarDTO
                         {
-                            Id = a.idAvatar,
+                            AvatarId = a.idAvatar,
                             Nombre = a.Nombre_Avatar,
                             RutaRelativa = a.Avatar_Ruta
                         })
@@ -32,7 +32,7 @@ namespace Servicios.Servicios
             }
             catch (Exception ex)
             {
-                Logger.Error("Error al obtener los avatares disponibles", ex);
+                _logger.Error("Error al obtener los avatares disponibles", ex);
                 return Array.Empty<AvatarDTO>();
             }
         }

@@ -4,18 +4,18 @@ using Servicios.Contratos.DTOs;
 namespace Servicios.Contratos
 {
     [ServiceContract]
-    public interface ICambiarContrasenaManejador
+    public interface ICambioContrasenaManejador
     {
         [OperationContract]
         ResultadoSolicitudRecuperacionDTO SolicitarCodigoRecuperacion(SolicitudRecuperarCuentaDTO solicitud);
 
         [OperationContract]
-        ResultadoSolicitudCodigoDTO ReenviarCodigoRecuperacion(ReenviarCodigoDTO solicitud);
+        ResultadoSolicitudCodigoDTO ReenviarCodigoRecuperacion(ReenvioCodigoDTO solicitud);
 
         [OperationContract]
-        ResultadoOperacionDTO ConfirmarCodigoRecuperacion(ConfirmarCodigoDTO confirmacion);
+        ResultadoOperacionDTO ConfirmarCodigoRecuperacion(ConfirmacionCodigoDTO confirmacion);
 
         [OperationContract]
-        ResultadoOperacionDTO ActualizarContrasena(ActualizarContrasenaDTO solicitud);
+        ResultadoOperacionDTO ActualizarContrasena(ActualizacionContrasenaDTO solicitud);
     }
 }

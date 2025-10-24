@@ -4,7 +4,7 @@ using Servicios.Contratos.DTOs;
 namespace Servicios.Contratos
 {
     [ServiceContract]
-    public interface ICatalogoAvatares
+    public interface ICatalogoAvataresManejador
     {
         [OperationContract]
         AvatarDTO[] ObtenerAvataresDisponibles();

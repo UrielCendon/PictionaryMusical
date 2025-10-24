@@ -4,7 +4,7 @@ namespace Servicios.Servicios.Utilidades
 {
     internal static class CodigoVerificacionGenerador
     {
-        private static readonly Random Random = new Random();
+        private static readonly Random _random = new Random();
 
         public static string GenerarCodigo(int longitud = 6)
         {
@@ -13,11 +13,11 @@ namespace Servicios.Servicios.Utilidades
                 throw new ArgumentOutOfRangeException(nameof(longitud));
             }
 
-            lock (Random)
+            lock (_random)
             {
-                int max = (int)Math.Pow(10, longitud) - 1;
-                int min = (int)Math.Pow(10, longitud - 1);
-                int numero = Random.Next(min, max);
+                int limiteSuperior = (int)Math.Pow(10, longitud) - 1;
+                int limiteInferior = (int)Math.Pow(10, longitud - 1);
+                int numero = _random.Next(limiteInferior, limiteSuperior);
                 return numero.ToString();
             }
         }

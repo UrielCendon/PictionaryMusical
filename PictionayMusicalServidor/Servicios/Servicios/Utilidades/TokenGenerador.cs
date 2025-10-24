@@ -2,7 +2,7 @@ using System;
 
 namespace Servicios.Servicios.Utilidades
 {
-    internal static class TokenGenerator
+    internal static class TokenGenerador
     {
         public static string GenerarToken()
         {

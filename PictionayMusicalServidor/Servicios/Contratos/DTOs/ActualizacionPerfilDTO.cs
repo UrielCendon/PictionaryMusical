@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace Servicios.Contratos.DTOs
 {
     [DataContract]
-    public class ActualizarPerfilDTO
+    public class ActualizacionPerfilDTO
     {
         [DataMember]
         public int UsuarioId { get; set; }
