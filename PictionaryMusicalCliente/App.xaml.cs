@@ -12,7 +12,7 @@ namespace PictionaryMusicalCliente
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs evento)
+        protected override void OnStartup(StartupEventArgs e)
         {
             var localizacionServicio = LocalizacionServicio.Instancia;
             string codigoIdioma = Settings.Default.idiomaCodigo;
@@ -26,7 +26,7 @@ namespace PictionaryMusicalCliente
                 localizacionServicio.EstablecerCultura(CultureInfo.CurrentUICulture);
             }
 
-            base.OnStartup(evento);
+            base.OnStartup(e);
         }
     }
 }
