@@ -2,7 +2,7 @@ using System;
 
 namespace Servicios.Servicios.Utilidades
 {
-    internal static class CodigoVerificacionGenerator
+    internal static class CodigoVerificacionGenerador
     {
         private static readonly Random Random = new Random();
 

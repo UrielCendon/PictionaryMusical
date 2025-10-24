@@ -129,7 +129,7 @@
     <Compile Include="Servicios\PerfilManejador.cs" />
     <Compile Include="Servicios\Utilidades\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\ICodigoVerificacionNotificador.cs" />
-    <Compile Include="Servicios\Utilidades\CodigoVerificacionGenerator.cs" />
+    <Compile Include="Servicios\Utilidades\CodigoVerificacionGenerador.cs" />
     <Compile Include="Servicios\Utilidades\TokenGenerator.cs" />
   </ItemGroup>
   <ItemGroup />

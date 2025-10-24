@@ -55,7 +55,7 @@ namespace Servicios.Servicios
             }
 
             string token = TokenGenerator.GenerarToken();
-            string codigo = CodigoVerificacionGenerator.GenerarCodigo();
+            string codigo = CodigoVerificacionGenerador.GenerarCodigo();
             NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
 
             bool enviado = EnviarCorreoVerificacion(datosCuenta, codigo);
@@ -103,7 +103,7 @@ namespace Servicios.Servicios
             string codigoAnterior = existente.Codigo;
             DateTime expiracionAnterior = existente.Expira;
 
-            string nuevoCodigo = CodigoVerificacionGenerator.GenerarCodigo();
+            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
             existente.Codigo = nuevoCodigo;
             existente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
 
@@ -208,7 +208,7 @@ namespace Servicios.Servicios
                 LimpiarSolicitudesRecuperacion(usuario.idUsuario);
 
                 string token = TokenGenerator.GenerarToken();
-                string codigo = CodigoVerificacionGenerator.GenerarCodigo();
+                string codigo = CodigoVerificacionGenerador.GenerarCodigo();
 
                 var pendiente = new SolicitudRecuperacionPendiente
                 {
@@ -276,7 +276,7 @@ namespace Servicios.Servicios
             DateTime expiracionAnterior = pendiente.Expira;
             bool confirmadoAnterior = pendiente.Confirmado;
 
-            string nuevoCodigo = CodigoVerificacionGenerator.GenerarCodigo();
+            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
             pendiente.Codigo = nuevoCodigo;
             pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
             pendiente.Confirmado = false;
