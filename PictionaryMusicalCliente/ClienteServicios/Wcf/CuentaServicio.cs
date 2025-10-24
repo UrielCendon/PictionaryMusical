@@ -2,7 +2,6 @@ using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios;
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Wcf.Helpers;
 using DTOs = global::Servicios.Contratos.DTOs;
