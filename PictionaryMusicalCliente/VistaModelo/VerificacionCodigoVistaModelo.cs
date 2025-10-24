@@ -12,12 +12,12 @@ using DTOs = global::Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 {
-    public class VerificarCodigoVistaModelo : BaseVistaModelo
+    public class VerificacionCodigoVistaModelo : BaseVistaModelo
     {
         private const int SegundosEsperaReenvio = 30;
         private static readonly TimeSpan TiempoExpiracionCodigo = TimeSpan.FromMinutes(5);
 
-        private readonly ICodigoVerificacionServicio _codigoVerificacionService;
+        private readonly ICodigoVerificacionServicio _codigoVerificacionServicio;
         private string _tokenCodigo;
         private readonly DispatcherTimer _temporizadorReenvio;
         private readonly DispatcherTimer _temporizadorExpiracion;
@@ -28,18 +28,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
         private string _textoBotonReenviar;
         private int _segundosRestantes;
 
-        public VerificarCodigoVistaModelo(
+        public VerificacionCodigoVistaModelo(
             string descripcion,
             string tokenCodigo,
-            ICodigoVerificacionServicio codigoVerificacionService)
+            ICodigoVerificacionServicio codigoVerificacionServicio)
         {
             Descripcion = descripcion ?? throw new ArgumentNullException(nameof(descripcion));
             _tokenCodigo = tokenCodigo ?? throw new ArgumentNullException(nameof(tokenCodigo));
-            _codigoVerificacionService = codigoVerificacionService ?? throw new ArgumentNullException(nameof(codigoVerificacionService));
+            _codigoVerificacionServicio = codigoVerificacionServicio ?? throw new ArgumentNullException(nameof(codigoVerificacionServicio));
 
-            VerificarCodigoCommand = new ComandoAsincrono(_ => VerificarCodigoAsync());
-            ReenviarCodigoCommand = new ComandoAsincrono(_ => ReenviarCodigoAsync(), _ => PuedeReenviar);
-            CancelarCommand = new ComandoDelegado(Cancelar);
+            VerificarCodigoComando = new ComandoAsincrono(_ => VerificarCodigoAsync());
+            ReenviarCodigoComando = new ComandoAsincrono(_ => ReenviarCodigoAsync(), _ => PuedeReenviar);
+            CancelarComando = new ComandoDelegado(Cancelar);
 
             _temporizadorReenvio = new DispatcherTimer
             {
@@ -72,7 +72,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             {
                 if (EstablecerPropiedad(ref _estaVerificando, value))
                 {
-                    ((IComandoNotificable)ReenviarCodigoCommand).NotificarPuedeEjecutar();
+                    ((IComandoNotificable)ReenviarCodigoComando).NotificarPuedeEjecutar();
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             {
                 if (EstablecerPropiedad(ref _puedeReenviar, value))
                 {
-                    ((IComandoNotificable)ReenviarCodigoCommand).NotificarPuedeEjecutar();
+                    ((IComandoNotificable)ReenviarCodigoComando).NotificarPuedeEjecutar();
                 }
             }
         }
@@ -95,11 +95,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             private set => EstablecerPropiedad(ref _textoBotonReenviar, value);
         }
 
-        public IComandoAsincrono VerificarCodigoCommand { get; }
+        public IComandoAsincrono VerificarCodigoComando { get; }
 
-        public IComandoAsincrono ReenviarCodigoCommand { get; }
+        public IComandoAsincrono ReenviarCodigoComando { get; }
 
-        public ICommand CancelarCommand { get; }
+        public ICommand CancelarComando { get; }
 
         public Action<DTOs.ResultadoRegistroCuentaDTO> VerificacionCompletada { get; set; }
 
@@ -122,7 +122,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
             try
             {
-                DTOs.ResultadoRegistroCuentaDTO resultado = await _codigoVerificacionService
+                DTOs.ResultadoRegistroCuentaDTO resultado = await _codigoVerificacionServicio
                     .ConfirmarCodigoRegistroAsync(_tokenCodigo, CodigoVerificacion).ConfigureAwait(true);
 
                 if (resultado == null)
@@ -173,7 +173,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
             try
             {
-                DTOs.ResultadoSolicitudCodigoDTO resultado = await _codigoVerificacionService
+                DTOs.ResultadoSolicitudCodigoDTO resultado = await _codigoVerificacionServicio
                     .ReenviarCodigoRegistroAsync(_tokenCodigo).ConfigureAwait(true);
 
                 if (resultado?.CodigoEnviado == true)

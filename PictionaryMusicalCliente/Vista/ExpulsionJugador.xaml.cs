@@ -5,9 +5,9 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para ExpulsarJugador.xaml
     /// </summary>
-    public partial class ExpulsarJugador : Window
+    public partial class ExpulsionJugador : Window
     {
-        public ExpulsarJugador()
+        public ExpulsionJugador()
         {
             InitializeComponent();
         }

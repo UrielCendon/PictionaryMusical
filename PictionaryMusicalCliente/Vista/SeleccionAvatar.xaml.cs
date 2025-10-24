@@ -2,9 +2,9 @@ using System.Windows;
 
 namespace PictionaryMusicalCliente
 {
-    public partial class SeleccionarAvatar : Window
+    public partial class SeleccionAvatar : Window
     {
-        public SeleccionarAvatar()
+        public SeleccionAvatar()
         {
             InitializeComponent();
         }

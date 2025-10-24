@@ -5,23 +5,23 @@ using PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
-    public class EliminarAmigoVistaModelo : BaseVistaModelo
+    public class EliminacionAmigoVistaModelo : BaseVistaModelo
     {
-        public EliminarAmigoVistaModelo(string nombreAmigo)
+        public EliminacionAmigoVistaModelo(string nombreAmigo)
         {
             MensajeConfirmacion = string.IsNullOrWhiteSpace(nombreAmigo)
                 ? Lang.eliminarAmigoTextoConfirmacion
                 : string.Concat(Lang.eliminarAmigoTextoConfirmacion, nombreAmigo, "?");
 
-            AceptarCommand = new ComandoDelegado(_ => Cerrar?.Invoke(true));
-            CancelarCommand = new ComandoDelegado(_ => Cerrar?.Invoke(false));
+            AceptarComando = new ComandoDelegado(_ => Cerrar?.Invoke(true));
+            CancelarComando = new ComandoDelegado(_ => Cerrar?.Invoke(false));
         }
 
         public string MensajeConfirmacion { get; }
 
-        public ICommand AceptarCommand { get; }
+        public ICommand AceptarComando { get; }
 
-        public ICommand CancelarCommand { get; }
+        public ICommand CancelarComando { get; }
 
         public Action<bool?> Cerrar { get; set; }
     }

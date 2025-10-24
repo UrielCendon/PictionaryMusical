@@ -10,26 +10,26 @@ using PictionaryMusicalCliente.VistaModelo.Cuentas;
 
 namespace PictionaryMusicalCliente
 {
-    public partial class CrearCuenta : Window
+    public partial class CreacionCuenta : Window
     {
-        private readonly CrearCuentaVistaModelo _vistaModelo;
+        private readonly CreacionCuentaVistaModelo _vistaModelo;
 
-        public CrearCuenta()
+        public CreacionCuenta()
         {
             InitializeComponent();
 
-            var codigoVerificacionService = new CodigoVerificacionServicio();
-            var cuentaService = new CuentaServicio();
-            IAvatarServicio avatarService = new AvatarServicio();
-            var seleccionarAvatarService = new SeleccionarAvatarDialogoServicio(avatarService);
-            var verificarCodigoDialogService = new VerificarCodigoDialogoServicio();
+            var codigoVerificacionServicio = new CodigoVerificacionServicio();
+            var cuentaServicio = new CuentaServicio();
+            IAvatarServicio avatarServicio = new AvatarServicio();
+            var seleccionarAvatarServicio = new SeleccionAvatarDialogoServicio(avatarServicio);
+            var verificarCodigoDialogoServicio = new VerificacionCodigoDialogoServicio();
 
-            _vistaModelo = new CrearCuentaVistaModelo(
-                codigoVerificacionService,
-                cuentaService,
-                seleccionarAvatarService,
-                verificarCodigoDialogService,
-                avatarService);
+            _vistaModelo = new CreacionCuentaVistaModelo(
+                codigoVerificacionServicio,
+                cuentaServicio,
+                seleccionarAvatarServicio,
+                verificarCodigoDialogoServicio,
+                avatarServicio);
 
             _vistaModelo.CerrarAccion = Close;
             _vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
@@ -48,11 +48,11 @@ namespace PictionaryMusicalCliente
 
         private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
-            ControlVisual.RestablecerEstadoCampo(bloqueTextoUsuario);
-            ControlVisual.RestablecerEstadoCampo(bloqueTextoNombre);
-            ControlVisual.RestablecerEstadoCampo(bloqueTextoApellido);
-            ControlVisual.RestablecerEstadoCampo(bloqueTextoCorreo);
-            ControlVisual.RestablecerEstadoCampo(bloqueContrasena);
+            ControlVisual.RestablecerEstadoCampo(campoTextoUsuario);
+            ControlVisual.RestablecerEstadoCampo(campoTextoNombre);
+            ControlVisual.RestablecerEstadoCampo(campoTextoApellido);
+            ControlVisual.RestablecerEstadoCampo(campoTextoCorreo);
+            ControlVisual.RestablecerEstadoCampo(bloqueContrasenaContrasena);
 
             if (camposInvalidos == null)
             {
@@ -61,27 +61,27 @@ namespace PictionaryMusicalCliente
 
             if (camposInvalidos.Contains(nameof(_vistaModelo.Usuario)))
             {
-                ControlVisual.MarcarCampoInvalido(bloqueTextoUsuario);
+                ControlVisual.MarcarCampoInvalido(campoTextoUsuario);
             }
 
             if (camposInvalidos.Contains(nameof(_vistaModelo.Nombre)))
             {
-                ControlVisual.MarcarCampoInvalido(bloqueTextoNombre);
+                ControlVisual.MarcarCampoInvalido(campoTextoNombre);
             }
 
             if (camposInvalidos.Contains(nameof(_vistaModelo.Apellido)))
             {
-                ControlVisual.MarcarCampoInvalido(bloqueTextoApellido);
+                ControlVisual.MarcarCampoInvalido(campoTextoApellido);
             }
 
             if (camposInvalidos.Contains(nameof(_vistaModelo.Correo)))
             {
-                ControlVisual.MarcarCampoInvalido(bloqueTextoCorreo);
+                ControlVisual.MarcarCampoInvalido(campoTextoCorreo);
             }
 
             if (camposInvalidos.Contains(nameof(_vistaModelo.Contrasena)))
             {
-                ControlVisual.MarcarCampoInvalido(bloqueContrasena);
+                ControlVisual.MarcarCampoInvalido(bloqueContrasenaContrasena);
             }
         }
     }

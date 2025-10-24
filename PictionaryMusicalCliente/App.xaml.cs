@@ -12,21 +12,21 @@ namespace PictionaryMusicalCliente
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs evento)
         {
-            var localizacionService = LocalizacionServicio.Instancia;
+            var localizacionServicio = LocalizacionServicio.Instancia;
             string codigoIdioma = Settings.Default.idiomaCodigo;
 
             try
             {
-                localizacionService.EstablecerIdioma(codigoIdioma);
+                localizacionServicio.EstablecerIdioma(codigoIdioma);
             }
             catch (CultureNotFoundException)
             {
-                localizacionService.EstablecerCultura(CultureInfo.CurrentUICulture);
+                localizacionServicio.EstablecerCultura(CultureInfo.CurrentUICulture);
             }
 
-            base.OnStartup(e);
+            base.OnStartup(evento);
         }
     }
 }

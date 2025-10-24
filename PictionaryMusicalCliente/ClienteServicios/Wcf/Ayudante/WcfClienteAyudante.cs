@@ -29,6 +29,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
             }
             catch
             {
+                //Se propaga la excepción en dónde sea llamada
                 Abortar(cliente);
                 throw;
             }
@@ -56,6 +57,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
             }
             catch
             {
+                //Se propaga la excepción en dónde sea llamada
                 Abortar(cliente);
                 throw;
             }
@@ -106,7 +108,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
             }
             catch
             {
-                // Ignorado de manera intencional: no hay acción adicional a realizar.
+                // Ignorado de manera intencional: No se puede hacer nada para manejar una excepción al abortar.
             }
         }
     }

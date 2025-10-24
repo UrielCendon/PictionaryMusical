@@ -15,8 +15,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     {
         private const string Endpoint = "NetTcpBinding_IAmigosManejador";
 
-        private readonly SemaphoreSlim _semaphore = new(1, 1);
-        private readonly object _solicitudesLock = new();
+        private readonly SemaphoreSlim _semaforo = new(1, 1);
+        private readonly object _solicitudesBloqueo = new();
         private readonly List<DTOs.SolicitudAmistadDTO> _solicitudes = new();
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
@@ -28,7 +28,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             get
             {
-                lock (_solicitudesLock)
+                lock (_solicitudesBloqueo)
                 {
                     return _solicitudes.Count == 0
                         ? Array.Empty<DTOs.SolicitudAmistadDTO>()
@@ -42,7 +42,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreUsuario))
                 throw new ArgumentException("El nombre de usuario es obligatorio.", nameof(nombreUsuario));
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaforo.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -101,7 +101,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -110,7 +110,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreUsuario))
                 return;
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaforo.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -121,7 +121,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -146,7 +146,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             bool modificada = false;
 
-            lock (_solicitudesLock)
+            lock (_solicitudesBloqueo)
             {
                 int indice = _solicitudes.FindIndex(s =>
                     s.UsuarioEmisor == solicitud.UsuarioEmisor && s.UsuarioReceptor == usuarioActual);
@@ -185,7 +185,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             bool modificada = false;
 
-            lock (_solicitudesLock)
+            lock (_solicitudesBloqueo)
             {
                 int indice = _solicitudes.FindIndex(s =>
                     s.UsuarioEmisor == solicitud.UsuarioEmisor && s.UsuarioReceptor == usuarioActual);
@@ -203,7 +203,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         public void Dispose()
         {
-            _semaphore.Wait();
+            _semaforo.Wait();
             try
             {
                 CerrarCliente(_cliente);
@@ -213,7 +213,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -225,7 +225,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             PictionaryServidorServicioAmigos.AmigosManejadorClient cliente = null;
             bool esTemporal = false;
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaforo.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -270,7 +270,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -287,7 +287,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch
             {
-                // Podrías loggear o notificar que la reconexión falló
+                //Registrar en bitácora
             }
         }
 
@@ -339,7 +339,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (cliente == null)
                 return;
 
-            bool aborted = false;
+            bool abortado = false;
             try
             {
                 if (cliente.State != CommunicationState.Faulted)
@@ -349,22 +349,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 else
                 {
                     cliente.Abort();
-                    aborted = true;
+                    abortado = true;
                 }
             }
             catch (CommunicationException)
             {
                 cliente.Abort();
-                aborted = true;
+                abortado = true;
             }
             catch (TimeoutException)
             {
                 cliente.Abort();
-                aborted = true;
+                abortado = true;
             }
             catch (Exception) 
             {
-                if (!aborted) cliente.Abort();
+                if (!abortado) cliente.Abort();
             }
         }
 
@@ -389,7 +389,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private void LimpiarSolicitudes()
         {
-            lock (_solicitudesLock)
+            lock (_solicitudesBloqueo)
                 _solicitudes.Clear();
         }
 
@@ -397,7 +397,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private void NotificarSolicitudesActualizadas()
         {
             IReadOnlyCollection<DTOs.SolicitudAmistadDTO> snapshot;
-            lock (_solicitudesLock)
+            lock (_solicitudesBloqueo)
             {
                 snapshot = _solicitudes.ToArray();
             }

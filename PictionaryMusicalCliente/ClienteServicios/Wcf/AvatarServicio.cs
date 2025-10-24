@@ -14,7 +14,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
     public class AvatarServicio : IAvatarServicio
     {
-        private const string CatalogoAvataresEndpoint = "BasicHttpBinding_ICatalogoAvatares";
+        private const string CatalogoAvataresEndpoint = "BasicHttpBinding_ICatalogoAvataresManejador";
 
         public async Task<IReadOnlyList<ObjetoAvatar>> ObtenerCatalogoAsync()
         {

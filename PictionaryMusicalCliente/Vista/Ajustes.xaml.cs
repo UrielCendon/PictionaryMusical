@@ -19,7 +19,7 @@ namespace PictionaryMusicalCliente
 
         private void BotonCerrarSesion(object sender, RoutedEventArgs e)
         {
-            CerrarSesion cerrarSesion = new CerrarSesion();
+            TerminacionSesion cerrarSesion = new TerminacionSesion();
             cerrarSesion.Owner = this;
             cerrarSesion.ShowDialog();
         }

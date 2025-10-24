@@ -7,9 +7,9 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para CerrarSesion.xaml
     /// </summary>
-    public partial class CerrarSesion : Window
+    public partial class TerminacionSesion : Window
     {
-        public CerrarSesion()
+        public TerminacionSesion()
         {
             InitializeComponent();
         }

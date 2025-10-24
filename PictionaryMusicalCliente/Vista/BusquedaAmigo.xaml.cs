@@ -9,21 +9,21 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para BuscarAmigo.xaml
     /// </summary>
-    public partial class BuscarAmigo : Window
+    public partial class BusquedaAmigo : Window
     {
-        private readonly BuscarAmigoVistaModelo _vistaModelo;
+        private readonly BusquedaAmigoVistaModelo _vistaModelo;
 
-        public BuscarAmigo()
-            : this(new BuscarAmigoVistaModelo(new AmigosServicio()))
+        public BusquedaAmigo()
+            : this(new BusquedaAmigoVistaModelo(new AmigosServicio()))
         {
         }
 
-        public BuscarAmigo(IAmigosServicio amigosService)
-            : this(new BuscarAmigoVistaModelo(amigosService))
+        public BusquedaAmigo(IAmigosServicio amigosServicio)
+            : this(new BusquedaAmigoVistaModelo(amigosServicio))
         {
         }
 
-        public BuscarAmigo(BuscarAmigoVistaModelo vistaModelo)
+        public BusquedaAmigo(BusquedaAmigoVistaModelo vistaModelo)
         {
             _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
 

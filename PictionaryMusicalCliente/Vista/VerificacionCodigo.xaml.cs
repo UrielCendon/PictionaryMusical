@@ -4,14 +4,14 @@ using PictionaryMusicalCliente.VistaModelo.Cuentas;
 
 namespace PictionaryMusicalCliente
 {
-    public partial class VerificarCodigo : Window
+    public partial class VerificacionCodigo : Window
     {
-        public VerificarCodigo()
+        public VerificacionCodigo()
         {
             InitializeComponent();
         }
 
-        public void ConfigurarVistaModelo(VerificarCodigoVistaModelo vistaModelo)
+        public void ConfigurarVistaModelo(VerificacionCodigoVistaModelo vistaModelo)
         {
             if (vistaModelo == null)
             {
@@ -26,11 +26,11 @@ namespace PictionaryMusicalCliente
         {
             if (invalido)
             {
-                ControlVisual.MarcarCampoInvalido(bloqueTextoCodigoVerificacion);
+                ControlVisual.MarcarCampoInvalido(campoTextoCodigoVerificacion);
             }
             else
             {
-                ControlVisual.RestablecerEstadoCampo(bloqueTextoCodigoVerificacion);
+                ControlVisual.RestablecerEstadoCampo(campoTextoCodigoVerificacion);
             }
         }
     }

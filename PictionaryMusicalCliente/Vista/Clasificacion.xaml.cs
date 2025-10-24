@@ -11,9 +11,9 @@ namespace PictionaryMusicalCliente
         {
             InitializeComponent();
 
-            IClasificacionServicio clasificacionService = new ClasificacionServicio();
+            IClasificacionServicio clasificacionServicio = new ClasificacionServicio();
 
-            var vistaModelo = new ClasificacionVistaModelo(clasificacionService)
+            var vistaModelo = new ClasificacionVistaModelo(clasificacionServicio)
             {
                 CerrarAccion = Close
             };

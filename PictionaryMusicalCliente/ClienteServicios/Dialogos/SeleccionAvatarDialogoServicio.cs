@@ -10,13 +10,13 @@ using PictionaryMusicalCliente.VistaModelo.Cuentas;
 
 namespace PictionaryMusicalCliente.Servicios.Dialogos
 {
-    public class SeleccionarAvatarDialogoServicio : ISeleccionarAvatarServicio
+    public class SeleccionAvatarDialogoServicio : ISeleccionarAvatarServicio
     {
-        private readonly IAvatarServicio _avatarService;
+        private readonly IAvatarServicio _avatarServicio;
 
-        public SeleccionarAvatarDialogoServicio(IAvatarServicio avatarService)
+        public SeleccionAvatarDialogoServicio(IAvatarServicio avatarServicio)
         {
-            _avatarService = avatarService ?? throw new ArgumentNullException(nameof(avatarService));
+            _avatarServicio = avatarServicio ?? throw new ArgumentNullException(nameof(avatarServicio));
         }
 
         public async Task<ObjetoAvatar> SeleccionarAvatarAsync(string avatarSeleccionadoRutaRelativa = null)
@@ -34,8 +34,8 @@ namespace PictionaryMusicalCliente.Servicios.Dialogos
                 return null;
             }
 
-            var ventana = new SeleccionarAvatar();
-            var vistaModelo = new SeleccionarAvatarVistaModelo(avatares);
+            var ventana = new SeleccionAvatar();
+            var vistaModelo = new SeleccionAvatarVistaModelo(avatares);
             var finalizacion = new TaskCompletionSource<ObjetoAvatar>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             if (!string.IsNullOrWhiteSpace(avatarSeleccionadoRutaRelativa))
@@ -74,7 +74,7 @@ namespace PictionaryMusicalCliente.Servicios.Dialogos
 
             try
             {
-                IReadOnlyList<ObjetoAvatar> avatares = await _avatarService.ObtenerCatalogoAsync()
+                IReadOnlyList<ObjetoAvatar> avatares = await _avatarServicio.ObtenerCatalogoAsync()
                     .ConfigureAwait(true);
 
                 if (avatares != null && avatares.Count > 0)

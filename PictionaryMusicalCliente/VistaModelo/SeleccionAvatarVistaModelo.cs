@@ -9,11 +9,11 @@ using PictionaryMusicalCliente.Utilidades;
 
 namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 {
-    public class SeleccionarAvatarVistaModelo : BaseVistaModelo
+    public class SeleccionAvatarVistaModelo : BaseVistaModelo
     {
         private ObjetoAvatar _avatarSeleccionado;
 
-        public SeleccionarAvatarVistaModelo(IEnumerable<ObjetoAvatar> avatares)
+        public SeleccionAvatarVistaModelo(IEnumerable<ObjetoAvatar> avatares)
         {
             if (avatares == null)
             {
@@ -21,7 +21,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             }
 
             Avatares = new ObservableCollection<ObjetoAvatar>(avatares);
-            ConfirmarSeleccionCommand = new ComandoDelegado(ConfirmarSeleccion);
+            ConfirmarSeleccionComando = new ComandoDelegado(ConfirmarSeleccion);
         }
 
         public ObservableCollection<ObjetoAvatar> Avatares { get; }
@@ -32,7 +32,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             set => EstablecerPropiedad(ref _avatarSeleccionado, value);
         }
 
-        public ICommand ConfirmarSeleccionCommand { get; }
+        public ICommand ConfirmarSeleccionComando { get; }
 
         public Action<ObjetoAvatar> SeleccionConfirmada { get; set; }
 

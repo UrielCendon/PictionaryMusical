@@ -5,9 +5,9 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para UnirsePartidaInvitado.xaml
     /// </summary>
-    public partial class UnirsePartidaInvitado : Window
+    public partial class IngresoPartidaInvitado : Window
     {
-        public UnirsePartidaInvitado()
+        public IngresoPartidaInvitado()
         {
             InitializeComponent();
         }

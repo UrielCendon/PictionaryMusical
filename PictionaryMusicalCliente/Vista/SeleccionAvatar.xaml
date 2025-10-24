@@ -1,4 +1,4 @@
-<Window x:Class="PictionaryMusicalCliente.SeleccionarAvatar"
+<Window x:Class="PictionaryMusicalCliente.SeleccionAvatar"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
@@ -13,7 +13,7 @@
                 Padding="20" CornerRadius="3">
             <StackPanel>
                 <!-- ===== Avatares en 4x4 ===== -->
-                <ListBox x:Name="listaAvatares"
+                <ListBox x:Name="cuadroListaAvatares"
                          BorderThickness="0"
                          SelectionMode="Single"
                          ItemsSource="{Binding Avatares}"
@@ -45,7 +45,7 @@
                         HorizontalAlignment="Center"
                         FontFamily="Comic Sans MS" FontWeight="Bold"
                         Background="White" BorderBrush="Black"
-                        Command="{Binding ConfirmarSeleccionCommand}"/>
+                        Command="{Binding ConfirmarSeleccionComando}"/>
             </StackPanel>
         </Border>
     </Grid>

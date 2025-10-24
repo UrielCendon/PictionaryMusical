@@ -1,4 +1,4 @@
-﻿<Window x:Class="PictionaryMusicalCliente.ExpulsarJugador"
+﻿<Window x:Class="PictionaryMusicalCliente.ExpulsionJugador"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
@@ -20,7 +20,7 @@
                            FontFamily="Comic Sans MS" FontSize="14"
                            TextAlignment="Center" Margin="0,0,0,10"/>
 
-                <TextBox x:Name="bloqueTextoRazonExpulsion"
+                <TextBox x:Name="campoTextoRazonExpulsion"
                          Height="110" TextWrapping="Wrap" AcceptsReturn="True"
                          FontFamily="Comic Sans MS"
                          Margin="0,0,0,12"

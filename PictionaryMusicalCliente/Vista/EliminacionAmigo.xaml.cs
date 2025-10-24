@@ -7,16 +7,16 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para EliminarAmigo.xaml
     /// </summary>
-    public partial class EliminarAmigo : Window
+    public partial class EliminacionAmigo : Window
     {
-        private readonly EliminarAmigoVistaModelo _vistaModelo;
+        private readonly EliminacionAmigoVistaModelo _vistaModelo;
 
-        public EliminarAmigo(string nombreAmigo)
-            : this(new EliminarAmigoVistaModelo(nombreAmigo))
+        public EliminacionAmigo(string nombreAmigo)
+            : this(new EliminacionAmigoVistaModelo(nombreAmigo))
         {
         }
 
-        public EliminarAmigo(EliminarAmigoVistaModelo vistaModelo)
+        public EliminacionAmigo(EliminacionAmigoVistaModelo vistaModelo)
         {
             _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
 

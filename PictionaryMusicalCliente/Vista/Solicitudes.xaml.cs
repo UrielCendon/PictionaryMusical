@@ -18,8 +18,8 @@ namespace PictionaryMusicalCliente
         {
         }
 
-        public Solicitudes(IAmigosServicio amigosService)
-            : this(new SolicitudesVistaModelo(amigosService))
+        public Solicitudes(IAmigosServicio amigosServicio)
+            : this(new SolicitudesVistaModelo(amigosServicio))
         {
         }
 

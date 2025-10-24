@@ -7,18 +7,18 @@ using DTOs = global::Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.Servicios.Dialogos
 {
-    public class VerificarCodigoDialogoServicio : IVerificarCodigoDialogoServicio
+    public class VerificacionCodigoDialogoServicio : IVerificacionCodigoDialogoServicio
     {
         public Task<DTOs.ResultadoRegistroCuentaDTO> MostrarDialogoAsync(
             string descripcion,
             string tokenCodigo,
-            ICodigoVerificacionCli codigoVerificacionService)
+            ICodigoVerificacionCli codigoVerificacionServicio)
         {
-            if (codigoVerificacionService == null)
-                throw new ArgumentNullException(nameof(codigoVerificacionService));
+            if (codigoVerificacionServicio == null)
+                throw new ArgumentNullException(nameof(codigoVerificacionServicio));
 
-            var ventana = new VerificarCodigo();
-            var vistaModelo = new VerificarCodigoVistaModelo(descripcion, tokenCodigo, codigoVerificacionService);
+            var ventana = new VerificacionCodigo();
+            var vistaModelo = new VerificacionCodigoVistaModelo(descripcion, tokenCodigo, codigoVerificacionServicio);
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO>();
 
             vistaModelo.VerificacionCompletada = resultado =>

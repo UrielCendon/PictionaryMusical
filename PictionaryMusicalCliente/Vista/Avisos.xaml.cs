@@ -11,11 +11,11 @@ namespace PictionaryMusicalCliente
         public Avisos(string mensaje)
         {
             InitializeComponent();
-            textoMensaje.Text = mensaje; 
+            bloqueTextoMensaje.Text = mensaje; 
 
         }
 
-        private void botonAceptar(object sender, RoutedEventArgs e)
+        private void BotonAceptar(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

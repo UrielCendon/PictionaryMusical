@@ -10,20 +10,20 @@ using PictionaryMusicalCliente.Utilidades;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
-    public class BuscarAmigoVistaModelo : BaseVistaModelo
+    public class BusquedaAmigoVistaModelo : BaseVistaModelo
     {
-        private readonly IAmigosServicio _amigosService;
+        private readonly IAmigosServicio _amigosServicio;
         private readonly string _usuarioActual;
         private string _nombreUsuarioBusqueda;
         private bool _estaProcesando;
 
-        public BuscarAmigoVistaModelo(IAmigosServicio amigosService)
+        public BusquedaAmigoVistaModelo(IAmigosServicio amigosServicio)
         {
-            _amigosService = amigosService ?? throw new ArgumentNullException(nameof(amigosService));
+            _amigosServicio = amigosServicio ?? throw new ArgumentNullException(nameof(amigosServicio));
             _usuarioActual = SesionUsuarioActual.Instancia.Usuario?.NombreUsuario ?? string.Empty;
 
-            EnviarSolicitudCommand = new ComandoAsincrono(_ => EnviarSolicitudAsync(), _ => PuedeEnviarSolicitud());
-            CancelarCommand = new ComandoDelegado(_ => Cancelado?.Invoke());
+            EnviarSolicitudComando = new ComandoAsincrono(_ => EnviarSolicitudAsync(), _ => PuedeEnviarSolicitud());
+            CancelarComando = new ComandoDelegado(_ => Cancelado?.Invoke());
         }
 
         public string NombreUsuarioBusqueda
@@ -33,7 +33,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             {
                 if (EstablecerPropiedad(ref _nombreUsuarioBusqueda, value))
                 {
-                    EnviarSolicitudCommand?.NotificarPuedeEjecutar();
+                    EnviarSolicitudComando?.NotificarPuedeEjecutar();
                 }
             }
         }
@@ -45,14 +45,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             {
                 if (EstablecerPropiedad(ref _estaProcesando, value))
                 {
-                    EnviarSolicitudCommand?.NotificarPuedeEjecutar();
+                    EnviarSolicitudComando?.NotificarPuedeEjecutar();
                 }
             }
         }
 
-        public IComandoAsincrono EnviarSolicitudCommand { get; }
+        public IComandoAsincrono EnviarSolicitudComando { get; }
 
-        public ICommand CancelarCommand { get; }
+        public ICommand CancelarComando { get; }
 
         public Action SolicitudEnviada { get; set; }
 
@@ -84,7 +84,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             try
             {
-                await _amigosService.EnviarSolicitudAsync(_usuarioActual, nombreAmigo).ConfigureAwait(true);
+                await _amigosServicio.EnviarSolicitudAsync(_usuarioActual, nombreAmigo).ConfigureAwait(true);
                 AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudEnviada);
                 SolicitudEnviada?.Invoke();
             }

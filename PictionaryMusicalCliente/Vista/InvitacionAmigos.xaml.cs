@@ -5,9 +5,9 @@ namespace PictionaryMusicalCliente
     /// <summary>
     /// Lógica de interacción para InvitarAmigos.xaml
     /// </summary>
-    public partial class InvitarAmigos : Window
+    public partial class InvitacionAmigos : Window
     {
-        public InvitarAmigos()
+        public InvitacionAmigos()
         {
             InitializeComponent();
         }

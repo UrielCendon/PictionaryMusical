@@ -15,8 +15,8 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
     {
         private const string Endpoint = "NetTcpBinding_IListaAmigosManejador";
 
-        private readonly SemaphoreSlim _semaphore = new(1, 1);
-        private readonly object _amigosLock = new();
+        private readonly SemaphoreSlim _semaforo = new(1, 1);
+        private readonly object _amigosBloqueo = new();
         private readonly List<DTOs.AmigoDTO> _amigos = new();
 
         private PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient _cliente;
@@ -28,7 +28,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
         {
             get
             {
-                lock (_amigosLock)
+                lock (_amigosBloqueo)
                 {
                     return _amigos.Count == 0
                         ? Array.Empty<DTOs.AmigoDTO>()
@@ -42,7 +42,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreUsuario))
                 throw new ArgumentException("El nombre de usuario es obligatorio.", nameof(nombreUsuario));
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaforo.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -91,7 +91,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -100,7 +100,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreUsuario))
                 return;
 
-            await _semaphore.WaitAsync().ConfigureAwait(false);
+            await _semaforo.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -114,7 +114,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -122,7 +122,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
         {
             var lista = Convertir(amigos);
 
-            lock (_amigosLock)
+            lock (_amigosBloqueo)
             {
                 _amigos.Clear();
                 _amigos.AddRange(lista);
@@ -133,7 +133,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
 
         public void Dispose()
         {
-            _semaphore.Wait();
+            _semaforo.Wait();
 
             try
             {
@@ -143,7 +143,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             }
             finally
             {
-                _semaphore.Release();
+                _semaforo.Release();
             }
         }
 
@@ -216,7 +216,11 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                     cliente.Close();
                 }
             }
-            catch
+            catch (CommunicationException)
+            {
+                cliente.Abort();
+            }
+            catch (TimeoutException)
             {
                 cliente.Abort();
             }

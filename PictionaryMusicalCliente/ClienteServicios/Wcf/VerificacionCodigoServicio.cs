@@ -9,7 +9,7 @@ using DTOs = global::Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.Servicios.Wcf
 {
-    public class VerificarCodigoServicio : IVerificarCodigoServicio
+    public class VerificacionCodigoServicio : IVerificacionCodigoServicio
     {
         public async Task<DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoRegistroAsync(string tokenCodigo, string codigoIngresado)
         {

@@ -14,13 +14,13 @@ using DTOs = global::Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 {
-    public class CrearCuentaVistaModelo : BaseVistaModelo
+    public class CreacionCuentaVistaModelo : BaseVistaModelo
     {
-        private readonly ICodigoVerificacionServicio _codigoVerificacionService;
-        private readonly ICuentaServicio _cuentaService;
-        private readonly ISeleccionarAvatarServicio _seleccionarAvatarService;
-        private readonly IVerificarCodigoDialogoServicio _verificarCodigoDialogService;
-        private readonly IAvatarServicio _avatarService;
+        private readonly ICodigoVerificacionServicio _codigoVerificacionServicio;
+        private readonly ICuentaServicio _cuentaServicio;
+        private readonly ISeleccionarAvatarServicio _seleccionarAvatarServicio;
+        private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
+        private readonly IAvatarServicio _avatarServicio;
 
         private string _usuario;
         private string _nombre;
@@ -33,22 +33,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
         private bool _mostrarErrorCorreo;
         private bool _estaProcesando;
 
-        public CrearCuentaVistaModelo(
-            ICodigoVerificacionServicio codigoVerificacionService,
-            ICuentaServicio cuentaService,
-            ISeleccionarAvatarServicio seleccionarAvatarService,
-            IVerificarCodigoDialogoServicio verificarCodigoDialogService,
-            IAvatarServicio avatarService)
+        public CreacionCuentaVistaModelo(
+            ICodigoVerificacionServicio codigoVerificacionServicio,
+            ICuentaServicio cuentaServicio,
+            ISeleccionarAvatarServicio seleccionarAvatarServicio,
+            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
+            IAvatarServicio avatarServicio)
         {
-            _codigoVerificacionService = codigoVerificacionService ?? throw new ArgumentNullException(nameof(codigoVerificacionService));
-            _cuentaService = cuentaService ?? throw new ArgumentNullException(nameof(cuentaService));
-            _seleccionarAvatarService = seleccionarAvatarService ?? throw new ArgumentNullException(nameof(seleccionarAvatarService));
-            _verificarCodigoDialogService = verificarCodigoDialogService ?? throw new ArgumentNullException(nameof(verificarCodigoDialogService));
-            _avatarService = avatarService ?? throw new ArgumentNullException(nameof(avatarService));
+            _codigoVerificacionServicio = codigoVerificacionServicio ?? throw new ArgumentNullException(nameof(codigoVerificacionServicio));
+            _cuentaServicio = cuentaServicio ?? throw new ArgumentNullException(nameof(cuentaServicio));
+            _seleccionarAvatarServicio = seleccionarAvatarServicio ?? throw new ArgumentNullException(nameof(seleccionarAvatarServicio));
+            _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ?? throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
+            _avatarServicio = avatarServicio ?? throw new ArgumentNullException(nameof(avatarServicio));
 
-            CrearCuentaCommand = new ComandoAsincrono(_ => CrearCuentaAsync(), _ => !EstaProcesando);
-            CancelarCommand = new ComandoDelegado(Cancelar);
-            SeleccionarAvatarCommand = new ComandoAsincrono(_ => SeleccionarAvatarAsync());
+            CrearCuentaComando = new ComandoAsincrono(_ => CrearCuentaAsync(), _ => !EstaProcesando);
+            CancelarComando = new ComandoDelegado(Cancelar);
+            SeleccionarAvatarComando = new ComandoAsincrono(_ => SeleccionarAvatarAsync());
 
             EstablecerAvatarPredeterminado();
             _ = CargarCatalogoAvataresAsync();
@@ -115,16 +115,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             {
                 if (EstablecerPropiedad(ref _estaProcesando, value))
                 {
-                    ((IComandoNotificable)CrearCuentaCommand).NotificarPuedeEjecutar();
+                    ((IComandoNotificable)CrearCuentaComando).NotificarPuedeEjecutar();
                 }
             }
         }
 
-        public IComandoAsincrono CrearCuentaCommand { get; }
+        public IComandoAsincrono CrearCuentaComando { get; }
 
-        public ICommand CancelarCommand { get; }
+        public ICommand CancelarComando { get; }
 
-        public IComandoAsincrono SeleccionarAvatarCommand { get; }
+        public IComandoAsincrono SeleccionarAvatarComando { get; }
 
         public Action CerrarAccion { get; set; }
 
@@ -234,7 +234,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
             {
                 EstaProcesando = true;
 
-                DTOs.ResultadoSolicitudCodigoDTO resultadoSolicitud = await _codigoVerificacionService
+                DTOs.ResultadoSolicitudCodigoDTO resultadoSolicitud = await _codigoVerificacionServicio
                     .SolicitarCodigoRegistroAsync(solicitud).ConfigureAwait(true);
 
                 if (resultadoSolicitud == null)
@@ -284,11 +284,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
                     return;
                 }
 
-                DTOs.ResultadoRegistroCuentaDTO resultadoVerificacion = await _verificarCodigoDialogService
+                DTOs.ResultadoRegistroCuentaDTO resultadoVerificacion = await _verificarCodigoDialogoServicio
                     .MostrarDialogoAsync(
                         Lang.cambiarContrasenaTextoCodigoVerificacion,
                         resultadoSolicitud.TokenCodigo,
-                        _codigoVerificacionService).ConfigureAwait(true);
+                        _codigoVerificacionServicio).ConfigureAwait(true);
 
                 if (resultadoVerificacion == null || !resultadoVerificacion.RegistroExitoso)
                 {
@@ -300,7 +300,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
                     return;
                 }
 
-                DTOs.ResultadoRegistroCuentaDTO resultadoRegistro = await _cuentaService
+                DTOs.ResultadoRegistroCuentaDTO resultadoRegistro = await _cuentaServicio
                     .RegistrarCuentaAsync(solicitud).ConfigureAwait(true);
 
                 if (resultadoRegistro == null)
@@ -361,7 +361,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
         private async Task SeleccionarAvatarAsync()
         {
-            ObjetoAvatar avatar = await _seleccionarAvatarService
+            ObjetoAvatar avatar = await _seleccionarAvatarServicio
                 .SeleccionarAvatarAsync(AvatarSeleccionadoRutaRelativa).ConfigureAwait(true);
 
             if (avatar == null)
@@ -387,7 +387,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
         {
             try
             {
-                IReadOnlyList<ObjetoAvatar> avatares = await _avatarService.ObtenerCatalogoAsync()
+                IReadOnlyList<ObjetoAvatar> avatares = await _avatarServicio.ObtenerCatalogoAsync()
                     .ConfigureAwait(true);
 
                 if (avatares != null && avatares.Count > 0)
