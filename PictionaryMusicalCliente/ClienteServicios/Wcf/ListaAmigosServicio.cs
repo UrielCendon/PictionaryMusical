@@ -118,7 +118,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             }
         }
 
-        public void ListaAmigosActualizada(DTOs.AmigoDTO[] amigos)
+        public void NotificarListaAmigosActualizada(DTOs.AmigoDTO[] amigos)
         {
             var lista = Convertir(amigos);
 
@@ -231,7 +231,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                 .Where(amigo => amigo != null && !string.IsNullOrWhiteSpace(amigo.NombreUsuario))
                 .Select(amigo => new DTOs.AmigoDTO
                 {
-                    IdUsuario = amigo.IdUsuario,
+                    UsuarioId = amigo.UsuarioId,
                     NombreUsuario = amigo.NombreUsuario
                 })
                 .ToList();

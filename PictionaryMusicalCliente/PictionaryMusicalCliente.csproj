@@ -372,14 +372,27 @@
     </None>
     <None Include="Connected Services\PictionaryServidorServicioPerfil\PerfilManejador.wsdl" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.AmigoDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.AmigoDTO1.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.AvatarDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.AvatarDTO1.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ClasificacionUsuarioDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ClasificacionUsuarioDTO1.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoInicioSesionDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoInicioSesionDTO1.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoOperacionDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoOperacionDTO1.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoOperacionDTO2.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO1.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO2.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO1.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO2.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudRecuperacionDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudRecuperacionDTO1.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudRecuperacionDTO2.datasource" />
     <None Include="Properties\DataSources\Servicios.Contratos.DTOs.UsuarioDTO.datasource" />
+    <None Include="Properties\DataSources\Servicios.Contratos.DTOs.UsuarioDTO1.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -415,9 +428,6 @@
     <WCFMetadataStorage Include="Connected Services\PictionaryServidorServicioPerfil\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.disco" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Recursos\Aleks_Syntek.jpg" />
     <Resource Include="Recursos\Anuel_AA.jpg" />
     <Resource Include="Recursos\Bad_Bunny.jpg" />
@@ -432,18 +442,6 @@
     <Resource Include="Recursos\Taylor_Swift.jpg" />
     <Resource Include="Recursos\The_Weeknd.jpg" />
     <Resource Include="Recursos\Travis_Scott.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion.disco" />
@@ -661,6 +659,21 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Recursos\PictionaryMusicalLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

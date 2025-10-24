@@ -113,7 +113,7 @@ namespace Servicios.Servicios
 
             return new UsuarioDTO
             {
-                UsuarioID = usuario.idUsuario,
+                UsuarioId = usuario.idUsuario,
                 JugadorId = jugador?.idJugador ?? 0,
                 NombreUsuario = usuario.Nombre_Usuario,
                 Nombre = jugador?.Nombre,

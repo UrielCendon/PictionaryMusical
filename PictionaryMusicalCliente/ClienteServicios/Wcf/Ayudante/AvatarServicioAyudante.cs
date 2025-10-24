@@ -34,7 +34,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
             ImageSource imagen = CrearImagen(rutaAbsoluta);
 
             return new ObjetoAvatar(
-                dto.Id,
+                dto.AvatarId,
                 dto.Nombre,
                 imagen,
                 rutaRelativa: dto.RutaRelativa,

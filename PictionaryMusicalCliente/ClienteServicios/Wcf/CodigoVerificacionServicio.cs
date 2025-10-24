@@ -59,7 +59,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                var dto = new DTOs.ReenviarCodigoVerificacionDTO
+                var dto = new DTOs.ReenvioCodigoVerificacionDTO
                 {
                     TokenCodigo = tokenCodigo.Trim()
                 };
@@ -103,7 +103,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                var dto = new DTOs.ConfirmarCodigoDTO
+                var dto = new DTOs.ConfirmacionCodigoDTO
                 {
                     TokenCodigo = tokenCodigo,
                     CodigoIngresado = codigoIngresado

@@ -1,5 +1,5 @@
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios;
+using PictionaryMusicalCliente.Servicios; 
 using PictionaryMusicalCliente.Servicios.Abstracciones;
 using PictionaryMusicalCliente.Servicios.Wcf.Helpers;
 using System;
@@ -134,7 +134,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public Task EliminarAmigoAsync(string usuarioA, string usuarioB) =>
             EjecutarOperacionAsync(c => c.EliminarAmigoAsync(usuarioA, usuarioB));
 
-        public void SolicitudActualizada(DTOs.SolicitudAmistadDTO solicitud)
+        public void NotificarSolicitudActualizada(DTOs.SolicitudAmistadDTO solicitud)
         {
             if (solicitud == null || string.IsNullOrWhiteSpace(solicitud.UsuarioEmisor) || string.IsNullOrWhiteSpace(solicitud.UsuarioReceptor))
                 return;
@@ -174,13 +174,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 NotificarSolicitudesActualizadas();
         }
 
-        public void AmistadEliminada(DTOs.SolicitudAmistadDTO solicitud)
+        public void NotificarAmistadEliminada(DTOs.SolicitudAmistadDTO solicitud)
         {
             if (solicitud == null)
                 return;
 
             string usuarioActual = _usuarioSuscrito;
-            if(string.IsNullOrWhiteSpace(usuarioActual))
+            if (string.IsNullOrWhiteSpace(usuarioActual))
                 return;
 
             bool modificada = false;
@@ -230,7 +230,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 cliente = _cliente ?? CrearCliente();
-                esTemporal = _cliente == null;
+                esTemporal = (_cliente == null);
 
                 try
                 {
@@ -239,32 +239,32 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 }
                 catch (FaultException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
                 catch (EndpointNotFoundException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
                 catch (TimeoutException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
                 catch (CommunicationException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
                 catch (InvalidOperationException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
                 catch (OperationCanceledException ex)
                 {
-                    if (esTemporal) cliente.Abort();
+                    if (esTemporal) cliente.Abort(); else ReiniciarClienteConSuscripcion();
                     ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
                 }
             }
@@ -273,6 +273,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _semaphore.Release();
             }
         }
+
+        private async void ReiniciarClienteConSuscripcion()
+        {
+            string usuario = _usuarioSuscrito;
+            if (string.IsNullOrWhiteSpace(usuario)) return;
+
+            await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
+
+            try
+            {
+                await SuscribirAsync(usuario).ConfigureAwait(false);
+            }
+            catch
+            {
+                // Podrías loggear o notificar que la reconexión falló
+            }
+        }
+
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient CrearCliente()
         {
@@ -288,48 +306,32 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             _usuarioSuscrito = null;
 
             if (cliente == null)
+            {
+                LimpiarSolicitudes();
+                NotificarSolicitudesActualizadas();
                 return;
+            }
+
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(usuario))
+                if (!string.IsNullOrWhiteSpace(usuario) && cliente.State == CommunicationState.Opened) 
+                {
                     await cliente.CancelarSuscripcionAsync(usuario).ConfigureAwait(false);
-
-                CerrarCliente(cliente);
+                }
+                CerrarCliente(cliente); 
             }
-            catch (FaultException ex)
+            catch (FaultException) { cliente.Abort(); } 
+            catch (EndpointNotFoundException) { cliente.Abort(); }
+            catch (TimeoutException) { cliente.Abort(); }
+            catch (CommunicationException) { cliente.Abort(); }
+            catch (InvalidOperationException) { cliente.Abort(); }
+            catch (OperationCanceledException) { cliente.Abort(); }
+            finally 
             {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
+                LimpiarSolicitudes();
+                NotificarSolicitudesActualizadas();
             }
-            catch (EndpointNotFoundException ex)
-            {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-            }
-            catch (TimeoutException ex)
-            {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-            }
-            catch (CommunicationException ex)
-            {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-            }
-            catch (InvalidOperationException ex)
-            {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-            }
-            catch (OperationCanceledException ex)
-            {
-                cliente.Abort();
-                ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-            }
-
-            LimpiarSolicitudes();
-            NotificarSolicitudesActualizadas();
         }
 
         private static void CerrarCliente(PictionaryServidorServicioAmigos.AmigosManejadorClient cliente)
@@ -337,24 +339,32 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (cliente == null)
                 return;
 
+            bool aborted = false;
             try
             {
-                if (cliente.State == CommunicationState.Faulted)
-                    cliente.Abort();
-                else
+                if (cliente.State != CommunicationState.Faulted)
+                {
                     cliente.Close();
+                }
+                else
+                {
+                    cliente.Abort();
+                    aborted = true;
+                }
             }
             catch (CommunicationException)
             {
                 cliente.Abort();
+                aborted = true;
             }
             catch (TimeoutException)
             {
                 cliente.Abort();
+                aborted = true;
             }
-            catch (InvalidOperationException)
+            catch (Exception) 
             {
-                cliente.Abort();
+                if (!aborted) cliente.Abort();
             }
         }
 
@@ -364,16 +374,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 case FaultException faultEx:
                     throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, ErrorServicioAyudante.ObtenerMensaje(faultEx, mensajePredeterminado), ex);
-                case EndpointNotFoundException:
+                case EndpointNotFoundException _: 
                     throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-                case TimeoutException:
+                case TimeoutException _:
                     throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
-                case CommunicationException:
+                case CommunicationException _:
                     throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-                case InvalidOperationException:
+                case InvalidOperationException _:
                     throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoErrorProcesarSolicitud, ex);
                 default:
-                    throw ex;
+                    throw new ExcepcionServicio(TipoErrorServicio.Desconocido, mensajePredeterminado, ex);
             }
         }
 
@@ -383,9 +393,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _solicitudes.Clear();
         }
 
+
         private void NotificarSolicitudesActualizadas()
         {
-            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> snapshot = SolicitudesPendientes;
+            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> snapshot;
+            lock (_solicitudesLock)
+            {
+                snapshot = _solicitudes.ToArray();
+            }
             SolicitudesActualizadas?.Invoke(this, snapshot);
         }
     }

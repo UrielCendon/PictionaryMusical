@@ -34,7 +34,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
         public static Task<DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoRegistroAsync(string tokenCodigo, string codigoIngresado)
         {
             var cliente = new PictionaryServidorServicioCodigoVerificacion.CodigoVerificacionManejadorClient(CodigoVerificacionEndpoint);
-            var solicitud = new DTOs.ConfirmarCodigoDTO
+            var solicitud = new DTOs.ConfirmacionCodigoDTO
             {
                 TokenCodigo = tokenCodigo,
                 CodigoIngresado = codigoIngresado?.Trim()
@@ -46,7 +46,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
         public static Task<DTOs.ResultadoOperacionDTO> ConfirmarCodigoRecuperacionAsync(string tokenCodigo, string codigoIngresado)
         {
             var cliente = new PictionaryServidorServicioCodigoVerificacion.CodigoVerificacionManejadorClient(CodigoVerificacionEndpoint);
-            var solicitud = new DTOs.ConfirmarCodigoDTO
+            var solicitud = new DTOs.ConfirmacionCodigoDTO
             {
                 TokenCodigo = tokenCodigo,
                 CodigoIngresado = codigoIngresado?.Trim()
@@ -58,7 +58,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
         public static Task<DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoRegistroAsync(string tokenCodigo)
         {
             var cliente = new PictionaryServidorServicioCuenta.CuentaManejadorClient(CuentaEndpoint);
-            var solicitud = new DTOs.ReenviarCodigoVerificacionDTO
+            var solicitud = new DTOs.ReenvioCodigoVerificacionDTO
             {
                 TokenCodigo = tokenCodigo?.Trim()
             };
@@ -68,8 +68,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
 
         public static Task<DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoRecuperacionAsync(string tokenCodigo)
         {
-            var cliente = new PictionaryServidorServicioCambioContrasena.CambiarContrasenaManejadorClient(CambioContrasenaEndpoint);
-            var solicitud = new DTOs.ReenviarCodigoDTO
+            var cliente = new PictionaryServidorServicioCambioContrasena.CambioContrasenaManejadorClient(CambioContrasenaEndpoint);
+            var solicitud = new DTOs.ReenvioCodigoDTO
             {
                 TokenCodigo = tokenCodigo?.Trim()
             };

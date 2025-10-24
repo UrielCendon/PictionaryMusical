@@ -157,11 +157,11 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             if (string.IsNullOrWhiteSpace(nuevaContrasena))
                 throw new ArgumentNullException(nameof(nuevaContrasena));
 
-            var cliente = new PictionaryServidorServicioCambioContrasena.CambiarContrasenaManejadorClient(Endpoint);
+            var cliente = new PictionaryServidorServicioCambioContrasena.CambioContrasenaManejadorClient(Endpoint);
 
             try
             {
-                var solicitud = new DTOs.ActualizarContrasenaDTO
+                var solicitud = new DTOs.ActualizacionContrasenaDTO
                 {
                     TokenCodigo = tokenCodigo,
                     NuevaContrasena = nuevaContrasena

@@ -65,7 +65,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             }
         }
 
-        public async Task<DTOs.ResultadoOperacionDTO> ActualizarPerfilAsync(DTOs.ActualizarPerfilDTO solicitud)
+        public async Task<DTOs.ResultadoOperacionDTO> ActualizarPerfilAsync(DTOs.ActualizacionPerfilDTO solicitud)
         {
             if (solicitud == null)
                 throw new ArgumentNullException(nameof(solicitud));
@@ -126,7 +126,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
 
         public async Task<IReadOnlyList<ObjetoAvatar>> ObtenerAvataresDisponiblesAsync()
         {
-            var cliente = new PictionaryServidorServicioAvatares.CatalogoAvataresClient(CatalogoAvataresEndpoint);
+            var cliente = new PictionaryServidorServicioAvatares.CatalogoAvataresManejadorClient(CatalogoAvataresEndpoint);
 
             try
             {

@@ -52,9 +52,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return null;
         }
 
-        private async Task<T> EjecutarCatalogoAsync<T>(Func<PictionaryServidorServicioAvatares.CatalogoAvataresClient, Task<T>> operacion)
+        private async Task<T> EjecutarCatalogoAsync<T>(Func<PictionaryServidorServicioAvatares.CatalogoAvataresManejadorClient, Task<T>> operacion)
         {
-            var cliente = new PictionaryServidorServicioAvatares.CatalogoAvataresClient(CatalogoAvataresEndpoint);
+            var cliente = new PictionaryServidorServicioAvatares.CatalogoAvataresManejadorClient(CatalogoAvataresEndpoint);
 
             try
             {

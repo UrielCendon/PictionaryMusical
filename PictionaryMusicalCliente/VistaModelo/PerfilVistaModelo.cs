@@ -265,7 +265,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
                 return;
             }
 
-            var solicitud = new DTOs.ActualizarPerfilDTO
+            var solicitud = new DTOs.ActualizacionPerfilDTO
             {
                 UsuarioId = _usuarioId,
                 Nombre = nombre,
@@ -349,7 +349,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
         private void AplicarPerfil(DTOs.UsuarioDTO perfil)
         {
-            _usuarioId = perfil.IdUsuario;
+            _usuarioId = perfil.UsuarioId;
             Usuario = perfil.NombreUsuario;
             Correo = perfil.Correo;
             Nombre = perfil.Nombre;
@@ -492,7 +492,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
             var dto = new DTOs.UsuarioDTO
             {
-                IdUsuario = sesion.IdUsuario,
+                UsuarioId = sesion.IdUsuario,
                 JugadorId = sesion.JugadorId,
                 NombreUsuario = sesion.NombreUsuario,
                 Nombre = nombreActual,

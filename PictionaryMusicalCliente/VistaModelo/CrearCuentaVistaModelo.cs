@@ -243,27 +243,27 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
                     return;
                 }
 
-                if (resultadoSolicitud.UsuarioYaRegistrado)
+                if (resultadoSolicitud.UsuarioRegistrado)
                 {
                     MostrarErrorUsuario = true;
                 }
 
-                if (resultadoSolicitud.CorreoYaRegistrado)
+                if (resultadoSolicitud.CorreoRegistrado)
                 {
                     MostrarErrorCorreo = true;
                 }
 
-                bool tieneDuplicados = resultadoSolicitud.UsuarioYaRegistrado || resultadoSolicitud.CorreoYaRegistrado;
+                bool tieneDuplicados = resultadoSolicitud.UsuarioRegistrado || resultadoSolicitud.CorreoRegistrado;
 
                 if (tieneDuplicados)
                 {
                     var duplicados = new List<string>();
-                    if (resultadoSolicitud.UsuarioYaRegistrado)
+                    if (resultadoSolicitud.UsuarioRegistrado)
                     {
                         duplicados.Add(nameof(Usuario));
                     }
 
-                    if (resultadoSolicitud.CorreoYaRegistrado)
+                    if (resultadoSolicitud.CorreoRegistrado)
                     {
                         duplicados.Add(nameof(Correo));
                     }
@@ -311,18 +311,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Cuentas
 
                 if (!resultadoRegistro.RegistroExitoso)
                 {
-                    MostrarErrorUsuario = resultadoRegistro.UsuarioYaRegistrado;
-                    MostrarErrorCorreo = resultadoRegistro.CorreoYaRegistrado;
+                    MostrarErrorUsuario = resultadoRegistro.UsuarioRegistrado;
+                    MostrarErrorCorreo = resultadoRegistro.CorreoRegistrado;
 
-                    if (resultadoRegistro.UsuarioYaRegistrado || resultadoRegistro.CorreoYaRegistrado)
+                    if (resultadoRegistro.UsuarioRegistrado || resultadoRegistro.CorreoRegistrado)
                     {
                         var duplicados = new List<string>();
-                        if (resultadoRegistro.UsuarioYaRegistrado)
+                        if (resultadoRegistro.UsuarioRegistrado)
                         {
                             duplicados.Add(nameof(Usuario));
                         }
 
-                        if (resultadoRegistro.CorreoYaRegistrado)
+                        if (resultadoRegistro.CorreoRegistrado)
                         {
                             duplicados.Add(nameof(Correo));
                         }

@@ -9,7 +9,112 @@
 //------------------------------------------------------------------------------
 
 namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
+    using System.Runtime.Serialization;
+    using System;
     
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ReenvioCodigoVerificacionDTO", Namespace="http://schemas.datacontract.org/2004/07/global::Servicios.Contratos.DTOs")]
+    [System.SerializableAttribute()]
+    public partial class ReenvioCodigoVerificacionDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string TokenCodigoField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string TokenCodigo {
+            get {
+                return this.TokenCodigoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TokenCodigoField, value) != true)) {
+                    this.TokenCodigoField = value;
+                    this.RaisePropertyChanged("TokenCodigo");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="ConfirmacionCodigoDTO", Namespace="http://schemas.datacontract.org/2004/07/global::Servicios.Contratos.DTOs")]
+    [System.SerializableAttribute()]
+    public partial class ConfirmacionCodigoDTO : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string CodigoIngresadoField;
+        
+        private string TokenCodigoField;
+        
+        [global::System.ComponentModel.BrowsableAttribute(false)]
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
+            get {
+                return this.extensionDataField;
+            }
+            set {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string CodigoIngresado {
+            get {
+                return this.CodigoIngresadoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.CodigoIngresadoField, value) != true)) {
+                    this.CodigoIngresadoField = value;
+                    this.RaisePropertyChanged("CodigoIngresado");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string TokenCodigo {
+            get {
+                return this.TokenCodigoField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.TokenCodigoField, value) != true)) {
+                    this.TokenCodigoField = value;
+                    this.RaisePropertyChanged("TokenCodigo");
+                }
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="PictionaryServidorServicioCuenta.ICuentaManejador")]
@@ -22,16 +127,16 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
         System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO> SolicitarCodigoVerificacionAsync(global::Servicios.Contratos.DTOs.NuevaCuentaDTO nuevaCuenta);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/ReenviarCodigoVerificacion", ReplyAction="http://tempuri.org/ICuentaManejador/ReenviarCodigoVerificacionResponse")]
-        global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(global::Servicios.Contratos.DTOs.ReenviarCodigoVerificacionDTO solicitud);
+        global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ReenvioCodigoVerificacionDTO solicitud);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/ReenviarCodigoVerificacion", ReplyAction="http://tempuri.org/ICuentaManejador/ReenviarCodigoVerificacionResponse")]
-        System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoVerificacionAsync(global::Servicios.Contratos.DTOs.ReenviarCodigoVerificacionDTO solicitud);
+        System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoVerificacionAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ReenvioCodigoVerificacionDTO solicitud);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/ConfirmarCodigoVerificacion", ReplyAction="http://tempuri.org/ICuentaManejador/ConfirmarCodigoVerificacionResponse")]
-        global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(global::Servicios.Contratos.DTOs.ConfirmarCodigoDTO confirmacion);
+        global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ConfirmacionCodigoDTO confirmacion);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/ConfirmarCodigoVerificacion", ReplyAction="http://tempuri.org/ICuentaManejador/ConfirmarCodigoVerificacionResponse")]
-        System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoVerificacionAsync(global::Servicios.Contratos.DTOs.ConfirmarCodigoDTO confirmacion);
+        System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoVerificacionAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ConfirmacionCodigoDTO confirmacion);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICuentaManejador/RegistrarCuenta", ReplyAction="http://tempuri.org/ICuentaManejador/RegistrarCuentaResponse")]
         global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO RegistrarCuenta(global::Servicios.Contratos.DTOs.NuevaCuentaDTO nuevaCuenta);
@@ -75,19 +180,19 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCuenta {
             return base.Channel.SolicitarCodigoVerificacionAsync(nuevaCuenta);
         }
         
-        public global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(global::Servicios.Contratos.DTOs.ReenviarCodigoVerificacionDTO solicitud) {
+        public global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ReenvioCodigoVerificacionDTO solicitud) {
             return base.Channel.ReenviarCodigoVerificacion(solicitud);
         }
         
-        public System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoVerificacionAsync(global::Servicios.Contratos.DTOs.ReenviarCodigoVerificacionDTO solicitud) {
+        public System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoVerificacionAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ReenvioCodigoVerificacionDTO solicitud) {
             return base.Channel.ReenviarCodigoVerificacionAsync(solicitud);
         }
         
-        public global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(global::Servicios.Contratos.DTOs.ConfirmarCodigoDTO confirmacion) {
+        public global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ConfirmacionCodigoDTO confirmacion) {
             return base.Channel.ConfirmarCodigoVerificacion(confirmacion);
         }
         
-        public System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoVerificacionAsync(global::Servicios.Contratos.DTOs.ConfirmarCodigoDTO confirmacion) {
+        public System.Threading.Tasks.Task<global::Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO> ConfirmarCodigoVerificacionAsync(PictionaryMusicalCliente.PictionaryServidorServicioCuenta.ConfirmacionCodigoDTO confirmacion) {
             return base.Channel.ConfirmarCodigoVerificacionAsync(confirmacion);
         }
         
