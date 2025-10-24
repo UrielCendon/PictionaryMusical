@@ -28,7 +28,7 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioAvatares {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class CatalogoAvataresClient : System.ServiceModel.ClientBase<PictionaryMusicalCliente.PictionaryServidorServicioAvatares.ICatalogoAvatares>, global::PictionaryMusicalCliente.PictionaryServidorServicioAvatares.ICatalogoAvatares {
+    public partial class CatalogoAvataresClient : System.ServiceModel.ClientBase<PictionaryMusicalCliente.PictionaryServidorServicioAvatares.ICatalogoAvatares>, PictionaryMusicalCliente.PictionaryServidorServicioAvatares.ICatalogoAvatares {
         
         public CatalogoAvataresClient() {
         }

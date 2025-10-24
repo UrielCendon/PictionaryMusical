@@ -24,7 +24,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 return await WcfClienteAyudante
-                    .UsarAsync(cliente, c => c.SolicitarCodigoVerificacionAsync(solicitud))
+                    .UsarAsincrono(cliente, c => c.SolicitarCodigoVerificacionAsync(solicitud))
                     .ConfigureAwait(false);
             }
             catch (FaultException ex)
@@ -65,7 +65,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 };
 
                 return await WcfClienteAyudante
-                    .UsarAsync(cliente, c => c.ReenviarCodigoVerificacionAsync(dto))
+                    .UsarAsincrono(cliente, c => c.ReenviarCodigoVerificacionAsync(dto))
                     .ConfigureAwait(false);
             }
             catch (FaultException ex)
@@ -110,7 +110,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 };
 
                 return await WcfClienteAyudante
-                    .UsarAsync(cliente, c => c.ConfirmarCodigoVerificacionAsync(dto))
+                    .UsarAsincrono(cliente, c => c.ConfirmarCodigoVerificacionAsync(dto))
                     .ConfigureAwait(false);
             }
             catch (FaultException ex)

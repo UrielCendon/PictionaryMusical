@@ -167,7 +167,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                     NuevaContrasena = nuevaContrasena
                 };
 
-                DTOs.ResultadoOperacionDTO resultado = await WcfClienteAyudante.UsarAsync(
+                DTOs.ResultadoOperacionDTO resultado = await WcfClienteAyudante.UsarAsincrono(
                     cliente,
                     c => c.ActualizarContrasenaAsync(solicitud))
                     .ConfigureAwait(false);

@@ -6,7 +6,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
 {
     public static class WcfClienteAyudante
     {
-        public static async Task<TResult> UsarAsync<TClient, TResult>(
+        public static async Task<TResult> UsarAsincrono<TClient, TResult>(
             TClient cliente,
             Func<TClient, Task<TResult>> operacion)
             where TClient : class, ICommunicationObject
@@ -34,7 +34,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
             }
         }
 
-        public static async Task UsarAsync<TClient>(
+        public static async Task UsarAsincrono<TClient>(
             TClient cliente,
             Func<TClient, Task> operacion)
             where TClient : class, ICommunicationObject

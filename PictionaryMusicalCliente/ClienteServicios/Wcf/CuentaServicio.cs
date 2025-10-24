@@ -23,7 +23,7 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             {
                 // Llamada directa con el mismo DTO del server
                 return await WcfClienteAyudante
-                    .UsarAsync(cliente, c => c.RegistrarCuentaAsync(solicitud))
+                    .UsarAsincrono(cliente, c => c.RegistrarCuentaAsync(solicitud))
                     .ConfigureAwait(false);
             }
             catch (FaultException ex)

@@ -6,7 +6,6 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Servicios;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers;
 using PictionaryMusicalCliente.Utilidades;
 using DTOs = global::Servicios.Contratos.DTOs;
 

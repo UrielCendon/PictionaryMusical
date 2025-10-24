@@ -26,7 +26,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 // Llamamos al servicio remoto
                 var resultadoDto = await WcfClienteAyudante
-                    .UsarAsync(cliente, c => c.IniciarSesionAsync(solicitud))
+                    .UsarAsincrono(cliente, c => c.IniciarSesionAsync(solicitud))
                     .ConfigureAwait(false);
 
                 if (resultadoDto == null)

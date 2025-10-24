@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="b2cb2a4e-354d-4d97-8d7f-8471e5944d1f" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
-    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
-    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+	<GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+	<GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
     <EnableDataBinding>true</EnableDataBinding>
     <ExcludedTypes />
     <ImportXmlTypes>false</ImportXmlTypes>
