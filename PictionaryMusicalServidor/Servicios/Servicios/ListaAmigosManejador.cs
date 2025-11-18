@@ -3,14 +3,16 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.ServiceModel;
-using Datos.DAL.Implementaciones;
-using Datos.Modelo;
-using Datos.Utilidades;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using PictionaryMusicalServidor.Datos.Modelo;
+using PictionaryMusicalServidor.Datos.Utilidades;
 using log4net;
-using Servicios.Contratos;
-using Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using System.Globalization;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
-namespace Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ListaAmigosManejador : IListaAmigosManejador
@@ -26,26 +28,22 @@ namespace Servicios.Servicios
             List<AmigoDTO> amigosActuales;
             try
             {
-                amigosActuales = ObtenerAmigosInterno(nombreUsuario);
-            }
-            catch (FaultException)
-            {
-                throw;
+                amigosActuales = ObtenerAmigosPorNombre(nombreUsuario);
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn("Identificador inválido al suscribirse a la lista de amigos", ex);
-                throw new FaultException(ex.Message);
+                _logger.Warn(MensajesError.Log.ListaAmigosSuscribirIdentificadorInvalido, ex);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Datos inválidos al suscribirse a la lista de amigos", ex);
-                throw new FaultException(ex.Message);
+                _logger.Warn(MensajesError.Log.ListaAmigosSuscribirDatosInvalidos, ex);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al suscribirse a la lista de amigos", ex);
-                throw new FaultException("No fue posible suscribirse a la lista de amigos.");
+                _logger.Error(MensajesError.Log.ListaAmigosSuscribirErrorDatos, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
 
             IListaAmigosManejadorCallback callback = ObtenerCallbackActual();
@@ -73,26 +71,22 @@ namespace Servicios.Servicios
 
             try
             {
-                return ObtenerAmigosInterno(nombreUsuario);
-            }
-            catch (FaultException)
-            {
-                throw;
+                return ObtenerAmigosPorNombre(nombreUsuario);
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn("Identificador inválido al obtener la lista de amigos", ex);
-                throw new FaultException(ex.Message);
+                _logger.Warn(MensajesError.Log.ListaAmigosObtenerIdentificadorInvalido, ex);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Datos inválidos al obtener la lista de amigos", ex);
-                throw new FaultException(ex.Message);
+                _logger.Warn(MensajesError.Log.ListaAmigosObtenerDatosInvalidos, ex);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al obtener la lista de amigos", ex);
-                throw new FaultException("No fue posible recuperar la lista de amigos.");
+                _logger.Error(MensajesError.Log.ListaAmigosObtenerErrorDatos, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
         }
 
@@ -106,68 +100,52 @@ namespace Servicios.Servicios
             NotificarLista(nombreUsuario);
         }
 
-        private static List<AmigoDTO> ObtenerAmigosInterno(string nombreUsuario)
+
+        private static List<AmigoDTO> ObtenerAmigosPorNombre(string nombreUsuario)
         {
             using var contexto = CrearContexto();
             var usuarioRepositorio = new UsuarioRepositorio(contexto);
-            var amigoRepositorio = new AmigoRepositorio(contexto);
 
             Usuario usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
 
-            if (usuario != null)
+            if (usuario == null)
             {
-                IList<Usuario> amigos = amigoRepositorio.ObtenerAmigos(usuario.idUsuario);
-
-                var resultado = new List<AmigoDTO>(amigos.Count);
-                foreach (var amigo in amigos)
-                {
-                    if (amigo == null)
-                    {
-                        continue;
-                    }
-
-                    resultado.Add(new AmigoDTO
-                    {
-                        UsuarioId = amigo.idUsuario,
-                        NombreUsuario = amigo.Nombre_Usuario
-                    });
-                }
-
-                return resultado;
+                throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
             }
 
-            throw new FaultException("El usuario especificado no existe.");
+            return ServicioAmistad.ObtenerAmigosDTO(usuario.idUsuario);
         }
+
 
         private static void NotificarLista(string nombreUsuario)
         {
             try
             {
-                var amigos = ObtenerAmigosInterno(nombreUsuario);
+                var amigos = ObtenerAmigosPorNombre(nombreUsuario);
                 NotificarLista(nombreUsuario, amigos);
             }
             catch (FaultException ex)
             {
-                _logger.Warn($"No se pudo obtener la lista de amigos del usuario {nombreUsuario} para notificar", ex);
+                _logger.Warn(MensajesError.Log.ListaAmigosNotificarObtenerError, ex);
                 RemoverSuscripcion(nombreUsuario);
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn($"Identificador inválido al actualizar la lista de amigos del usuario {nombreUsuario}", ex);
+                _logger.Warn(MensajesError.Log.ListaAmigosActualizarIdentificadorInvalido, ex);
                 RemoverSuscripcion(nombreUsuario);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn($"Datos inválidos al actualizar la lista de amigos del usuario {nombreUsuario}", ex);
+                _logger.Warn(MensajesError.Log.ListaAmigosActualizarDatosInvalidos, ex);
                 RemoverSuscripcion(nombreUsuario);
             }
             catch (DataException ex)
             {
-                _logger.Error($"Error de datos al obtener la lista de amigos del usuario {nombreUsuario}", ex);
+                _logger.Error(MensajesError.Log.ListaAmigosObtenerErrorDatos, ex);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn($"Error inesperado al obtener la lista de amigos del usuario {nombreUsuario}", ex);
+                _logger.Warn(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
             }
         }
 
@@ -192,7 +170,7 @@ namespace Servicios.Servicios
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn($"Error inesperado al notificar la lista de amigos del usuario {nombreUsuario}", ex);
+                _logger.Warn(MensajesError.Log.ListaAmigosNotificarError, ex);
             }
         }
 
@@ -207,10 +185,10 @@ namespace Servicios.Servicios
                     return callback;
                 }
 
-                throw new FaultException("No se pudo obtener el canal de retorno para la lista de amigos.");
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerCallback);
             }
 
-            throw new FaultException("No se pudo obtener el contexto de la operación para suscribirse a la lista de amigos.");
+            throw new FaultException(MensajesError.Cliente.ErrorContextoOperacion);
         }
 
         private static void RemoverSuscripcion(string nombreUsuario)
@@ -227,7 +205,8 @@ namespace Servicios.Servicios
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                throw new FaultException($"El parámetro {parametro} es obligatorio.");
+                string mensaje = string.Format(CultureInfo.CurrentCulture, MensajesError.Cliente.ParametroObligatorio, parametro);
+                throw new FaultException(mensaje);
             }
         }
 

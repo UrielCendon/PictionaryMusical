@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Media.Imaging;
 
 namespace PictionaryMusicalCliente.Modelo.Catalogos
@@ -8,7 +9,7 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
     {
         private const string CarpetaRecursos = "Recursos";
 
-        private static readonly IReadOnlyList<ObjetoAvatar> Avatares = new List<ObjetoAvatar>
+        private static readonly IReadOnlyList<ObjetoAvatar> _listaAvatares = new List<ObjetoAvatar>
         {
             Crear(1, "AC/DC", "ACDC.jpg"),
             Crear(2, "Aleks Syntek", "Aleks_Syntek.jpg"),
@@ -28,17 +29,25 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
             Crear(16, "Travis Scott", "Travis_Scott.jpg")
         };
 
+        private static readonly Dictionary<int, ObjetoAvatar> _diccionarioAvatares =
+            _listaAvatares.ToDictionary(a => a.Id);
+
         public static IReadOnlyList<ObjetoAvatar> ObtenerAvatares()
         {
-            return Avatares;
+            return _listaAvatares;
+        }
+
+        public static ObjetoAvatar ObtenerPorId(int id)
+        {
+            return _diccionarioAvatares.TryGetValue(id, out var avatar) ? avatar : null;
         }
 
         private static ObjetoAvatar Crear(int id, string nombre, string archivo)
         {
-            string rutaRelativa = $"{CarpetaRecursos}/{archivo}";
-            var uri = new Uri($"pack://application:,,,/{rutaRelativa}", UriKind.Absolute);
+            var uri = new Uri($"pack://application:,,,/{CarpetaRecursos}/{archivo}", UriKind.Absolute);
             var imagen = new BitmapImage(uri);
-            return new ObjetoAvatar(id, nombre, imagen, rutaRelativa, null);
+
+            return new ObjetoAvatar(id, nombre, imagen);
         }
     }
 }

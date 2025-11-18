@@ -1,24 +1,29 @@
+using PictionaryMusicalCliente.ClienteServicios;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Dialogos;
+using PictionaryMusicalCliente.ClienteServicios.Idiomas;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Dialogos;
-using PictionaryMusicalCliente.Servicios.Wcf;
-using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.VistaModelo.Cuentas;
-using PictionaryMusicalCliente.Servicios.Idiomas;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using System.Windows.Media.Imaging;
 
 namespace PictionaryMusicalCliente
 {
     public partial class InicioSesion : Window
     {
+        private readonly MusicaManejador _servicioMusica;
+
         public InicioSesion()
         {
             Resources["Localizacion"] = new Utilidades.Idiomas.LocalizacionContexto();
             InitializeComponent();
 
+            _servicioMusica = new MusicaManejador();
+            _servicioMusica.ReproducirEnBucle("inicio_sesion_musica.mp3");
 
             IInicioSesionServicio inicioSesionServicio = new InicioSesionServicio();
             ICambioContrasenaServicio cambioContrasenaServicio = new CambioContrasenaServicio();
@@ -31,19 +36,54 @@ namespace PictionaryMusicalCliente
                 inicioSesionServicio,
                 cambioContrasenaServicio,
                 recuperacionCuentaDialogoServicio,
-                localizacionServicio)
+                localizacionServicio,
+                () => new SalasServicio())
             {
                 AbrirCrearCuenta = () =>
                 {
                     var ventana = new CreacionCuenta();
                     ventana.ShowDialog();
                 },
-                IniciarSesionInvitado = () =>
-                {
-                    var ventana = new IngresoPartidaInvitado();
-                    ventana.ShowDialog();
-                },
                 CerrarAccion = Close
+            };
+
+            vistaModelo.MostrarIngresoInvitado = vistaModeloInvitado =>
+            {
+                if (vistaModeloInvitado == null)
+                {
+                    return;
+                }
+
+                var ventana = new IngresoPartidaInvitado(vistaModeloInvitado)
+                {
+                    Owner = this
+                };
+
+                ventana.ShowDialog();
+            };
+
+            vistaModelo.AbrirVentanaJuegoInvitado = (sala, salasServicio, nombreInvitado) =>
+            {
+                if (sala == null || salasServicio == null)
+                {
+                    return;
+                }
+
+                _servicioMusica.Detener();
+
+                var ventanaJuego = new VentanaJuego(
+                    sala,
+                    salasServicio,
+                    esInvitado: true,
+                    nombreJugador: nombreInvitado,
+                    accionAlCerrar: () =>
+                    {
+                        var inicioSesion = new InicioSesion();
+                        inicioSesion.Show();
+                    });
+
+                ventanaJuego.Show();
+                Close();
             };
 
             vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
@@ -85,6 +125,25 @@ namespace PictionaryMusicalCliente
                         ControlVisual.MarcarCampoInvalido(bloqueContrasenaContrasena);
                         break;
                 }
+            }
+        }
+
+        private void InicioSesion_Cerrado(object sender, System.EventArgs e)
+        {
+            _servicioMusica.Detener();
+            _servicioMusica.Dispose();
+        }
+
+        private void BotonAudio_Click(object sender, RoutedEventArgs e)
+        {
+            bool estaSilenciado = _servicioMusica.AlternarSilencio();
+
+            if (estaSilenciado) {
+                imagenBotonAudio.Source = new BitmapImage(new Uri("/Recursos/Audio_Apagado.png", UriKind.Relative));
+            }
+            else
+            {
+                imagenBotonAudio.Source = new BitmapImage(new Uri("/Recursos/Audio_Encendido.png", UriKind.Relative));
             }
         }
     }

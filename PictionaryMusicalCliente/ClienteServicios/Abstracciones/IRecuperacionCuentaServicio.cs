@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using DTOs = global::Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalCliente.Servicios.Abstracciones
+namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
 {
     public interface IRecuperacionCuentaServicio
     {

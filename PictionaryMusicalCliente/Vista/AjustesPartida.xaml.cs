@@ -1,26 +1,31 @@
 ﻿using System.Windows;
+using PictionaryMusicalCliente.Utilidades; 
+using PictionaryMusicalCliente.VistaModelo.Ajustes; 
 
 namespace PictionaryMusicalCliente
 {
-    /// <summary>
-    /// Lógica de interacción para AjustesPartida.xaml
-    /// </summary>
     public partial class AjustesPartida : Window
     {
-        public AjustesPartida()
+        private readonly AjustesPartidaVistaModelo _viewModel;
+
+        public AjustesPartida(CancionManejador servicioCancion)
         {
             InitializeComponent();
-        }
 
-        private void BotonConfirmar(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-        private void BotonSalirPartida(object sender, RoutedEventArgs e)
-        {
-            ConfirmacionSalirPartida confirmacionSalirPartida = new ConfirmacionSalirPartida();
-            confirmacionSalirPartida.Owner = this;
-            confirmacionSalirPartida.ShowDialog();
+            _viewModel = new AjustesPartidaVistaModelo(servicioCancion);
+
+            _viewModel.OcultarVentana = () => this.Close();
+
+            _viewModel.MostrarDialogoSalirPartida = () =>
+            {
+                ConfirmacionSalirPartida confirmacionSalirPartida = new ConfirmacionSalirPartida
+                {
+                    Owner = this
+                };
+                confirmacionSalirPartida.ShowDialog();
+            };
+
+            this.DataContext = _viewModel;
         }
     }
 }

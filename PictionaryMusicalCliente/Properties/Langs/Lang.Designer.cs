@@ -61,11 +61,38 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Intenta adivinar la canción en el tiempo restante!.
+        /// </summary>
+        public static string adivinadorTextoContenido {
+            get {
+                return ResourceManager.GetString("adivinadorTextoContenido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ADIVINADOR.
+        /// </summary>
+        public static string adivinadorTextoTitulo {
+            get {
+                return ResourceManager.GetString("adivinadorTextoTitulo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a SALIR DE LA PARTIDA.
         /// </summary>
         public static string ajustesPartidaTextoSalirPartida {
             get {
                 return ResourceManager.GetString("ajustesPartidaTextoSalirPartida", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Volumen de las canciones.
+        /// </summary>
+        public static string ajustesPartidaTextoVolumenCanciones {
+            get {
+                return ResourceManager.GetString("ajustesPartidaTextoVolumenCanciones", resourceCulture);
             }
         }
         
@@ -79,11 +106,20 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a ADVERTENCIA.
+        ///   Busca una cadena traducida similar a Volumen de la música.
         /// </summary>
-        public static string alertaTextoAviso {
+        public static string ajustesVolumenFondo {
             get {
-                return ResourceManager.GetString("alertaTextoAviso", resourceCulture);
+                return ResourceManager.GetString("ajustesVolumenFondo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No tienes solicitudes de amistad pendientes..
+        /// </summary>
+        public static string amigosAvisoSinSolicitudesPendientes {
+            get {
+                return ResourceManager.GetString("amigosAvisoSinSolicitudesPendientes", resourceCulture);
             }
         }
         
@@ -520,6 +556,24 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡Dibuja la canción para que los demás jugadores adivinen!.
+        /// </summary>
+        public static string dibujanteTextoContenido {
+            get {
+                return ResourceManager.GetString("dibujanteTextoContenido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a DIBUJANTE.
+        /// </summary>
+        public static string dibujanteTextoTitulo {
+            get {
+                return ResourceManager.GetString("dibujanteTextoTitulo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a ¿Está seguro de querer eliminar de su lista de amigos a .
         /// </summary>
         public static string eliminarAmigoTextoConfirmacion {
@@ -727,15 +781,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a La cuenta o usuario no se encontró, verifique el dato ingresado..
-        /// </summary>
-        public static string errorTextoCuentaNoEncontradaInicioSesion {
-            get {
-                return ResourceManager.GetString("errorTextoCuentaNoEncontradaInicioSesion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a No se encontró la cuenta asociada a la sesión actual..
         /// </summary>
         public static string errorTextoCuentaNoEncontradaSesion {
@@ -772,6 +817,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Error al enviar la invitación. Por favor, verifique el correo electrónico e intente nuevamente..
+        /// </summary>
+        public static string errorTextoEnviarCorreo {
+            get {
+                return ResourceManager.GetString("errorTextoEnviarCorreo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se pudo enviar el código de verificación. Verifique la información e intente de nuevo..
         /// </summary>
         public static string errorTextoEnvioCodigoVerificacionDatos {
@@ -795,6 +849,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoErrorProcesarSolicitud {
             get {
                 return ResourceManager.GetString("errorTextoErrorProcesarSolicitud", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Error al expulsar al jugador de la sala..
+        /// </summary>
+        public static string errorTextoExpulsarJugador {
+            get {
+                return ResourceManager.GetString("errorTextoExpulsarJugador", resourceCulture);
             }
         }
         
@@ -862,7 +925,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No se encontró la partida.
+        ///   Busca una cadena traducida similar a No se encontró una partida con el código ingresado. Intente con otro distinto..
         /// </summary>
         public static string errorTextoNoEncuentraPartida {
             get {
@@ -876,6 +939,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoNombreObligatorioLongitud {
             get {
                 return ResourceManager.GetString("errorTextoNombreObligatorioLongitud", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No hay nombres de invitado disponibles en esta sala. Intente de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoNombresInvitadoAgotados {
+            get {
+                return ResourceManager.GetString("errorTextoNombresInvitadoAgotados", resourceCulture);
             }
         }
         
@@ -912,6 +984,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoRegistrarCuentaMasTarde {
             get {
                 return ResourceManager.GetString("errorTextoRegistrarCuentaMasTarde", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La sala a la que intentas unirte está llena..
+        /// </summary>
+        public static string errorTextoSalaLlena {
+            get {
+                return ResourceManager.GetString("errorTextoSalaLlena", resourceCulture);
             }
         }
         
@@ -1155,6 +1236,60 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoVerificarCodigo {
             get {
                 return ResourceManager.GetString("errorTextoVerificarCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Cancelar.
+        /// </summary>
+        public static string expulsarJugadorTextoCancelar {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoCancelar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¿Estás seguro de que quieres sacar a {0} de la sala?.
+        /// </summary>
+        public static string expulsarJugadorTextoConfirmacion {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoConfirmacion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Confirmar.
+        /// </summary>
+        public static string expulsarJugadorTextoConfirmar {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoConfirmar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Jugador expulsado de la sala..
+        /// </summary>
+        public static string expulsarJugadorTextoExito {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoExito", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Has sido expulsado de la sala..
+        /// </summary>
+        public static string expulsarJugadorTextoFuisteExpulsado {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoFuisteExpulsado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Expulsar Jugador.
+        /// </summary>
+        public static string expulsarJugadorTextoTitulo {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoTitulo", resourceCulture);
             }
         }
         
@@ -1420,15 +1555,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Volumen de las canciones.
-        /// </summary>
-        public static string globalTextoVolumenCanciones {
-            get {
-                return ResourceManager.GetString("globalTextoVolumenCanciones", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Español.
         /// </summary>
         public static string idiomaTextoEspañol {
@@ -1501,6 +1627,24 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a MusicoFeliz|BuenDibujante|MelodiaMagica|RitmoCreativo|ArtistaSonriente|NotaImaginativa|CancionJuguetona|PincelMelodico|AcordeLudico|VersoColorido|BateriaFantastica|TrovadorLuz|HarmonicoAlegre|CantorBrillante|BailarinArmonioso.
+        /// </summary>
+        public static string invitadoNombres {
+            get {
+                return ResourceManager.GetString("invitadoNombres", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No fue posible obtener el correo del jugador..
+        /// </summary>
+        public static string invitarAmigosTextoCorreoNoDisponible {
+            get {
+                return ResourceManager.GetString("invitarAmigosTextoCorreoNoDisponible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a INVITADO.
         /// </summary>
         public static string invitarAmigosTextoInvitado {
@@ -1515,6 +1659,42 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string invitarAmigosTextoInvitarAmigos {
             get {
                 return ResourceManager.GetString("invitarAmigosTextoInvitarAmigos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No tienes amigos por invitar.
+        /// </summary>
+        public static string invitarAmigosTextoSinAmigos {
+            get {
+                return ResourceManager.GetString("invitarAmigosTextoSinAmigos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Ya se invitó a este jugador!.
+        /// </summary>
+        public static string invitarAmigosTextoYaInvitado {
+            get {
+                return ResourceManager.GetString("invitarAmigosTextoYaInvitado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Invitación enviada con éxito!.
+        /// </summary>
+        public static string invitarCorreoTextoEnviado {
+            get {
+                return ResourceManager.GetString("invitarCorreoTextoEnviado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El jugador con el correo ingresado ya está en la sala..
+        /// </summary>
+        public static string invitarCorreoTextoJugadorYaEnSala {
+            get {
+                return ResourceManager.GetString("invitarCorreoTextoJugadorYaEnSala", resourceCulture);
             }
         }
         
@@ -1551,6 +1731,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string partidaTextoCodigo {
             get {
                 return ResourceManager.GetString("partidaTextoCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a JUGADORES.
+        /// </summary>
+        public static string partidaTextoJugadores {
+            get {
+                return ResourceManager.GetString("partidaTextoJugadores", resourceCulture);
             }
         }
         

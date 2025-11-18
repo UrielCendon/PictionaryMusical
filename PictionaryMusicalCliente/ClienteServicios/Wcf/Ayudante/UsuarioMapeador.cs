@@ -1,7 +1,7 @@
 using PictionaryMusicalCliente.Sesiones;
-using DTOs = global::Servicios.Contratos.DTOs;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 {
     /// <summary>
     /// Expone operaciones auxiliares para mantener sincronizada la sesin del usuario.
@@ -16,11 +16,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers
         {
             if (dto == null)
             {
-                SesionUsuarioActual.Instancia.CerrarSesion();
+                SesionUsuarioActual.CerrarSesion();
                 return;
             }
 
-            SesionUsuarioActual.Instancia.EstablecerUsuario(dto);
+            SesionUsuarioActual.EstablecerUsuario(dto);
         }
 
     }

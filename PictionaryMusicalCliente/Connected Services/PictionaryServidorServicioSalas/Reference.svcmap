@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="c4fa0945-8328-4230-afd4-19c81b34ab99" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:8519/Pictionary/Salas" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="Salas.xsd" MetadataType="Schema" ID="861ed793-ae9b-4119-9193-964fff43b2d1" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?xsd=xsd2" />
+    <MetadataFile FileName="Salas1.xsd" MetadataType="Schema" ID="9d940347-e0a6-42f1-b93a-280c0762fdb6" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?xsd=xsd1" />
+    <MetadataFile FileName="Salas2.xsd" MetadataType="Schema" ID="c71182d6-213c-4dc0-b3de-8e3bb97fb78d" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?xsd=xsd0" />
+    <MetadataFile FileName="Salas.disco" MetadataType="Disco" ID="2a790059-d110-4131-8057-408a8b53c51c" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?disco" />
+    <MetadataFile FileName="SalasManejador.wsdl" MetadataType="Wsdl" ID="c3c3fd20-8f4b-428c-aef6-eefcdb1423e4" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?wsdl" />
+    <MetadataFile FileName="Salas3.xsd" MetadataType="Schema" ID="53182635-7d5e-4838-a02b-342eb30f6203" SourceId="1" SourceUrl="http://localhost:8519/Pictionary/Salas?xsd=xsd3" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

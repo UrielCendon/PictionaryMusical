@@ -4,36 +4,15 @@
     <wsp:ExactlyOne>
       <wsp:All>
         <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
-        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <wsp:Policy>
-            <sp:TransportToken>
-              <wsp:Policy>
-                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
-                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
-                </msf:WindowsTransportSecurity>
-              </wsp:Policy>
-            </sp:TransportToken>
-            <sp:AlgorithmSuite>
-              <wsp:Policy>
-                <sp:Basic256 />
-              </wsp:Policy>
-            </sp:AlgorithmSuite>
-            <sp:Layout>
-              <wsp:Policy>
-                <sp:Strict />
-              </wsp:Policy>
-            </sp:Layout>
-          </wsp:Policy>
-        </sp:TransportBinding>
         <wsaw:UsingAddressing />
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Clasificacion?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Clasificacion?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Clasificacion?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Servicios.Contratos.DTOs" />
+      <xsd:import schemaLocation="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/PictionaryMusicalServidor.Servicios.Contratos.DTOs" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IClasificacionManejador_ObtenerTopJugadores_InputMessage">
@@ -75,15 +54,12 @@
   </wsdl:binding>
   <wsdl:service name="ClasificacionManejador">
     <wsdl:port name="BasicHttpBinding_IClasificacionManejador" binding="tns:BasicHttpBinding_IClasificacionManejador">
-      <soap:address location="http://localhost:8086/Pictionary/Clasificacion/Clasificacion" />
+      <soap:address location="http://localhost:8511/Pictionary/Clasificacion/Clasificacion" />
     </wsdl:port>
     <wsdl:port name="NetTcpBinding_IClasificacionManejador" binding="tns:NetTcpBinding_IClasificacionManejador">
-      <soap12:address location="net.tcp://localhost:8096/Pictionary/Clasificacion/Clasificacion" />
+      <soap12:address location="net.tcp://localhost:8512/Pictionary/Clasificacion/Clasificacion" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8096/Pictionary/Clasificacion/Clasificacion</wsa10:Address>
-        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>URIEL\uriel</Upn>
-        </Identity>
+        <wsa10:Address>net.tcp://localhost:8512/Pictionary/Clasificacion/Clasificacion</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

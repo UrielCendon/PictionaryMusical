@@ -1,7 +1,7 @@
 using System.Windows;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Wcf;
-using PictionaryMusicalCliente.VistaModelo.Cuentas;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal;
 
 namespace PictionaryMusicalCliente
 {
@@ -21,7 +21,7 @@ namespace PictionaryMusicalCliente
             DataContext = vistaModelo;
         }
 
-        private async void Clasificacion_Loaded(object sender, RoutedEventArgs e)
+        private async void Clasificacion_LoadedAsync(object sender, RoutedEventArgs e)
         {
             if (DataContext is ClasificacionVistaModelo vistaModelo)
             {

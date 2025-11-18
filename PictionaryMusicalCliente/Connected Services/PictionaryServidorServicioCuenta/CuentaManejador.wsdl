@@ -4,36 +4,15 @@
     <wsp:ExactlyOne>
       <wsp:All>
         <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
-        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
-          <wsp:Policy>
-            <sp:TransportToken>
-              <wsp:Policy>
-                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
-                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
-                </msf:WindowsTransportSecurity>
-              </wsp:Policy>
-            </sp:TransportToken>
-            <sp:AlgorithmSuite>
-              <wsp:Policy>
-                <sp:Basic256 />
-              </wsp:Policy>
-            </sp:AlgorithmSuite>
-            <sp:Layout>
-              <wsp:Policy>
-                <sp:Strict />
-              </wsp:Policy>
-            </sp:Layout>
-          </wsp:Policy>
-        </sp:TransportBinding>
         <wsaw:UsingAddressing />
       </wsp:All>
     </wsp:ExactlyOne>
   </wsp:Policy>
   <wsdl:types>
     <xsd:schema targetNamespace="http://tempuri.org/Imports">
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Cuenta?xsd=xsd0" namespace="http://tempuri.org/" />
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Cuenta?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
-      <xsd:import schemaLocation="http://localhost:8086/Pictionary/Cuenta?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/Servicios.Contratos.DTOs" />
+      <xsd:import schemaLocation="http://localhost:8501/Pictionary/Cuenta?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8501/Pictionary/Cuenta?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8501/Pictionary/Cuenta?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/PictionaryMusicalServidor.Servicios.Contratos.DTOs" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="ICuentaManejador_SolicitarCodigoVerificacion_InputMessage">
@@ -159,15 +138,12 @@
   </wsdl:binding>
   <wsdl:service name="CuentaManejador">
     <wsdl:port name="BasicHttpBinding_ICuentaManejador" binding="tns:BasicHttpBinding_ICuentaManejador">
-      <soap:address location="http://localhost:8086/Pictionary/Cuenta/Cuenta" />
+      <soap:address location="http://localhost:8501/Pictionary/Cuenta/Cuenta" />
     </wsdl:port>
     <wsdl:port name="NetTcpBinding_ICuentaManejador" binding="tns:NetTcpBinding_ICuentaManejador">
-      <soap12:address location="net.tcp://localhost:8096/Pictionary/Cuenta/Cuenta" />
+      <soap12:address location="net.tcp://localhost:8502/Pictionary/Cuenta/Cuenta" />
       <wsa10:EndpointReference>
-        <wsa10:Address>net.tcp://localhost:8096/Pictionary/Cuenta/Cuenta</wsa10:Address>
-        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>URIEL\uriel</Upn>
-        </Identity>
+        <wsa10:Address>net.tcp://localhost:8502/Pictionary/Cuenta/Cuenta</wsa10:Address>
       </wsa10:EndpointReference>
     </wsdl:port>
   </wsdl:service>

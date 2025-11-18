@@ -1,10 +1,14 @@
-using Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos;
 using System;
+using System.Data;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using log4net;
-using Servicios.Contratos.DTOs;
-using Servicios.Servicios.Utilidades;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
-namespace Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     public class CodigoVerificacionManejador : ICodigoVerificacionManejador
     {
@@ -14,15 +18,33 @@ namespace Servicios.Servicios
         {
             try
             {
-                return CodigoVerificacionServicio.SolicitarCodigo(nuevaCuenta);
+                return ServicioVerificacionRegistro.SolicitarCodigo(nuevaCuenta);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.Error("Error al solicitar código de verificación", ex);
+                _logger.Warn(MensajesError.Log.VerificacionSolicitarArgumentoNulo, ex);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.DatosSolicitudVerificacionInvalidos
+                };
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionSolicitarErrorBD, ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionSolicitarErrorDatos, ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
                 };
             }
         }
@@ -31,15 +53,33 @@ namespace Servicios.Servicios
         {
             try
             {
-                return CodigoVerificacionServicio.ReenviarCodigo(solicitud);
+                return ServicioVerificacionRegistro.ReenviarCodigo(solicitud);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.Error("Error al reenviar código de verificación", ex);
+                _logger.Warn(MensajesError.Log.VerificacionReenviarArgumentoNulo, ex);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.DatosReenvioCodigo
+                };
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionReenviarErrorBD, ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionReenviarErrorDatos, ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
                 };
             }
         }
@@ -48,15 +88,51 @@ namespace Servicios.Servicios
         {
             try
             {
-                return CodigoVerificacionServicio.ConfirmarCodigo(confirmacion);
+                return ServicioVerificacionRegistro.ConfirmarCodigo(confirmacion);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.Error("Error al confirmar el código de verificación", ex);
+                _logger.Warn(MensajesError.Log.VerificacionConfirmarArgumentoNulo, ex);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.DatosConfirmacionInvalidos
+                };
+            }
+            catch (DbEntityValidationException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionConfirmarValidacionEntidad, ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionConfirmarActualizacionBD, ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionConfirmarErrorBD, ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.VerificacionConfirmarErrorDatos, ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
                 };
             }
         }
@@ -65,15 +141,33 @@ namespace Servicios.Servicios
         {
             try
             {
-                return CodigoVerificacionServicio.SolicitarCodigoRecuperacion(solicitud);
+                return ServicioRecuperacionCuenta.SolicitarCodigoRecuperacion(solicitud);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.Error("Error al solicitar código de recuperación", ex);
+                _logger.Warn(MensajesError.Log.RecuperacionSolicitarArgumentoNulo, ex);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.DatosRecuperacionInvalidos
+                };
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.RecuperacionSolicitarErrorBD, ex);
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.RecuperacionSolicitarErrorDatos, ex);
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
                 };
             }
         }
@@ -82,15 +176,33 @@ namespace Servicios.Servicios
         {
             try
             {
-                return CodigoVerificacionServicio.ConfirmarCodigoRecuperacion(confirmacion);
+                return ServicioRecuperacionCuenta.ConfirmarCodigoRecuperacion(confirmacion);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                _logger.Error("Error al confirmar el código de recuperación", ex);
+                _logger.Warn(MensajesError.Log.RecuperacionConfirmarArgumentoNulo, ex);
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.DatosConfirmacionInvalidos
+                };
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.RecuperacionConfirmarErrorBD, ex);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigoRecuperacion
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.RecuperacionConfirmarErrorDatos, ex);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigoRecuperacion
                 };
             }
         }

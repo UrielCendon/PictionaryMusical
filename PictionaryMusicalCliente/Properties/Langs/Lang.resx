@@ -267,6 +267,9 @@
   <data name="amigosErrorRecuperarSolicitudes" xml:space="preserve">
     <value>No fue posible recuperar las solicitudes de amistad.</value>
   </data>
+  <data name="amigosAvisoSinSolicitudesPendientes" xml:space="preserve">
+    <value>No tienes solicitudes de amistad pendientes.</value>
+  </data>
   <data name="amigosErrorAutoSolicitud" xml:space="preserve">
     <value>No es posible enviarse una solicitud de amistad a sí mismo.</value>
   </data>
@@ -336,9 +339,6 @@
   <data name="eliminarAmigoTextoConfirmacion" xml:space="preserve">
     <value>¿Está seguro de querer eliminar de su lista de amigos a </value>
   </data>
-  <data name="errorTextoNoEncuentraPartida" xml:space="preserve">
-    <value>No se encontró la partida</value>
-  </data>
   <data name="principalTextoTitulo" xml:space="preserve">
     <value>Ventana Principal</value>
   </data>
@@ -360,7 +360,7 @@
   <data name="invitacionTextoInvitado" xml:space="preserve">
     <value> te invitó a unirse a su partida!</value>
   </data>
-  <data name="globalTextoVolumenCanciones" xml:space="preserve">
+  <data name="ajustesPartidaTextoVolumenCanciones" xml:space="preserve">
     <value>Volumen de las canciones</value>
   </data>
   <data name="globalTextoEfectosSonido" xml:space="preserve">
@@ -453,6 +453,15 @@
   <data name="invitarAmigosTextoInvitado" xml:space="preserve">
     <value>INVITADO</value>
   </data>
+  <data name="invitarAmigosTextoSinAmigos" xml:space="preserve">
+    <value>No tienes amigos por invitar</value>
+  </data>
+  <data name="invitarAmigosTextoYaInvitado" xml:space="preserve">
+    <value>¡Ya se invitó a este jugador!</value>
+  </data>
+  <data name="invitarAmigosTextoCorreoNoDisponible" xml:space="preserve">
+    <value>No fue posible obtener el correo del jugador.</value>
+  </data>
   <data name="ajustesPartidaTextoSalirPartida" xml:space="preserve">
     <value>SALIR DE LA PARTIDA</value>
   </data>
@@ -461,9 +470,6 @@
   </data>
   <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
     <value>Partida en curso</value>
-  </data>
-  <data name="alertaTextoAviso" xml:space="preserve">
-    <value>ADVERTENCIA</value>
   </data>
   <data name="avisoTextoCodigoDescripcionCambio" xml:space="preserve">
     <value>Ingresa el código que enviamos para confirmar el cambio de contraseña.</value>
@@ -533,9 +539,6 @@
   </data>
   <data name="errorTextoCorreoInvalido" xml:space="preserve">
     <value>Ingrese un correo electrónico válido.</value>
-  </data>
-  <data name="errorTextoCuentaNoEncontradaInicioSesion" xml:space="preserve">
-    <value>La cuenta o usuario no se encontró, verifique el dato ingresado.</value>
   </data>
   <data name="errorTextoCuentaNoEncontradaSesion" xml:space="preserve">
     <value>No se encontró la cuenta asociada a la sesión actual.</value>
@@ -615,6 +618,9 @@
   <data name="errorTextoIdentificarAvatar" xml:space="preserve">
     <value>No se pudo identificar el avatar seleccionado. Intente nuevamente.</value>
   </data>
+  <data name="invitadoNombres" xml:space="preserve">
+    <value>MusicoFeliz|BuenDibujante|MelodiaMagica|RitmoCreativo|ArtistaSonriente|NotaImaginativa|CancionJuguetona|PincelMelodico|AcordeLudico|VersoColorido|BateriaFantastica|TrovadorLuz|HarmonicoAlegre|CantorBrillante|BailarinArmonioso</value>
+  </data>
   <data name="errorTextoIdentificadorRecuperacionRequerido" xml:space="preserve">
     <value>Ingrese el usuario o correo registrado para recuperar la contraseña.</value>
   </data>
@@ -692,5 +698,62 @@
   </data>
   <data name="errorTextoCamposInvalidosGenerico" xml:space="preserve">
     <value>Hay datos inválidos o campos vacíos, por favor verifique sus datos.</value>
+  </data>
+  <data name="ajustesVolumenFondo" xml:space="preserve">
+    <value>Volumen de la música</value>
+  </data>
+  <data name="dibujanteTextoTitulo" xml:space="preserve">
+    <value>DIBUJANTE</value>
+  </data>
+  <data name="dibujanteTextoContenido" xml:space="preserve">
+    <value>¡Dibuja la canción para que los demás jugadores adivinen!</value>
+  </data>
+  <data name="adivinadorTextoTitulo" xml:space="preserve">
+    <value>ADIVINADOR</value>
+  </data>
+  <data name="adivinadorTextoContenido" xml:space="preserve">
+    <value>¡Intenta adivinar la canción en el tiempo restante!</value>
+  </data>
+  <data name="invitarCorreoTextoEnviado" xml:space="preserve">
+    <value>¡Invitación enviada con éxito!</value>
+  </data>
+  <data name="invitarCorreoTextoJugadorYaEnSala" xml:space="preserve">
+    <value>El jugador con el correo ingresado ya está en la sala.</value>
+  </data>
+  <data name="errorTextoEnviarCorreo" xml:space="preserve">
+    <value>Error al enviar la invitación. Por favor, verifique el correo electrónico e intente nuevamente.</value>
+  </data>
+  <data name="errorTextoNoEncuentraPartida" xml:space="preserve">
+    <value>No se encontró una partida con el código ingresado. Intente con otro distinto.</value>
+  </data>
+  <data name="errorTextoSalaLlena" xml:space="preserve">
+    <value>La sala a la que intentas unirte está llena.</value>
+  </data>
+  <data name="errorTextoNombresInvitadoAgotados" xml:space="preserve">
+    <value>No hay nombres de invitado disponibles en esta sala. Intente de nuevo más tarde.</value>
+  </data>
+  <data name="expulsarJugadorTextoConfirmacion" xml:space="preserve">
+    <value>¿Estás seguro de que quieres sacar a {0} de la sala?</value>
+  </data>
+  <data name="expulsarJugadorTextoTitulo" xml:space="preserve">
+    <value>Expulsar Jugador</value>
+  </data>
+  <data name="expulsarJugadorTextoConfirmar" xml:space="preserve">
+    <value>Confirmar</value>
+  </data>
+  <data name="expulsarJugadorTextoCancelar" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="expulsarJugadorTextoExito" xml:space="preserve">
+    <value>Jugador expulsado de la sala.</value>
+  </data>
+  <data name="errorTextoExpulsarJugador" xml:space="preserve">
+    <value>Error al expulsar al jugador de la sala.</value>
+  </data>
+  <data name="expulsarJugadorTextoFuisteExpulsado" xml:space="preserve">
+    <value>Has sido expulsado de la sala.</value>
+  </data>
+  <data name="partidaTextoJugadores" xml:space="preserve">
+    <value>JUGADORES</value>
   </data>
 </root>

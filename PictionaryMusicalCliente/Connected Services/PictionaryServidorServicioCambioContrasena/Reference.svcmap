@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="cdb06e37-9d6f-40b2-a517-78c2c45c84f1" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="3ec19686-c658-41da-99bd-cbeefe63f336" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -21,14 +21,14 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:8086/Pictionary/CambiarContrasena" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:8509/Pictionary/CambioContrasena" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="CambiarContrasena.disco" MetadataType="Disco" ID="370b85a4-cdbb-4eca-b581-077b006d7a25" SourceId="1" SourceUrl="http://localhost:8086/Pictionary/CambiarContrasena?disco" />
-    <MetadataFile FileName="CambiarContrasena.xsd" MetadataType="Schema" ID="6fb4e74b-6fba-4b73-ba65-aa1d8e92488f" SourceId="1" SourceUrl="http://localhost:8086/Pictionary/CambiarContrasena?xsd=xsd0" />
-    <MetadataFile FileName="CambiarContrasena1.xsd" MetadataType="Schema" ID="7d4a6ca7-680f-4e58-ba00-d4d0e298bd5e" SourceId="1" SourceUrl="http://localhost:8086/Pictionary/CambiarContrasena?xsd=xsd2" />
-    <MetadataFile FileName="CambiarContrasenaManejador.wsdl" MetadataType="Wsdl" ID="36dba903-6a28-43f5-b651-17d089e1579f" SourceId="1" SourceUrl="http://localhost:8086/Pictionary/CambiarContrasena?wsdl" />
-    <MetadataFile FileName="CambiarContrasena2.xsd" MetadataType="Schema" ID="48b779d7-777b-4638-bce2-b96428befb7c" SourceId="1" SourceUrl="http://localhost:8086/Pictionary/CambiarContrasena?xsd=xsd1" />
+    <MetadataFile FileName="CambioContrasena.xsd" MetadataType="Schema" ID="5468c036-1998-435a-8240-68f11fc70989" SourceId="1" SourceUrl="http://localhost:8509/Pictionary/CambioContrasena?xsd=xsd1" />
+    <MetadataFile FileName="CambioContrasena.disco" MetadataType="Disco" ID="e88e207e-6193-4941-9657-68f3cba964c1" SourceId="1" SourceUrl="http://localhost:8509/Pictionary/CambioContrasena?disco" />
+    <MetadataFile FileName="CambioContrasena1.xsd" MetadataType="Schema" ID="8ba19b2c-95ea-4f24-a554-5d4f5d12e69f" SourceId="1" SourceUrl="http://localhost:8509/Pictionary/CambioContrasena?xsd=xsd2" />
+    <MetadataFile FileName="CambioContrasena2.xsd" MetadataType="Schema" ID="6c2bb57d-ac10-4ed3-b184-0e0952b0b131" SourceId="1" SourceUrl="http://localhost:8509/Pictionary/CambioContrasena?xsd=xsd0" />
+    <MetadataFile FileName="CambioContrasenaManejador.wsdl" MetadataType="Wsdl" ID="64abb9ab-b338-4a86-b691-86772492fead" SourceId="1" SourceUrl="http://localhost:8509/Pictionary/CambioContrasena?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

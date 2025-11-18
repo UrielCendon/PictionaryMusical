@@ -1,7 +1,8 @@
-using System;
-using System.Windows.Input;
+using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
+using System;
+using System.Windows.Input;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
@@ -13,8 +14,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 ? Lang.eliminarAmigoTextoConfirmacion
                 : string.Concat(Lang.eliminarAmigoTextoConfirmacion, nombreAmigo, "?");
 
-            AceptarComando = new ComandoDelegado(_ => Cerrar?.Invoke(true));
-            CancelarComando = new ComandoDelegado(_ => Cerrar?.Invoke(false));
+            AceptarComando = new ComandoDelegado(_ =>
+            {
+                ManejadorSonido.ReproducirClick();
+                Cerrar?.Invoke(true);
+            });
+
+            CancelarComando = new ComandoDelegado(_ =>
+            {
+                ManejadorSonido.ReproducirClick();
+                Cerrar?.Invoke(false);
+            });
         }
 
         public string MensajeConfirmacion { get; }

@@ -1,14 +1,17 @@
-using Servicios.Contratos;
-using Servicios.Contratos.DTOs;
-using Datos.Modelo;
-using Datos.Utilidades;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Datos.Modelo;
+using PictionaryMusicalServidor.Datos.Utilidades;
 using System;
 using System.Data.Entity;
 using System.Linq;
 using log4net;
 using BCryptNet = BCrypt.Net.BCrypt;
+using System.Data;
+using System.Data.Entity.Core;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
-namespace Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     public class InicioSesionManejador : IInicioSesionManejador
     {
@@ -29,7 +32,7 @@ namespace Servicios.Servicios
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = true,
-                    Mensaje = "Credenciales inválidas"
+                    Mensaje = MensajesError.Cliente.CredencialesInvalidas
                 };
             }
 
@@ -43,8 +46,8 @@ namespace Servicios.Servicios
                     {
                         return new ResultadoInicioSesionDTO
                         {
-                            CuentaEncontrada = true,
-                            Mensaje = null
+                            CuentaEncontrada = false,
+                            Mensaje = MensajesError.Cliente.CredencialesIncorrectas
                         };
                     }
 
@@ -53,7 +56,7 @@ namespace Servicios.Servicios
                         return new ResultadoInicioSesionDTO
                         {
                             ContrasenaIncorrecta = true,
-                            Mensaje = "Credenciales incorrectas."
+                            Mensaje = MensajesError.Cliente.CredencialesIncorrectas
                         };
                     }
 
@@ -64,13 +67,31 @@ namespace Servicios.Servicios
                     };
                 }
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.Error("Error al iniciar sesión", ex);
+                _logger.Error(MensajesError.Log.InicioSesionErrorBD, ex);
                 return new ResultadoInicioSesionDTO
                 {
                     InicioSesionExitoso = false,
-                    Mensaje = ex.Message
+                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
+                };
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.InicioSesionErrorDatos, ex);
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
+                };
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error(MensajesError.Log.InicioSesionOperacionInvalida, ex);
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
                 };
             }
         }
@@ -86,7 +107,6 @@ namespace Servicios.Servicios
         private static Usuario BuscarUsuarioPorIdentificador(BaseDatosPruebaEntities1 contexto, string identificador)
         {
             var usuariosPorNombre = contexto.Usuario
-                .Include(u => u.Jugador.Avatar)
                 .Where(u => u.Nombre_Usuario == identificador)
                 .ToList();
 
@@ -99,7 +119,6 @@ namespace Servicios.Servicios
             }
 
             var usuariosPorCorreo = contexto.Usuario
-                .Include(u => u.Jugador.Avatar)
                 .Where(u => u.Jugador.Correo == identificador)
                 .ToList();
 
@@ -119,8 +138,7 @@ namespace Servicios.Servicios
                 Nombre = jugador?.Nombre,
                 Apellido = jugador?.Apellido,
                 Correo = jugador?.Correo,
-                AvatarId = jugador?.Avatar_idAvatar ?? 0,
-                AvatarRutaRelativa = jugador?.Avatar?.Avatar_Ruta
+                AvatarId = jugador?.Id_Avatar ?? 0,
             };
         }
     }

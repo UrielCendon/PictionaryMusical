@@ -1,13 +1,11 @@
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Wcf.Helpers;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using DTOs = global::Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.Modelo;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
@@ -25,7 +23,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 var resultadoDto = await WcfClienteAyudante
-                    .UsarAsincrono(cliente, c => c.IniciarSesionAsync(solicitud))
+                    .UsarAsincronoAsync(cliente, c => c.IniciarSesionAsync(solicitud))
                     .ConfigureAwait(false);
 
                 if (resultadoDto == null)
@@ -42,23 +40,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             catch (FaultException ex)
             {
                 string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, Lang.errorTextoServidorInicioSesion);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.FallaServicio, mensaje, ex);
             }
             catch (EndpointNotFoundException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
             }
             catch (TimeoutException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
             }
             catch (CommunicationException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
             }
             catch (InvalidOperationException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoErrorProcesarSolicitud, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.OperacionInvalida, Lang.errorTextoErrorProcesarSolicitud, ex);
             }
         }
     }

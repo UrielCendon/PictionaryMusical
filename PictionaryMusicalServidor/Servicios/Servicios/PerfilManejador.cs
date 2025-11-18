@@ -1,26 +1,29 @@
 using System;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
-using Datos.DAL.Implementaciones;
-using Datos.Modelo;
-using Datos.Utilidades;
-using Servicios.Contratos;
-using Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Datos.Modelo;
+using PictionaryMusicalServidor.Datos.Utilidades;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
-namespace Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     public class PerfilManejador : IPerfilManejador
     {
-        private const int LongitudMaximaRedSocial = 50;
         private static readonly ILog _logger = LogManager.GetLogger(typeof(PerfilManejador));
 
         public UsuarioDTO ObtenerPerfil(int idUsuario)
         {
             if (idUsuario <= 0)
             {
-                throw new FaultException("Los datos proporcionados no son válidos para obtener el perfil.");
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
 
             try
@@ -28,20 +31,19 @@ namespace Servicios.Servicios
                 using (BaseDatosPruebaEntities1 contexto = CrearContexto())
                 {
                     Usuario usuario = contexto.Usuario
-                        .Include(u => u.Jugador.Avatar)
                         .Include(u => u.Jugador.RedSocial)
                         .FirstOrDefault(u => u.idUsuario == idUsuario);
 
                     if (usuario == null)
                     {
-                        throw new FaultException("No se encontró el usuario especificado.");
+                        throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
                     }
 
                     Jugador jugador = usuario.Jugador;
 
                     if (jugador == null)
                     {
-                        throw new FaultException("No existe un jugador asociado al usuario especificado.");
+                        throw new FaultException(MensajesError.Cliente.JugadorNoAsociado);
                     }
 
                     RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
@@ -54,8 +56,7 @@ namespace Servicios.Servicios
                         Nombre = jugador.Nombre,
                         Apellido = jugador.Apellido,
                         Correo = jugador.Correo,
-                        AvatarId = jugador.Avatar_idAvatar,
-                        AvatarRutaRelativa = jugador.Avatar?.Avatar_Ruta,
+                        AvatarId = jugador.Id_Avatar,
                         Instagram = redSocial?.Instagram,
                         Facebook = redSocial?.facebook,
                         X = redSocial?.x,
@@ -63,51 +64,30 @@ namespace Servicios.Servicios
                     };
                 }
             }
-            catch (FaultException)
+            catch (EntityException ex)
             {
-                throw;
+                _logger.Error(MensajesError.Log.PerfilObtenerErrorBD, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
-            catch (Exception ex)
+            catch (DataException ex)
             {
-                _logger.Error("Error al obtener el perfil del usuario", ex);
-                throw new FaultException("Ocurrió un problema al consultar la información del perfil.");
+                _logger.Error(MensajesError.Log.PerfilObtenerErrorDatos, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error(MensajesError.Log.PerfilObtenerOperacionInvalida, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
 
         public ResultadoOperacionDTO ActualizarPerfil(ActualizacionPerfilDTO solicitud)
         {
-            if (solicitud == null)
-            {
-                throw new FaultException("La solicitud de actualización es obligatoria.");
-            }
 
-            if (solicitud.UsuarioId <= 0)
+            ResultadoOperacionDTO validacion = PerfilValidador.ValidarActualizacion(solicitud);
+            if (!validacion.OperacionExitosa)
             {
-                return CrearResultadoFallo("El identificador de usuario es inválido.");
-            }
-
-            string nombre = solicitud.Nombre?.Trim();
-            if (string.IsNullOrWhiteSpace(nombre) || nombre.Length > 50)
-            {
-                return CrearResultadoFallo("El nombre es obligatorio y no debe exceder 50 caracteres.");
-            }
-
-            string apellido = solicitud.Apellido?.Trim();
-            if (string.IsNullOrWhiteSpace(apellido) || apellido.Length > 50)
-            {
-                return CrearResultadoFallo("El apellido es obligatorio y no debe exceder 50 caracteres.");
-            }
-
-            string rutaAvatar = solicitud.AvatarRutaRelativa?.Trim();
-            if (string.IsNullOrWhiteSpace(rutaAvatar))
-            {
-                return CrearResultadoFallo("Selecciona un avatar válido.");
-            }
-
-            ResultadoOperacionDTO validacionRedes = ValidarRedesSociales(solicitud);
-            if (!validacionRedes.OperacionExitosa)
-            {
-                return validacionRedes;
+                return validacion;
             }
 
             try
@@ -118,28 +98,22 @@ namespace Servicios.Servicios
                         .Include(u => u.Jugador.RedSocial)
                         .FirstOrDefault(u => u.idUsuario == solicitud.UsuarioId);
 
+
                     if (usuario == null)
                     {
-                        return CrearResultadoFallo("No se encontró el usuario especificado.");
+                        return CrearResultadoFallo(MensajesError.Cliente.UsuarioNoEncontrado);
                     }
 
                     Jugador jugador = usuario.Jugador;
 
                     if (jugador == null)
                     {
-                        return CrearResultadoFallo("No existe un jugador asociado al usuario especificado.");
+                        return CrearResultadoFallo(MensajesError.Cliente.JugadorNoAsociado);
                     }
 
-                    var avatarRepositorio = new AvatarRepositorio(contexto);
-                    Avatar avatar = avatarRepositorio.ObtenerAvatarPorRuta(rutaAvatar);
-                    if (avatar == null)
-                    {
-                        return CrearResultadoFallo("El avatar seleccionado no existe.");
-                    }
-
-                    jugador.Nombre = nombre;
-                    jugador.Apellido = apellido;
-                    jugador.Avatar_idAvatar = avatar.idAvatar;
+                    jugador.Nombre = solicitud.Nombre.Trim();
+                    jugador.Apellido = solicitud.Apellido.Trim();
+                    jugador.Id_Avatar = solicitud.AvatarId;
 
                     RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
                     if (redSocial == null)
@@ -162,14 +136,34 @@ namespace Servicios.Servicios
                     return new ResultadoOperacionDTO
                     {
                         OperacionExitosa = true,
-                        Mensaje = "Perfil actualizado correctamente."
+                        Mensaje = MensajesError.Cliente.PerfilActualizadoExito
                     };
                 }
             }
-            catch (Exception ex)
+            catch (DbEntityValidationException ex)
             {
-                _logger.Error("Error al actualizar el perfil", ex);
-                return CrearResultadoFallo("No fue posible actualizar el perfil.");
+                _logger.Error(MensajesError.Log.PerfilActualizarValidacionEntidad, ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error(MensajesError.Log.PerfilActualizarActualizacionBD, ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error(MensajesError.Log.PerfilActualizarErrorBD, ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(MensajesError.Log.PerfilActualizarErrorDatos, ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error(MensajesError.Log.PerfilActualizarOperacionInvalida, ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }
 
@@ -181,45 +175,6 @@ namespace Servicios.Servicios
                 : new BaseDatosPruebaEntities1(conexion);
         }
 
-        private static ResultadoOperacionDTO ValidarRedesSociales(ActualizacionPerfilDTO solicitud)
-        {
-            ResultadoOperacionDTO resultado = ValidarRedSocial("Instagram", solicitud.Instagram);
-            if (!resultado.OperacionExitosa)
-            {
-                return resultado;
-            }
-
-            resultado = ValidarRedSocial("Facebook", solicitud.Facebook);
-            if (!resultado.OperacionExitosa)
-            {
-                return resultado;
-            }
-
-            resultado = ValidarRedSocial("X", solicitud.X);
-            if (!resultado.OperacionExitosa)
-            {
-                return resultado;
-            }
-
-            return ValidarRedSocial("Discord", solicitud.Discord);
-        }
-
-        private static ResultadoOperacionDTO ValidarRedSocial(string nombre, string valor)
-        {
-            if (string.IsNullOrWhiteSpace(valor))
-            {
-                return ResultadoOperacionExitoso();
-            }
-
-            string normalizado = valor.Trim();
-            if (normalizado.Length > LongitudMaximaRedSocial)
-            {
-                return CrearResultadoFallo(
-                    $"El identificador de {nombre} no debe exceder {LongitudMaximaRedSocial} caracteres.");
-            }
-
-            return ResultadoOperacionExitoso();
-        }
 
         private static string NormalizarRedSocial(string valor)
         {
@@ -232,20 +187,13 @@ namespace Servicios.Servicios
             return normalizado.Length == 0 ? null : normalizado;
         }
 
+
         private static ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
         {
             return new ResultadoOperacionDTO
             {
                 OperacionExitosa = false,
                 Mensaje = mensaje
-            };
-        }
-
-        private static ResultadoOperacionDTO ResultadoOperacionExitoso()
-        {
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = true
             };
         }
     }

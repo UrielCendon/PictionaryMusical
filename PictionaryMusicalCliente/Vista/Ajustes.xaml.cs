@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using PictionaryMusicalCliente.ClienteServicios;
+using PictionaryMusicalCliente.VistaModelo.Ajustes;
 
 namespace PictionaryMusicalCliente
 {
@@ -7,21 +9,25 @@ namespace PictionaryMusicalCliente
     /// </summary>
     public partial class Ajustes : Window
     {
-        public Ajustes()
+        private readonly AjustesVistaModelo _viewModel;
+
+        public Ajustes(MusicaManejador servicioMusica)
         {
             InitializeComponent();
-        }
 
-        private void BotonConfirmar(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
+            _viewModel = new AjustesVistaModelo(servicioMusica);
 
-        private void BotonCerrarSesion(object sender, RoutedEventArgs e)
-        {
-            TerminacionSesion cerrarSesion = new TerminacionSesion();
-            cerrarSesion.Owner = this;
-            cerrarSesion.ShowDialog();
+            _viewModel.OcultarVentana = () => this.Close();
+            _viewModel.MostrarDialogoCerrarSesion = () =>
+            {
+                TerminacionSesion cerrarSesion = new TerminacionSesion
+                {
+                    Owner = this
+                };
+                cerrarSesion.ShowDialog();
+            };
+
+            this.DataContext = _viewModel;
         }
     }
 }

@@ -1,41 +1,43 @@
-﻿using System.Linq;
+﻿using PictionaryMusicalCliente.VistaModelo.Sesion; 
+using System.Linq;
 using System.Windows;
-using PictionaryMusicalCliente.Sesiones;
 
 namespace PictionaryMusicalCliente
 {
     /// <summary>
-    /// Lógica de interacción para CerrarSesion.xaml
+    /// Lógica de interacción para TerminacionSesion.xaml
     /// </summary>
     public partial class TerminacionSesion : Window
     {
+        private readonly TerminacionSesionVistaModelo _viewModel;
+
         public TerminacionSesion()
         {
             InitializeComponent();
+
+            _viewModel = new TerminacionSesionVistaModelo();
+            _viewModel.OcultarDialogo = () => this.Close();
+            _viewModel.EjecutarCierreSesionYNavegacion = EjecutarNavegacionInicioSesion;
+
+            this.DataContext = _viewModel;
         }
 
-        private void BotonAceptar(object sender, RoutedEventArgs e)
+        private static void EjecutarNavegacionInicioSesion()
         {
-            var ventanasActivas = Application.Current.Windows.Cast<Window>().ToList();
-
-            SesionUsuarioActual.Instancia.CerrarSesion();
-
             var inicioSesion = new InicioSesion();
-            Application.Current.MainWindow = inicioSesion;
+
+            var ventanasACerrar = Application.Current.Windows
+                .Cast<Window>()
+                .Where(v => v != inicioSesion)
+                .ToList();
+
             inicioSesion.Show();
+            Application.Current.MainWindow = inicioSesion;
 
-            foreach (Window ventana in ventanasActivas)
+            foreach (var ventana in ventanasACerrar)
             {
-                if (ventana != inicioSesion)
-                {
-                    ventana.Close();
-                }
+                ventana.Close();
             }
-        }
-
-        private void BotonCancelar(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }

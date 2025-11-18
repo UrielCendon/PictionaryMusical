@@ -2,11 +2,10 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Dialogos;
-using PictionaryMusicalCliente.Servicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Dialogos;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.VistaModelo.Cuentas;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 
 namespace PictionaryMusicalCliente
 {
@@ -20,16 +19,14 @@ namespace PictionaryMusicalCliente
 
             var codigoVerificacionServicio = new CodigoVerificacionServicio();
             var cuentaServicio = new CuentaServicio();
-            IAvatarServicio avatarServicio = new AvatarServicio();
-            var seleccionarAvatarServicio = new SeleccionAvatarDialogoServicio(avatarServicio);
+            var seleccionarAvatarServicio = new SeleccionAvatarDialogoServicio();
             var verificarCodigoDialogoServicio = new VerificacionCodigoDialogoServicio();
 
             _vistaModelo = new CreacionCuentaVistaModelo(
                 codigoVerificacionServicio,
                 cuentaServicio,
                 seleccionarAvatarServicio,
-                verificarCodigoDialogoServicio,
-                avatarServicio);
+                verificarCodigoDialogoServicio);
 
             _vistaModelo.CerrarAccion = Close;
             _vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;

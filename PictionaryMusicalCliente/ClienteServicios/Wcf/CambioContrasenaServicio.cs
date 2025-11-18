@@ -1,62 +1,38 @@
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios.Wcf.Helpers;
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using DTOs = global::Servicios.Contratos.DTOs;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalCliente.Servicios.Wcf
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
     public class CambioContrasenaServicio : ICambioContrasenaServicio
     {
-        private const string Endpoint = "BasicHttpBinding_ICambiarContrasenaManejador";
+        private const string Endpoint = "BasicHttpBinding_ICambioContrasenaManejador";
 
         public async Task<DTOs.ResultadoSolicitudRecuperacionDTO> SolicitarCodigoRecuperacionAsync(string identificador)
         {
             if (string.IsNullOrWhiteSpace(identificador))
                 throw new ArgumentException(Lang.errorTextoIdentificadorRecuperacionRequerido, nameof(identificador));
 
-            try
-            {
-                DTOs.ResultadoSolicitudRecuperacionDTO resultado = await CodigoVerificacionServicioAyudante
-                    .SolicitarCodigoRecuperacionAsync(identificador)
-                    .ConfigureAwait(false);
+            DTOs.ResultadoSolicitudRecuperacionDTO resultado = await EjecutarConManejoDeErroresAsync(
+                () => CodigoVerificacionServicioAyudante.SolicitarCodigoRecuperacionAsync(identificador),
+                Lang.errorTextoServidorSolicitudCambioContrasena
+            ).ConfigureAwait(false);
 
-                if (resultado == null)
-                    return null;
+            if (resultado == null)
+                return null;
 
-                return new DTOs.ResultadoSolicitudRecuperacionDTO
-                {
-                    CuentaEncontrada = resultado.CuentaEncontrada,
-                    CodigoEnviado = resultado.CodigoEnviado,
-                    CorreoDestino = resultado.CorreoDestino,
-                    Mensaje = resultado.Mensaje,
-                    TokenCodigo = resultado.TokenCodigo
-                };
-            }
-            catch (FaultException ex)
+            return new DTOs.ResultadoSolicitudRecuperacionDTO
             {
-                string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, Lang.errorTextoServidorSolicitudCambioContrasena);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
-            }
-            catch (EndpointNotFoundException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (TimeoutException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
-            }
-            catch (CommunicationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoPrepararSolicitudCambioContrasena, ex);
-            }
+                CuentaEncontrada = resultado.CuentaEncontrada,
+                CodigoEnviado = resultado.CodigoEnviado,
+                CorreoDestino = resultado.CorreoDestino,
+                Mensaje = resultado.Mensaje,
+                TokenCodigo = resultado.TokenCodigo
+            };
         }
 
         public async Task<DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoRecuperacionAsync(string tokenCodigo)
@@ -64,43 +40,20 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             if (string.IsNullOrWhiteSpace(tokenCodigo))
                 throw new ArgumentException(Lang.errorTextoTokenCodigoObligatorio, nameof(tokenCodigo));
 
-            try
-            {
-                DTOs.ResultadoSolicitudCodigoDTO resultado = await CodigoVerificacionServicioAyudante
-                    .ReenviarCodigoRecuperacionAsync(tokenCodigo)
-                    .ConfigureAwait(false);
+            DTOs.ResultadoSolicitudCodigoDTO resultado = await EjecutarConManejoDeErroresAsync(
+                () => CodigoVerificacionServicioAyudante.ReenviarCodigoRecuperacionAsync(tokenCodigo),
+                Lang.errorTextoServidorReenviarCodigo
+            ).ConfigureAwait(false);
 
-                if (resultado == null)
-                    return null;
+            if (resultado == null)
+                return null;
 
-                return new DTOs.ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = resultado.CodigoEnviado,
-                    Mensaje = resultado.Mensaje,
-                    TokenCodigo = resultado.TokenCodigo
-                };
-            }
-            catch (FaultException ex)
+            return new DTOs.ResultadoSolicitudCodigoDTO
             {
-                string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, Lang.errorTextoServidorReenviarCodigo);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
-            }
-            catch (EndpointNotFoundException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (TimeoutException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
-            }
-            catch (CommunicationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoPrepararSolicitudCambioContrasena, ex);
-            }
+                CodigoEnviado = resultado.CodigoEnviado,
+                Mensaje = resultado.Mensaje,
+                TokenCodigo = resultado.TokenCodigo
+            };
         }
 
         public async Task<DTOs.ResultadoOperacionDTO> ConfirmarCodigoRecuperacionAsync(string tokenCodigo, string codigoIngresado)
@@ -111,42 +64,19 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             if (string.IsNullOrWhiteSpace(codigoIngresado))
                 throw new ArgumentException(Lang.errorTextoCodigoVerificacionRequerido, nameof(codigoIngresado));
 
-            try
-            {
-                DTOs.ResultadoOperacionDTO resultado = await CodigoVerificacionServicioAyudante
-                    .ConfirmarCodigoRecuperacionAsync(tokenCodigo, codigoIngresado)
-                    .ConfigureAwait(false);
+            DTOs.ResultadoOperacionDTO resultado = await EjecutarConManejoDeErroresAsync(
+                () => CodigoVerificacionServicioAyudante.ConfirmarCodigoRecuperacionAsync(tokenCodigo, codigoIngresado),
+                Lang.errorTextoServidorValidarCodigo
+            ).ConfigureAwait(false);
 
-                if (resultado == null)
-                    return null;
+            if (resultado == null)
+                return null;
 
-                return new DTOs.ResultadoOperacionDTO
-                {
-                    OperacionExitosa = resultado.OperacionExitosa,
-                    Mensaje = resultado.Mensaje
-                };
-            }
-            catch (FaultException ex)
+            return new DTOs.ResultadoOperacionDTO
             {
-                string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, Lang.errorTextoServidorValidarCodigo);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
-            }
-            catch (EndpointNotFoundException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (TimeoutException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
-            }
-            catch (CommunicationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoPrepararSolicitudCambioContrasena, ex);
-            }
+                OperacionExitosa = resultado.OperacionExitosa,
+                Mensaje = resultado.Mensaje
+            };
         }
 
         public async Task<DTOs.ResultadoOperacionDTO> ActualizarContrasenaAsync(string tokenCodigo, string nuevaContrasena)
@@ -158,49 +88,55 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
                 throw new ArgumentNullException(nameof(nuevaContrasena));
 
             var cliente = new PictionaryServidorServicioCambioContrasena.CambioContrasenaManejadorClient(Endpoint);
+            var solicitud = new DTOs.ActualizacionContrasenaDTO
+            {
+                TokenCodigo = tokenCodigo,
+                NuevaContrasena = nuevaContrasena
+            };
 
+            DTOs.ResultadoOperacionDTO resultado = await EjecutarConManejoDeErroresAsync(
+                () => WcfClienteAyudante.UsarAsincronoAsync(cliente, c => c.ActualizarContrasenaAsync(solicitud)),
+                Lang.errorTextoServidorActualizarContrasena
+            ).ConfigureAwait(false);
+
+            if (resultado == null)
+                return null;
+
+            return new DTOs.ResultadoOperacionDTO
+            {
+                OperacionExitosa = resultado.OperacionExitosa,
+                Mensaje = resultado.Mensaje
+            };
+        }
+
+        private static async Task<TResult> EjecutarConManejoDeErroresAsync<TResult>(
+            Func<Task<TResult>> operacion,
+            string mensajeFallaPredeterminado)
+        {
             try
             {
-                var solicitud = new DTOs.ActualizacionContrasenaDTO
-                {
-                    TokenCodigo = tokenCodigo,
-                    NuevaContrasena = nuevaContrasena
-                };
-
-                DTOs.ResultadoOperacionDTO resultado = await WcfClienteAyudante.UsarAsincrono(
-                    cliente,
-                    c => c.ActualizarContrasenaAsync(solicitud))
-                    .ConfigureAwait(false);
-
-                if (resultado == null)
-                    return null;
-
-                return new DTOs.ResultadoOperacionDTO
-                {
-                    OperacionExitosa = resultado.OperacionExitosa,
-                    Mensaje = resultado.Mensaje
-                };
+                return await operacion().ConfigureAwait(false);
             }
             catch (FaultException ex)
             {
-                string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, Lang.errorTextoServidorActualizarContrasena);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
+                string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, mensajeFallaPredeterminado);
+                throw new ServicioExcepcion(TipoErrorServicio.FallaServicio, mensaje, ex);
             }
             catch (EndpointNotFoundException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
             }
             catch (TimeoutException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.TiempoAgotado, Lang.errorTextoServidorTiempoAgotado, ex);
             }
             catch (CommunicationException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.Comunicacion, Lang.errorTextoServidorNoDisponible, ex);
             }
             catch (InvalidOperationException ex)
             {
-                throw new ExcepcionServicio(TipoErrorServicio.OperacionInvalida, Lang.errorTextoPrepararSolicitudCambioContrasena, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.OperacionInvalida, Lang.errorTextoPrepararSolicitudCambioContrasena, ex);
             }
         }
     }

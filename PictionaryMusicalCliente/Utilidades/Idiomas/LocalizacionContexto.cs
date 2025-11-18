@@ -2,15 +2,13 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Idiomas;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Idiomas;
 
 namespace PictionaryMusicalCliente.Utilidades.Idiomas
 {
     public class LocalizacionContexto : INotifyPropertyChanged
     {
-        private readonly ILocalizacionServicio _localizacionServicio;
-
         public LocalizacionContexto()
             : this(LocalizacionServicio.Instancia)
         {
@@ -18,9 +16,13 @@ namespace PictionaryMusicalCliente.Utilidades.Idiomas
 
         public LocalizacionContexto(ILocalizacionServicio localizacionServicio)
         {
-            _localizacionServicio = localizacionServicio ?? throw new ArgumentNullException(nameof(localizacionServicio));
+            if (localizacionServicio == null)
+            {
+                throw new ArgumentNullException(nameof(localizacionServicio));
+            }
+
             WeakEventManager<ILocalizacionServicio, EventArgs>.AddHandler(
-                _localizacionServicio,
+                localizacionServicio,
                 nameof(ILocalizacionServicio.IdiomaActualizado),
                 LocalizacionServicioEnIdiomaActualizado);
         }

@@ -1,13 +1,12 @@
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Helpers;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Wcf.Helpers;
-using DTOs = global::Servicios.Contratos.DTOs;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalCliente.Servicios.Wcf
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
     public class VerificacionCodigoServicio : IVerificacionCodigoServicio
     {
@@ -58,32 +57,32 @@ namespace PictionaryMusicalCliente.Servicios.Wcf
             catch (FaultException ex)
             {
                 string mensaje = ErrorServicioAyudante.ObtenerMensaje(ex, mensajeErrorPredeterminado);
-                throw new ExcepcionServicio(TipoErrorServicio.FallaServicio, mensaje, ex);
+                throw new ServicioExcepcion(TipoErrorServicio.FallaServicio, mensaje, ex);
             }
             catch (EndpointNotFoundException ex)
             {
-                throw new ExcepcionServicio(
+                throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
                     Lang.errorTextoServidorNoDisponible,
                     ex);
             }
             catch (TimeoutException ex)
             {
-                throw new ExcepcionServicio(
+                throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
                     Lang.errorTextoServidorTiempoAgotado,
                     ex);
             }
             catch (CommunicationException ex)
             {
-                throw new ExcepcionServicio(
+                throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
                     Lang.errorTextoServidorNoDisponible,
                     ex);
             }
             catch (InvalidOperationException ex)
             {
-                throw new ExcepcionServicio(
+                throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
                     ex);

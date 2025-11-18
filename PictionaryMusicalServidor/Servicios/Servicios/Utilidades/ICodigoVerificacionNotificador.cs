@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 
-namespace Servicios.Servicios.Utilidades
+namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     public interface ICodigoVerificacionNotificador
     {
-        Task<bool> NotificarAsincrono(string correoDestino, string codigo, string usuarioDestino);
+        Task<bool> NotificarAsync(string correoDestino, string codigo, string usuarioDestino);
     }
 }

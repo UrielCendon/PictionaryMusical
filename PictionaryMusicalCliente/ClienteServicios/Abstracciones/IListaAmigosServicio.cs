@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DTOs = global::Servicios.Contratos.DTOs;
+using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalCliente.Servicios.Abstracciones
+namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
 {
     public interface IListaAmigosServicio : IDisposable
     {
@@ -14,5 +14,7 @@ namespace PictionaryMusicalCliente.Servicios.Abstracciones
         Task SuscribirAsync(string nombreUsuario);
 
         Task CancelarSuscripcionAsync(string nombreUsuario);
+
+        Task<IReadOnlyList<DTOs.AmigoDTO>> ObtenerAmigosAsync(string nombreUsuario);
     }
 }

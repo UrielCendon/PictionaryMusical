@@ -1,25 +1,18 @@
-﻿using System.Windows;
+using PictionaryMusicalCliente.VistaModelo.Salas;
+using System;
+using System.Windows;
 
 namespace PictionaryMusicalCliente
 {
-    /// <summary>
-    /// Lógica de interacción para UnirsePartidaInvitado.xaml
-    /// </summary>
     public partial class IngresoPartidaInvitado : Window
     {
-        public IngresoPartidaInvitado()
+        public IngresoPartidaInvitado(IngresoPartidaInvitadoVistaModelo vistaModelo)
         {
             InitializeComponent();
-        }
 
-        private void BotonUnirsePartida(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void BotonCancelarUnirse(object sender, RoutedEventArgs e)
-        {
-            this.Close();
+            DataContext = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
+            vistaModelo.CerrarVentana = Close;
+            Closed += (_, __) => vistaModelo.CerrarVentana = null;
         }
     }
 }

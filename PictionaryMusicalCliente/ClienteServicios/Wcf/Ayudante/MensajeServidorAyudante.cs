@@ -4,23 +4,33 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using LangResources = PictionaryMusicalCliente.Properties.Langs;
 
-namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 {
     public static class MensajeServidorAyudante
     {
         private static readonly Regex EsperaCodigoRegex = new Regex(
             @"^Debe esperar (\d+) segundos para solicitar un nuevo código\.$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
 
         private static readonly Regex IdentificadorRedSocialRegex = new Regex(
             @"^El identificador de (.+) no debe exceder (\d+) caracteres\.$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
 
         private static readonly Dictionary<string, Func<string>> MapaMensajes =
             new Dictionary<string, Func<string>>(StringComparer.Ordinal)
             {
                 ["No fue posible procesar la solicitud de verificación."] = () => LangResources.Lang.errorTextoProcesarSolicitudVerificacion,
+                ["El jugador con el correo ingresado ya está en la sala."] = () => LangResources.Lang.invitarCorreoTextoJugadorYaEnSala,
+                ["No fue posible enviar la invitación por correo electrónico."] = () => LangResources.Lang.errorTextoEnviarCorreo,
+                ["No fue posible enviar la invitación por un error inesperado."] = () => LangResources.Lang.errorTextoEnviarCorreo,
+                ["Ocurrió un problema al procesar la invitación."] = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
+                ["Invitación enviada correctamente."] = () => LangResources.Lang.invitarCorreoTextoEnviado,
+                ["El correo electrónico proporcionado no es válido."] = () => LangResources.Lang.errorTextoCorreoInvalido,
+                ["No se encontró la sala especificada."] = () => LangResources.Lang.errorTextoNoEncuentraPartida,
+                ["La solicitud de invitación no es válida."] = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
+                ["Los datos proporcionados no son válidos para enviar la invitación."] = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
                 ["Se envió un código de verificación al correo proporcionado."] = () => LangResources.Lang.avisoTextoCodigoEnviado,
+                ["La sala está llena."] = () => LangResources.Lang.errorTextoSalaLlena,
                 ["La solicitud de verificación no es válida."] = () => LangResources.Lang.errorTextoSolicitudVerificacionInvalida,
                 ["No se encontró una solicitud de verificación activa."] = () => LangResources.Lang.errorTextoSolicitudVerificacionActiva,
                 ["El código de verificación ha expirado. Inicie el proceso nuevamente."] = () => LangResources.Lang.avisoTextoCodigoExpirado,
@@ -153,6 +163,42 @@ namespace PictionaryMusicalCliente.Servicios.Wcf.Helpers
             }
 
             return LangResources.Lang.errorTextoErrorProcesarSolicitud;
+        }
+
+        public static bool CoincideConMensaje(string mensaje, params string[] candidatos)
+        {
+            if (string.IsNullOrWhiteSpace(mensaje) || candidatos == null || candidatos.Length == 0)
+            {
+                return false;
+            }
+
+            string mensajeNormalizado = NormalizarMensaje(mensaje);
+
+            foreach (string candidato in candidatos)
+            {
+                if (string.IsNullOrWhiteSpace(candidato))
+                {
+                    continue;
+                }
+
+                string candidatoNormalizado = NormalizarMensaje(candidato);
+
+                if (!string.IsNullOrEmpty(candidatoNormalizado)
+                    && mensajeNormalizado.IndexOf(candidatoNormalizado, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string NormalizarMensaje(string mensaje)
+        {
+            return mensaje?
+                .Trim()
+                .TrimEnd('.')
+                ?? string.Empty;
         }
 
         private static bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)

@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Servicios.Contratos.DTOs
+namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
 {
     [DataContract]
     public class NuevaCuentaDTO
@@ -21,7 +21,7 @@ namespace Servicios.Contratos.DTOs
         public string Contrasena { get; set; }
 
         [DataMember(IsRequired = true)]
-        public string AvatarRutaRelativa { get; set; }
+        public int AvatarId { get; set; }
 
     }
 }

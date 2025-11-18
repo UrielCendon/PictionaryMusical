@@ -6,11 +6,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.Servicios.Abstracciones;
-using PictionaryMusicalCliente.Servicios.Dialogos;
-using PictionaryMusicalCliente.Servicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Dialogos;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.VistaModelo.Cuentas;
+using PictionaryMusicalCliente.VistaModelo.Perfil;
 
 namespace PictionaryMusicalCliente
 {
@@ -21,8 +19,7 @@ namespace PictionaryMusicalCliente
             InitializeComponent();
 
             IPerfilServicio perfilServicio = new PerfilServicio();
-            IAvatarServicio avatarServicio = new AvatarServicio();
-            ISeleccionarAvatarServicio seleccionarAvatarServicio = new SeleccionAvatarDialogoServicio(avatarServicio);
+            ISeleccionarAvatarServicio seleccionarAvatarServicio = new SeleccionAvatarDialogoServicio();
             ICambioContrasenaServicio cambioContrasenaServicio = new CambioContrasenaServicio();
             IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio = new VerificacionCodigoDialogoServicio();
             IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio =
@@ -32,8 +29,7 @@ namespace PictionaryMusicalCliente
                 perfilServicio,
                 seleccionarAvatarServicio,
                 cambioContrasenaServicio,
-                recuperacionCuentaDialogoServicio,
-                avatarServicio)
+                recuperacionCuentaDialogoServicio)
             {
                 CerrarAccion = Close
             };
@@ -43,7 +39,7 @@ namespace PictionaryMusicalCliente
             DataContext = vistaModelo;
         }
 
-        private async void Perfil_Loaded(object sender, RoutedEventArgs e)
+        private async void Perfil_LoadedAsync(object sender, RoutedEventArgs e)
         {
             if (DataContext is PerfilVistaModelo vistaModelo)
             {
@@ -62,13 +58,12 @@ namespace PictionaryMusicalCliente
 
         private void RedSocialTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (sender is TextBox textBox && textBox.Tag is ToggleButton toggle)
+            if (sender is TextBox textBox &&
+                textBox.Tag is ToggleButton toggle &&
+                (e.Key == Key.Enter || e.Key == Key.Return || e.Key == Key.Escape))
             {
-                if (e.Key == Key.Enter || e.Key == Key.Return || e.Key == Key.Escape)
-                {
-                    toggle.IsChecked = false;
-                    e.Handled = true;
-                }
+                toggle.IsChecked = false;
+                e.Handled = true;
             }
         }
 

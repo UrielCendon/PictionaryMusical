@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace Servicios.Contratos.DTOs
+namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
 {
     [DataContract]
     public class UsuarioDTO
@@ -25,9 +25,6 @@ namespace Servicios.Contratos.DTOs
 
         [DataMember]
         public int AvatarId { get; set; }
-
-        [DataMember]
-        public string AvatarRutaRelativa { get; set; }
 
         [DataMember]
         public string Instagram { get; set; }
