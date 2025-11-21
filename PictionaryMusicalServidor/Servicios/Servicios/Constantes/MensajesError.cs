@@ -34,6 +34,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             // Mensajes de registro y autenticación
             public const string ErrorRegistrarCuenta = "No fue posible completar el registro. Por favor, intente nuevamente.";
             public const string ErrorInicioSesion = "No fue posible iniciar sesión. Por favor, intente nuevamente.";
+            public const string UsuarioRegistroInvalido = "El nombre de usuario es obligatorio y no debe exceder 50 caracteres.";
+            public const string NombreRegistroInvalido = "El nombre es obligatorio y no debe exceder 50 caracteres.";
+            public const string ApellidoRegistroInvalido = "El apellido es obligatorio y no debe exceder 50 caracteres.";
+            public const string CorreoRegistroInvalido = "El correo electrónico es obligatorio, debe tener un formato válido y no debe exceder 50 caracteres.";
+            public const string ContrasenaRegistroInvalida = "La contraseña debe tener entre 8 y 15 caracteres, incluir una letra mayúscula, un número y un carácter especial.";
 
             // Mensajes de perfil
             public const string ErrorObtenerPerfil = "No fue posible obtener la información del perfil.";
@@ -49,6 +54,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorSuscripcionAmigos = "No fue posible suscribirse a las actualizaciones de amigos.";
             public const string ErrorNotificarSolicitud = "No fue posible notificar la actualización de la solicitud de amistad.";
             public const string ErrorNotificarEliminacion = "No fue posible notificar la eliminación de la relación de amistad.";
+            public const string SolicitudAmistadMismoUsuario = "No es posible enviarse una solicitud de amistad a sí mismo.";
+            public const string RelacionAmistadExistente = "Ya existe una solicitud o relación de amistad entre los usuarios.";
+            public const string SolicitudAmistadNoExiste = "No existe una solicitud de amistad entre los usuarios.";
+            public const string ErrorAceptarSolicitud = "No fue posible aceptar la solicitud de amistad.";
+            public const string SolicitudAmistadYaAceptada = "La solicitud de amistad ya fue aceptada con anterioridad.";
+            public const string RelacionAmistadNoExiste = "No existe una relación de amistad entre los usuarios.";
 
             // Mensajes de recuperación de cuenta
             public const string ErrorRecuperarCuenta = "No fue posible procesar la recuperación de cuenta.";
@@ -61,7 +72,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string DatosActualizacionContrasena = "Los datos de actualización no son válidos.";
             public const string ErrorConfirmarCodigoRecuperacion = "No fue posible confirmar el código de recuperación.";
             public const string DatosSolicitudVerificacionInvalidos = "Los datos proporcionados no son válidos para solicitar el código.";
-            public const string SolicitudRecuperacionIdentificadorObligatorio = "Debe proporcionar el usuario o correo registrado.";
+            public const string SolicitudRecuperacionIdentificadorObligatorio = "Debe proporcionar el usuario o correo registrado y no debe exceder 50 caracteres.";
             public const string SolicitudRecuperacionCuentaNoEncontrada = "No se encontró una cuenta con el usuario o correo proporcionado.";
             public const string SolicitudRecuperacionNoEncontrada = "No se encontró una solicitud de recuperación activa.";
             public const string CodigoRecuperacionExpirado = "El código de verificación ha expirado. Solicite uno nuevo.";

@@ -6,21 +6,30 @@ using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using log4net;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
+    /// <summary>
+    /// Controla la logica para invitar amigos conectados a una sala de juego.
+    /// </summary>
     public class InvitarAmigosVistaModelo : BaseVistaModelo
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private readonly IInvitacionesServicio _invitacionesServicio;
         private readonly IPerfilServicio _perfilServicio;
         private readonly string _codigoSala;
         private readonly Action<int> _registrarAmigoInvitado;
         private readonly Action<string> _mostrarMensaje;
 
+        /// <summary>
+        /// Inicializa el ViewModel con la lista de amigos y servicios necesarios.
+        /// </summary>
         public InvitarAmigosVistaModelo(
             IEnumerable<DTOs.AmigoDTO> amigos,
             IInvitacionesServicio invitacionesServicio,
@@ -30,12 +39,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             Action<int> registrarAmigoInvitado,
             Action<string> mostrarMensaje)
         {
-            _invitacionesServicio = invitacionesServicio ?? throw new ArgumentNullException(nameof(invitacionesServicio));
-            _perfilServicio = perfilServicio ?? throw new ArgumentNullException(nameof(perfilServicio));
+            _invitacionesServicio = invitacionesServicio ??
+                throw new ArgumentNullException(nameof(invitacionesServicio));
+            _perfilServicio = perfilServicio ??
+                throw new ArgumentNullException(nameof(perfilServicio));
 
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
-                throw new ArgumentException("El código de la sala es obligatorio.", nameof(codigoSala));
+                throw new ArgumentException("El código de la sala es obligatorio.",
+                    nameof(codigoSala));
             }
 
             _codigoSala = codigoSala;
@@ -46,6 +58,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 CrearElementos(amigos, amigoInvitado));
         }
 
+        /// <summary>
+        /// Coleccion de amigos disponibles para invitar.
+        /// </summary>
         public ObservableCollection<AmigoInvitacionItemVistaModelo> Amigos { get; }
 
         internal async Task InvitarAsync(AmigoInvitacionItemVistaModelo amigo)
@@ -57,14 +72,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (amigo.InvitacionEnviada)
             {
-                ManejadorSonido.ReproducirError();
+                SonidoManejador.ReproducirError();
                 _mostrarMensaje?.Invoke(Lang.invitarAmigosTextoYaInvitado);
                 return;
             }
 
             if (amigo.UsuarioId <= 0)
             {
-                ManejadorSonido.ReproducirError();
+                SonidoManejador.ReproducirError();
                 _mostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
@@ -73,31 +88,39 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             try
             {
+                Log.InfoFormat("Obteniendo perfil para invitar amigo ID: {0}",
+                    amigo.UsuarioId);
                 DTOs.UsuarioDTO perfil = await _perfilServicio
                     .ObtenerPerfilAsync(amigo.UsuarioId)
                     .ConfigureAwait(true);
 
                 if (perfil == null || string.IsNullOrWhiteSpace(perfil.Correo))
                 {
-                    ManejadorSonido.ReproducirError();
+                    Log.WarnFormat("Perfil o correo no disponible para amigo ID: {0}",
+                        amigo.UsuarioId);
+                    SonidoManejador.ReproducirError();
                     _mostrarMensaje?.Invoke(Lang.invitarAmigosTextoCorreoNoDisponible);
                     return;
                 }
 
+                Log.InfoFormat("Enviando invitación por correo a: {0}",
+                    perfil.Correo);
                 DTOs.ResultadoOperacionDTO resultado = await _invitacionesServicio
                     .EnviarInvitacionAsync(_codigoSala, perfil.Correo)
                     .ConfigureAwait(true);
 
                 if (resultado != null && resultado.OperacionExitosa)
                 {
-                    ManejadorSonido.ReproducirExito();
+                    SonidoManejador.ReproducirExito();
                     amigo.MarcarInvitacionEnviada();
                     _registrarAmigoInvitado?.Invoke(amigo.UsuarioId);
                     _mostrarMensaje?.Invoke(Lang.invitarCorreoTextoEnviado);
                 }
                 else
                 {
-                    ManejadorSonido.ReproducirError();
+                    Log.WarnFormat("Fallo al enviar invitación: {0}",
+                        resultado?.Mensaje);
+                    SonidoManejador.ReproducirError();
                     string mensaje = MensajeServidorAyudante.Localizar(
                         resultado?.Mensaje,
                         Lang.errorTextoEnviarCorreo);
@@ -106,14 +129,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             }
             catch (ServicioExcepcion ex)
             {
-                Debug.WriteLine($"[Error Invitaciones Amigos]: {ex.Message}");
-                ManejadorSonido.ReproducirError();
+                Log.Error("Error de servicio al enviar invitación.", ex);
+                SonidoManejador.ReproducirError();
                 _mostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoEnviarCorreo);
             }
             catch (ArgumentException ex)
             {
-                Debug.WriteLine($"[Error Invitaciones Amigos - Argumento inválido]: {ex.Message}");
-                ManejadorSonido.ReproducirError();
+                Log.Error("Error de argumento inválido al invitar.", ex);
+                SonidoManejador.ReproducirError();
                 _mostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoEnviarCorreo);
             }
             finally
@@ -149,12 +172,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         }
     }
 
+    /// <summary>
+    /// Representa un item individual en la lista de amigos para invitar.
+    /// </summary>
     public class AmigoInvitacionItemVistaModelo : BaseVistaModelo
     {
         private readonly InvitarAmigosVistaModelo _padre;
         private bool _invitacionEnviada;
         private bool _estaProcesando;
 
+        /// <summary>
+        /// Crea una instancia del item de invitacion.
+        /// </summary>
         public AmigoInvitacionItemVistaModelo(
             DTOs.AmigoDTO amigo,
             InvitarAmigosVistaModelo padre,
@@ -172,15 +201,24 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             InvitarComando = new ComandoAsincrono(async () =>
             {
-                ManejadorSonido.ReproducirClick();
+                SonidoManejador.ReproducirClick();
                 await _padre.InvitarAsync(this).ConfigureAwait(true);
             }, () => !EstaProcesando);
         }
 
+        /// <summary>
+        /// Identificador unico del usuario amigo.
+        /// </summary>
         public int UsuarioId { get; }
 
+        /// <summary>
+        /// Nombre de usuario a mostrar.
+        /// </summary>
         public string NombreUsuario { get; }
 
+        /// <summary>
+        /// Indica si la invitacion ya ha sido enviada exitosamente.
+        /// </summary>
         public bool InvitacionEnviada
         {
             get => _invitacionEnviada;
@@ -194,6 +232,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             }
         }
 
+        /// <summary>
+        /// Indica si hay una operacion en curso para este item.
+        /// </summary>
         public bool EstaProcesando
         {
             get => _estaProcesando;
@@ -206,10 +247,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             }
         }
 
+        /// <summary>
+        /// Texto dinamico del boton (Invitar / Invitado).
+        /// </summary>
         public string TextoBoton => InvitacionEnviada
             ? Lang.invitarAmigosTextoInvitado
             : Lang.globalTextoInvitar;
 
+        /// <summary>
+        /// Comando para ejecutar el envio de la invitacion.
+        /// </summary>
         public IComandoAsincrono InvitarComando { get; }
 
         internal void MarcarInvitacionEnviada()

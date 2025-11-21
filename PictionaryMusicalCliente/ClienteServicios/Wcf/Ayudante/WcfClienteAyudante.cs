@@ -1,11 +1,21 @@
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using log4net;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 {
+    /// <summary>
+    /// Helper para manejar el ciclo de vida de los clientes WCF de forma segura.
+    /// </summary>
     public static class WcfClienteAyudante
     {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(WcfClienteAyudante));
+
+        /// <summary>
+        /// Ejecuta una operacion asincrona en un cliente WCF, asegurando el cierre correcto 
+        /// del canal.
+        /// </summary>
         public static async Task<TResult> UsarAsincronoAsync<TClient, TResult>(
             TClient cliente,
             Func<TClient, Task<TResult>> operacion)
@@ -27,9 +37,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 Cerrar(cliente);
                 return resultado;
             }
-            catch
+            catch (CommunicationException)
             {
-                //Se propaga la excepción en dónde sea llamada
+                Abortar(cliente);
+                throw;
+            }
+            catch (TimeoutException)
+            {
+                Abortar(cliente);
+                throw;
+            }
+            catch (InvalidOperationException)
+            {
+                Abortar(cliente);
+                throw;
+            }
+            catch (Exception)
+            {
                 Abortar(cliente);
                 throw;
             }
@@ -53,16 +77,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     cliente.Abort();
                 }
             }
-            catch (CommunicationException)
+            catch (CommunicationException ex)
             {
+                _logger.Warn("Excepción al cerrar cliente WCF.", ex);
                 cliente.Abort();
             }
-            catch (TimeoutException)
+            catch (TimeoutException ex)
             {
+                _logger.Warn("Timeout al cerrar cliente WCF.", ex);
                 cliente.Abort();
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+                _logger.Warn("Operación inválida al cerrar cliente WCF.", ex);
                 cliente.Abort();
             }
         }
@@ -78,9 +105,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             {
                 cliente.Abort();
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignorado de manera intencional: No se puede hacer nada para manejar una excepción al abortar.
+                // Ignorado de manera intencional: No se puede hacer nada para manejar
+                // una excepcion al abortar.
+                _logger.Error("Error crítico al abortar cliente WCF.", ex);
             }
         }
     }

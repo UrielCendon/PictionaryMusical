@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PictionaryMusicalCliente.Properties.Langs;
+using log4net;
 
 namespace PictionaryMusicalCliente.Utilidades
 {
@@ -11,19 +12,32 @@ namespace PictionaryMusicalCliente.Utilidades
     /// </summary>
     public static class NombreInvitadoGenerador
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static readonly object _sync = new();
         private static readonly Random _random = new();
 
         /// <summary>
         /// Obtiene un nombre de invitado aleatorio acorde a la cultura proporcionada.
         /// </summary>
-        /// <param name="cultura">Cultura a utilizar para localizar el nombre. Si es <c>null</c> se utilizarÃ¡ la cultura actual.</param>
+        /// <param name="cultura">Cultura a utilizar. Si es null se usa la actual.</param>
+        /// <param name="nombresExcluidos">Lista de nombres que no deben repetirse.</param>
         /// <returns>Nombre de invitado localizado.</returns>
-        public static string Generar(CultureInfo cultura, IEnumerable<string> nombresExcluidos = null)
+        public static string Generar(
+            CultureInfo cultura,
+            IEnumerable<string> nombresExcluidos = null)
         {
             CultureInfo culturaEfectiva = cultura ?? CultureInfo.CurrentUICulture;
 
             string opciones = ObtenerOpciones(culturaEfectiva);
+
+            if (string.IsNullOrWhiteSpace(opciones))
+            {
+                Log.ErrorFormat("No se encontraron nombres de invitados para cultura: {0}",
+                    culturaEfectiva);
+                return null;
+            }
 
             var nombres = opciones
                 .Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
@@ -33,11 +47,13 @@ namespace PictionaryMusicalCliente.Utilidades
 
             if (nombres.Length == 0)
             {
+                Log.Warn("La lista de nombres parseada está vacía.");
                 return null;
             }
 
             HashSet<string> nombresNoDisponibles = nombresExcluidos != null
-                ? new HashSet<string>(nombresExcluidos.Where(nombre => !string.IsNullOrWhiteSpace(nombre)),
+                ? new HashSet<string>(
+                    nombresExcluidos.Where(n => !string.IsNullOrWhiteSpace(n)),
                     StringComparer.OrdinalIgnoreCase)
                 : null;
 
@@ -47,6 +63,7 @@ namespace PictionaryMusicalCliente.Utilidades
 
             if (nombresDisponibles.Length == 0)
             {
+                Log.Info("Todos los nombres disponibles ya han sido utilizados.");
                 return null;
             }
 
@@ -63,11 +80,14 @@ namespace PictionaryMusicalCliente.Utilidades
 
             if (string.IsNullOrWhiteSpace(opciones) && cultura != CultureInfo.InvariantCulture)
             {
-                opciones = Lang.ResourceManager.GetString("invitadoNombres", CultureInfo.InvariantCulture);
+                Log.WarnFormat("Falta recurso 'invitadoNombres' en {0}, usando Invariant.",
+                    cultura);
+                opciones = Lang.ResourceManager.GetString(
+                    "invitadoNombres",
+                    CultureInfo.InvariantCulture);
             }
 
             return opciones;
         }
     }
 }
-

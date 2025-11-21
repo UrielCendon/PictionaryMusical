@@ -3,19 +3,28 @@ using System.Configuration;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Threading.Tasks;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
+    /// <summary>
+    /// Notificador que envía invitaciones a partidas por correo electrónico.
+    /// Refactorizado para seguir el patrón de CorreoCodigoVerificacionNotificador.
+    /// </summary>
     internal static class CorreoInvitacionNotificador
     {
-        private static readonly ILog _logger = 
+        private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CorreoInvitacionNotificador));
-    
-        private const string AsuntoPredeterminado = "Invitación a partida";
 
-        public static bool EnviarInvitacion(string correoDestino, string codigoSala, string creador)
+        private const string AsuntoPredeterminadoEs = "Invitación a partida de Pictionary Musical";
+        private const string AsuntoPredeterminadoEn = "Pictionary Musical Game Invitation";
+
+        /// <summary>
+        /// Envía una invitación a una partida al correo indicado de forma asíncrona.
+        /// </summary>
+        public static async Task<bool> EnviarInvitacionAsync(string correoDestino, string codigoSala, string creador, string idioma)
         {
             if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigoSala))
             {
@@ -27,12 +36,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             string host = ObtenerConfiguracion("CorreoHost", "Correo.Smtp.Host");
             string usuarioSmtp = ObtenerConfiguracion("CorreoUsuario", "Correo.Smtp.Usuario");
             string puertoConfigurado = ObtenerConfiguracion("CorreoPuerto", "Correo.Smtp.Puerto");
-            string asunto = ObtenerConfiguracion("CorreoAsuntoInvitacion", "Correo.Invitacion.Asunto") ?? AsuntoPredeterminado;
 
-            bool.TryParse(ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl"), out bool habilitarSsl);
+            string idiomaNormalizado = NormalizarIdioma(idioma);
+
+            string asuntoConfigurado = ObtenerConfiguracion(
+                $"CorreoAsuntoInvitacion.{idiomaNormalizado}",
+                $"Correo.Invitacion.Asunto.{idiomaNormalizado}",
+                "CorreoAsuntoInvitacion",
+                "Correo.Invitacion.Asunto");
+
+            string asunto = string.IsNullOrWhiteSpace(asuntoConfigurado)
+                ? ObtenerAsuntoPredeterminado(idiomaNormalizado)
+                : asuntoConfigurado;
+
+            bool.TryParse(
+                ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl"),
+                out bool habilitarSsl);
 
             if (string.IsNullOrWhiteSpace(remitente) || string.IsNullOrWhiteSpace(host))
             {
+                _logger.Error("Configuración de correo incompleta (Remitente o Host faltante).");
                 return false;
             }
 
@@ -46,27 +69,38 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 puerto = 587;
             }
 
-            string cuerpoHtml = ConstruirCuerpoMensaje(codigoSala, creador);
+            if (!habilitarSsl)
+            {
+                _logger.Error("Configuración inválida: Correo.Smtp.HabilitarSsl debe ser true.");
+                return false;
+            }
+
+            string cuerpoHtml = ConstruirCuerpoMensaje(codigoSala, creador, idiomaNormalizado);
 
             try
             {
-                using (var mensajeCorreo = new MailMessage(remitente, correoDestino, asunto, cuerpoHtml))
+                using (var mensaje = new MailMessage(remitente, correoDestino, asunto, cuerpoHtml))
                 {
-                    mensajeCorreo.IsBodyHtml = true;
+                    mensaje.IsBodyHtml = true;
+                    mensaje.BodyEncoding = Encoding.UTF8;
+                    mensaje.SubjectEncoding = Encoding.UTF8;
 
                     using (var clienteSmtp = new SmtpClient(host, puerto))
                     {
-                        clienteSmtp.EnableSsl = habilitarSsl;
+                        clienteSmtp.EnableSsl = true;
 
                         if (!string.IsNullOrWhiteSpace(contrasena))
                         {
                             clienteSmtp.Credentials = new NetworkCredential(usuarioSmtp, contrasena);
                         }
 
-                        clienteSmtp.Send(mensajeCorreo);
+                        await clienteSmtp
+                            .SendMailAsync(mensaje)
+                            .ConfigureAwait(false);
                     }
                 }
 
+                _logger.Info($"Invitación enviada correctamente a '{correoDestino}'.");
                 return true;
             }
             catch (SmtpException ex)
@@ -84,6 +118,65 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 _logger.Error(MensajesError.Log.CorreoArgumentoInvalido, ex);
                 return false;
             }
+            catch (Exception ex)
+            {
+                _logger.Error($"Error inesperado al enviar invitación a {correoDestino}", ex);
+                return false;
+            }
+        }
+
+        internal static string ConstruirCuerpoMensaje(string codigoSala, string creador, string idioma)
+        {
+            string idiomaNormalizado = NormalizarIdioma(idioma);
+            bool esIngles = idiomaNormalizado == "en";
+
+            string saludo = esIngles
+                ? "Hello!"
+                : "¡Hola!";
+
+            string mensajeBienvenida = esIngles
+                ? "You have been invited to a Musical Pictionary game."
+                : "Has sido invitado a una partida de Pictionary Musical.";
+
+            string mensajeInvitacion = esIngles
+                ? $"{creador} has invited you to their room."
+                : $"{creador} te ha invitado a su sala.";
+
+            string mensajeInstruccion = esIngles
+                ? "Use the following code to join:"
+                : "Utiliza el siguiente código para unirte:";
+
+            string mensajeDespedida = esIngles
+                ? "See you in the game!"
+                : "¡Nos vemos en el juego!";
+
+            var cuerpoHtml = new StringBuilder();
+
+            cuerpoHtml.Append("<html><body style='font-family: Arial, sans-serif;'>");
+            cuerpoHtml.Append($"<h2>{saludo}</h2>");
+            cuerpoHtml.Append($"<p>{mensajeBienvenida}</p>");
+            cuerpoHtml.Append($"<p>{mensajeInvitacion}</p>");
+            cuerpoHtml.Append($"<p>{mensajeInstruccion}</p>");
+            cuerpoHtml.Append($"<h1 style='color:#4CAF50; letter-spacing: 2px;'>{codigoSala}</h1>");
+            cuerpoHtml.Append($"<p>{mensajeDespedida}</p>");
+            cuerpoHtml.Append("</body></html>");
+
+            return cuerpoHtml.ToString();
+        }
+
+        private static string NormalizarIdioma(string idioma)
+        {
+            if (string.IsNullOrWhiteSpace(idioma))
+            {
+                return "es";
+            }
+
+            return idioma.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "en" : "es";
+        }
+
+        private static string ObtenerAsuntoPredeterminado(string idiomaNormalizado)
+        {
+            return idiomaNormalizado == "en" ? AsuntoPredeterminadoEn : AsuntoPredeterminadoEs;
         }
 
         private static string ObtenerConfiguracion(params string[] claves)
@@ -101,6 +194,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 }
 
                 string valor = ConfigurationManager.AppSettings[clave];
+
                 if (!string.IsNullOrWhiteSpace(valor))
                 {
                     return valor;
@@ -108,26 +202,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
 
             return null;
-        }
-
-        private static string ConstruirCuerpoMensaje(string codigoSala, string creador)
-        {
-            var cuerpoHtml = new StringBuilder();
-            cuerpoHtml.Append("<html><body>");
-            cuerpoHtml.Append("<h2>¡Has sido invitado a una partida de Pictionary Musical!</h2>");
-
-            if (!string.IsNullOrWhiteSpace(creador))
-            {
-                cuerpoHtml.Append($"<p>{creador} te ha invitado a su sala.</p>");
-            }
-
-            cuerpoHtml.Append("<p>Utiliza el siguiente código para unirte:</p>");
-            cuerpoHtml.Append($"<h1 style='color:#4CAF50;'>{codigoSala}</h1>");
-            cuerpoHtml.Append("<p>Ingresa el código en la aplicación para unirte a la partida.</p>");
-            cuerpoHtml.Append("<p>¡Te esperamos!</p>");
-            cuerpoHtml.Append("</body></html>");
-
-            return cuerpoHtml.ToString();
         }
     }
 }

@@ -45,8 +45,8 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=3.2.0.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.3.2.0\lib\net462\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -67,6 +67,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -119,21 +120,28 @@
     <Compile Include="Servicios\CodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\Constantes\MensajesError.cs" />
     <Compile Include="Servicios\CuentaManejador.cs" />
+    <Compile Include="Servicios\EntradaComunValidador.cs" />
     <Compile Include="Servicios\InicioSesionManejador.cs" />
     <Compile Include="Servicios\CambioContrasenaManejador.cs" />
+    <Compile Include="Servicios\Modelos\SalaInterna.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorAmigos.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorListaAmigos.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorSalas.cs" />
     <Compile Include="Servicios\PerfilManejador.cs" />
-    <Compile Include="Servicios\PerfilValidador.cs" />
     <Compile Include="Servicios\SalasManejador.cs" />
     <Compile Include="Servicios\InvitacionesManejador.cs" />
     <Compile Include="Servicios\ServicioAmistad.cs" />
     <Compile Include="Servicios\ServicioNotificacionCodigos.cs" />
     <Compile Include="Servicios\ServicioRecuperacionCuenta.cs" />
     <Compile Include="Servicios\ServicioVerificacionRegistro.cs" />
+    <Compile Include="Servicios\Utilidades\ContextoFactory.cs" />
     <Compile Include="Servicios\Utilidades\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\CorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\ICodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\CodigoVerificacionGenerador.cs" />
+    <Compile Include="Servicios\Utilidades\ManejadorCallback.cs" />
     <Compile Include="Servicios\Utilidades\TokenGenerador.cs" />
+    <Compile Include="Servicios\Utilidades\ValidadorNombreUsuario.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

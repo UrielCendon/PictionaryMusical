@@ -1,24 +1,46 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Media;
+using log4net;
 
 namespace PictionaryMusicalCliente.ClienteServicios
 {
+    /// <summary>
+    /// Controla la reproduccion de musica de fondo en la aplicacion.
+    /// </summary>
     public class MusicaManejador : IDisposable
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private const double VolumenPredeterminado = 0.5;
         private readonly MediaPlayer _reproductor;
         private bool _desechado;
         private double _volumenGuardado;
 
+        /// <summary>
+        /// Indica si el reproductor esta actualmente emitiendo sonido.
+        /// </summary>
         public bool EstaReproduciendo { get; private set; }
+
+        /// <summary>
+        /// Indica si el volumen esta en cero.
+        /// </summary>
         public bool EstaSilenciado { get; private set; }
 
+        /// <summary>
+        /// Obtiene o establece el nivel de volumen (0.0 a 1.0).
+        /// </summary>
         public double Volumen
         {
             get => _reproductor.Volume;
             set
             {
                 double clamped = Math.Max(0, Math.Min(1, value));
+                if (Math.Abs(_reproductor.Volume - clamped) < 0.0001)
+                {
+                    return;
+                }
+
                 _reproductor.Volume = clamped;
 
                 EstaSilenciado = clamped < 0.0001;
@@ -26,41 +48,52 @@ namespace PictionaryMusicalCliente.ClienteServicios
                 {
                     _volumenGuardado = clamped;
                 }
+
+                GuardarPreferencia(clamped);
             }
         }
 
+        /// <summary>
+        /// Inicializa una nueva instancia del manejador de musica.
+        /// </summary>
         public MusicaManejador()
         {
             _reproductor = new MediaPlayer();
             _reproductor.MediaEnded += EnMedioTerminado;
             _reproductor.MediaOpened += EnMedioAbierto;
             _reproductor.MediaFailed += EnMedioFallido;
-            this.Volumen = 0.4;
-            EstaSilenciado = false;
+            double volumenPreferido = ObtenerVolumenGuardado();
+            _volumenGuardado = volumenPreferido;
+            this.Volumen = volumenPreferido;
+            EstaSilenciado = _volumenGuardado < 0.0001;
         }
 
         /// <summary>
-        /// Alterna el estado de silencio (mute) del reproductor.
-        /// </summary>
-        /// <returns>Devuelve true si el reproductor está AHORA silenciado, false si no lo está.</returns>
-        public bool AlternarSilencio()
+        /// Alterna el estado de silencio (mute) del reproductor.
+        /// </summary>
+        /// <returns>True si esta silenciado, false si tiene volumen.</returns>
+        public bool AlternarSilencio()
         {
             if (EstaSilenciado)
             {
-                this.Volumen = _volumenGuardado;
+                this.Volumen = _volumenGuardado;
             }
             else
             {
-                this.Volumen = 0;
+                this.Volumen = 0;
             }
             return EstaSilenciado;
         }
 
+        /// <summary>
+        /// Inicia la reproduccion de un archivo de audio en bucle infinito.
+        /// </summary>
+        /// <param name="nombreArchivo">Nombre del archivo en la carpeta Recursos.</param>
         public void ReproducirEnBucle(string nombreArchivo)
         {
             if (string.IsNullOrWhiteSpace(nombreArchivo))
             {
-                Debug.WriteLine("El nombre del archivo no puede ser vacio.");
+                Log.Warn("Se intentó reproducir música con nombre de archivo vacío.");
                 return;
             }
 
@@ -77,18 +110,24 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
             catch (UriFormatException ex)
             {
-                Debug.WriteLine($"Error en el formato de la URI: {ex.Message}");
+                Log.ErrorFormat("Formato URI inválido para música: {0}", 
+                    nombreArchivo, ex);
             }
             catch (InvalidOperationException ex)
             {
-                Debug.WriteLine($"Error al intentar abrir: {ex.Message}");
+                Log.ErrorFormat("Error de operación al abrir música: {0}", 
+                    nombreArchivo, ex);
             }
             catch (System.IO.IOException ex)
             {
-                Debug.WriteLine($"Error de E/S: {ex.Message}");
+                Log.ErrorFormat("Error de E/S al cargar música: {0}",
+                    nombreArchivo, ex);
             }
         }
 
+        /// <summary>
+        /// Pausa la reproduccion actual.
+        /// </summary>
         public void Pausar()
         {
             if (EstaReproduciendo)
@@ -98,6 +137,9 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
         }
 
+        /// <summary>
+        /// Reanudar la reproduccion si estaba pausada.
+        /// </summary>
         public void Reanudar()
         {
             if (!EstaReproduciendo)
@@ -107,18 +149,9 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
         }
 
-        private void EnMedioAbierto(object sender, EventArgs e)
-        {
-            _reproductor.Play();
-            EstaReproduciendo = true;
-        }
-
-        private void EnMedioFallido(object sender, ExceptionEventArgs e)
-        {
-            EstaReproduciendo = false;
-            Debug.WriteLine($"Error al cargar la música: {e.ErrorException.Message}");
-        }
-
+        /// <summary>
+        /// Detiene completamente la reproduccion y reinicia la posicion.
+        /// </summary>
         public void Detener()
         {
             if (EstaReproduciendo)
@@ -128,19 +161,26 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
         }
 
+        /// <summary>
+        /// Manejador de evento para reiniciar la musica cuando termina (Loop).
+        /// </summary>
         public void EnMedioTerminado(object sender, EventArgs e)
         {
             _reproductor.Position = TimeSpan.Zero;
             _reproductor.Play();
-            EstaReproduciendo = true; 
+            EstaReproduciendo = true;
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Libera los recursos no administrados y opcionalmente los administrados.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
             if (_desechado)
@@ -159,6 +199,37 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
 
             _desechado = true;
+        }
+
+        private void EnMedioAbierto(object sender, EventArgs e)
+        {
+            _reproductor.Play();
+            EstaReproduciendo = true;
+            Log.Info("Reproducción de música iniciada exitosamente.");
+        }
+
+        private void EnMedioFallido(object sender, ExceptionEventArgs e)
+        {
+            EstaReproduciendo = false;
+            Log.ErrorFormat("Fallo crítico en reproducción de medio: {0}",
+                e.ErrorException.Message, e.ErrorException);
+        }
+
+        private static double ObtenerVolumenGuardado()
+        {
+            double volumenGuardado = Properties.Settings.Default.volumenMusica;
+            if (double.IsNaN(volumenGuardado) || double.IsInfinity(volumenGuardado))
+            {
+                return VolumenPredeterminado;
+            }
+
+            return Math.Max(0, Math.Min(1, volumenGuardado));
+        }
+
+        private static void GuardarPreferencia(double volumen)
+        {
+            Properties.Settings.Default.volumenMusica = volumen;
+            Properties.Settings.Default.Save();
         }
     }
 }

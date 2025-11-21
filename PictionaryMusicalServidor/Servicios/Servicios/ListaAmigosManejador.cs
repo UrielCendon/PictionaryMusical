@@ -1,109 +1,145 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.ServiceModel;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.Modelo;
-using PictionaryMusicalServidor.Datos.Utilidades;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using System.Globalization;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
+    /// <summary>
+    /// Implementacion del servicio de gestion de listas de amigos.
+    /// Maneja suscripciones para notificaciones de cambios en listas de amigos con notificaciones en tiempo real via callbacks.
+    /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ListaAmigosManejador : IListaAmigosManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ListaAmigosManejador));
-        private static readonly ConcurrentDictionary<string, IListaAmigosManejadorCallback> _suscripciones =
-            new(StringComparer.OrdinalIgnoreCase);
+        private static readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly NotificadorListaAmigos _notificador = new(_manejadorCallback);
 
+        /// <summary>
+        /// Suscribe un usuario para recibir notificaciones sobre cambios en su lista de amigos.
+        /// Obtiene la lista actual de amigos, registra el callback y notifica inmediatamente.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario a suscribir.</param>
+        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido, no existe, o hay errores de base de datos.</exception>
         public void Suscribir(string nombreUsuario)
         {
-            ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
-
             List<AmigoDTO> amigosActuales;
             try
             {
+                ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+
                 amigosActuales = ObtenerAmigosPorNombre(nombreUsuario);
+
+                IListaAmigosManejadorCallback callback = ManejadorCallback<IListaAmigosManejadorCallback>.ObtenerCallbackActual();
+                _manejadorCallback.Suscribir(nombreUsuario, callback);
+                _manejadorCallback.ConfigurarEventosCanal(nombreUsuario);
+
+                _notificador.NotificarLista(nombreUsuario, amigosActuales);
+
+                _logger.Info($"Usuario '{nombreUsuario}' se suscribió a notificaciones de lista de amigos.");
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 _logger.Warn(MensajesError.Log.ListaAmigosSuscribirIdentificadorInvalido, ex);
-                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
+                throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
                 _logger.Warn(MensajesError.Log.ListaAmigosSuscribirDatosInvalidos, ex);
-                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
+                throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
                 _logger.Error(MensajesError.Log.ListaAmigosSuscribirErrorDatos, ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
-
-            IListaAmigosManejadorCallback callback = ObtenerCallbackActual();
-            _suscripciones.AddOrUpdate(nombreUsuario, callback, (_, __) => callback);
-
-            var canal = OperationContext.Current?.Channel;
-            if (canal != null)
+            catch (Exception ex)
             {
-                canal.Closed += (_, __) => RemoverSuscripcion(nombreUsuario);
-                canal.Faulted += (_, __) => RemoverSuscripcion(nombreUsuario);
+                _logger.Error(MensajesError.Log.ListaAmigosSuscribirErrorDatos, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
-
-            NotificarLista(nombreUsuario, amigosActuales);
         }
 
+        /// <summary>
+        /// Cancela la suscripcion de un usuario de notificaciones de lista de amigos.
+        /// Elimina el callback del usuario del manejador de callbacks.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario que cancela la suscripcion.</param>
+        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido o hay errores.</exception>
         public void CancelarSuscripcion(string nombreUsuario)
         {
-            ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
-            RemoverSuscripcion(nombreUsuario);
-        }
-
-        public List<AmigoDTO> ObtenerAmigos(string nombreUsuario)
-        {
-            ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
-
             try
             {
+                ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                _manejadorCallback.Desuscribir(nombreUsuario);
+
+                _logger.Info($"Usuario '{nombreUsuario}' canceló su suscripción a lista de amigos.");
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.Warn(MensajesError.Log.ListaAmigosObtenerDatosInvalidos, ex);
+                throw new FaultException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la lista de amigos de un usuario especifico.
+        /// Recupera todos los amigos del usuario desde la base de datos.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario cuya lista de amigos se desea obtener.</param>
+        /// <returns>Lista de amigos del usuario.</returns>
+        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido, no existe, o hay errores de base de datos.</exception>
+        public List<AmigoDTO> ObtenerAmigos(string nombreUsuario)
+        {
+            try
+            {
+                ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
                 return ObtenerAmigosPorNombre(nombreUsuario);
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 _logger.Warn(MensajesError.Log.ListaAmigosObtenerIdentificadorInvalido, ex);
-                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
+                throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
                 _logger.Warn(MensajesError.Log.ListaAmigosObtenerDatosInvalidos, ex);
-                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
+                throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
                 _logger.Error(MensajesError.Log.ListaAmigosObtenerErrorDatos, ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
+                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
+            }
         }
 
         internal static void NotificarCambioAmistad(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                return;
-            }
-
-            NotificarLista(nombreUsuario);
+            _notificador.NotificarCambioAmistad(nombreUsuario);
         }
-
 
         private static List<AmigoDTO> ObtenerAmigosPorNombre(string nombreUsuario)
         {
-            using var contexto = CrearContexto();
+            using var contexto = ContextoFactory.CrearContexto();
             var usuarioRepositorio = new UsuarioRepositorio(contexto);
 
             Usuario usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
@@ -114,108 +150,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             return ServicioAmistad.ObtenerAmigosDTO(usuario.idUsuario);
-        }
-
-
-        private static void NotificarLista(string nombreUsuario)
-        {
-            try
-            {
-                var amigos = ObtenerAmigosPorNombre(nombreUsuario);
-                NotificarLista(nombreUsuario, amigos);
-            }
-            catch (FaultException ex)
-            {
-                _logger.Warn(MensajesError.Log.ListaAmigosNotificarObtenerError, ex);
-                RemoverSuscripcion(nombreUsuario);
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                _logger.Warn(MensajesError.Log.ListaAmigosActualizarIdentificadorInvalido, ex);
-                RemoverSuscripcion(nombreUsuario);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.Warn(MensajesError.Log.ListaAmigosActualizarDatosInvalidos, ex);
-                RemoverSuscripcion(nombreUsuario);
-            }
-            catch (DataException ex)
-            {
-                _logger.Error(MensajesError.Log.ListaAmigosObtenerErrorDatos, ex);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.Warn(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
-            }
-        }
-
-        private static void NotificarLista(string nombreUsuario, List<AmigoDTO> amigos)
-        {
-            if (!_suscripciones.TryGetValue(nombreUsuario, out var callback))
-            {
-                return;
-            }
-
-            try
-            {
-                callback.NotificarListaAmigosActualizada(amigos);
-            }
-            catch (CommunicationException)
-            {
-                RemoverSuscripcion(nombreUsuario);
-            }
-            catch (TimeoutException)
-            {
-                RemoverSuscripcion(nombreUsuario);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.Warn(MensajesError.Log.ListaAmigosNotificarError, ex);
-            }
-        }
-
-        private static IListaAmigosManejadorCallback ObtenerCallbackActual()
-        {
-            var contexto = OperationContext.Current;
-            if (contexto != null)
-            {
-                var callback = contexto.GetCallbackChannel<IListaAmigosManejadorCallback>();
-                if (callback != null)
-                {
-                    return callback;
-                }
-
-                throw new FaultException(MensajesError.Cliente.ErrorObtenerCallback);
-            }
-
-            throw new FaultException(MensajesError.Cliente.ErrorContextoOperacion);
-        }
-
-        private static void RemoverSuscripcion(string nombreUsuario)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                return;
-            }
-
-            _suscripciones.TryRemove(nombreUsuario, out _);
-        }
-
-        private static void ValidarNombreUsuario(string nombreUsuario, string parametro)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                string mensaje = string.Format(CultureInfo.CurrentCulture, MensajesError.Cliente.ParametroObligatorio, parametro);
-                throw new FaultException(mensaje);
-            }
-        }
-
-        private static BaseDatosPruebaEntities1 CrearContexto()
-        {
-            string conexion = Conexion.ObtenerConexion();
-            return string.IsNullOrWhiteSpace(conexion)
-                ? new BaseDatosPruebaEntities1()
-                : new BaseDatosPruebaEntities1(conexion);
         }
     }
 }

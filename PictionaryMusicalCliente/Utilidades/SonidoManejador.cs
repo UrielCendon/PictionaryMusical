@@ -1,32 +1,68 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
+using log4net;
 
 namespace PictionaryMusicalCliente.ClienteServicios
 {
-    public static class ManejadorSonido
+    /// <summary>
+    /// Provee métodos para reproducir efectos de sonido (SFX) cortos, respetando
+    /// la preferencia de silencio del usuario.
+    /// </summary>
+    public static class SonidoManejador
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private const double VolumenPredeterminado = 1.0;
+
         /// <summary>
-        /// Reproduce un archivo de sonido ubicado en la carpeta "Recursos" de la aplicación.
+        /// Indica si los efectos de sonido están silenciados por preferencia del usuario.
         /// </summary>
-        /// <param name="nombreArchivo">Nombre del archivo con extensión (ej. "click.mp3")</param>
-        /// <param name="volumen">Volumen de 0.0 a 1.0 (por defecto 0.5)</param>
-        public static void ReproducirSonido(string nombreArchivo, double volumen = 0.5)
+        public static bool Silenciado
         {
+            get => Properties.Settings.Default.efectosSilenciados;
+            set
+            {
+                if (Properties.Settings.Default.efectosSilenciados != value)
+                {
+                    Properties.Settings.Default.efectosSilenciados = value;
+                    Properties.Settings.Default.Save();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reproduce un archivo de sonido ubicado en la carpeta "Recursos" de la aplicación
+        /// si la preferencia de usuario lo permite.
+        /// </summary>
+        /// <param name="nombreArchivo">Nombre del archivo con extensión.</param>
+        /// <param name="volumen">Volumen de 0.0 a 1.0 (por defecto 1.0)</param>
+        public static void ReproducirSonido(string nombreArchivo, 
+            double volumen = VolumenPredeterminado)
+        {
+            if (Silenciado)
+            {
+                return;
+            }
+
             try
             {
-                string rutaSonido = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Recursos", nombreArchivo);
+                string rutaSonido = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Recursos",
+                    nombreArchivo);
 
                 if (!File.Exists(rutaSonido))
                 {
-                    Debug.WriteLine($"Sonido no encontrado en: {rutaSonido}");
+                    Log.WarnFormat("Sonido SFX no encontrado: {0}",
+                        rutaSonido);
                     return;
                 }
 
                 var player = new MediaPlayer();
                 player.Open(new Uri(rutaSonido, UriKind.Absolute));
-                player.Volume = volumen;
+                player.Volume = Math.Max(0, Math.Min(VolumenPredeterminado, volumen));
 
                 player.MediaEnded += (s, e) =>
                 {
@@ -35,9 +71,10 @@ namespace PictionaryMusicalCliente.ClienteServicios
                         player.Stop();
                         player.Close();
                     }
-                    catch (Exception ex)
+                    catch (InvalidOperationException ex)
                     {
-                        Debug.WriteLine($"Error limpiando reproductor SFX: {ex.Message}");
+                        Log.WarnFormat("Error limpiando reproductor SFX: {0}",
+                            ex.Message);
                     }
                 };
 
@@ -45,32 +82,45 @@ namespace PictionaryMusicalCliente.ClienteServicios
             }
             catch (ArgumentException argEx)
             {
-                Debug.WriteLine($"Error en los argumentos de la ruta: {argEx.Message}");
+                Log.ErrorFormat("Argumentos de ruta inválidos para sonido: {0}",
+                    nombreArchivo, argEx);
             }
             catch (UriFormatException uriEx)
             {
-                Debug.WriteLine($"Formato de URI inválido para el sonido: {uriEx.Message}");
+                Log.ErrorFormat("Formato URI inválido para sonido: {0}",
+                    nombreArchivo, uriEx);
             }
             catch (FileNotFoundException fnfEx)
             {
-                Debug.WriteLine($"Archivo perdido antes de reproducir: {fnfEx.FileName}");
+                Log.ErrorFormat("Archivo perdido antes de reproducir: {0}",
+                    fnfEx.FileName, fnfEx);
             }
             catch (InvalidOperationException ioEx)
             {
-                Debug.WriteLine($"Error de operación en MediaPlayer: {ioEx.Message}");
+                Log.ErrorFormat("Error de operación en MediaPlayer SFX: {0}",
+                    ioEx.Message, ioEx);
             }
         }
 
+        /// <summary>
+        /// Reproduce el sonido estándar de clic de boton.
+        /// </summary>
         public static void ReproducirClick()
         {
-            ReproducirSonido("piano_boton.mp3", 1.0);
+            ReproducirSonido("piano_boton.mp3");
         }
 
+        /// <summary>
+        /// Reproduce el sonido estándar de error.
+        /// </summary>
         public static void ReproducirError()
         {
             ReproducirSonido("error.mp3", 0.8);
         }
 
+        /// <summary>
+        /// Reproduce el sonido estándar de éxito o confirmacion.
+        /// </summary>
         public static void ReproducirExito()
         {
             ReproducirSonido("exito.mp3", 0.7);

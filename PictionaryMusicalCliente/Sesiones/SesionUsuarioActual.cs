@@ -1,16 +1,28 @@
 using System;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.Modelo;
+using log4net;
 
 namespace PictionaryMusicalCliente.Sesiones
 {
+    /// <summary>
+    /// Gestiona el acceso global a la sesion del usuario autenticado.
+    /// </summary>
     public sealed class SesionUsuarioActual
     {
+        private static readonly ILog Log = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private static readonly Lazy<SesionUsuarioActual> _instancia =
             new(() => new SesionUsuarioActual());
 
-        private SesionUsuarioActual() { }
+        private SesionUsuarioActual()
+        {
+        }
 
+        /// <summary>
+        /// Obtiene la instancia unica del administrador de sesion.
+        /// </summary>
         public static SesionUsuarioActual Instancia => _instancia.Value;
 
         /// <summary>
@@ -30,9 +42,13 @@ namespace PictionaryMusicalCliente.Sesiones
         public static void EstablecerUsuario(UsuarioDTO usuarioDto)
         {
             if (usuarioDto == null)
+            {
                 throw new ArgumentNullException(nameof(usuarioDto));
+            }
 
             Usuario.CargarDesdeDTO(usuarioDto);
+            Log.InfoFormat("Sesión establecida para usuario ID: {0}, Username: {1}", 
+                usuarioDto.UsuarioId, usuarioDto.NombreUsuario);
         }
 
         /// <summary>
@@ -40,6 +56,11 @@ namespace PictionaryMusicalCliente.Sesiones
         /// </summary>
         public static void CerrarSesion()
         {
+            if (EstaAutenticado)
+            {
+                Log.InfoFormat("Cerrando sesión de usuario: {0}", 
+                    Usuario.NombreUsuario);
+            }
             Usuario.Limpiar();
         }
     }
