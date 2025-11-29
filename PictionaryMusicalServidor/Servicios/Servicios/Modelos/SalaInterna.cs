@@ -17,8 +17,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
     {
         private const int MaximoJugadores = 4;
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SalaInterna));
+        private static readonly ISalasManejadorCallback CallbackNulo = new SalasCallbackNulo();
         private readonly object _sync = new();
-        private readonly Dictionary<string, ISalasCallback> _callbacks = new(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, ISalasManejadorCallback> _callbacks = new(StringComparer.OrdinalIgnoreCase);
 
         public SalaInterna(string codigo, string creador, ConfiguracionPartidaDTO configuracion)
         {
@@ -26,6 +27,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
             Creador = creador;
             Configuracion = configuracion;
             Jugadores = new List<string>();
+            PartidaIniciada = false;
         }
 
         public string Codigo { get; }
@@ -33,6 +35,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
         public ConfiguracionPartidaDTO Configuracion { get; }
         public List<string> Jugadores { get; }
         public bool DebeEliminarse { get; private set; }
+        public bool PartidaIniciada { get; set; }
 
         /// <summary>
         /// Convierte la sala interna a su representación DTO.
@@ -58,14 +61,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
         /// <param name="callback">Callback del jugador.</param>
         /// <param name="notificar">Indica si se debe notificar a otros jugadores.</param>
         /// <returns>Estado actualizado de la sala.</returns>
-        public SalaDTO AgregarJugador(string nombreUsuario, ISalasCallback callback, bool notificar)
+        public SalaDTO AgregarJugador(string nombreUsuario, ISalasManejadorCallback callback, bool notificar)
         {
             lock (_sync)
             {
                 if (JugadorYaExiste(nombreUsuario))
                 {
                     _callbacks[nombreUsuario] = callback;
-                    _logger.Info($"Jugador '{nombreUsuario}' se reconectó a la sala {Codigo}.");
+                    _logger.InfoFormat("Jugador '{0}' se reconectó a la sala {1}.", nombreUsuario, Codigo);
                     return ToDto();
                 }
 
@@ -73,7 +76,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
 
                 Jugadores.Add(nombreUsuario);
                 _callbacks[nombreUsuario] = callback;
-                _logger.Info($"Jugador '{nombreUsuario}' se unió a la sala {Codigo}. Total jugadores: {Jugadores.Count}.");
+                _logger.InfoFormat("Jugador '{0}' se unió a la sala {1}. Total jugadores: {2}.", nombreUsuario, Codigo, Jugadores.Count);
 
                 if (notificar)
                 {
@@ -98,14 +101,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
                     return;
                 }
 
-                _logger.Info($"Jugador '{nombreUsuario}' salió de la sala {Codigo}.");
+                _logger.InfoFormat("Jugador '{0}' salió de la sala {1}.", nombreUsuario, Codigo);
 
                 var salaActualizada = ToDto();
                 NotificarSalidaYActualizacion(nombreUsuario, salaActualizada);
 
-                if (DebeMarcarseParaEliminar(nombreUsuario))
+                bool anfitrionAbandono = string.Equals(
+                    nombreUsuario,
+                    Creador,
+                    StringComparison.OrdinalIgnoreCase);
+
+                if (anfitrionAbandono)
                 {
-                    _logger.Info($"Marcando sala {Codigo} para eliminación (Host salió o sala vacía).");
+                    NotificarCancelacionSala();
+                    Jugadores.Clear();
+                    _callbacks.Clear();
+                    DebeEliminarse = true;
+                    return;
+                }
+
+                if (Jugadores.Count == 0)
+                {
+                    _logger.InfoFormat("Marcando sala {0} para eliminación (Host salió o sala vacía).", Codigo);
                     DebeEliminarse = true;
                 }
             }
@@ -127,7 +144,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
                 Jugadores.RemoveAll(j => string.Equals(j, nombreJugadorAExpulsar, StringComparison.OrdinalIgnoreCase));
                 _callbacks.Remove(nombreJugadorAExpulsar);
 
-                _logger.Info($"Jugador '{nombreJugadorAExpulsar}' fue expulsado de la sala {Codigo} por '{nombreHost}'.");
+                _logger.InfoFormat("Jugador '{0}' fue expulsado de la sala {1} por '{2}'.", nombreJugadorAExpulsar, Codigo, nombreHost);
 
                 var salaActualizada = ToDto();
 
@@ -165,20 +182,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
             return true;
         }
 
-        private bool DebeMarcarseParaEliminar(string nombreUsuario)
+        private void NotificarCancelacionSala()
         {
-            return string.Equals(nombreUsuario, Creador, StringComparison.OrdinalIgnoreCase)
-                || Jugadores.Count == 0;
+            foreach (var callback in _callbacks.Select(callbakJugador => callbakJugador.Value))
+            {
+                NotificarSalaCancelada(callback);
+            }
         }
 
-        private ISalasCallback ObtenerCallback(string nombreJugador)
+        private ISalasManejadorCallback ObtenerCallback(string nombreJugador)
         {
             if (_callbacks.TryGetValue(nombreJugador, out var callback))
             {
                 return callback;
             }
 
-            return null;
+            return CallbackNulo;
         }
 
         private void ValidarExpulsion(string nombreHost, string nombreJugadorAExpulsar)
@@ -239,7 +258,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn(MensajesError.Log.ComunicacionOperacionInvalida, ex);
+                _logger.Warn("Operación inválida en comunicación WCF. El canal no está en el estado correcto para la operación.", ex);
             }
             catch (Exception ex)
             {
@@ -247,37 +266,66 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Modelos
             }
         }
 
-        private void NotificarJugadorSeUnio(ISalasCallback callback, string nombreJugador)
+        private void NotificarJugadorSeUnio(ISalasManejadorCallback callback, string nombreJugador)
         {
             EjecutarNotificacion(
                 () => callback.NotificarJugadorSeUnio(Codigo, nombreJugador),
-                MensajesError.Log.SalaNotificarJugadorUnionError);
+                "Error al notificar la unión del jugador a la sala a través del callback.");
         }
 
-        private void NotificarJugadorSalio(ISalasCallback callback, string nombreJugador)
+        private void NotificarJugadorSalio(ISalasManejadorCallback callback, string nombreJugador)
         {
             EjecutarNotificacion(
                 () => callback.NotificarJugadorSalio(Codigo, nombreJugador),
-                MensajesError.Log.SalaNotificarJugadorSalidaError);
+                "Error al notificar la salida del jugador de la sala a través del callback.");
         }
 
-        private void NotificarJugadorExpulsado(ISalasCallback callback, string nombreJugador)
+        private void NotificarJugadorExpulsado(ISalasManejadorCallback callback, string nombreJugador)
         {
-            if (callback == null)
-            {
-                return;
-            }
-
             EjecutarNotificacion(
                 () => callback.NotificarJugadorExpulsado(Codigo, nombreJugador),
-                MensajesError.Log.SalaNotificarJugadorExpulsionError);
+                "Error al notificar la expulsión del jugador de la sala a través del callback.");
         }
 
-        private static void NotificarSalaActualizada(ISalasCallback callback, SalaDTO salaActualizada)
+        private void NotificarSalaCancelada(ISalasManejadorCallback callback)
+        {
+            EjecutarNotificacion(
+                () => callback.NotificarSalaCancelada(Codigo),
+                "Error al notificar la cancelación de la sala a través del callback.");
+        }
+
+        private static void NotificarSalaActualizada(ISalasManejadorCallback callback, SalaDTO salaActualizada)
         {
             EjecutarNotificacion(
                 () => callback.NotificarSalaActualizada(salaActualizada),
-                MensajesError.Log.SalaNotificarJugadorActualizacionError);
+                "Error al notificar la actualización de la sala a través del callback.");
+        }
+
+        private sealed class SalasCallbackNulo : ISalasManejadorCallback
+        {
+            public void NotificarJugadorSeUnio(string codigoSala, string nombreJugador)
+            {
+            }
+
+            public void NotificarJugadorSalio(string codigoSala, string nombreJugador)
+            {
+            }
+
+            public void NotificarListaSalasActualizada(SalaDTO[] salas)
+            {
+            }
+
+            public void NotificarSalaActualizada(SalaDTO sala)
+            {
+            }
+
+            public void NotificarJugadorExpulsado(string codigoSala, string nombreJugador)
+            {
+            }
+
+            public void NotificarSalaCancelada(string codigoSala)
+            {
+            }
         }
     }
 }

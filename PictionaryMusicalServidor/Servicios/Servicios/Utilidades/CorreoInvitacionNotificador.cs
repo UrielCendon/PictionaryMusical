@@ -100,27 +100,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                     }
                 }
 
-                _logger.Info($"Invitación enviada correctamente a '{correoDestino}'.");
+                _logger.InfoFormat("Invitación enviada correctamente a '{0}'.", correoDestino);
                 return true;
             }
             catch (SmtpException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoSmtp, ex);
+                _logger.Error("Error SMTP al enviar correo electrónico. Fallo en la conexión o autenticación con el servidor de correo.", ex);
                 return false;
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoOperacionInvalida, ex);
+                _logger.Error("Operación inválida al enviar correo. Configuración de SMTP incorrecta o estado del cliente inválido.", ex);
                 return false;
             }
             catch (ArgumentException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoArgumentoInvalido, ex);
+                _logger.Error("Argumentos inválidos para enviar correo. Dirección de email, asunto o cuerpo del mensaje incorrectos.", ex);
                 return false;
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error inesperado al enviar invitación a {correoDestino}", ex);
+                _logger.Error(string.Format("Error inesperado al enviar invitación a {0}", correoDestino), ex);
                 return false;
             }
         }
@@ -183,7 +183,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (claves == null)
             {
-                return null;
+                return string.Empty;
             }
 
             foreach (string clave in claves)
@@ -201,7 +201,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 }
             }
 
-            return null;
+            return string.Empty;
         }
     }
 }

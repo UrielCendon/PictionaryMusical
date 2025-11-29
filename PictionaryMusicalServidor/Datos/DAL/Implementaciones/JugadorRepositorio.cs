@@ -2,16 +2,16 @@ using System;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
-using PictionaryMusicalServidor.Datos.Modelo;
+using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 {
     public class JugadorRepositorio : IJugadorRepositorio
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(JugadorRepositorio));
-        private readonly BaseDatosPruebaEntities1 _contexto;
+        private readonly BaseDatosPruebaEntities _contexto;
 
-        public JugadorRepositorio(BaseDatosPruebaEntities1 contexto)
+        public JugadorRepositorio(BaseDatosPruebaEntities contexto)
         {
             _contexto = contexto ?? throw new ArgumentNullException(nameof(contexto));
         }
@@ -24,7 +24,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error al verificar existencia del correo '{correo}'.", ex);
+                _logger.Error(string.Format("Error al verificar existencia del correo '{0}'.", correo), ex);
                 throw;
             }
         }
@@ -43,12 +43,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 var entidad = _contexto.Jugador.Add(jugador);
                 _contexto.SaveChanges();
 
-                _logger.Info($"Jugador registrado exitosamente. Correo: {entidad.Correo}, ID: {entidad.idJugador}.");
+                _logger.InfoFormat("Jugador registrado exitosamente. Correo: {0}, ID: {1}.", entidad.Correo, entidad.idJugador);
                 return entidad;
             }
             catch (Exception ex)
             {
-                _logger.Error($"Error al guardar el jugador con correo '{jugador.Correo}'.", ex);
+                _logger.Error(string.Format("Error al guardar el jugador con correo '{0}'.", jugador.Correo), ex);
                 throw;
             }
         }

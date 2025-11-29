@@ -9,7 +9,6 @@ using PictionaryMusicalCliente.Sesiones;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,7 +23,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
     /// </summary>
     public class VentanaPrincipalVistaModelo : BaseVistaModelo
     {
-        private static readonly ILog Log = LogManager.GetLogger(
+        private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private string _nombreUsuario;
@@ -41,7 +40,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private DTOs.AmigoDTO _amigoSeleccionado;
 
         private readonly string _nombreUsuarioSesion;
-        private readonly ILocalizacionServicio _localizacionServicio;
         private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IAmigosServicio _amigosServicio;
         private readonly ISalasServicio _salasServicio;
@@ -69,8 +67,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             IAmigosServicio amigosServicio,
             ISalasServicio salasServicio)
         {
-            _localizacionServicio = localizacionServicio ??
-                throw new ArgumentNullException(nameof(localizacionServicio));
             _listaAmigosServicio = listaAmigosServicio ??
                 throw new ArgumentNullException(nameof(listaAmigosServicio));
             _amigosServicio = amigosServicio ??
@@ -84,7 +80,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             CargarDatosUsuario();
             CargarOpcionesPartida();
-            CargarIdiomas();
 
             AbrirPerfilComando = new ComandoDelegado(_ =>
             {
@@ -361,7 +356,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             try
             {
-                Log.InfoFormat("Inicializando suscripciones para usuario: {0}",
+				_logger.InfoFormat("Inicializando suscripciones para usuario: {0}",
                     _nombreUsuarioSesion);
                 await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
                     ConfigureAwait(false);
@@ -374,7 +369,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
             catch (ServicioExcepcion ex)
             {
-                Log.Error("Error al inicializar suscripciones.", ex);
+                _logger.Error("Error al inicializar suscripciones.", ex);
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
         }
@@ -393,7 +388,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             try
             {
-                Log.Info("Cancelando suscripciones al finalizar ventana principal.");
+                _logger.Info("Cancelando suscripciones al finalizar ventana principal.");
                 await _listaAmigosServicio.CancelarSuscripcionAsync(
                     _nombreUsuarioSesion).ConfigureAwait(false);
                 await _amigosServicio.CancelarSuscripcionAsync(
@@ -401,7 +396,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
             catch (ServicioExcepcion ex)
             {
-                Log.WarnFormat("Error al cancelar suscripciones (ignorado): {0}",
+                _logger.WarnFormat("Error al cancelar suscripciones (ignorado): {0}",
                     ex.Message);
             }
             finally
@@ -420,12 +415,22 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void CargarOpcionesPartida()
         {
             NumeroRondasOpciones = new ObservableCollection<OpcionEntero>(
-                new[] { new OpcionEntero(3), new OpcionEntero(5), new OpcionEntero(7) });
+                new[] { new OpcionEntero(2), new OpcionEntero(3), new OpcionEntero(4) });
             NumeroRondasSeleccionada = NumeroRondasOpciones.FirstOrDefault();
 
             TiempoRondaOpciones = new ObservableCollection<OpcionEntero>(
                 new[] { new OpcionEntero(60), new OpcionEntero(90), new OpcionEntero(120) });
             TiempoRondaSeleccionada = TiempoRondaOpciones.FirstOrDefault();
+
+            IdiomasDisponibles = new ObservableCollection<IdiomaOpcion>(
+                new[]
+                {
+                    new IdiomaOpcion("es-MX", Lang.idiomaTextoEspañol),
+                    new IdiomaOpcion("en-US", Lang.idiomaTextoIngles),
+                    new IdiomaOpcion("mixto", Lang.principalTextoMixto)
+                });
+
+            IdiomaSeleccionado = IdiomasDisponibles.FirstOrDefault();
 
             DificultadesDisponibles = new ObservableCollection<OpcionTexto>(
                 new[]
@@ -435,59 +440,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     new OpcionTexto("dificil", Lang.principalTextoDificil)
                 });
             DificultadSeleccionada = DificultadesDisponibles.FirstOrDefault();
-        }
-
-        private void CargarIdiomas()
-        {
-            WeakEventManager<ILocalizacionServicio, EventArgs>.AddHandler(
-                _localizacionServicio,
-                nameof(ILocalizacionServicio.IdiomaActualizado),
-                LocalizacionServicioEnIdiomaActualizado);
-
-            ActualizarIdiomasDisponibles(_localizacionServicio.CulturaActual?.Name
-                ?? CultureInfo.CurrentUICulture?.Name);
-        }
-
-        private void LocalizacionServicioEnIdiomaActualizado(object sender, EventArgs e)
-        {
-            ActualizarIdiomasDisponibles(_localizacionServicio.CulturaActual?.Name);
-        }
-
-        private void ActualizarIdiomasDisponibles(string culturaActual)
-        {
-            var opciones = new[]
-            {
-                new IdiomaOpcion("es-MX", Lang.idiomaTextoEspañol),
-                new IdiomaOpcion("en-US", Lang.idiomaTextoIngles),
-                new IdiomaOpcion("mixto", Lang.principalTextoMixto)
-            };
-
-            if (IdiomasDisponibles == null)
-            {
-                IdiomasDisponibles = new ObservableCollection<IdiomaOpcion>(opciones);
-            }
-            else
-            {
-                IdiomasDisponibles.Clear();
-
-                foreach (var opcion in opciones)
-                {
-                    IdiomasDisponibles.Add(opcion);
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(culturaActual))
-            {
-                IdiomaSeleccionado = IdiomasDisponibles.FirstOrDefault();
-                return;
-            }
-
-            IdiomaSeleccionado = IdiomasDisponibles
-                .FirstOrDefault(i => string.Equals(
-                    i.Codigo,
-                    culturaActual,
-                    StringComparison.OrdinalIgnoreCase))
-                ?? IdiomasDisponibles.FirstOrDefault();
         }
 
         private void ListaActualizada(object sender, IReadOnlyList<DTOs.AmigoDTO> amigos)
@@ -557,7 +509,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
             {
-                Log.Warn("Intento de eliminar amigo sin sesión activa.");
+                _logger.Warn("Intento de eliminar amigo sin sesión activa.");
                 SonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
@@ -565,7 +517,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             try
             {
-                Log.InfoFormat("Eliminando amigo: {0}",
+                _logger.InfoFormat("Eliminando amigo: {0}",
                     amigo.NombreUsuario);
                 SonidoManejador.ReproducirExito();
                 await _amigosServicio.EliminarAmigoAsync(
@@ -575,7 +527,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
             catch (ServicioExcepcion ex)
             {
-                Log.Error("Error al eliminar amigo.", ex);
+                _logger.Error("Error al eliminar amigo.", ex);
                 SonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
@@ -613,7 +565,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             try
             {
-                Log.InfoFormat("Intentando unirse a sala: {0}",
+                _logger.InfoFormat("Intentando unirse a sala: {0}",
                     codigo);
                 var sala = await _salasServicio.UnirseSalaAsync(
                     codigo,
@@ -624,11 +576,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
             catch (ServicioExcepcion ex)
             {
-                Log.Error("Error al unirse a sala.", ex);
+                _logger.Error("Error al unirse a sala.", ex);
 
                 string mensaje;
-                if (ex?.Tipo == TipoErrorServicio.FallaServicio || string.IsNullOrWhiteSpace
-                    (ex?.Message))
+                if (string.IsNullOrWhiteSpace(ex?.Message))
                 {
                     mensaje = Lang.errorTextoNoEncuentraPartida;
                 }
@@ -668,7 +619,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             try
             {
-                Log.Info("Creando nueva sala de juego.");
+                _logger.Info("Creando nueva sala de juego.");
                 var sala = await _salasServicio.CrearSalaAsync(
                     _nombreUsuarioSesion,
                     configuracion).ConfigureAwait(true);
@@ -678,7 +629,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
             catch (ServicioExcepcion ex)
             {
-                Log.Error("Error al crear sala de juego.", ex);
+                _logger.Error("Error al crear sala de juego.", ex);
                 SonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }

@@ -85,22 +85,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                     }
                 }
 
-                _logger.Info($"Código de verificación enviado a '{correoDestino}'.");
+                _logger.InfoFormat("Código de verificación enviado a '{0}'.", correoDestino);
                 return true;
             }
             catch (SmtpException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoSmtp, ex);
+                _logger.Error("Error SMTP al enviar correo electrónico. Fallo en la conexión o autenticación con el servidor de correo.", ex);
                 return false;
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoOperacionInvalida, ex);
+                _logger.Error("Operación inválida al enviar correo. Configuración de SMTP incorrecta o estado del cliente inválido.", ex);
                 return false;
             }
             catch (ArgumentException ex)
             {
-                _logger.Error(MensajesError.Log.CorreoArgumentoInvalido, ex);
+                _logger.Error("Argumentos inválidos para enviar correo. Dirección de email, asunto o cuerpo del mensaje incorrectos.", ex);
                 return false;
             }
         }
@@ -109,7 +109,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (claves == null)
             {
-                return null;
+                return string.Empty;
             }
 
             foreach (string clave in claves)
@@ -127,7 +127,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 }
             }
 
-            return null;
+            return string.Empty;
         }
 
         internal static string ConstruirCuerpoMensaje(string usuarioDestino, string codigo, string idioma)

@@ -3,7 +3,8 @@ using System.Data;
 using System.Data.Entity.Core;
 using System.ServiceModel;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Modelo;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using Datos.Modelo;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -25,6 +26,45 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback = new(StringComparer.OrdinalIgnoreCase);
         private static readonly NotificadorAmigos _notificador = new(_manejadorCallback);
 
+        private readonly IContextoFactory _contextoFactory;
+        private readonly IAmistadServicio _amistadServicio;
+
+        /// <summary>
+        /// Constructor por defecto para compatibilidad con WCF.
+        /// </summary>
+        public AmigosManejador() : this(CrearDependenciasPorDefecto())
+        {
+        }
+
+        /// <summary>
+        /// Crea las dependencias por defecto, reutilizando la misma instancia de ContextoFactory.
+        /// </summary>
+        private static (IContextoFactory, IAmistadServicio) CrearDependenciasPorDefecto()
+        {
+            var contextoFactory = new ContextoFactory();
+            var amistadServicio = new AmistadServicio(contextoFactory);
+            return (contextoFactory, amistadServicio);
+        }
+
+        /// <summary>
+        /// Constructor interno que recibe una tupla con las dependencias.
+        /// </summary>
+        private AmigosManejador((IContextoFactory contextoFactory, IAmistadServicio amistadServicio) dependencias)
+            : this(dependencias.contextoFactory, dependencias.amistadServicio)
+        {
+        }
+
+        /// <summary>
+        /// Constructor que permite inyectar dependencias para pruebas unitarias.
+        /// </summary>
+        /// <param name="contextoFactory">Factoría para crear contextos de base de datos.</param>
+        /// <param name="amistadServicio">Servicio de logica de negocio de amistades.</param>
+        public AmigosManejador(IContextoFactory contextoFactory, IAmistadServicio amistadServicio)
+        {
+            _contextoFactory = contextoFactory ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _amistadServicio = amistadServicio ?? throw new ArgumentNullException(nameof(amistadServicio));
+        }
+
         /// <summary>
         /// Suscribe un usuario para recibir notificaciones de solicitudes de amistad.
         /// Normaliza el nombre de usuario, registra el callback y notifica solicitudes pendientes.
@@ -44,7 +84,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             try
             {
-                using (var contexto = ContextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
                     var usuarioRepositorio = new UsuarioRepositorio(contexto);
                     usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
@@ -74,16 +114,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 _notificador.NotificarSolicitudesPendientesAlSuscribir(nombreNormalizado, usuario.idUsuario);
 
-                _logger.Info($"Usuario '{nombreNormalizado}' suscrito a notificaciones de amistad.");
+                _logger.InfoFormat("Usuario '{0}' suscrito a notificaciones de amistad.", nombreNormalizado);
             }
             catch (EntityException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadSuscribirErrorBD, ex);
+                _logger.Error("Error de base de datos al suscribir a notificaciones de amistad. Fallo en la consulta de usuario o solicitudes.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadSuscribirErrorDatos, ex);
+                _logger.Error("Error de datos al suscribir a notificaciones de amistad. No se pudieron recuperar las solicitudes pendientes.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
         }
@@ -121,7 +161,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 Usuario usuarioEmisor;
                 Usuario usuarioReceptor;
 
-                using (var contexto = ContextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
                     var usuarioRepositorio = new UsuarioRepositorio(contexto);
                     usuarioEmisor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioEmisor);
@@ -137,7 +177,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                         throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
                     }
 
-                    ServicioAmistad.CrearSolicitud(usuarioEmisor.idUsuario, usuarioReceptor.idUsuario);
+                    _amistadServicio.CrearSolicitud(usuarioEmisor.idUsuario, usuarioReceptor.idUsuario);
                 }
 
                 string nombreEmisor = ValidadorNombreUsuario.ObtenerNombreNormalizado(usuarioEmisor.Nombre_Usuario, nombreUsuarioEmisor);
@@ -150,31 +190,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     SolicitudAceptada = false
                 };
 
-                _logger.Info($"Solicitud de amistad enviada de '{nombreEmisor}' a '{nombreReceptor}'.");
+                _logger.InfoFormat("Solicitud de amistad enviada de '{0}' a '{1}'.", nombreEmisor, nombreReceptor);
                 _notificador.NotificarSolicitudActualizada(nombreReceptor, solicitud);
             }
-            catch (FaultException ex)
+            catch (FaultException)
             {
-                throw ex;
+                throw;
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadEnviarSolicitudReglaNegocio, ex);
+                _logger.Warn("Regla de negocio violada al enviar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadEnviarSolicitudDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al enviar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadEnviarSolicitudErrorDatos, ex);
+                _logger.Error("Error de datos al enviar solicitud de amistad. No se pudo almacenar la solicitud en la base de datos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.AmistadEnviarSolicitudErrorDatos, ex);
+                _logger.Error("Error de datos al enviar solicitud de amistad. No se pudo almacenar la solicitud en la base de datos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
         }
@@ -196,7 +236,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 ValidadorNombreUsuario.Validar(nombreUsuarioEmisor, nameof(nombreUsuarioEmisor));
                 ValidadorNombreUsuario.Validar(nombreUsuarioReceptor, nameof(nombreUsuarioReceptor));
 
-                using (var contexto = ContextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
                     var usuarioRepositorio = new UsuarioRepositorio(contexto);
                     Usuario usuarioEmisor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioEmisor);
@@ -207,7 +247,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                         throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
                     }
 
-                    ServicioAmistad.AceptarSolicitud(usuarioEmisor.idUsuario, usuarioReceptor.idUsuario);
+                    _amistadServicio.AceptarSolicitud(usuarioEmisor.idUsuario, usuarioReceptor.idUsuario);
 
                     nombreEmisorNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado(usuarioEmisor.Nombre_Usuario, nombreUsuarioEmisor);
                     nombreReceptorNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado(usuarioReceptor.Nombre_Usuario, nombreUsuarioReceptor);
@@ -219,7 +259,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                         SolicitudAceptada = true
                     };
 
-                    _logger.Info($"Solicitud de amistad aceptada entre '{nombreEmisorNormalizado}' y '{nombreReceptorNormalizado}'.");
+                    _logger.InfoFormat("Solicitud de amistad aceptada entre '{0}' y '{1}'.", nombreEmisorNormalizado, nombreReceptorNormalizado);
                     _notificador.NotificarSolicitudActualizada(nombreEmisorNormalizado, solicitud);
                     _notificador.NotificarSolicitudActualizada(nombreReceptorNormalizado, solicitud);
                 }
@@ -229,22 +269,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadResponderSolicitudReglaNegocio, ex);
+                _logger.Warn("Regla de negocio violada al aceptar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadResponderSolicitudDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al aceptar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadResponderSolicitudErrorDatos, ex);
+                _logger.Error("Error de datos al responder solicitud de amistad. No se pudo actualizar el estado de la solicitud.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.AmistadResponderSolicitudErrorDatos, ex);
+                _logger.Error("Error de datos al responder solicitud de amistad. No se pudo actualizar el estado de la solicitud.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
         }
@@ -269,7 +309,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 Amigo relacionEliminada;
                 int idUsuarioA;
 
-                using (var contexto = ContextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
                     var usuarioRepositorio = new UsuarioRepositorio(contexto);
                     Usuario usuarioA = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioA);
@@ -282,7 +322,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                     idUsuarioA = usuarioA.idUsuario;
 
-                    relacionEliminada = ServicioAmistad.EliminarAmistad(usuarioA.idUsuario, usuarioB.idUsuario);
+                    relacionEliminada = _amistadServicio.EliminarAmistad(usuarioA.idUsuario, usuarioB.idUsuario);
 
                     nombreUsuarioANormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado(usuarioA.Nombre_Usuario, nombreUsuarioA);
                     nombreUsuarioBNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado(usuarioB.Nombre_Usuario, nombreUsuarioB);
@@ -302,28 +342,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _notificador.NotificarAmistadEliminada(nombreUsuarioANormalizado, solicitud);
                 _notificador.NotificarAmistadEliminada(nombreUsuarioBNormalizado, solicitud);
 
-                _logger.Info($"Amistad eliminada entre '{nombreUsuarioANormalizado}' y '{nombreUsuarioBNormalizado}'.");
+                _logger.InfoFormat("Amistad eliminada entre '{0}' y '{1}'.", nombreUsuarioANormalizado, nombreUsuarioBNormalizado);
                 ListaAmigosManejador.NotificarCambioAmistad(nombreUsuarioANormalizado);
                 ListaAmigosManejador.NotificarCambioAmistad(nombreUsuarioBNormalizado);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadEliminarReglaNegocio, ex);
+                _logger.Warn("Regla de negocio violada al eliminar amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.AmistadEliminarDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al eliminar la relación de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadEliminarErrorDatos, ex);
+                _logger.Error("Error de datos al eliminar amistad. No se pudo eliminar la relación en la base de datos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.AmistadEliminarErrorDatos, ex);
+                _logger.Error("Error de datos al eliminar amistad. No se pudo eliminar la relación en la base de datos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
         }

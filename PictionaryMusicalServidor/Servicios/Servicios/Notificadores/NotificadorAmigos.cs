@@ -16,10 +16,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorAmigos));
         private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
+        private readonly IAmistadServicio _amistadServicio;
 
         public NotificadorAmigos(ManejadorCallback<IAmigosManejadorCallback> manejadorCallback)
+            : this(manejadorCallback, new AmistadServicio(new ContextoFactory()))
+        {
+        }
+
+        public NotificadorAmigos(ManejadorCallback<IAmigosManejadorCallback> manejadorCallback, IAmistadServicio amistadServicio)
         {
             _manejadorCallback = manejadorCallback;
+            _amistadServicio = amistadServicio;
         }
 
         /// <summary>
@@ -29,7 +36,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="solicitud">Detalles de la solicitud.</param>
         public void NotificarSolicitudActualizada(string nombreUsuario, SolicitudAmistadDTO solicitud)
         {
-            _logger.Info($"Notificando solicitud de amistad (Emisor: {solicitud.UsuarioEmisor}) a '{nombreUsuario}'. Estado aceptada: {solicitud.SolicitudAceptada}");
+            _logger.InfoFormat("Notificando solicitud de amistad (Emisor: {0}) a '{1}'. Estado aceptada: {2}", solicitud.UsuarioEmisor, nombreUsuario, solicitud.SolicitudAceptada);
             _manejadorCallback.Notificar(nombreUsuario, callback =>
             {
                 callback.NotificarSolicitudActualizada(solicitud);
@@ -43,7 +50,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="solicitud">Detalles de la relación eliminada.</param>
         public void NotificarAmistadEliminada(string nombreUsuario, SolicitudAmistadDTO solicitud)
         {
-            _logger.Info($"Notificando eliminación de amistad a '{nombreUsuario}' con {solicitud.UsuarioEmisor}/{solicitud.UsuarioReceptor}.");
+            _logger.InfoFormat("Notificando eliminación de amistad a '{0}' con {1}/{2}.", nombreUsuario, solicitud.UsuarioEmisor, solicitud.UsuarioReceptor);
             _manejadorCallback.Notificar(nombreUsuario, callback =>
             {
                 callback.NotificarAmistadEliminada(solicitud);
@@ -59,14 +66,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             try
             {
-                List<SolicitudAmistadDTO> solicitudesDTO = ServicioAmistad.ObtenerSolicitudesPendientesDTO(usuarioId);
+                List<SolicitudAmistadDTO> solicitudesDTO = _amistadServicio.ObtenerSolicitudesPendientesDTO(usuarioId);
 
                 if (solicitudesDTO == null || solicitudesDTO.Count == 0)
                 {
                     return;
                 }
 
-                _logger.Info($"Usuario '{nombreNormalizado}' tiene {solicitudesDTO.Count} solicitudes pendientes. Enviando notificaciones.");
+                _logger.InfoFormat("Usuario '{0}' tiene {1} solicitudes pendientes. Enviando notificaciones.", nombreNormalizado, solicitudesDTO.Count);
 
                 foreach (var dto in solicitudesDTO)
                 {
@@ -75,7 +82,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.AmistadSolicitudesPendientesErrorDatos, ex);
+                _logger.Error("Error de datos al recuperar las solicitudes pendientes de amistad.", ex);
             }
         }
     }

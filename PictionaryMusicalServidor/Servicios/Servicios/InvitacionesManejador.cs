@@ -1,18 +1,19 @@
+using log4net;
+using Datos.Modelo;
+using PictionaryMusicalServidor.Datos.Utilidades;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Linq;
+using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using log4net;
-using PictionaryMusicalServidor.Datos.Modelo;
-using PictionaryMusicalServidor.Datos.Utilidades;
-using PictionaryMusicalServidor.Servicios.Contratos;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using System.ServiceModel;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -39,45 +40,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                if (invitacion == null)
-                {
-                    throw new ArgumentException(MensajesError.Cliente.SolicitudInvitacionInvalida);
-                }
+                ValidarSolicitud(invitacion);
 
-                string codigoSala = invitacion.CodigoSala?.Trim();
-                string correo = invitacion.Correo?.Trim();
+                string codigoSala = invitacion.CodigoSala.Trim();
+                string correo = invitacion.Correo.Trim();
                 string idioma = invitacion.Idioma;
 
-                if (string.IsNullOrWhiteSpace(codigoSala) || string.IsNullOrWhiteSpace(correo))
-                {
-                    throw new ArgumentException(MensajesError.Cliente.DatosInvitacionInvalidos);
-                }
-
-                if (!CorreoRegex.IsMatch(correo))
-                {
-                    throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
-                }
-
                 var sala = SalasManejador.ObtenerSalaPorCodigo(codigoSala);
-                if (sala == null)
-                {
-                    throw new InvalidOperationException(MensajesError.Cliente.SalaNoEncontrada);
-                }
+                ValidarSala(sala);
 
-                if (sala.Jugadores != null && sala.Jugadores.Count > 0)
+                if (sala.Jugadores != null && sala.Jugadores.Count > 0 && await UsuarioYaEnSalaAsync(correo, sala))
                 {
-                    using (var contexto = CrearContexto())
-                    {
-                        var usuario = contexto.Usuario
-                            .Include(u => u.Jugador)
-                            .FirstOrDefault(u => u.Jugador.Correo == correo);
-
-                        if (!string.IsNullOrWhiteSpace(usuario?.Nombre_Usuario)
-                            && sala.Jugadores.Contains(usuario.Nombre_Usuario, StringComparer.OrdinalIgnoreCase))
-                        {
-                            throw new InvalidOperationException(MensajesError.Cliente.CorreoJugadorEnSala);
-                        }
-                    }
+                    throw new InvalidOperationException(MensajesError.Cliente.CorreoJugadorEnSala);
                 }
 
                 bool enviado = await CorreoInvitacionNotificador.EnviarInvitacionAsync(
@@ -91,7 +65,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return CrearFallo(MensajesError.Cliente.ErrorEnviarInvitacionCorreo);
                 }
 
-                _logger.Info($"Invitación enviada a '{correo}' para la sala {codigoSala}.");
+                _logger.InfoFormat("Invitación enviada a '{0}' para la sala {1}.", correo, codigoSala);
 
                 return new ResultadoOperacionDTO
                 {
@@ -99,43 +73,91 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.InvitacionEnviadaExito
                 };
             }
-            catch (FaultException ex)
+            catch (FaultException)
             {
-                throw ex;
+                throw;
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.InvitacionOperacionInvalida, ex);
+                _logger.Warn("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn(MensajesError.Log.InvitacionOperacionInvalida, ex);
+                _logger.Warn("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (EntityException ex)
             {
-                _logger.Error(MensajesError.Log.InvitacionErrorBD, ex);
+                _logger.Error("Error de base de datos al enviar invitación. Fallo en la consulta de verificación de usuario.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.InvitacionErrorDatos, ex);
+                _logger.Error("Error de datos al enviar invitación. No se pudo procesar la información del destinatario.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.InvitacionOperacionInvalida, ex);
+                _logger.Error("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
         }
 
-        private static BaseDatosPruebaEntities1 CrearContexto()
+        private static void ValidarSolicitud(InvitacionSalaDTO invitacion)
+        {
+            if (invitacion == null)
+            {
+                throw new ArgumentException(MensajesError.Cliente.SolicitudInvitacionInvalida);
+            }
+
+            string codigoSala = invitacion.CodigoSala?.Trim();
+            string correo = invitacion.Correo?.Trim();
+
+            if (string.IsNullOrWhiteSpace(codigoSala) || string.IsNullOrWhiteSpace(correo))
+            {
+                throw new ArgumentException(MensajesError.Cliente.DatosInvitacionInvalidos);
+            }
+
+            if (!CorreoRegex.IsMatch(correo))
+            {
+                throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
+            }
+        }
+
+        private static void ValidarSala(dynamic sala)
+        {
+            if (sala == null)
+            {
+                throw new InvalidOperationException(MensajesError.Cliente.SalaNoEncontrada);
+            }
+        }
+
+        private static async Task<bool> UsuarioYaEnSalaAsync(string correo, dynamic sala)
+        {
+            using (var contexto = CrearContexto())
+            {
+                var usuario = await contexto.Usuario
+                    .Include(u => u.Jugador)
+                    .FirstOrDefaultAsync(u => u.Jugador.Correo == correo);
+
+                if (string.IsNullOrWhiteSpace(usuario?.Nombre_Usuario))
+                {
+                    return false;
+                }
+
+                var listaJugadores = (IEnumerable<string>)sala.Jugadores;
+
+                return listaJugadores.Contains(usuario.Nombre_Usuario, StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        private static BaseDatosPruebaEntities CrearContexto()
         {
             string cadenaConexion = Conexion.ObtenerConexion();
             return string.IsNullOrWhiteSpace(cadenaConexion)
-                ? new BaseDatosPruebaEntities1()
-                : new BaseDatosPruebaEntities1(cadenaConexion);
+                ? new BaseDatosPruebaEntities()
+                : new BaseDatosPruebaEntities(cadenaConexion);
         }
 
         private static ResultadoOperacionDTO CrearFallo(string mensaje)

@@ -385,13 +385,13 @@
     <value>Are you sure you want to log out?</value>
   </data>
   <data name="clasificacionTextoTotalRondas" xml:space="preserve">
-    <value>Total rounds won</value>
+    <value>Total matches won</value>
   </data>
   <data name="clasificacionTextoTotalPuntos" xml:space="preserve">
     <value>Total points</value>
   </data>
   <data name="clasificacionTextoOrdenarRondas" xml:space="preserve">
-    <value>Sort by rounds</value>
+    <value>Sort by matches</value>
   </data>
   <data name="clasificacionTextoOrdenarPuntos" xml:space="preserve">
     <value>Sort by points</value>
@@ -479,6 +479,12 @@
   </data>
   <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
     <value>Ongoing game</value>
+  </data>
+  <data name="partidaTextoHostCanceloSala" xml:space="preserve">
+    <value>The host left the room, so the match was cancelled.</value>
+  </data>
+  <data name="partidaTextoJugadoresInsuficientes" xml:space="preserve">
+    <value>Not enough players to keep playing, the game was cancelled.</value>
   </data>
   <data name="avisoTextoCodigoDescripcionCambio" xml:space="preserve">
     <value>Enter the code we sent to confirm the password change.</value>
@@ -722,6 +728,9 @@
   </data>
   <data name="adivinadorTextoContenido" xml:space="preserve">
     <value>Try to guess the song before time runs out!</value>
+  </data>
+  <data name="partidaTextoTiempoTerminado" xml:space="preserve">
+    <value>Time's up!</value>
   </data>
   <data name="invitarCorreoTextoEnviado" xml:space="preserve">
     <value>Invitation sent successfully!</value>
@@ -1019,5 +1028,38 @@
   </data>
   <data name="solicitudInvitacionInvalida" xml:space="preserve">
     <value>The invitation request is not valid.</value>
+  </data>
+  <data name="partidaTooltipBorrador" xml:space="preserve">
+    <value>Eraser</value>
+  </data>
+  <data name="partidaTooltipLapiz" xml:space="preserve">
+    <value>Pencil</value>
+  </data>
+  <data name="partidaTooltipLimpiar" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
+  <data name="errorTextoPartidaUnJugador" xml:space="preserve">
+    <value>At least 2 people are needed to start a game.</value>
+  </data>
+  <data name="errorTextoPartidaYaIniciada" xml:space="preserve">
+    <value>The game in the room you are trying to join has already started.</value>
+  </data>
+  <data name="chatTextoJugadorAdivino" xml:space="preserve">
+    <value>{0} guessed the song!</value>
+  </data>
+  <data name="partidaTextoDibujoDe" xml:space="preserve">
+    <value>{0} is drawing</value>
+  </data>
+  <data name="partidaTextoGanasteTitulo" xml:space="preserve">
+    <value>YOU WON</value>
+  </data>
+  <data name="partidaTextoGanasteMensaje" xml:space="preserve">
+    <value>Congratulations, you won this game!</value>
+  </data>
+  <data name="partidaTextoPerdisteTitulo" xml:space="preserve">
+    <value>YOU LOST</value>
+  </data>
+  <data name="partidaTextoPerdisteMensaje" xml:space="preserve">
+    <value>You lost this game, better luck next time!</value>
   </data>
 </root>

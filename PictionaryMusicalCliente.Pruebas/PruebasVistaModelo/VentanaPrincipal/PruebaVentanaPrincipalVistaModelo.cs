@@ -23,8 +23,6 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaPrincipal
         private Mock<ISalasServicio> _mockSalasServicio;
         private VentanaPrincipalVistaModelo _vistaModelo;
 
-        private const string UsuarioTest = "UsuarioPrueba";
-
         [TestInitialize]
         public void Inicializar()
         {
@@ -570,21 +568,6 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaPrincipal
         #endregion
 
         #region Idioma y Localizacion
-
-        [TestMethod]
-        public void Prueba_IdiomaActualizado_Evento_ActualizaListaIdiomas()
-        {
-            _mockLocalizacion.Setup(l => l.CulturaActual).Returns(new CultureInfo("en-US"));
-
-            MethodInfo metodo = typeof(VentanaPrincipalVistaModelo)
-                .GetMethod("LocalizacionServicioEnIdiomaActualizado",
-                    BindingFlags.NonPublic | BindingFlags.Instance);
-
-            metodo.Invoke(_vistaModelo, new object[] { null, EventArgs.Empty });
-
-            Assert.IsNotNull(_vistaModelo.IdiomaSeleccionado, "El idioma seleccionado es nulo");
-            Assert.AreEqual("en-US", _vistaModelo.IdiomaSeleccionado.Codigo);
-        }
 
         [TestMethod]
         public void Prueba_IdiomaSeleccionado_Cambio_ActualizaEstadoComando()

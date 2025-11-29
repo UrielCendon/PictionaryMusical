@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.ServiceModel;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Modelo;
+using Datos.Modelo;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -22,7 +22,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ListaAmigosManejador));
         private static readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly NotificadorListaAmigos _notificador = new(_manejadorCallback);
+        private static readonly IContextoFactory _contextoFactoryInstancia = new ContextoFactory();
+        private static readonly IAmistadServicio _amistadServicioInstancia = new AmistadServicio(_contextoFactoryInstancia);
+        private static readonly NotificadorListaAmigos _notificador = new(_manejadorCallback, _contextoFactoryInstancia);
 
         /// <summary>
         /// Suscribe un usuario para recibir notificaciones sobre cambios en su lista de amigos.
@@ -45,26 +47,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 _notificador.NotificarLista(nombreUsuario, amigosActuales);
 
-                _logger.Info($"Usuario '{nombreUsuario}' se suscribi� a notificaciones de lista de amigos.");
+                _logger.InfoFormat("Usuario '{0}' se suscribió a notificaciones de lista de amigos.", nombreUsuario);
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn(MensajesError.Log.ListaAmigosSuscribirIdentificadorInvalido, ex);
+                _logger.Warn("Identificador inválido al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.ListaAmigosSuscribirDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.ListaAmigosSuscribirErrorDatos, ex);
+                _logger.Error("Error de datos al suscribirse a lista de amigos. No se pudo recuperar la lista de amigos del usuario.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.ListaAmigosSuscribirErrorDatos, ex);
+                _logger.Error("Error de datos al suscribirse a lista de amigos. No se pudo recuperar la lista de amigos del usuario.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
         }
@@ -82,16 +84,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
                 _manejadorCallback.Desuscribir(nombreUsuario);
 
-                _logger.Info($"Usuario '{nombreUsuario}' cancel� su suscripci�n a lista de amigos.");
+                _logger.InfoFormat("Usuario '{0}' canceló su suscripción a lista de amigos.", nombreUsuario);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.ListaAmigosObtenerDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al obtener la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
+                _logger.Error("Error inesperado al obtener la lista de amigos del usuario.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
         }
@@ -112,22 +114,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn(MensajesError.Log.ListaAmigosObtenerIdentificadorInvalido, ex);
+                _logger.Warn("Identificador inválido al obtener la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(MensajesError.Log.ListaAmigosObtenerDatosInvalidos, ex);
+                _logger.Warn("Datos inválidos al obtener la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (DataException ex)
             {
-                _logger.Error(MensajesError.Log.ListaAmigosObtenerErrorDatos, ex);
+                _logger.Error("Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (Exception ex)
             {
-                _logger.Error(MensajesError.Log.ListaAmigosObtenerInesperado, ex);
+                _logger.Error("Error inesperado al obtener la lista de amigos del usuario.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
         }
@@ -139,7 +141,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static List<AmigoDTO> ObtenerAmigosPorNombre(string nombreUsuario)
         {
-            using var contexto = ContextoFactory.CrearContexto();
+            using var contexto = _contextoFactoryInstancia.CrearContexto();
             var usuarioRepositorio = new UsuarioRepositorio(contexto);
 
             Usuario usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
@@ -149,7 +151,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
             }
 
-            return ServicioAmistad.ObtenerAmigosDTO(usuario.idUsuario);
+            return _amistadServicioInstancia.ObtenerAmigosDTO(usuario.idUsuario);
         }
     }
 }

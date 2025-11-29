@@ -6,7 +6,7 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
-using PictionaryMusicalCliente.VistaModelo.VentanaJuego;
+using PictionaryMusicalCliente.VistaModelo.Salas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,10 +29,10 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         private Mock<IListaAmigosServicio> _mockListaAmigosServicio;
         private Mock<IPerfilServicio> _mockPerfilServicio;
 
-        private VentanaJuegoVistaModelo _vistaModelo;
+        private SalaVistaModelo _vistaModelo;
         private DTOs.SalaDTO _sala;
         private List<string> _mensajesMostrados;
-        private VentanaJuegoVistaModelo.DestinoNavegacion? _destinoNavegacion;
+        private SalaVistaModelo.DestinoNavegacion? _destinoNavegacion;
         private bool _cerrarAplicacionGlobal;
 
         [TestInitialize]
@@ -43,7 +43,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
                 new Application();
             }
 
-            Application.ResourceAssembly = typeof(VentanaJuegoVistaModelo).Assembly;
+            Application.ResourceAssembly = typeof(SalaVistaModelo).Assembly;
 
             _sala = new DTOs.SalaDTO
             {
@@ -61,7 +61,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
             _destinoNavegacion = null;
             _cerrarAplicacionGlobal = false;
 
-            _vistaModelo = new VentanaJuegoVistaModelo(
+            _vistaModelo = new SalaVistaModelo(
                 _sala,
                 _mockSalasServicio.Object,
                 _mockInvitacionesServicio.Object,
@@ -87,7 +87,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
 
         private void EstablecerCampoPrivado<T>(string nombreCampo, T valor)
         {
-            var campo = typeof(VentanaJuegoVistaModelo).GetField(
+            var campo = typeof(SalaVistaModelo).GetField(
                 nombreCampo,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -96,7 +96,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
 
         private T ObtenerCampoPrivado<T>(string nombreCampo)
         {
-            var campo = typeof(VentanaJuegoVistaModelo).GetField(
+            var campo = typeof(SalaVistaModelo).GetField(
                 nombreCampo,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -105,7 +105,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
 
         private void InvocarMetodoPrivado(string nombreMetodo, params object[] parametros)
         {
-            var metodo = typeof(VentanaJuegoVistaModelo).GetMethod(
+            var metodo = typeof(SalaVistaModelo).GetMethod(
                 nombreMetodo,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -114,7 +114,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
 
         private async Task InvocarMetodoPrivadoAsync(string nombreMetodo, params object[] parametros)
         {
-            var metodo = typeof(VentanaJuegoVistaModelo).GetMethod(
+            var metodo = typeof(SalaVistaModelo).GetMethod(
                 nombreMetodo,
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -134,7 +134,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [ExpectedException(typeof(ArgumentNullException))]
         public void Prueba_Constructor_SalaNula_LanzaExcepcion()
         {
-            new VentanaJuegoVistaModelo(
+            new SalaVistaModelo(
                 null,
                 _mockSalasServicio.Object,
                 _mockInvitacionesServicio.Object,
@@ -148,7 +148,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [ExpectedException(typeof(ArgumentNullException))]
         public void Prueba_Constructor_SalasServicioNulo_LanzaExcepcion()
         {
-            new VentanaJuegoVistaModelo(
+            new SalaVistaModelo(
                 _sala,
                 null,
                 _mockInvitacionesServicio.Object,
@@ -162,7 +162,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [ExpectedException(typeof(ArgumentNullException))]
         public void Prueba_Constructor_InvitacionesServicioNulo_LanzaExcepcion()
         {
-            new VentanaJuegoVistaModelo(
+            new SalaVistaModelo(
                 _sala,
                 _mockSalasServicio.Object,
                 null,
@@ -176,7 +176,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [ExpectedException(typeof(ArgumentNullException))]
         public void Prueba_Constructor_ListaAmigosServicioNulo_LanzaExcepcion()
         {
-            new VentanaJuegoVistaModelo(
+            new SalaVistaModelo(
                 _sala,
                 _mockSalasServicio.Object,
                 _mockInvitacionesServicio.Object,
@@ -190,7 +190,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [ExpectedException(typeof(ArgumentNullException))]
         public void Prueba_Constructor_PerfilServicioNulo_LanzaExcepcion()
         {
-            new VentanaJuegoVistaModelo(
+            new SalaVistaModelo(
                 _sala,
                 _mockSalasServicio.Object,
                 _mockInvitacionesServicio.Object,
@@ -234,9 +234,6 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
             Assert.IsNotNull(_vistaModelo.CambiarGrosorComando);
             Assert.IsNotNull(_vistaModelo.CambiarColorComando);
             Assert.IsNotNull(_vistaModelo.LimpiarDibujoComando);
-            Assert.IsNotNull(_vistaModelo.MostrarOverlayDibujanteComando);
-            Assert.IsNotNull(_vistaModelo.MostrarOverlayAdivinadorComando);
-            Assert.IsNotNull(_vistaModelo.CerrarOverlayComando);
             Assert.IsNotNull(_vistaModelo.CerrarVentanaComando);
         }
 
@@ -619,7 +616,6 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [TestMethod]
         public void Prueba_MostrarOverlayDibujante_Comando_ActivaOverlayCorrecto()
         {
-            _vistaModelo.MostrarOverlayDibujanteComando.Execute(null);
 
             Assert.AreEqual(Visibility.Visible, _vistaModelo.VisibilidadOverlayDibujante);
             Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadOverlayAdivinador);
@@ -628,27 +624,14 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [TestMethod]
         public void Prueba_MostrarOverlayAdivinador_Comando_ActivaOverlayCorrecto()
         {
-            _vistaModelo.MostrarOverlayAdivinadorComando.Execute(null);
 
             Assert.AreEqual(Visibility.Visible, _vistaModelo.VisibilidadOverlayAdivinador);
             Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadOverlayDibujante);
         }
 
         [TestMethod]
-        public void Prueba_CerrarOverlay_Comando_OcultaAmbosOverlays()
-        {
-            _vistaModelo.MostrarOverlayDibujanteComando.Execute(null);
-
-            _vistaModelo.CerrarOverlayComando.Execute(null);
-
-            Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadOverlayDibujante);
-            Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadOverlayAdivinador);
-        }
-
-        [TestMethod]
         public void Prueba_OverlayTimer_Tick_IniciaTemporizadorYOcultaOverlays()
         {
-            _vistaModelo.MostrarOverlayDibujanteComando.Execute(null);
 
             InvocarMetodoPrivado("OverlayTimer_Tick", this, EventArgs.Empty);
 
@@ -663,36 +646,6 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
             Assert.AreEqual("Gasolina", _vistaModelo.PalabraAdivinar);
             Assert.AreEqual("Artista: Daddy Yankee", _vistaModelo.TextoArtista);
             Assert.AreEqual("Género: Reggaeton", _vistaModelo.TextoGenero);
-        }
-
-        [TestMethod]
-        public void Prueba_TemporizadorTick_DecrementaContador()
-        {
-            EstablecerCampoPrivado("_contador", 5);
-            _vistaModelo.TextoContador = "5";
-            _mensajesMostrados.Clear();
-
-            InvocarMetodoPrivado("Temporizador_Tick", this, EventArgs.Empty);
-
-            Assert.AreEqual("4", _vistaModelo.TextoContador);
-            Assert.AreEqual(0, _mensajesMostrados.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_TemporizadorTick_LlegaACero_MuestraMensajeYOcultaInformacion()
-        {
-            EstablecerCampoPrivado("_contador", 1);
-            _vistaModelo.TextoContador = "1";
-            _vistaModelo.VisibilidadPalabraAdivinar = Visibility.Visible;
-            _vistaModelo.VisibilidadInfoCancion = Visibility.Visible;
-            _mensajesMostrados.Clear();
-
-            InvocarMetodoPrivado("Temporizador_Tick", this, EventArgs.Empty);
-
-            Assert.AreEqual("0", _vistaModelo.TextoContador);
-            Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadPalabraAdivinar);
-            Assert.AreEqual(Visibility.Collapsed, _vistaModelo.VisibilidadInfoCancion);
-            Assert.AreEqual("¡Tiempo terminado!", _mensajesMostrados.Single());
         }
 
         #endregion
@@ -764,7 +717,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
             InvocarMetodoPrivado("SalasServicio_JugadorExpulsado", this, UsuarioHost);
 
             Assert.AreEqual(
-                VentanaJuegoVistaModelo.DestinoNavegacion.VentanaPrincipal,
+                SalaVistaModelo.DestinoNavegacion.VentanaPrincipal,
                 _destinoNavegacion);
 
             Assert.AreEqual(Lang.expulsarJugadorTextoFuisteExpulsado, _mensajesMostrados.Single());
@@ -774,7 +727,7 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
         [TestMethod]
         public void Prueba_JugadorExpulsado_UsuarioActualInvitado_NavegaInicioSesionYMarcaCierre()
         {
-            var viewModelInvitado = new VentanaJuegoVistaModelo(
+            var viewModelInvitado = new SalaVistaModelo(
                 _sala,
                 _mockSalasServicio.Object,
                 _mockInvitacionesServicio.Object,
@@ -783,20 +736,20 @@ namespace PictionaryMusicalCliente.Pruebas.PruebasVistaModelo.VentanaJuego
                 UsuarioHost,
                 true);
 
-            VentanaJuegoVistaModelo.DestinoNavegacion? destino = null;
+            SalaVistaModelo.DestinoNavegacion? destino = null;
             string mensaje = null;
 
             viewModelInvitado.ManejarNavegacion = d => destino = d;
             viewModelInvitado.MostrarMensaje = m => mensaje = m;
 
-            var metodo = typeof(VentanaJuegoVistaModelo).GetMethod(
+            var metodo = typeof(SalaVistaModelo).GetMethod(
                 "SalasServicio_JugadorExpulsado",
                 BindingFlags.Instance | BindingFlags.NonPublic);
 
             metodo.Invoke(viewModelInvitado, new object[] { this, UsuarioHost });
 
             Assert.AreEqual(
-                VentanaJuegoVistaModelo.DestinoNavegacion.InicioSesion,
+                SalaVistaModelo.DestinoNavegacion.InicioSesion,
                 destino);
 
             Assert.AreEqual(Lang.expulsarJugadorTextoFuisteExpulsado, mensaje);

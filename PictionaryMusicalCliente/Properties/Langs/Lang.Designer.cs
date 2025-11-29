@@ -502,6 +502,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ¡{0} adivinó la canción!.
+        /// </summary>
+        public static string chatTextoJugadorAdivino {
+            get {
+                return ResourceManager.GetString("chatTextoJugadorAdivino", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ordenar por puntos.
         /// </summary>
         public static string clasificacionTextoOrdenarPuntos {
@@ -1438,6 +1447,24 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se necesitan al menos 2 personas para poder iniciar una partida..
+        /// </summary>
+        public static string errorTextoPartidaUnJugador {
+            get {
+                return ResourceManager.GetString("errorTextoPartidaUnJugador", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La partida de la sala a la que te intentas unir ya comenzó..
+        /// </summary>
+        public static string errorTextoPartidaYaIniciada {
+            get {
+                return ResourceManager.GetString("errorTextoPartidaYaIniciada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No fue posible obtener la información actualizada del perfil..
         /// </summary>
         public static string errorTextoPerfilActualizarInformacion {
@@ -2311,11 +2338,56 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Dibujo de {0}.
+        /// </summary>
+        public static string partidaTextoDibujoDe {
+            get {
+                return ResourceManager.GetString("partidaTextoDibujoDe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Felicidades, ganaste esta partida!.
+        /// </summary>
+        public static string partidaTextoGanasteMensaje {
+            get {
+                return ResourceManager.GetString("partidaTextoGanasteMensaje", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a GANASTE.
+        /// </summary>
+        public static string partidaTextoGanasteTitulo {
+            get {
+                return ResourceManager.GetString("partidaTextoGanasteTitulo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El anfitrión de la sala abandonó la partida, por lo tanto, esta fue cancelada..
+        /// </summary>
+        public static string partidaTextoHostCanceloSala {
+            get {
+                return ResourceManager.GetString("partidaTextoHostCanceloSala", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a JUGADORES.
         /// </summary>
         public static string partidaTextoJugadores {
             get {
                 return ResourceManager.GetString("partidaTextoJugadores", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No hay suficientes jugadores para seguir jugando, se canceló la partida..
+        /// </summary>
+        public static string partidaTextoJugadoresInsuficientes {
+            get {
+                return ResourceManager.GetString("partidaTextoJugadoresInsuficientes", resourceCulture);
             }
         }
         
@@ -2329,11 +2401,65 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Perdiste esta partida, ¡suerte para la próxima!.
+        /// </summary>
+        public static string partidaTextoPerdisteMensaje {
+            get {
+                return ResourceManager.GetString("partidaTextoPerdisteMensaje", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a PERDISTE.
+        /// </summary>
+        public static string partidaTextoPerdisteTitulo {
+            get {
+                return ResourceManager.GetString("partidaTextoPerdisteTitulo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ronda:.
         /// </summary>
         public static string partidaTextoRonda {
             get {
                 return ResourceManager.GetString("partidaTextoRonda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a ¡Tiempo terminado!.
+        /// </summary>
+        public static string partidaTextoTiempoTerminado {
+            get {
+                return ResourceManager.GetString("partidaTextoTiempoTerminado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Borrador.
+        /// </summary>
+        public static string partidaTooltipBorrador {
+            get {
+                return ResourceManager.GetString("partidaTooltipBorrador", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Lápiz.
+        /// </summary>
+        public static string partidaTooltipLapiz {
+            get {
+                return ResourceManager.GetString("partidaTooltipLapiz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Limpiar todo.
+        /// </summary>
+        public static string partidaTooltipLimpiar {
+            get {
+                return ResourceManager.GetString("partidaTooltipLimpiar", resourceCulture);
             }
         }
         

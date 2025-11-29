@@ -75,6 +75,9 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioSalas {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISalasManejador/NotificarJugadorExpulsado")]
         void NotificarJugadorExpulsado(string codigoSala, string nombreJugador);
+        
+        [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/ISalasManejador/NotificarSalaCancelada")]
+        void NotificarSalaCancelada(string codigoSala);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]

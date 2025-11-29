@@ -387,13 +387,13 @@ aciertan o cuando se acaba el tiempo.
     <value>¿Está seguro de querer cerrar la sesión?</value>
   </data>
   <data name="clasificacionTextoTotalRondas" xml:space="preserve">
-    <value>Total de rondas ganadas</value>
+    <value>Total de partidas ganadas</value>
   </data>
   <data name="clasificacionTextoTotalPuntos" xml:space="preserve">
     <value>Total de puntos</value>
   </data>
   <data name="clasificacionTextoOrdenarRondas" xml:space="preserve">
-    <value>Ordenar por rondas</value>
+    <value>Ordenar por partidas</value>
   </data>
   <data name="clasificacionTextoOrdenarPuntos" xml:space="preserve">
     <value>Ordenar por puntos</value>
@@ -481,6 +481,12 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="partidaTextoPartidaEnCurso" xml:space="preserve">
     <value>Partida en curso</value>
+  </data>
+  <data name="partidaTextoHostCanceloSala" xml:space="preserve">
+    <value>El anfitrión de la sala abandonó la partida, por lo tanto, esta fue cancelada.</value>
+  </data>
+  <data name="partidaTextoJugadoresInsuficientes" xml:space="preserve">
+    <value>No hay suficientes jugadores para seguir jugando, se canceló la partida.</value>
   </data>
   <data name="avisoTextoCodigoDescripcionCambio" xml:space="preserve">
     <value>Ingresa el código que enviamos para confirmar el cambio de contraseña.</value>
@@ -724,6 +730,9 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="adivinadorTextoContenido" xml:space="preserve">
     <value>¡Intenta adivinar la canción en el tiempo restante!</value>
+  </data>
+  <data name="partidaTextoTiempoTerminado" xml:space="preserve">
+    <value>¡Tiempo terminado!</value>
   </data>
   <data name="invitarCorreoTextoEnviado" xml:space="preserve">
     <value>¡Invitación enviada con éxito!</value>
@@ -1021,5 +1030,38 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="solicitudInvitacionInvalida" xml:space="preserve">
     <value>La solicitud de invitación no es válida.</value>
+  </data>
+  <data name="partidaTooltipBorrador" xml:space="preserve">
+    <value>Borrador</value>
+  </data>
+  <data name="partidaTooltipLapiz" xml:space="preserve">
+    <value>Lápiz</value>
+  </data>
+  <data name="partidaTooltipLimpiar" xml:space="preserve">
+    <value>Limpiar todo</value>
+  </data>
+  <data name="errorTextoPartidaUnJugador" xml:space="preserve">
+    <value>Se necesitan al menos 2 personas para poder iniciar una partida.</value>
+  </data>
+  <data name="errorTextoPartidaYaIniciada" xml:space="preserve">
+    <value>La partida de la sala a la que te intentas unir ya comenzó.</value>
+  </data>
+  <data name="chatTextoJugadorAdivino" xml:space="preserve">
+    <value>¡{0} adivinó la canción!</value>
+  </data>
+  <data name="partidaTextoDibujoDe" xml:space="preserve">
+    <value>Está dibujando: {0}</value>
+  </data>
+  <data name="partidaTextoGanasteTitulo" xml:space="preserve">
+    <value>GANASTE</value>
+  </data>
+  <data name="partidaTextoGanasteMensaje" xml:space="preserve">
+    <value>¡Felicidades, ganaste esta partida!</value>
+  </data>
+  <data name="partidaTextoPerdisteTitulo" xml:space="preserve">
+    <value>PERDISTE</value>
+  </data>
+  <data name="partidaTextoPerdisteMensaje" xml:space="preserve">
+    <value>Perdiste esta partida, ¡suerte para la próxima!</value>
   </data>
 </root>
