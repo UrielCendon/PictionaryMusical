@@ -132,13 +132,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (CommunicationException ex)
             {
-                _logger.Warn(string.Format("Error de comunicación al notificar a '{0}'. Desuscribiendo.", nombreUsuario), ex);
-                Desuscribir(nombreUsuario);
+                _logger.ErrorFormat("Error de comunicación al notificar a '{0}'. Desuscribiendo.", nombreUsuario, ex);
+                    Desuscribir(nombreUsuario);
             }
             catch (TimeoutException ex)
             {
-                _logger.Warn(string.Format("Timeout al notificar a '{0}'. Desuscribiendo.", nombreUsuario), ex);
-                Desuscribir(nombreUsuario);
+                _logger.ErrorFormat("Timeout al notificar a '{0}'. Desuscribiendo.", nombreUsuario, ex);
+                    Desuscribir(nombreUsuario);
             }
             catch (InvalidOperationException ex)
             {

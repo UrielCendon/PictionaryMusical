@@ -115,13 +115,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (System.ServiceModel.CommunicationException ex)
                 {
-                    _logger.Warn(string.Format("{0} (Sesión: {1})", "Error de comunicación al notificar la lista de salas a los suscriptores.", kvp.Key), ex);
+                    _logger.WarnFormat("{0} (Sesión: {1})", "Error de comunicación al notificar la lista de salas a los suscriptores.", kvp.Key, ex);
                     _suscripciones.TryRemove(kvp.Key, out _);
                 }
                 catch (TimeoutException ex)
                 {
-                    _logger.Warn(string.Format("{0} (Sesión: {1})", "Timeout al notificar la lista de salas a los suscriptores.", kvp.Key), ex);
-                    _suscripciones.TryRemove(kvp.Key, out _);
+                    _logger.WarnFormat("{0} (Sesión: {1})", "Timeout al notificar la lista de salas a los suscriptores.", kvp.Key, ex);
+                        _suscripciones.TryRemove(kvp.Key, out _);
                 }
                 catch (InvalidOperationException ex)
                 {

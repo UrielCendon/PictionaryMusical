@@ -1,6 +1,7 @@
+using Datos.Modelo;
+
 namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
 {
-    using Datos.Modelo;
 
     /// <summary>
     /// Interfaz de repositorio para la gestion de usuarios en la capa de acceso a datos.

@@ -5,30 +5,32 @@ namespace PictionaryMusicalServidor.Datos.Excepciones
     /// <summary>
     /// Excepcion lanzada cuando no hay canciones disponibles para las condiciones solicitadas.
     /// </summary>
-    public class CancionNoDisponibleException : Exception
+    public class CancionNoDisponibleExcepcion : Exception
     {
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleException"/>.
+        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/>.
         /// </summary>
-        public CancionNoDisponibleException()
+        public CancionNoDisponibleExcepcion()
         {
         }
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleException"/> con un mensaje especifico.
+        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/> 
+        /// con un mensaje especifico.
         /// </summary>
         /// <param name="mensaje">Mensaje descriptivo del error.</param>
-        public CancionNoDisponibleException(string mensaje)
+        public CancionNoDisponibleExcepcion(string mensaje)
             : base(mensaje)
         {
         }
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleException"/> con un mensaje y una excepcion interna.
+        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/> 
+        /// con un mensaje y una excepcion interna.
         /// </summary>
         /// <param name="mensaje">Mensaje descriptivo del error.</param>
         /// <param name="excepcionInterna">Excepcion que origino el error actual.</param>
-        public CancionNoDisponibleException(string mensaje, Exception excepcionInterna)
+        public CancionNoDisponibleExcepcion(string mensaje, Exception excepcionInterna)
             : base(mensaje, excepcionInterna)
         {
         }

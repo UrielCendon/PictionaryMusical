@@ -182,7 +182,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     callbacks = callbacksSala.ToList();
                 }
 
-                var cancionActual = CatalogoCancionesLogico.ObtenerCancionPorId(rondaBase.IdCancion);
+                var cancionActual = CatalogoCanciones.ObtenerCancionPorId(rondaBase.IdCancion);
 
                 foreach (var par in callbacks)
                 {

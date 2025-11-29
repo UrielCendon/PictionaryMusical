@@ -120,8 +120,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (Exception ex)
             {
-                _logger.Error(string.Format("Error inesperado al enviar invitación a {0}", correoDestino), ex);
-                return false;
+                _logger.ErrorFormat("Error inesperado al enviar invitación a {0}", correoDestino, ex);
+                    return false;
             }
         }
 

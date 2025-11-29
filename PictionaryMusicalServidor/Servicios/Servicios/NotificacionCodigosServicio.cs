@@ -51,7 +51,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _logger.Error(string.Format("Error crítico al enviar notificación a {0}.", correoDestino), ex);
+                _logger.ErrorFormat("Error crítico al enviar notificación a {0}.", correoDestino, ex);
                 return false;
             }
         }

@@ -10,12 +10,14 @@ using PictionaryMusicalServidor.Datos.Excepciones;
 namespace PictionaryMusicalServidor.Datos
 {
     /// <summary>
+    /// 
     /// Proporciona el acceso al catalogo interno de canciones disponibles para las partidas.
     /// </summary>
-    public static class CatalogoCancionesLogico
+    public class CatalogoCanciones : ICatalogoCanciones
     {
-        private const string MensajeCancionesNoDisponibles = "No hay canciones disponibles para los criterios solicitados.";
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCancionesLogico));
+        private const string MensajeCancionesNoDisponibles = 
+            "No hay canciones disponibles para los criterios solicitados.";
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCanciones));
         private static readonly Dictionary<int, Cancion> _canciones = new Dictionary<int, Cancion>
         {
             { 1, CrearCancion(1, "Gasolina", "Daddy Yankee", "Reggaeton", "Español") },
@@ -29,7 +31,8 @@ namespace PictionaryMusicalServidor.Datos
             { 9, CrearCancion(9, "Rosas", "La Oreja de Van Gogh", "Pop", "Español") },
             { 10, CrearCancion(10, "La Bicicleta", "Shakira", "Vallenato Pop", "Español") },
             { 11, CrearCancion(11, "El Taxi", "Pitbull", "Urbano", "Español") },
-            { 12, CrearCancion(12, "La Puerta Negra", "Los Tigres del Norte", "Norteño", "Español") },
+            { 12, CrearCancion
+                (12, "La Puerta Negra", "Los Tigres del Norte", "Norteño", "Español") },
             { 13, CrearCancion(13, "Baraja de Oro", "Chalino Sánchez", "Corrido", "Español") },
             { 14, CrearCancion(14, "Los Luchadores", "La Sonora Santanera", "Cumbia", "Español") },
             { 15, CrearCancion(15, "El Oso Polar", "Nelson Kanzela", "Cumbia", "Español") },
@@ -65,46 +68,45 @@ namespace PictionaryMusicalServidor.Datos
         private static readonly Random _random = new Random();
 
         /// <summary>
-        /// Obtiene una cancion aleatoria segun el idioma solicitado y excluyendo los identificadores proporcionados.
+        /// Obtiene una cancion aleatoria segun el idioma solicitado y excluyendo los 
+        /// identificadores proporcionados.
         /// </summary>
         /// <param name="idioma">Idioma de la cancion ("Español" o "Ingles").</param>
-        /// <param name="idsExcluidos">Coleccion de identificadores que no deben considerarse.</param>
+        /// <param name="idsExcluidos">Coleccion de identificadores que no deben considerarse.
+        /// </param>
         /// <returns>Una instancia de <see cref="Cancion"/> que cumple los criterios.</returns>
-        /// <exception cref="ArgumentException">Se produce cuando el idioma es nulo o vacio.</exception>
-        /// <exception cref="CancionNoDisponibleException">Se produce cuando no hay canciones disponibles.</exception>
-        // En PictionaryMusicalServidor/Datos/CatalogoCancionesLogico.cs
+        /// <exception cref="ArgumentException">Se produce cuando el idioma es nulo o vacio.
+        /// </exception>
+        /// <exception cref="CancionNoDisponibleExcepcion">Se produce cuando no hay canciones 
+        /// disponibles.</exception>
 
-        public static Cancion ObtenerCancionAleatoria(string idioma, HashSet<int> idsExcluidos)
+        public Cancion ObtenerCancionAleatoria(string idioma, HashSet<int> idsExcluidos)
         {
-            // 1. Validar entrada
             if (string.IsNullOrWhiteSpace(idioma))
             {
-                var ex = new ArgumentException("El idioma no puede ser nulo o vacio.", nameof(idioma));
+                var ex = new ArgumentException("El idioma no puede ser nulo o vacio.", 
+                    nameof(idioma));
                 _logger.Error("Se recibio un idioma invalido al solicitar cancion.", ex);
                 throw ex;
             }
 
             try
             {
-                // 2. Preparar criterios de búsqueda
                 string idiomaInterno = MapearIdiomaInterno(idioma);
                 string idiomaBusqueda = NormalizarTexto(idiomaInterno);
                 var idsRechazados = idsExcluidos ?? new HashSet<int>();
 
-                // 3. Filtrar candidatos
                 var candidatos = ObtenerCandidatos(idiomaBusqueda, idsRechazados);
 
-                // 4. Verificar resultados
                 if (!candidatos.Any())
                 {
                     RegistrarErrorFaltaCanciones(idioma, idiomaInterno, idiomaBusqueda);
-                    throw new CancionNoDisponibleException(MensajeCancionesNoDisponibles);
+                    throw new CancionNoDisponibleExcepcion(MensajeCancionesNoDisponibles);
                 }
 
-                // 5. Seleccionar ganador
                 return SeleccionarAleatorio(candidatos);
             }
-            catch (CancionNoDisponibleException)
+            catch (CancionNoDisponibleExcepcion)
             {
                 throw;
             }
@@ -120,7 +122,7 @@ namespace PictionaryMusicalServidor.Datos
         /// </summary>
         /// <param name="idCancion">Identificador de la canción.</param>
         /// <returns>La canción correspondiente o null si no existe.</returns>
-        public static Cancion ObtenerCancionPorId(int idCancion)
+        public Cancion ObtenerCancionPorId(int idCancion)
         {
             if (_canciones.TryGetValue(idCancion, out var cancion))
             {
@@ -136,12 +138,14 @@ namespace PictionaryMusicalServidor.Datos
         /// </summary>
         /// <param name="idCancion">Identificador de la cancion a evaluar.</param>
         /// <param name="intentoUsuario">Texto proporcionado por el usuario.</param>
-        /// <returns>True si el intento coincide con el nombre normalizado de la cancion, false en caso contrario.</returns>
-        public static bool ValidarRespuesta(int idCancion, string intentoUsuario)
+        /// <returns>True si el intento coincide con el nombre normalizado de la cancion, false en
+        /// caso contrario.</returns>
+        public bool ValidarRespuesta(int idCancion, string intentoUsuario)
         {
             if (!_canciones.ContainsKey(idCancion))
             {
-                _logger.ErrorFormat("No se encontro la cancion con id {0} en el catalogo.", idCancion);
+                _logger.ErrorFormat("No se encontro la cancion con id {0} en el catalogo.", 
+                    idCancion);
                 return false;
             }
 
@@ -149,14 +153,15 @@ namespace PictionaryMusicalServidor.Datos
 
             if (string.IsNullOrWhiteSpace(intentoNormalizado))
             {
-                _logger.Warn("El intento de respuesta es nulo o vacio despues de normalizar.");
                 return false;
             }
 
-            return string.Equals(intentoNormalizado, _canciones[idCancion].NombreNormalizado, StringComparison.Ordinal);
+            return string.Equals(intentoNormalizado, _canciones[idCancion].NombreNormalizado, 
+                StringComparison.Ordinal);
         }
 
-        private static Cancion CrearCancion(int id, string nombre, string artista, string genero, string idioma)
+        private static Cancion CrearCancion(int id, string nombre, string artista, string genero, 
+            string idioma)
         {
             var nombreNormalizado = NormalizarTexto(nombre);
 
@@ -186,7 +191,8 @@ namespace PictionaryMusicalServidor.Datos
             return idiomaEntrada;
         }
 
-        private static List<Cancion> ObtenerCandidatos(string idiomaNormalizado, HashSet<int> idsRechazados)
+        private static List<Cancion> ObtenerCandidatos(string idiomaNormalizado, 
+            HashSet<int> idsRechazados)
         {
             var candidatos = _canciones.Values
                 .Where(cancion => !idsRechazados.Contains(cancion.Id));
@@ -194,19 +200,19 @@ namespace PictionaryMusicalServidor.Datos
             if (!string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase))
             {
                 candidatos = candidatos.Where(cancion =>
-                    string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
+                    StringComparison.OrdinalIgnoreCase));
             }
 
             return candidatos.ToList();
         }
 
-        private static void RegistrarErrorFaltaCanciones(string idiomaOriginal, string idiomaMapeado, string idiomaNorm)
+        private static void RegistrarErrorFaltaCanciones(string idiomaOriginal, 
+            string idiomaMapeado, string idiomaNorm)
         {
-            _logger.WarnFormat("Fallo al buscar canción. Idioma Entrante: {0}, Mapeado: {1}, Normalizado: {2}.",
+            _logger.WarnFormat(
+                "Fallo al buscar canción. Idioma Entrante: {0}, Mapeado: {1}, Normalizado: {2}.",
                 idiomaOriginal, idiomaMapeado, idiomaNorm);
-
-            var exception = new CancionNoDisponibleException(MensajeCancionesNoDisponibles);
-            _logger.Error("No se encontraron canciones disponibles para los criterios proporcionados.", exception);
         }
 
         private static Cancion SeleccionarAleatorio(List<Cancion> candidatos)
@@ -244,7 +250,8 @@ namespace PictionaryMusicalServidor.Datos
             }
 
             var textoSinAcentos = constructor.ToString().Normalize(NormalizationForm.FormC);
-            var partes = textoSinAcentos.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var partes = textoSinAcentos.Split(new[] { ' ' }, 
+                StringSplitOptions.RemoveEmptyEntries);
             return string.Join(" ", partes);
         }
     }

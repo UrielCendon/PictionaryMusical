@@ -8,7 +8,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 {
     /// <summary>
     /// Implementacion del repositorio de usuarios para acceso a datos.
-    /// Proporciona operaciones de consulta y creacion de usuarios con validaciones y comparaciones exactas.
+    /// Proporciona operaciones de consulta y creacion de usuarios con validaciones y 
+    /// comparaciones exactas.
     /// Verifica que el nombre de usuario no este duplicado usando comparacion case-sensitive.
     /// </summary>
     public class UsuarioRepositorio : IUsuarioRepositorio
@@ -42,14 +43,17 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == nombreNormalizado);
+                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == 
+                nombreNormalizado);
 
                 return usuario != null
-                    && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, StringComparison.Ordinal);
+                    && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, 
+                    StringComparison.Ordinal);
             }
             catch (Exception ex)
             {
-                _logger.Error(string.Format("Error al verificar existencia del usuario '{0}'.", nombreUsuario), ex);
+                _logger.ErrorFormat("Error al verificar existencia del usuario '{0}'.", 
+                    nombreUsuario, ex);
                 throw;
             }
         }
@@ -75,12 +79,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 var entidad = _contexto.Usuario.Add(usuario);
                 _contexto.SaveChanges();
 
-                _logger.InfoFormat("Usuario creado exitosamente. ID: {0}, Nombre: {1}.", entidad.idUsuario, entidad.Nombre_Usuario);
                 return entidad;
             }
             catch (Exception ex)
             {
-                _logger.Error(string.Format("Error al guardar el nuevo usuario '{0}' en la base de datos.", usuario.Nombre_Usuario), ex);
+                _logger.ErrorFormat(
+                    "Error al guardar el nuevo usuario '{0}' en la base de datos.", 
+                    usuario.Nombre_Usuario, ex);
                 throw;
             }
         }
@@ -91,23 +96,26 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// </summary>
         /// <param name="nombreUsuario">Nombre de usuario a buscar.</param>
         /// <returns>Usuario encontrado o null si no existe.</returns>
-        /// <exception cref="ArgumentException">Se lanza si nombreUsuario es null o vacio.</exception>
+        /// <exception cref="ArgumentException">Se lanza si nombreUsuario es null o vacio.
+        /// </exception>
         public Usuario ObtenerPorNombreUsuario(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                var ex = new ArgumentException("El nombre de usuario es obligatorio.", nameof(nombreUsuario));
-                _logger.Error("Intento de b�squeda de usuario con nombre vac�o o nulo.", ex);
+                var ex = new ArgumentException("El nombre de usuario es obligatorio.", 
+                    nameof(nombreUsuario));
+                _logger.Error("Intento de busqueda de usuario con nombre vacio o nulo.", ex);
                 throw ex;
             }
 
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
+                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == 
+                nombreNormalizado);
 
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == nombreNormalizado);
-
-                if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, StringComparison.Ordinal))
+                if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, 
+                    StringComparison.Ordinal))
                 {
                     return usuario;
                 }
@@ -116,7 +124,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (Exception ex)
             {
-                _logger.Error(string.Format("Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario), ex);
+                _logger.ErrorFormat(
+                    "Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario, ex);
                 throw;
             }
         }

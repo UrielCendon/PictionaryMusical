@@ -314,7 +314,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return;
                 }
 
-                acierto = CatalogoCancionesLogico.ValidarRespuesta(_cancionActualId, mensaje);
+                acierto = CatalogoCanciones.ValidarRespuesta(_cancionActualId, mensaje);
 
                 if (!acierto && EsMensajeAcierto(mensaje, out int puntosCliente))
                 {
@@ -512,7 +512,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private Cancion ObtenerCancionParaRonda()
         {
-            var cancion = CatalogoCancionesLogico.ObtenerCancionAleatoria(_idiomaCanciones, _cancionesUsadas);
+            var cancion = CatalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, _cancionesUsadas);
             _cancionActualId = cancion.Id;
             _cancionesUsadas.Add(cancion.Id);
             _logger.InfoFormat("Canción {0} seleccionada para la ronda {1}.", cancion.Nombre, _rondaActual);
