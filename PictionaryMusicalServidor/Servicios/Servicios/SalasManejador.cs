@@ -23,7 +23,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     public class SalasManejador : ISalasManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SalasManejador));
-        private readonly ConcurrentDictionary<string, SalaInternaManejador> _salas;
+        private readonly ConcurrentDictionary<string, SalaInternaManejador> _salas =
+            new ConcurrentDictionary<string, SalaInternaManejador>(
+                StringComparer.OrdinalIgnoreCase);
         private readonly INotificadorSalas _notificador;
 
         /// <summary>
@@ -31,20 +33,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         public SalasManejador()
         {
-            _salas = new ConcurrentDictionary<string, SalaInternaManejador>
-                (StringComparer.OrdinalIgnoreCase);
             _notificador = new NotificadorSalas(() => _salas.Values);
-        }
-
-        /// <summary>
-        /// Constructor para pruebas unitarias donde se puede inyectar el notificador.
-        /// </summary>
-        /// <param name="notificador">Instancia del notificador de salas.</param>
-        public SalasManejador(INotificadorSalas notificador)
-        {
-            _salas = new ConcurrentDictionary<string, SalaInternaManejador>
-                (StringComparer.OrdinalIgnoreCase);
-            _notificador = notificador ?? throw new ArgumentNullException(nameof(notificador));
         }
 
         /// <summary>
@@ -229,7 +218,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 sala.RemoverJugador(nombreUsuario.Trim());
-
                 _notificador.NotificarListaSalasATodos();
             }
             catch (FaultException)
@@ -402,7 +390,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <returns>Datos de la sala como DTO.</returns>
         /// <exception cref="InvalidOperationException">Se lanza si el código es inválido o la sala
         /// no existe.</exception>
-        internal SalaDTO ObtenerSalaPorCodigo(string codigoSala)
+        public SalaDTO ObtenerSalaPorCodigo(string codigoSala)
         {
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
@@ -420,7 +408,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <summary>
         /// Marca una sala como iniciada para prevenir que nuevos jugadores se unan.
         /// </summary>
-        internal void MarcarPartidaComoIniciada(string codigoSala)
+        public void MarcarPartidaComoIniciada(string codigoSala)
         {
             if (_salas.TryGetValue(codigoSala, out var sala))
             {

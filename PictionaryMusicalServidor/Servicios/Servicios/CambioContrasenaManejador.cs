@@ -12,20 +12,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Implementacion del servicio de recuperacion y cambio de contrasena de usuarios.
-    /// Maneja el proceso completo de recuperacion incluyendo solicitud, reenvio, confirmacion de codigos y actualizacion de contrasena.
+    /// Maneja el proceso completo de recuperacion incluyendo solicitud, reenvio, confirmacion
+    /// de codigos y actualizacion de contrasena.
     /// Delega la logica de negocio al RecuperacionCuentaServicio.
     /// </summary>
     public class CambioContrasenaManejador : ICambioContrasenaManejador
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(CambioContrasenaManejador));
+        private static readonly ILog _logger = 
+            LogManager.GetLogger(typeof(CambioContrasenaManejador));
 
         /// <summary>
         /// Solicita un codigo de verificacion para recuperar la cuenta.
         /// Busca la cuenta por identificador, genera un codigo y lo envia por correo.
         /// </summary>
         /// <param name="solicitud">Datos de la solicitud con identificador del usuario.</param>
-        /// <returns>Resultado indicando si se encontro la cuenta y si el codigo fue enviado.</returns>
-        public ResultadoSolicitudRecuperacionDTO SolicitarCodigoRecuperacion(SolicitudRecuperarCuentaDTO solicitud)
+        /// <returns>Resultado indicando si se encontro la cuenta y si el codigo fue enviado.
+        /// </returns>
+        public ResultadoSolicitudRecuperacionDTO SolicitarCodigoRecuperacion
+            (SolicitudRecuperarCuentaDTO solicitud)
         {
             try
             {

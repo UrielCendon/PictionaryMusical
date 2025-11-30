@@ -29,6 +29,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IAmistadServicio _amistadServicio;
         private readonly INotificadorListaAmigos _notificador;
 
+        public ListaAmigosManejador()
+            : this(new ContextoFactory(), new AmistadServicio(new ContextoFactory()))
+        {
+        }
+
         /// <summary>
         /// Constructor principal.
         /// </summary>

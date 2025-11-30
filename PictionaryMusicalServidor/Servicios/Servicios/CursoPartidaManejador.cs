@@ -4,6 +4,7 @@ using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
@@ -31,15 +32,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly object _sincronizacion = new();
 
         private readonly IContextoFactory _contextoFactory;
+        private readonly ISalasManejador _salasManejador;
+        private readonly ICatalogoCanciones _catalogoCanciones;
 
-        public CursoPartidaManejador()
-            : this(new ContextoFactory())
+        public CursoPartidaManejador() : this( new ContextoFactory(), new SalasManejador(),
+            new CatalogoCanciones())
         {
         }
 
-        public CursoPartidaManejador(IContextoFactory contextoFactory)
+        public CursoPartidaManejador(
+            IContextoFactory contextoFactory,
+            ISalasManejador salasManejador,
+            ICatalogoCanciones catalogoCanciones)
         {
-            _contextoFactory = contextoFactory ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _contextoFactory = contextoFactory
+                ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _salasManejador = salasManejador
+                ?? throw new ArgumentNullException(nameof(salasManejador));
+            _catalogoCanciones = catalogoCanciones
+                ?? throw new ArgumentNullException(nameof(catalogoCanciones));
         }
 
         /// <summary>
@@ -81,7 +92,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException("El identificador de sala es obligatorio.");
             }
 
-            SalasManejador.MarcarPartidaComoIniciada(idSala.Trim());
+            _salasManejador.MarcarPartidaComoIniciada(idSala.Trim());
             var controlador = ObtenerOCrearControlador(idSala.Trim());
             controlador.IniciarPartida(idJugadorSolicitante?.Trim());
         }
@@ -149,7 +160,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var controlador = new ControladorPartida(
                     configuracion?.TiempoPorRondaSegundos ?? TiempoRondaPorDefectoSegundos,
                     configuracion?.Dificultad ?? DificultadPorDefecto,
-                    configuracion?.NumeroRondas ?? NumeroRondasPorDefecto);
+                    configuracion?.NumeroRondas ?? NumeroRondasPorDefecto, _catalogoCanciones);
 
                 if (!string.IsNullOrWhiteSpace(configuracion?.IdiomaCanciones))
                 {
@@ -182,7 +193,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     callbacks = callbacksSala.ToList();
                 }
 
-                var cancionActual = CatalogoCanciones.ObtenerCancionPorId(rondaBase.IdCancion);
+                var cancionActual = _catalogoCanciones.ObtenerCancionPorId(rondaBase.IdCancion);
 
                 foreach (var par in callbacks)
                 {
@@ -422,7 +433,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                return SalasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
+                return _salasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
             }
             catch (Exception ex)
             {

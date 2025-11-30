@@ -180,7 +180,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 ValidarInicioPartida(idSolicitante);
                 _estadoActual = EstadoPartida.Jugando;
-                _logger.Info("Partida iniciada.");
             }
 
             PartidaIniciada?.Invoke();
@@ -230,6 +229,17 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 {
                     TrazoRecibido?.Invoke(trazo);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una copia segura de la lista de jugadores actuales en la partida.
+        /// </summary>
+        public IEnumerable<JugadorPartida> ObtenerJugadores()
+        {
+            lock (_sincronizacion)
+            {
+                return _gestorJugadores.ObtenerCopiaLista();
             }
         }
 

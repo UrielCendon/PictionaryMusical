@@ -29,6 +29,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IContextoFactory _contextoFactory;
         private readonly IAmistadServicio _amistadServicio;
 
+        public AmigosManejador() : this(new ContextoFactory(), 
+            new AmistadServicio(new ContextoFactory()), new NotificadorListaAmigos(
+                new ManejadorCallback<IListaAmigosManejadorCallback>
+                (StringComparer.OrdinalIgnoreCase), new ContextoFactory()))
+        {
+        }
+
         /// <summary>
         /// Constructor por defecto para compatibilidad con WCF.
         /// </summary>
@@ -122,11 +129,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Envia una solicitud de amistad de un usuario a otro.
-        /// Valida que ambos usuarios existan, crea la solicitud en la base de datos y notifica al receptor.
+        /// Valida que ambos usuarios existan, crea la solicitud en la base de datos y notifica al
+        /// receptor.
         /// </summary>
         /// <param name="nombreUsuarioEmisor">Nombre del usuario que envia la solicitud.</param>
         /// <param name="nombreUsuarioReceptor">Nombre del usuario que recibe la solicitud.</param>
-        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios no existen, o hay errores de base de datos.</exception>
+        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios no
+        /// existen, o hay errores de base de datos.</exception>
         public void EnviarSolicitudAmistad(string nombreUsuarioEmisor, 
             string nombreUsuarioReceptor)
         {
@@ -253,7 +262,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         /// <param name="nombreUsuarioA">Nombre del primer usuario.</param>
         /// <param name="nombreUsuarioB">Nombre del segundo usuario.</param>
-        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios 
+        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios
         /// no existen, o hay errores de base de datos.</exception>
         public void EliminarAmigo(string nombreUsuarioA, string nombreUsuarioB)
         {

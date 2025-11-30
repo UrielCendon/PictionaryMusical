@@ -16,7 +16,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// </summary>
     public class AmistadServicio : IAmistadServicio
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(AmistadServicio));
         private readonly IContextoFactory _contextoFactory;
 
         /// <summary>
@@ -36,40 +35,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <returns>Lista de solicitudes de amistad pendientes como DTOs.</returns>
         public List<SolicitudAmistadDTO> ObtenerSolicitudesPendientesDTO(int usuarioId)
         {
-            using var contexto = _contextoFactory.CrearContexto();
-            var amigoRepositorio = new AmigoRepositorio(contexto);
-            var solicitudesPendientes =
-                amigoRepositorio.ObtenerSolicitudesPendientes(usuarioId);
-
-            if (solicitudesPendientes == null || solicitudesPendientes.Count == 0)
+            using (var contexto = _contextoFactory.CrearContexto())
             {
-                return new List<SolicitudAmistadDTO>();
-            }
+                var repo = new AmigoRepositorio(contexto);
+                var solicitudes = repo.ObtenerSolicitudesPendientes(usuarioId);
 
-            var resultadoDTOs = new List<SolicitudAmistadDTO>();
-            foreach (var solicitud in solicitudesPendientes)
-            {
-                if (solicitud.UsuarioReceptor != usuarioId)
+                if (solicitudes == null || solicitudes.Count == 0)
                 {
-                    continue;
+                    return new List<SolicitudAmistadDTO>();
                 }
 
-                string emisor = solicitud.Usuario?.Nombre_Usuario;
-                string receptor = solicitud.Usuario1?.Nombre_Usuario;
-
-                if (string.IsNullOrWhiteSpace(emisor) || string.IsNullOrWhiteSpace(receptor))
-                {
-                    continue;
-                }
-
-                resultadoDTOs.Add(new SolicitudAmistadDTO
-                {
-                    UsuarioEmisor = emisor,
-                    UsuarioReceptor = receptor,
-                    SolicitudAceptada = solicitud.Estado
-                });
+                return MapearSolicitudes(solicitudes, usuarioId);
             }
-            return resultadoDTOs;
         }
 
         /// <summary>
@@ -85,21 +62,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (usuarioEmisorId == usuarioReceptorId)
             {
-                _logger.Warn("Intento de auto-solicitud de amistad.");
-                throw new InvalidOperationException
-                    (MensajesError.Cliente.SolicitudAmistadMismoUsuario);
+                throw new InvalidOperationException(
+                    MensajesError.Cliente.SolicitudAmistadMismoUsuario);
             }
 
-            using var contexto = _contextoFactory.CrearContexto();
-            var amigoRepositorio = new AmigoRepositorio(contexto);
-            if (amigoRepositorio.ExisteRelacion(usuarioEmisorId, usuarioReceptorId))
+            using (var contexto = _contextoFactory.CrearContexto())
             {
-                _logger.Warn("Intento de crear solicitud de amistad existente.");
-                throw new InvalidOperationException
-                    (MensajesError.Cliente.RelacionAmistadExistente);
-            }
+                var repo = new AmigoRepositorio(contexto);
+                if (repo.ExisteRelacion(usuarioEmisorId, usuarioReceptorId))
+                {
+                    throw new InvalidOperationException(
+                        MensajesError.Cliente.RelacionAmistadExistente);
+                }
 
-            amigoRepositorio.CrearSolicitud(usuarioEmisorId, usuarioReceptorId);
+                repo.CrearSolicitud(usuarioEmisorId, usuarioReceptorId);
+            }
         }
 
         /// <summary>
@@ -113,33 +90,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// fue aceptada.</exception>
         public void AceptarSolicitud(int usuarioEmisorId, int usuarioReceptorId)
         {
-            using var contexto = _contextoFactory.CrearContexto();
-            var amigoRepositorio = new AmigoRepositorio(contexto);
-            var relacion = amigoRepositorio.ObtenerRelacion(usuarioEmisorId,
-                usuarioReceptorId);
-
-            if (relacion == null)
+            using (var contexto = _contextoFactory.CrearContexto())
             {
-                _logger.Warn("Intento de aceptar solicitud inexistente.");
-                throw new InvalidOperationException
-                    (MensajesError.Cliente.SolicitudAmistadNoExiste);
-            }
+                var repo = new AmigoRepositorio(contexto);
+                var relacion = repo.ObtenerRelacion(usuarioEmisorId, usuarioReceptorId);
 
-            if (relacion.UsuarioReceptor != usuarioReceptorId)
-            {
-                _logger.Warn("Usuario intento aceptar una solicitud que no le corresponde.");
-                throw new InvalidOperationException
-                    (MensajesError.Cliente.ErrorAceptarSolicitud);
+                ValidarSolicitudParaAceptar(relacion, usuarioReceptorId);
+                repo.ActualizarEstado(relacion, true);
             }
-
-            if (relacion.Estado)
-            {
-                _logger.Warn("Intento de aceptar una solicitud ya aceptada.");
-                throw new InvalidOperationException
-                    (MensajesError.Cliente.SolicitudAmistadYaAceptada);
-            }
-
-            amigoRepositorio.ActualizarEstado(relacion, true);
         }
 
         /// <summary>
@@ -157,18 +115,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new InvalidOperationException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
 
-            using var contexto = _contextoFactory.CrearContexto();
-            var amigoRepositorio = new AmigoRepositorio(contexto);
-            var relacion = amigoRepositorio.ObtenerRelacion(usuarioAId, usuarioBId);
-
-            if (relacion == null)
+            using (var contexto = _contextoFactory.CrearContexto())
             {
-                _logger.Warn("Intento de eliminar relacion inexistente.");
-                throw new InvalidOperationException(MensajesError.Cliente.RelacionAmistadNoExiste);
-            }
+                var repo = new AmigoRepositorio(contexto);
+                var relacion = repo.ObtenerRelacion(usuarioAId, usuarioBId);
 
-            amigoRepositorio.EliminarRelacion(relacion);
-            return relacion;
+                if (relacion == null)
+                {
+                    throw new InvalidOperationException(
+                        MensajesError.Cliente.RelacionAmistadNoExiste);
+                }
+
+                repo.EliminarRelacion(relacion);
+                return relacion;
+            }
         }
 
         /// <summary>
@@ -179,30 +139,77 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <returns>Lista de amigos como DTOs, o lista vacia si no hay amigos.</returns>
         public List<AmigoDTO> ObtenerAmigosDTO(int usuarioId)
         {
-            using var contexto = _contextoFactory.CrearContexto();
-            var amigoRepositorio = new AmigoRepositorio(contexto);
-            IList<Usuario> amigos = amigoRepositorio.ObtenerAmigos(usuarioId);
-
-            if (amigos == null)
+            using (var contexto = _contextoFactory.CrearContexto())
             {
-                return new List<AmigoDTO>();
+                var repo = new AmigoRepositorio(contexto);
+                var amigos = repo.ObtenerAmigos(usuarioId);
+
+                if (amigos == null)
+                {
+                    return new List<AmigoDTO>();
+                }
+
+                var resultado = new List<AmigoDTO>();
+                foreach (var amigo in amigos)
+                {
+                    if (amigo != null)
+                    {
+                        resultado.Add(new AmigoDTO
+                        {
+                            UsuarioId = amigo.idUsuario,
+                            NombreUsuario = amigo.Nombre_Usuario
+                        });
+                    }
+                }
+                return resultado;
             }
+        }
 
-            var resultado = new List<AmigoDTO>(amigos.Count);
-            foreach (var amigo in amigos)
+       private List<SolicitudAmistadDTO> MapearSolicitudes(IList<Amigo> solicitudes,
+            int usuarioId)
+        {
+            var resultadoDTOs = new List<SolicitudAmistadDTO>();
+            foreach (var solicitud in solicitudes)
             {
-                if (amigo == null)
+                if (solicitud.UsuarioReceptor != usuarioId)
                 {
                     continue;
                 }
 
-                resultado.Add(new AmigoDTO
+                string emisor = solicitud.Usuario?.Nombre_Usuario;
+                string receptor = solicitud.Usuario1?.Nombre_Usuario;
+
+                if (!string.IsNullOrWhiteSpace(emisor) && !string.IsNullOrWhiteSpace(receptor))
                 {
-                    UsuarioId = amigo.idUsuario,
-                    NombreUsuario = amigo.Nombre_Usuario
-                });
+                    resultadoDTOs.Add(new SolicitudAmistadDTO
+                    {
+                        UsuarioEmisor = emisor,
+                        UsuarioReceptor = receptor,
+                        SolicitudAceptada = solicitud.Estado
+                    });
+                }
             }
-            return resultado;
+            return resultadoDTOs;
+        }
+
+        private void ValidarSolicitudParaAceptar(Amigo relacion, int usuarioReceptorId)
+        {
+            if (relacion == null)
+            {
+                throw new InvalidOperationException(
+                    MensajesError.Cliente.SolicitudAmistadNoExiste);
+            }
+
+            if (relacion.UsuarioReceptor != usuarioReceptorId)
+            {
+                throw new InvalidOperationException(MensajesError.Cliente.ErrorAceptarSolicitud);
+            }
+
+            if (relacion.Estado)
+            {
+                throw new InvalidOperationException(
+                    MensajesError.Cliente.SolicitudAmistadYaAceptada);
+            }
         }
     }
 }

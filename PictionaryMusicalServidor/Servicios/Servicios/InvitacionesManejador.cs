@@ -1,9 +1,10 @@
-using log4net;
 using Datos.Modelo;
+using log4net;
 using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,RegexTimeout);
 
+        private readonly IContextoFactory _contextoFactory;
+        private readonly ISalasManejador _salasManejador;
+        private readonly ICorreoInvitacionNotificador _correoNotificador;
+
+        public InvitacionesManejador() : this(new ContextoFactory(), new SalasManejador(), 
+            new CorreoInvitacionNotificador())
+        {
+        }
+
+        /// <summary>
+        /// Constructor con inyeccion de dependencias.
+        /// </summary>
+        public InvitacionesManejador(
+            IContextoFactory contextoFactory,
+            ISalasManejador salasManejador,
+            ICorreoInvitacionNotificador correoNotificador)
+        {
+            _contextoFactory = contextoFactory
+                ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _salasManejador = salasManejador
+                ?? throw new ArgumentNullException(nameof(salasManejador));
+            _correoNotificador = correoNotificador
+                ?? throw new ArgumentNullException(nameof(correoNotificador));
+        }
+
         /// <summary>
         /// Envia una invitacion a una sala de juego a un usuario via correo electronico.
         /// Valida el correo, verifica que la sala exista y que el usuario no este ya en la sala.
@@ -46,15 +72,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 string correo = invitacion.Correo.Trim();
                 string idioma = invitacion.Idioma;
 
-                var sala = SalasManejador.ObtenerSalaPorCodigo(codigoSala);
+                var sala = _salasManejador.ObtenerSalaPorCodigo(codigoSala);
                 ValidarSala(sala);
 
-                if (sala.Jugadores != null && sala.Jugadores.Count > 0 && await UsuarioYaEnSalaAsync(correo, sala))
+                if (sala.Jugadores != null && sala.Jugadores.Count > 0 && 
+                    await UsuarioYaEnSalaAsync(correo, sala))
                 {
                     throw new InvalidOperationException(MensajesError.Cliente.CorreoJugadorEnSala);
                 }
 
-                bool enviado = await CorreoInvitacionNotificador.EnviarInvitacionAsync(
+                bool enviado = await _correoNotificador.EnviarInvitacionAsync(
                     correo,
                     sala.Codigo,
                     sala.Creador,
@@ -64,8 +91,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 {
                     return CrearFallo(MensajesError.Cliente.ErrorEnviarInvitacionCorreo);
                 }
-
-                _logger.InfoFormat("Invitación enviada a '{0}' para la sala {1}.", correo, codigoSala);
 
                 return new ResultadoOperacionDTO
                 {
@@ -79,27 +104,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
+                _logger.Warn("Operación inválida al enviar invitación.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
+                _logger.Warn("Operación inválida al enviar invitación.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al enviar invitación. Fallo en la consulta de verificación de usuario.", ex);
+                _logger.Error("Error de base de datos al enviar invitación.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al enviar invitación. No se pudo procesar la información del destinatario.", ex);
+                _logger.Error("Error de datos al enviar invitación.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (Exception ex)
             {
-                _logger.Error("Operación inválida al enviar invitación. Estado inconsistente o validación fallida.", ex);
+                _logger.Error("Operación inválida al enviar invitación.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
         }
@@ -133,9 +158,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private static async Task<bool> UsuarioYaEnSalaAsync(string correo, dynamic sala)
+        private async Task<bool> UsuarioYaEnSalaAsync(string correo, dynamic sala)
         {
-            using (var contexto = CrearContexto())
+            if (sala.Jugadores == null || sala.Jugadores.Count == 0)
+            {
+                return false;
+            }
+
+            using (var contexto = _contextoFactory.CrearContexto())
             {
                 var usuario = await contexto.Usuario
                     .Include(u => u.Jugador)
@@ -147,17 +177,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 var listaJugadores = (IEnumerable<string>)sala.Jugadores;
-
-                return listaJugadores.Contains(usuario.Nombre_Usuario, StringComparer.OrdinalIgnoreCase);
+                return listaJugadores.Contains(
+                    usuario.Nombre_Usuario, StringComparer.OrdinalIgnoreCase);
             }
-        }
-
-        private static BaseDatosPruebaEntities CrearContexto()
-        {
-            string cadenaConexion = Conexion.ObtenerConexion();
-            return string.IsNullOrWhiteSpace(cadenaConexion)
-                ? new BaseDatosPruebaEntities()
-                : new BaseDatosPruebaEntities(cadenaConexion);
         }
 
         private static ResultadoOperacionDTO CrearFallo(string mensaje)

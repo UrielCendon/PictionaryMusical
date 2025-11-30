@@ -102,7 +102,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                var ex = new ArgumentException(MensajesError.NombreUsuarioObligatorio, 
+                var ex = new ArgumentException("El nombre de usuario es obligatorio.", 
                     nameof(nombreUsuario));
                 _logger.Error("Intento de busqueda de usuario con nombre vacio o nulo.", ex);
                 throw ex;

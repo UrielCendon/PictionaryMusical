@@ -17,7 +17,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Implementacion del servicio de gestion de perfiles de usuario.
-    /// Maneja consulta y actualizacion de datos de perfil incluyendo informacion personal y redes sociales.
+    /// Maneja consulta y actualizacion de datos de perfil incluyendo informacion personal y 
+    /// redes sociales.
     /// Verifica que el usuario exista y tenga jugador asociado antes de operar.
     /// </summary>
     public class PerfilManejador : IPerfilManejador
@@ -25,13 +26,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger = LogManager.GetLogger(typeof(PerfilManejador));
         private readonly IContextoFactory _contextoFactory;
 
-        public PerfilManejador() : this(new ContextoFactory())
+        public PerfilManejador() : this(new ContextoFactory()) 
         {
         }
 
         public PerfilManejador(IContextoFactory contextoFactory)
         {
-            _contextoFactory = contextoFactory ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _contextoFactory = contextoFactory ?? 
+                throw new ArgumentNullException(nameof(contextoFactory));
         }
 
         /// <summary>
@@ -40,10 +42,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         /// <param name="idUsuario">Identificador unico del usuario.</param>
         /// <returns>Datos completos del perfil del usuario.</returns>
-        /// <exception cref="ArgumentException">Se lanza si idUsuario es menor o igual a 0.</exception>
-        /// <exception cref="InvalidOperationException">Se lanza si el usuario no existe o no tiene jugador asociado.</exception>
-        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de datos.</exception>
-        /// <exception cref="DataException">Se lanza si hay errores de datos durante la consulta.</exception>
+        /// <exception cref="ArgumentException">Se lanza si idUsuario es menor o igual a 0.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">Se lanza si el usuario no existe o no 
+        /// tiene jugador asociado.</exception>
+        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de 
+        /// datos.</exception>
+        /// <exception cref="DataException">Se lanza si hay errores de datos durante la consulta.
+        /// </exception>
         public UsuarioDTO ObtenerPerfil(int idUsuario)
         {
             try
@@ -53,25 +59,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     throw new ArgumentException(MensajesError.Cliente.DatosInvalidos);
                 }
 
-                using (BaseDatosPruebaEntities contexto = _contextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    Usuario usuario = contexto.Usuario
+                    var usuario = contexto.Usuario
                         .Include(u => u.Jugador.RedSocial)
                         .FirstOrDefault(u => u.idUsuario == idUsuario);
 
                     if (usuario == null)
                     {
-                        throw new InvalidOperationException(MensajesError.Cliente.UsuarioNoEncontrado);
+                        throw new InvalidOperationException(
+                            MensajesError.Cliente.UsuarioNoEncontrado);
                     }
 
-                    Jugador jugador = usuario.Jugador;
+                    var jugador = usuario.Jugador;
 
                     if (jugador == null)
                     {
-                        throw new InvalidOperationException(MensajesError.Cliente.JugadorNoAsociado);
+                        throw new InvalidOperationException(
+                            MensajesError.Cliente.JugadorNoAsociado);
                     }
 
-                    RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
+                    var redSocial = jugador.RedSocial.FirstOrDefault();
 
                     return new UsuarioDTO
                     {
@@ -81,7 +89,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                         Nombre = jugador.Nombre,
                         Apellido = jugador.Apellido,
                         Correo = jugador.Correo,
-                        AvatarId = jugador.Id_Avatar,
+                        AvatarId = jugador.Id_Avatar ?? 0,
                         Instagram = redSocial?.Instagram,
                         Facebook = redSocial?.facebook,
                         X = redSocial?.x,
@@ -91,27 +99,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al obtener perfil. Estado inconsistente del contexto de datos.", ex);
+                _logger.Warn("Operación inválida al obtener perfil.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al obtener perfil. Estado inconsistente del contexto de datos.", ex);
+                _logger.Warn("Operación inválida al obtener perfil.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al obtener perfil. Fallo en la consulta de información de usuario.", ex);
+                _logger.Error("Error de base de datos al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al obtener perfil. Los datos del perfil no se pudieron recuperar correctamente.", ex);
+                _logger.Error("Error de datos al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
             catch (Exception ex)
             {
-                _logger.Error("Operación inválida al obtener perfil. Estado inconsistente del contexto de datos.", ex);
+                _logger.Error("Operación inválida al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
@@ -131,54 +139,38 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ResultadoOperacionDTO validacion = EntradaComunValidador.ValidarActualizacionPerfil(solicitud);
+                var validacion = EntradaComunValidador.ValidarActualizacionPerfil(solicitud);
                 if (!validacion.OperacionExitosa)
                 {
                     return validacion;
                 }
 
-                using (BaseDatosPruebaEntities contexto = _contextoFactory.CrearContexto())
+                using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    Usuario usuario = contexto.Usuario
+                    var usuario = contexto.Usuario
                         .Include(u => u.Jugador.RedSocial)
                         .FirstOrDefault(u => u.idUsuario == solicitud.UsuarioId);
 
-
                     if (usuario == null)
                     {
-                        throw new InvalidOperationException(MensajesError.Cliente.UsuarioNoEncontrado);
+                        throw new InvalidOperationException(
+                            MensajesError.Cliente.UsuarioNoEncontrado);
                     }
 
-                    Jugador jugador = usuario.Jugador;
+                    var jugador = usuario.Jugador;
 
                     if (jugador == null)
                     {
-                        throw new InvalidOperationException(MensajesError.Cliente.JugadorNoAsociado);
+                        throw new InvalidOperationException(
+                            MensajesError.Cliente.JugadorNoAsociado);
                     }
 
-                    jugador.Nombre = solicitud.Nombre;
-                    jugador.Apellido = solicitud.Apellido;
-                    jugador.Id_Avatar = solicitud.AvatarId;
-
-                    RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
-                    if (redSocial == null)
-                    {
-                        redSocial = new RedSocial
-                        {
-                            Jugador_idJugador = jugador.idJugador
-                        };
-                        contexto.RedSocial.Add(redSocial);
-                        jugador.RedSocial.Add(redSocial);
-                    }
-
-                    redSocial.Instagram = solicitud.Instagram;
-                    redSocial.facebook = solicitud.Facebook;
-                    redSocial.x = solicitud.X;
-                    redSocial.discord = solicitud.Discord;
+                    ActualizarDatosJugador(jugador, solicitud);
+                    ActualizarRedesSociales(contexto, jugador, solicitud);
 
                     contexto.SaveChanges();
 
-                    _logger.InfoFormat("Perfil actualizado para el usuario ID: {0}.", solicitud.UsuarioId);
+                    _logger.Info("Perfil actualizado exitosamente.");
 
                     return new ResultadoOperacionDTO
                     {
@@ -222,6 +214,35 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Operación inválida al actualizar perfil. Secuencia de operaciones incorrecta.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
+        }
+
+        private void ActualizarDatosJugador(Jugador jugador, ActualizacionPerfilDTO solicitud)
+        {
+            jugador.Nombre = solicitud.Nombre;
+            jugador.Apellido = solicitud.Apellido;
+            jugador.Id_Avatar = solicitud.AvatarId;
+        }
+
+        private void ActualizarRedesSociales(
+            BaseDatosPruebaEntities contexto,
+            Jugador jugador,
+            ActualizacionPerfilDTO solicitud)
+        {
+            var redSocial = jugador.RedSocial.FirstOrDefault();
+            if (redSocial == null)
+            {
+                redSocial = new RedSocial
+                {
+                    Jugador_idJugador = jugador.idJugador
+                };
+                contexto.RedSocial.Add(redSocial);
+                jugador.RedSocial.Add(redSocial);
+            }
+
+            redSocial.Instagram = solicitud.Instagram;
+            redSocial.facebook = solicitud.Facebook;
+            redSocial.x = solicitud.X;
+            redSocial.discord = solicitud.Discord;
         }
 
         private static ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
