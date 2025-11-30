@@ -75,6 +75,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 throw new ArgumentNullException(nameof(salasServicio));
 
             _listaAmigosServicio.ListaActualizada += ListaActualizada;
+            _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
 
             _nombreUsuarioSesion = SesionUsuarioActual.Usuario?.NombreUsuario ?? string.Empty;
 
@@ -380,6 +381,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         public async Task FinalizarAsync()
         {
             _listaAmigosServicio.ListaActualizada -= ListaActualizada;
+            _amigosServicio.SolicitudesActualizadas -= SolicitudesAmistadActualizadas;
 
             if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
             {
@@ -447,6 +449,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             EjecutarEnDispatcher(() => ActualizarAmigos(amigos));
         }
 
+        private void SolicitudesAmistadActualizadas(
+            object sender,
+            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
+        {
+            _ = ActualizarListaAmigosDesdeServidorAsync();
+        }
+
         private void ActualizarAmigos(IReadOnlyList<DTOs.AmigoDTO> amigos)
         {
             if (Amigos == null)
@@ -472,6 +481,26 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     StringComparison.OrdinalIgnoreCase))))
             {
                 AmigoSeleccionado = null;
+            }
+        }
+
+        private async Task ActualizarListaAmigosDesdeServidorAsync()
+        {
+            if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
+            {
+                return;
+            }
+
+            try
+            {
+                var amigos = await _listaAmigosServicio.ObtenerAmigosAsync(
+                    _nombreUsuarioSesion).ConfigureAwait(false);
+
+                EjecutarEnDispatcher(() => ActualizarAmigos(amigos));
+            }
+            catch (ServicioExcepcion ex)
+            {
+                _logger.Warn("No se pudo actualizar la lista de amigos tras cambios en solicitudes.", ex);
             }
         }
 
@@ -523,6 +552,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 await _amigosServicio.EliminarAmigoAsync(
                     _nombreUsuarioSesion,
                     amigo.NombreUsuario).ConfigureAwait(true);
+                await ActualizarListaAmigosDesdeServidorAsync().ConfigureAwait(true);
                 MostrarMensaje?.Invoke(Lang.amigosTextoAmigoEliminado);
             }
             catch (ServicioExcepcion ex)
