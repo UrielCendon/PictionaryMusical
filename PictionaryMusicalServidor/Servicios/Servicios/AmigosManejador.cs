@@ -370,7 +370,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private void NotificarEliminacion(Amigo relacion, string usuarioA, string usuarioB)
         {
-            bool usuarioAEsEmisor = relacion.UsuarioEmisor == relacion.Usuario.idUsuario;
+            if (relacion == null)
+            {
+                _logger.Warn("Se solicito notificar una eliminacion de amistad sin relacion.");
+                return;
+            }
             var solicitud = new SolicitudAmistadDTO
             {
                 UsuarioEmisor = usuarioA,
