@@ -23,7 +23,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
             if (string.IsNullOrWhiteSpace(conexion))
             {
-                _logger.Warn("La cadena de conexión obtenida está vacía. Se intentará usar la configuración predeterminada (App.config).");
+                _logger.Warn(
+                    "La cadena de conexión obtenida está vacía.");
                 return new BaseDatosPruebaEntities();
             }
 

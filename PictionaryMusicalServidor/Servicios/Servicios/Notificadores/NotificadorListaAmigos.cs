@@ -4,7 +4,6 @@ using System.Data;
 using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using Datos.Modelo;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -16,17 +15,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     /// Servicio especializado en notificaciones de cambios en lista de amigos.
     /// Gestiona las notificaciones cuando la lista de amigos de un usuario cambia.
     /// </summary>
-    internal class NotificadorListaAmigos
+    internal class NotificadorListaAmigos : INotificadorListaAmigos
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorListaAmigos));
         private readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
         private readonly IAmistadServicio _amistadServicio;
         private readonly IContextoFactory _contextoFactory;
-
-        public NotificadorListaAmigos(ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback)
-            : this(manejadorCallback, new ContextoFactory())
-        {
-        }
 
         public NotificadorListaAmigos(ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, IContextoFactory contextoFactory)
         {
@@ -49,25 +43,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             try
             {
                 List<AmigoDTO> amigos = ObtenerAmigosPorNombre(nombreUsuario);
-
-                _logger.InfoFormat("Enviando notificación de actualización de lista de amigos a '{0}'. Total amigos: {1}", nombreUsuario, amigos.Count);
                 NotificarLista(nombreUsuario, amigos);
             }
             catch (FaultException ex)
             {
-                _logger.Warn("No se pudo obtener la lista de amigos del usuario para notificar.", ex);
+                _logger.Warn("No se pudo obtener la lista de amigos del usuario para notificar.", 
+                    ex);
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn("Identificador inválido al actualizar la lista de amigos del usuario.", ex);
+                _logger.Warn(
+                    "Identificador inválido al actualizar la lista de amigos del usuario.", ex);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Datos inválidos al actualizar la lista de amigos del usuario.", ex);
+                _logger.Warn("Datos inválidos al actualizar la lista de amigos del usuario.", 
+                    ex);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.", ex);
+                _logger.Error(
+                    "Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.", 
+                    ex);
             }
             catch (InvalidOperationException ex)
             {
@@ -92,15 +89,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             using var contexto = _contextoFactory.CrearContexto();
             var usuarioRepositorio = new UsuarioRepositorio(contexto);
+            var usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
 
-            Usuario usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
-
-            if (usuario == null)
-            {
-                throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
-            }
-
-            return _amistadServicio.ObtenerAmigosDTO(usuario.idUsuario);
+            return usuario == null
+                ? throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado)
+                : _amistadServicio.ObtenerAmigosDTO(usuario.idUsuario);
         }
     }
 }

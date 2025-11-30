@@ -22,7 +22,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
             if (string.IsNullOrWhiteSpace(normalizado))
             {
-                string mensaje = string.Format(CultureInfo.CurrentCulture, MensajesError.Cliente.ParametroObligatorio, parametro);
+                string mensaje = string.Format(CultureInfo.CurrentCulture, 
+                    MensajesError.Cliente.ParametroObligatorio, parametro);
                 throw new FaultException(mensaje);
             }
 

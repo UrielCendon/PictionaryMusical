@@ -3,7 +3,7 @@ using Datos.Modelo;
 namespace PictionaryMusicalServidor.Servicios.Contratos
 {
     /// <summary>
-    /// Interfaz para la factoría de creación de contextos de base de datos.
+    /// Interfaz para la factoria de creación de contextos de base de datos.
     /// Permite inyectar y mockear la creación de contextos en pruebas unitarias.
     /// </summary>
     public interface IContextoFactory

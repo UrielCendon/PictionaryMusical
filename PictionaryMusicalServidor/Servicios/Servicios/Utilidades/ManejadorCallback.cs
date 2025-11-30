@@ -13,7 +13,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// <typeparam name="TCallback">Tipo de callback a gestionar.</typeparam>
     internal class ManejadorCallback<TCallback> where TCallback : class
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ManejadorCallback<TCallback>));
+        private static readonly ILog _logger = 
+            LogManager.GetLogger(typeof(ManejadorCallback<TCallback>));
         private readonly ConcurrentDictionary<string, TCallback> _suscripciones;
 
         public ManejadorCallback(StringComparer comparer = null)
@@ -36,7 +37,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
 
             _suscripciones.AddOrUpdate(nombreUsuario, callback, (_, __) => callback);
-            _logger.InfoFormat("Usuario '{0}' suscrito correctamente al callback {1}.", nombreUsuario, typeof(TCallback).Name);
         }
 
         /// <summary>
@@ -50,12 +50,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 canal.Closed += (_, __) => 
                 {
-                    _logger.InfoFormat("Canal cerrado para usuario '{0}'. Desuscribiendo.", nombreUsuario);
                     Desuscribir(nombreUsuario);
                 };
                 canal.Faulted += (_, __) => 
                 {
-                    _logger.WarnFormat("Canal fallado (Faulted) para usuario '{0}'. Desuscribiendo.", nombreUsuario);
+                    _logger.WarnFormat(
+                        "Canal fallado (Faulted) para usuario '{0}'. Desuscribiendo.", 
+                        nombreUsuario);
                     Desuscribir(nombreUsuario);
                 };
             }
@@ -72,10 +73,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return;
             }
 
-            if (_suscripciones.TryRemove(nombreUsuario, out _))
-            {
-                _logger.InfoFormat("Usuario '{0}' desuscrito del callback {1}.", nombreUsuario, typeof(TCallback).Name);
-            }
+            _suscripciones.TryRemove(nombreUsuario, out _);
         }
 
         /// <summary>
@@ -93,7 +91,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// Obtiene el callback actual del contexto de operación.
         /// </summary>
         /// <returns>Callback del contexto actual.</returns>
-        /// <exception cref="FaultException">Se lanza si no se puede obtener el callback.</exception>
+        /// <exception cref="FaultException">Se lanza si no se puede obtener el callback.
+        /// </exception>
         public static TCallback ObtenerCallbackActual()
         {
             var contexto = OperationContext.Current;
@@ -105,8 +104,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                     return callback;
                 }
                 
-                // Se lanza excepción, pero no se loguea aquí como Error porque puede ser manejado arriba.
-                // El FaultException será atrapado por el WCF stack.
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerCallback);
             }
 
@@ -122,7 +119,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (!TryGetCallback(nombreUsuario, out var callback))
             {
-                _logger.WarnFormat("Intento de notificación a '{0}' fallido: No se encontró callback activo.", nombreUsuario);
+                _logger.WarnFormat(
+                    "Intento de notificación a '{0}' fallido: No se encontró callback activo.", 
+                    nombreUsuario);
                 return;
             }
 
@@ -132,17 +131,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (CommunicationException ex)
             {
-                _logger.ErrorFormat("Error de comunicación al notificar a '{0}'. Desuscribiendo.", nombreUsuario, ex);
+                _logger.ErrorFormat("Error de comunicación al notificar a '{0}'. Desuscribiendo.",
+                    nombreUsuario, ex);
                     Desuscribir(nombreUsuario);
             }
             catch (TimeoutException ex)
             {
-                _logger.ErrorFormat("Timeout al notificar a '{0}'. Desuscribiendo.", nombreUsuario, ex);
+                _logger.ErrorFormat("Timeout al notificar a '{0}'. Desuscribiendo.",
+                    nombreUsuario, ex);
                     Desuscribir(nombreUsuario);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida en comunicación WCF. El canal no está en el estado correcto para la operación.", ex);
+                _logger.Warn("Operación inválida en comunicación WCF.", ex);
             }
         }
     }

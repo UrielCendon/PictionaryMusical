@@ -88,11 +88,9 @@
     <Compile Include="Contratos\ICuentaManejador.cs" />
     <Compile Include="Contratos\ICursoPartidaManejadorCallback.cs" />
     <Compile Include="Contratos\ICursoPartidaManejador.cs" />
-    <Compile Include="Contratos\IInicioPartidaManejador.cs" />
     <Compile Include="Contratos\IInicioSesionManejador.cs" />
     <Compile Include="Contratos\IInvitacionesManejador.cs" />
     <Compile Include="Contratos\IAmistadServicio.cs" />
-    <Compile Include="Contratos\ILienzoManejador.cs" />
     <Compile Include="Contratos\IListaAmigosManejador.cs" />
     <Compile Include="Contratos\IListaAmigosManejadorCallback.cs" />
     <Compile Include="Contratos\IPerfilManejador.cs" />
@@ -101,6 +99,8 @@
     <Compile Include="Contratos\IContextoFactory.cs" />
     <Compile Include="LogicaNegocio\ControladorPartida.cs" />
     <Compile Include="LogicaNegocio\EstadoPartida.cs" />
+    <Compile Include="LogicaNegocio\GestorJugadoresPartida.cs" />
+    <Compile Include="LogicaNegocio\GestorTiempoPartida.cs" />
     <Compile Include="LogicaNegocio\JugadorPartida.cs" />
     <Compile Include="Contratos\DTOs\ActualizacionContrasenaDTO.cs" />
     <Compile Include="Contratos\DTOs\ClasificacionUsuarioDTO.cs" />

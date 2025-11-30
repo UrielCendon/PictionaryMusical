@@ -6,7 +6,8 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
 {
     /// <summary>
     /// Contrato de servicio para la gestion de salas de juego.
-    /// Proporciona operaciones para crear, unirse, abandonar y gestionar salas con soporte de callbacks.
+    /// Proporciona operaciones para crear, unirse, abandonar y gestionar salas con soporte de 
+    /// callbacks.
     /// </summary>
     [ServiceContract(CallbackContract = typeof(ISalasManejadorCallback))]
     public interface ISalasManejador

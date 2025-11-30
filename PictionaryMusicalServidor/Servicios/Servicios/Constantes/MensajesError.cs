@@ -122,6 +122,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string TiempoRondaInvalido = "El tiempo por ronda debe ser mayor a cero.";
             public const string IdiomaObligatorio = "El idioma de las canciones es obligatorio.";
             public const string DificultadObligatoria = "La dificultad es obligatoria.";
+
+            public const string PartidaCanceladaFaltaJugadores = "Partida cancelada por falta de jugadores.";
+            public const string PartidaYaIniciada = "Partida ya iniciada.";
+            public const string PartidaComenzo = "La partida ya comenzó";
+            public const string FaltanJugadores = "Faltan jugadores.";
+            public const string SoloHost = "Solo Host.";
         }
     }
 }
