@@ -383,11 +383,15 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             });
         }
 
-        private void FinalizarRondaActual()
+        private void FinalizarRondaActual(bool forzarPorAciertos = false)
         {
             lock (_sincronizacion)
             {
-                if (_estadoActual != EstadoPartida.Jugando || _rondaFinalizadaPorAciertos)
+                if (_estadoActual != EstadoPartida.Jugando)
+                {
+                    return;
+                }
+                if (_rondaFinalizadaPorAciertos && !forzarPorAciertos)
                 {
                     return;
                 }
@@ -400,8 +404,18 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void FinalizarRondaAnticipada()
         {
-            lock (_sincronizacion) _rondaFinalizadaPorAciertos = true;
-            FinalizarRondaActual();
+            bool yaFinalizada;
+
+            lock (_sincronizacion)
+            {
+                yaFinalizada = _rondaFinalizadaPorAciertos;
+                _rondaFinalizadaPorAciertos = true;
+            }
+
+            if (!yaFinalizada)
+            {
+                FinalizarRondaActual(true);
+            }
         }
 
         private void EvaluarContinuidadPartida()
@@ -449,7 +463,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void SuscribirEventosTiempo()
         {
-            _gestorTiempos.TiempoRondaAgotado += FinalizarRondaActual;
+            _gestorTiempos.TiempoRondaAgotado += () => FinalizarRondaActual();
             _gestorTiempos.TiempoTransicionAgotado += PrepararSiguienteRonda;
         }
 

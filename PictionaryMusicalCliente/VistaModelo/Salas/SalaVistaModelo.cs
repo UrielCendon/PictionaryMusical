@@ -1245,12 +1245,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _partidaVistaModelo.NotificarFinPartida();
                 BotonIniciarPartidaHabilitado = false;
 
-                bool esCancelacionPorFaltaDeJugadores = string.Equals(
-                    mensajeOriginal,
-                    "No hay suficientes jugadores para seguir jugando, se canceló la partida.",
-                    StringComparison.Ordinal);
+                bool finAnticipadoConMensaje = !string.IsNullOrWhiteSpace(mensajeOriginal);
 
-                if (esCancelacionPorFaltaDeJugadores)
+                if (finAnticipadoConMensaje)
                 {
                     if (!string.IsNullOrWhiteSpace(mensaje))
                     {

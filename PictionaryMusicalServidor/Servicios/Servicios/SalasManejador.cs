@@ -23,7 +23,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     public class SalasManejador : ISalasManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SalasManejador));
-        private readonly ConcurrentDictionary<string, SalaInternaManejador> _salas =
+        private static readonly ConcurrentDictionary<string, SalaInternaManejador> _salas =
             new ConcurrentDictionary<string, SalaInternaManejador>(
                 StringComparer.OrdinalIgnoreCase);
         private readonly INotificadorSalas _notificador;
