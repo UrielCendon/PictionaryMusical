@@ -121,8 +121,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
 
             _grosor = 6;
             _color = Colors.Black;
-            _contador = 30;
-            _textoContador = "30";
+            _contador = ObtenerTiempoRonda();
+            _textoContador = _contador.ToString();
             _colorContador = Brushes.Black;
             _esHerramientaLapiz = true;
             _esHerramientaBorrador = false;
@@ -799,7 +799,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
 
         private void IniciarTemporizador()
         {
-            _contador = 30;
+            _contador = ObtenerTiempoRonda();
             TextoContador = _contador.ToString();
             ColorContador = Brushes.Black;
 
@@ -811,6 +811,19 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
             TextoGenero = "Género: Reggaeton";
 
             _temporizador.Start();
+        }
+
+        private int ObtenerTiempoRonda()
+        {
+            var tiempoConfigurado = _sala?.Configuracion?.TiempoPorRondaSegundos ?? 0;
+
+            if (tiempoConfigurado > 0)
+            {
+                return tiempoConfigurado;
+            }
+
+            Log.Warn("Tiempo por ronda no configurado o invalido. Usando 60 segundos por defecto.");
+            return 60;
         }
 
         private void Temporizador_Tick(object sender, EventArgs e)

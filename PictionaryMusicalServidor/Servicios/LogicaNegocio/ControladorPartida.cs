@@ -29,6 +29,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private readonly GestorTiemposPartida _gestorTiempos;
         private readonly HashSet<int> _cancionesUsadas;
 
+        private readonly int _duracionRondaSegundos;
         private readonly string _dificultad;
         private readonly int _totalRondas;
         private string _idiomaCanciones = "Español";
@@ -57,6 +58,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     (nameof(dificultad));
 
             _catalogoCanciones = catalogo ?? throw new ArgumentNullException(nameof(catalogo));
+            _duracionRondaSegundos = tiempoRonda;
             _dificultad = dificultad.Trim();
             _totalRondas = totalRondas;
 
@@ -504,7 +506,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 Rol = RolDibujante,
                 PistaArtista = artista,
                 PistaGenero = genero,
-                TiempoSegundos = 60
+                TiempoSegundos = _duracionRondaSegundos
             };
         }
     }
