@@ -44,7 +44,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
                 ["No fue posible confirmar el codigo de recuperacion."]
                     = () => LangResources.Lang.errorTextoServidorValidarCodigo,
-                ["No fue posible actualizar la contraseña."]
+                ["No fue posible actualizar la contrasena."]
                     = () => LangResources.Lang.errorTextoActualizarContrasena,
                 ["Los datos de recuperacion no son validos."]
                     = () => LangResources.Lang.errorTextoServidorSolicitudCambioContrasena,
@@ -72,7 +72,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     = () => LangResources.Lang.errorTextoRegistrarCuentaMasTarde,
                 ["No fue posible iniciar sesion. Por favor, intente nuevamente."]
                     = () => LangResources.Lang.errorTextoServidorInicioSesion,
-                ["Usuario o contraseña incorrectos."]
+                ["Usuario o contrasena incorrectos."]
                     = () => LangResources.Lang.errorTextoCredencialesIncorrectas,
                 ["Las credenciales proporcionadas no son validas."]
                     = () => LangResources.Lang.errorTextoCredencialesIncorrectas,

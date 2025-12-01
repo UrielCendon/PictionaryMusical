@@ -17,7 +17,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
 
             public const string DatosInvalidos = "Los datos proporcionados no son validos. Por favor, verifique la informacion.";
             public const string CredencialesInvalidas = "Las credenciales proporcionadas no son validas.";
-            public const string CredencialesIncorrectas = "Usuario o contraseña incorrectos.";
+            public const string CredencialesIncorrectas = "Usuario o contrasena incorrectos.";
 
             public const string UsuarioNoEncontrado = "No se encontro el usuario especificado.";
             public const string UsuariosNoEncontrados = "No se encontraron todos los usuarios especificados.";
@@ -58,7 +58,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorRecuperarCuenta = "No fue posible procesar la recuperacion de cuenta.";
             public const string ErrorReenviarCodigo = "No fue posible reenviar el codigo de verificacion.";
             public const string ErrorConfirmarCodigo = "No fue posible confirmar el codigo de verificacion.";
-            public const string ErrorActualizarContrasena = "No fue posible actualizar la contraseña.";
+            public const string ErrorActualizarContrasena = "No fue posible actualizar la contrasena.";
             public const string DatosRecuperacionInvalidos = "Los datos de recuperacion no son validos.";
             public const string DatosReenvioCodigo = "Los datos para reenviar el codigo no son validos.";
             public const string DatosConfirmacionInvalidos = "Los datos de confirmacion no son validos.";
