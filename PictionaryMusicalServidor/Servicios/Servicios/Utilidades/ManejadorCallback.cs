@@ -7,7 +7,7 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
-    /// Manejador genérico para callbacks de servicios WCF.
+    /// Manejador generico para callbacks de servicios WCF.
     /// Gestiona el ciclo de vida de las suscripciones de callbacks.
     /// </summary>
     /// <typeparam name="TCallback">Tipo de callback a gestionar.</typeparam>
@@ -25,7 +25,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Registra una suscripción de callback para un usuario.
+        /// Registra una suscripcion de callback para un usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario.</param>
         /// <param name="callback">Callback a registrar.</param>
@@ -40,7 +40,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Configura eventos de canal para limpieza automática de suscripción.
+        /// Configura eventos de canal para limpieza automatica de suscripcion.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario.</param>
         public void ConfigurarEventosCanal(string nombreUsuario)
@@ -63,7 +63,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Elimina la suscripción de un usuario.
+        /// Elimina la suscripcion de un usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario.</param>
         public void Desuscribir(string nombreUsuario)
@@ -88,7 +88,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Obtiene el callback actual del contexto de operación.
+        /// Obtiene el callback actual del contexto de operacion.
         /// </summary>
         /// <returns>Callback del contexto actual.</returns>
         /// <exception cref="FaultException">Se lanza si no se puede obtener el callback.
@@ -111,16 +111,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Ejecuta una acción de notificación con manejo automático de errores de comunicación.
+        /// Ejecuta una accion de notificacion con manejo automatico de errores de comunicacion.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario a notificar.</param>
-        /// <param name="accionNotificacion">Acción de notificación a ejecutar.</param>
+        /// <param name="accionNotificacion">Accion de notificacion a ejecutar.</param>
         public void Notificar(string nombreUsuario, Action<TCallback> accionNotificacion)
         {
             if (!TryGetCallback(nombreUsuario, out var callback))
             {
                 _logger.WarnFormat(
-                    "Intento de notificación a '{0}' fallido: No se encontró callback activo.", 
+                    "Intento de notificacion a '{0}' fallido: No se encontro callback activo.", 
                     nombreUsuario);
                 return;
             }
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (CommunicationException ex)
             {
-                _logger.ErrorFormat("Error de comunicación al notificar a '{0}'. Desuscribiendo.",
+                _logger.ErrorFormat("Error de comunicacion al notificar a '{0}'. Desuscribiendo.",
                     nombreUsuario, ex);
                     Desuscribir(nombreUsuario);
             }
@@ -143,7 +143,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida en comunicación WCF.", ex);
+                _logger.Warn("Operacion invalida en comunicacion WCF.", ex);
             }
         }
     }

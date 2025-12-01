@@ -28,7 +28,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// Suscribe un callback a las notificaciones de la lista de salas.
         /// </summary>
         /// <param name="callback">Callback a suscribir.</param>
-        /// <returns>ID de la suscripción.</returns>
+        /// <returns>ID de la suscripcion.</returns>
         public Guid Suscribir(ISalasManejadorCallback callback)
         {
             var sesionId = Guid.NewGuid();
@@ -38,16 +38,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         }
 
         /// <summary>
-        /// Elimina una suscripción específica.
+        /// Elimina una suscripcion especifica.
         /// </summary>
-        /// <param name="sesionId">ID de la suscripción a eliminar.</param>
+        /// <param name="sesionId">ID de la suscripcion a eliminar.</param>
         public void Desuscribir(Guid sesionId)
         {
             _suscripciones.TryRemove(sesionId, out _);
         }
 
         /// <summary>
-        /// Elimina todas las suscripciones asociadas a un callback específico.
+        /// Elimina todas las suscripciones asociadas a un callback especifico.
         /// </summary>
         /// <param name="callback">Callback a desuscribir.</param>
         public void DesuscribirPorCallback(ISalasManejadorCallback callback)
@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         }
 
         /// <summary>
-        /// Notifica la lista actualizada de salas a un callback específico.
+        /// Notifica la lista actualizada de salas a un callback especifico.
         /// </summary>
         /// <param name="callback">Callback a notificar.</param>
         public void NotificarListaSalas(ISalasManejadorCallback callback)

@@ -40,10 +40,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         }
 
         /// <summary>
-        /// Notifica la eliminación de una amistad a un usuario.
+        /// Notifica la eliminacion de una amistad a un usuario.
         /// </summary>
         /// <param name="nombreUsuario">Usuario a notificar.</param>
-        /// <param name="solicitud">Detalles de la relación eliminada.</param>
+        /// <param name="solicitud">Detalles de la relacion eliminada.</param>
         public void NotificarAmistadEliminada(string nombreUsuario, SolicitudAmistadDTO solicitud)
         {
             _manejadorCallback.Notificar(nombreUsuario, callback =>

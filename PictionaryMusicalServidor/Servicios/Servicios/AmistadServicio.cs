@@ -19,9 +19,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IContextoFactory _contextoFactory;
 
         /// <summary>
-        /// Constructor que inyecta la factoría de contextos.
+        /// Constructor que inyecta la factoria de contextos.
         /// </summary>
-        /// <param name="contextoFactory">Factoría para crear contextos de base de datos.</param>
+        /// <param name="contextoFactory">Factoria para crear contextos de base de datos.</param>
         public AmistadServicio(IContextoFactory contextoFactory)
         {
             _contextoFactory = contextoFactory ?? 

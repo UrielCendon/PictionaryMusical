@@ -48,7 +48,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (Exception ex)
             {
-                _logger.Error("Error al crear la clasificación inicial.", ex);
+                _logger.Error("Error al crear la clasificacion inicial.", ex);
                 throw;
             }
         }
@@ -72,7 +72,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (jugador?.Clasificacion == null)
                 {
-                    _logger.WarnFormat("No se encontró clasificación para el jugador con ID {0}.",
+                    _logger.WarnFormat("No se encontro clasificacion para el jugador con ID {0}.",
                         jugadorId);
                     return false;
                 }
@@ -92,7 +92,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             catch (Exception ex)
             {
                 _logger.ErrorFormat(
-                    "Error al actualizar la clasificación del jugador con ID {0}.", jugadorId, ex);
+                    "Error al actualizar la clasificacion del jugador con ID {0}.", jugadorId, ex);
                 throw;
             }
         }

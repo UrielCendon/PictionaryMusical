@@ -58,7 +58,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.SolicitarCodigoRecuperacion(solicitud);
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat("Solicitud de recuperación fallida para '{0}': {1}",
+                    _logger.WarnFormat("Solicitud de recuperacion fallida para '{0}': {1}",
                         solicitud.Identificador, 
                         resultado.Mensaje);
                 }
@@ -208,7 +208,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.ActualizarContrasena(solicitud);
                 if (!resultado.OperacionExitosa)
                 {
-                    _logger.Warn("No se pudo actualizar la contraseña mediante recuperación.");
+                    _logger.Warn("No se pudo actualizar la contraseña mediante recuperacion.");
                 }
                 return resultado;
             }

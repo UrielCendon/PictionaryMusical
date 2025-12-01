@@ -154,7 +154,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 out SolicitudRecuperacionPendiente pendiente))
             {
                 _logger.Warn(
-                    "Intento de reenvío de código de recuperación con token inválido o expirado.");
+                    "Intento de reenvio de codigo de recuperacion con token invalido o expirado.");
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -165,7 +165,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 _solicitudesRecuperacion.TryRemove(token, out _);
-                _logger.Warn("Solicitud de recuperación expirada.");
+                _logger.Warn("Solicitud de recuperacion expirada.");
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -253,7 +253,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 _solicitudesRecuperacion.TryRemove(token, out _);
-                _logger.Warn("Intento de confirmación con código expirado.");
+                _logger.Warn("Intento de confirmacion con codigo expirado.");
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,
@@ -266,7 +266,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 codigoIngresado,
                 StringComparison.OrdinalIgnoreCase))
             {
-                _logger.Warn("Código de recuperación incorrecto.");
+                _logger.Warn("Codigo de recuperacion incorrecto.");
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,
@@ -323,7 +323,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!pendiente.Confirmado)
             {
-                _logger.Warn("Intento de actualizar contraseña sin confirmar código");
+                _logger.Warn("Intento de actualizar contrasena sin confirmar codigo");
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,

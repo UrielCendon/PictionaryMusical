@@ -15,14 +15,14 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         Clasificacion CrearClasificacionInicial();
 
         /// <summary>
-        /// Actualiza los puntos ganados y las rondas ganadas de la clasificación asociada a un 
+        /// Actualiza los puntos ganados y las rondas ganadas de la clasificacion asociada a un 
         /// jugador.
         /// </summary>
-        /// <param name="jugadorId">Identificador del jugador propietario de la clasificación.
+        /// <param name="jugadorId">Identificador del jugador propietario de la clasificacion.
         /// </param>
         /// <param name="puntosObtenidos">Puntos conseguidos en la partida.</param>
-        /// <param name="ganoPartida">Indica si el jugador ganó la partida.</param>
-        /// <returns><c>true</c> si la actualización se aplicó correctamente; de lo contrario, 
+        /// <param name="ganoPartida">Indica si el jugador gano la partida.</param>
+        /// <returns><c>true</c> si la actualizacion se aplico correctamente; de lo contrario, 
         /// <c>false</c>.</returns>
         bool ActualizarEstadisticas(int jugadorId, int puntosObtenidos, bool ganoPartida);
     }

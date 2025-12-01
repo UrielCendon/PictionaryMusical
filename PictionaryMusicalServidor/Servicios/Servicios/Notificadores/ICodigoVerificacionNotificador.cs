@@ -9,7 +9,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     public interface ICodigoVerificacionNotificador
     {
         /// <summary>
-        /// Envía una notificacion de codigo de verificacion al correo destino especificado.
+        /// Envia una notificacion de codigo de verificacion al correo destino especificado.
         /// </summary>
         /// <param name="correoDestino">
         /// Direccion de correo electronico a la cual se enviara el codigo de verificacion.

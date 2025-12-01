@@ -6,8 +6,8 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
-    /// Factoría para la creación de contextos de base de datos.
-    /// Centraliza la lógica de creación de instancias de contexto.
+    /// Factoria para la creacion de contextos de base de datos.
+    /// Centraliza la logica de creacion de instancias de contexto.
     /// </summary>
     public class ContextoFactory : IContextoFactory
     {
@@ -24,7 +24,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             if (string.IsNullOrWhiteSpace(conexion))
             {
                 _logger.Warn(
-                    "La cadena de conexión obtenida está vacía.");
+                    "La cadena de conexion obtenida esta vacia.");
                 return new BaseDatosPruebaEntities();
             }
 
