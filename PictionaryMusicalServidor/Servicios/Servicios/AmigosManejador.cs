@@ -29,10 +29,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IContextoFactory _contextoFactory;
         private readonly IAmistadServicio _amistadServicio;
 
-        public AmigosManejador() : this(new ContextoFactory(), 
-            new AmistadServicio(new ContextoFactory()), new NotificadorListaAmigos(
-                new ManejadorCallback<IListaAmigosManejadorCallback>
-                (StringComparer.OrdinalIgnoreCase), new ContextoFactory()))
+        public AmigosManejador() : this(
+            new ContextoFactory(),
+            new AmistadServicio(new ContextoFactory()),
+            new NotificadorListaAmigos(
+                new ManejadorCallback<IListaAmigosManejadorCallback>(
+                    StringComparer.OrdinalIgnoreCase),
+                new AmistadServicio(new ContextoFactory()),
+                new UsuarioRepositorio(new ContextoFactory().CrearContexto())
+            ))
         {
         }
 

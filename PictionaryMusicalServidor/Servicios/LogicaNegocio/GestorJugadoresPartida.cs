@@ -26,14 +26,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Obtiene la cantidad actual de jugadores conectados a la partida.
-        /// </summary>
-        public int CantidadJugadores => _jugadores.Count;
-
-        /// <summary>
         /// Indica si existe la cantidad minima necesaria de jugadores para jugar (al menos 2).
         /// </summary>
-        public bool HaySuficientesJugadores => _jugadores.Count >= 2;
+        public bool HaySuficientesJugadores
+        {
+            get { return _jugadores.Count >= 2; }
+        }
 
         /// <summary>
         /// Agrega un jugador a la coleccion o actualiza sus datos si ya existe.
@@ -156,10 +154,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public List<ClasificacionUsuarioDTO> GenerarClasificacion()
         {
             return _jugadores.Values
-                .Select(j => new ClasificacionUsuarioDTO
+                .Select(jugador => new ClasificacionUsuarioDTO
                 {
-                    Usuario = j.NombreUsuario,
-                    Puntos = j.PuntajeTotal
+                    Usuario = jugador.NombreUsuario,
+                    Puntos = jugador.PuntajeTotal
                 })
                 .OrderByDescending(j => j.Puntos)
                 .ToList();
@@ -172,7 +170,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>Coleccion de jugadores.</returns>
         public IReadOnlyCollection<JugadorPartida> ObtenerCopiaLista()
         {
-            return _jugadores.Values.Select(j => j.CopiarDatosBasicos()).ToList();
+            return _jugadores.Values.Select(jugador => jugador.CopiarDatosBasicos()).ToList();
         }
 
         /// <summary>
@@ -195,12 +193,21 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void ReconstruirColaDibujantes(string idExcluido)
         {
-            if (_colaDibujantes.Count == 0) return;
+            if (_colaDibujantes.Count == 0)
+            {
+                return;
+            }
 
-            var lista = _colaDibujantes.Where(id => id != idExcluido && 
-            _jugadores.ContainsKey(id)).ToList();
+            var lista = _colaDibujantes
+                .Where(id => id != idExcluido && _jugadores.ContainsKey(id))
+                .ToList();
+
             _colaDibujantes.Clear();
-            foreach (var id in lista) _colaDibujantes.Enqueue(id);
+
+            foreach (var id in lista)
+            {
+                _colaDibujantes.Enqueue(id);
+            }
         }
     }
 }

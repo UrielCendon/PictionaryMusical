@@ -22,7 +22,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             LogManager.GetLogger(typeof(ClasificacionManejador));
         private readonly IContextoFactory _contextoFactory;
 
-        public ClasificacionManejador() : this(new ContextoFactory()) { }
+        public ClasificacionManejador() : this(new ContextoFactory()) 
+        { 
+        }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias.
@@ -44,35 +46,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                using var contexto = _contextoFactory.CrearContexto();
-                return contexto.Usuario
-                    .Include(u => u.Jugador.Clasificacion)
-                    .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
-                    .Select(u => new ClasificacionUsuarioDTO
-                    {
-                        Usuario = u.Nombre_Usuario,
-                        Puntos = u.Jugador.Clasificacion.Puntos_Ganados ?? 0,
-                        RondasGanadas = u.Jugador.Clasificacion.Rondas_Ganadas ?? 0
-                    })
-                    .OrderByDescending(c => c.Puntos)
-                    .ThenByDescending(c => c.RondasGanadas)
-                    .ThenBy(c => c.Usuario)
-                    .Take(LimiteTopJugadores)
-                    .ToList();
+                using (var contexto = _contextoFactory.CrearContexto())
+                {
+                    return contexto.Usuario
+                        .Include(u => u.Jugador.Clasificacion)
+                        .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
+                        .Select(u => new ClasificacionUsuarioDTO
+                        {
+                            Usuario = u.Nombre_Usuario,
+                            Puntos = u.Jugador.Clasificacion.Puntos_Ganados ?? 0,
+                            RondasGanadas = u.Jugador.Clasificacion.Rondas_Ganadas ?? 0
+                        })
+                        .OrderByDescending(c => c.Puntos)
+                        .ThenByDescending(c => c.RondasGanadas)
+                        .ThenBy(c => c.Usuario)
+                        .Take(LimiteTopJugadores)
+                        .ToList();
+                }
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al obtener la clasificación.", ex);
+                _logger.Error("Error de base de datos al obtener la clasificacion.", ex);
                 return new List<ClasificacionUsuarioDTO>();
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al obtener la clasificación.", ex);
+                _logger.Error("Error de datos al obtener la clasificacion.", ex);
                 return new List<ClasificacionUsuarioDTO>();
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida al obtener la clasificación.", ex);
+                _logger.Error("Operación invalida al obtener la clasificacion.", ex);
                 return new List<ClasificacionUsuarioDTO>();
             }
         }

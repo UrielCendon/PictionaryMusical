@@ -17,11 +17,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     /// </summary>
     public class ControladorPartida
     {
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(ControladorPartida));
+
         private const string RolDibujante = "Dibujante";
         private const int LimitePalabrasMensaje = 150;
         private const int TiempoOverlayClienteSegundos = 5;
 
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ControladorPartida));
         private readonly object _sincronizacion = new object();
 
         private readonly ICatalogoCanciones _catalogoCanciones;
@@ -51,18 +53,28 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// invalidos.</exception>
         /// <exception cref="ArgumentNullException">Se lanza si el catalogo es nulo.</exception>
         public ControladorPartida(int tiempoRonda, string dificultad, int totalRondas, 
-            ICatalogoCanciones catalogo)
+            ICatalogoCanciones catalogo, GestorJugadoresPartida gestorJugadores)
         {
-            if (tiempoRonda <= 0 || totalRondas <= 0) throw new ArgumentOutOfRangeException();
-            if (string.IsNullOrWhiteSpace(dificultad)) throw new ArgumentException
-                    (nameof(dificultad));
+            if (tiempoRonda <= 0 || totalRondas <= 0)
+            {
+                throw new ArgumentOutOfRangeException();
+            }
 
-            _catalogoCanciones = catalogo ?? throw new ArgumentNullException(nameof(catalogo));
+            if (string.IsNullOrWhiteSpace(dificultad))
+            {
+                throw new ArgumentException(nameof(dificultad));
+            }
+
+            _catalogoCanciones = catalogo ??
+                throw new ArgumentNullException(nameof(catalogo));
+
+            _gestorJugadores = gestorJugadores ??
+                throw new ArgumentNullException(nameof(gestorJugadores));
+
             _duracionRondaSegundos = tiempoRonda;
             _dificultad = dificultad.Trim();
             _totalRondas = totalRondas;
 
-            _gestorJugadores = new GestorJugadoresPartida();
             _gestorTiempos = new GestorTiemposPartida(tiempoRonda, TiempoOverlayClienteSegundos);
             _cancionesUsadas = new HashSet<int>();
             _estadoActual = EstadoPartida.EnSalaEspera;
@@ -111,7 +123,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="idioma">Nombre del idioma (Ej. Espanol, Ingles).</param>
         public void ConfigurarIdiomaCanciones(string idioma)
         {
-            lock (_sincronizacion) _idiomaCanciones = idioma;
+            lock (_sincronizacion)
+            {
+                _idiomaCanciones = idioma;
+            }
         }
 
         /// <summary>
@@ -127,7 +142,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             lock (_sincronizacion)
             {
                 if (_estadoActual != EstadoPartida.EnSalaEspera)
+                {
                     throw new InvalidOperationException(MensajesError.Cliente.PartidaYaIniciada);
+                }
 
                 _gestorJugadores.Agregar(id, nombre, esHost);
             }
@@ -195,7 +212,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="mensaje">Contenido del mensaje.</param>
         public void ProcesarMensaje(string id, string mensaje)
         {
-            if (EsMensajeInvalido(id, mensaje)) return;
+            if (EsMensajeInvalido(id, mensaje))
+            {
+                return;
+            }
 
             JugadorPartida jugador;
             lock (_sincronizacion)
@@ -283,7 +303,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             if (acierto)
             {
                 JugadorAdivino?.Invoke(jugador.NombreUsuario, puntos);
-                if (finRonda) FinalizarRondaAnticipada();
+                if (finRonda)
+                {
+                    FinalizarRondaAnticipada();
+                }
             }
             else
             {
@@ -329,7 +352,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             lock (_sincronizacion)
             {
-                if (_estadoActual != EstadoPartida.Jugando) return;
+                if (_estadoActual != EstadoPartida.Jugando)
+                {
+                    return;
+                }
 
                 if (!_gestorJugadores.QuedanDibujantesPendientes())
                 {

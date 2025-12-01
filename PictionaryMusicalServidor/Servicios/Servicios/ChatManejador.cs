@@ -23,11 +23,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Permite a un jugador unirse al chat de una sala especifica.
-        /// Registra el callback del cliente y notifica a los demas participantes que alguien entro.
+        /// Registra el callback del cliente y notifica a los demas participantes que alguien 
+        /// entro.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="nombreJugador">Nombre del jugador que se une.</param>
-        /// <exception cref="FaultException">Se lanza si los datos son invalidos o hay errores de comunicacion.</exception>
+        /// <exception cref="FaultException">Se lanza si los datos son invalidos o hay errores 
+        /// de comunicacion.</exception>
         public void Unirse(string idSala, string nombreJugador)
         {
             try
@@ -53,27 +55,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
 
                     var clienteExistente = clientesSala.Find(c =>
-                        string.Equals(c.NombreJugador, nombreNormalizado, StringComparison.OrdinalIgnoreCase));
+                        string.Equals(c.NombreJugador, nombreNormalizado, 
+                        StringComparison.OrdinalIgnoreCase));
 
                     if (clienteExistente != null)
                     {
                         clienteExistente.Callback = callback;
-                        _logger.InfoFormat("Jugador '{0}' se reconecto al chat de la sala '{1}'.", nombreNormalizado, idSalaNormalizado);
                     }
                     else
                     {
                         clientesSala.Add(new ClienteChat(nombreNormalizado, callback));
-                        _logger.InfoFormat("Jugador '{0}' se unio al chat de la sala '{1}'. Total en sala: {2}.", nombreNormalizado, idSalaNormalizado, clientesSala.Count);
                     }
 
                     clientesANotificar = clientesSala
-                        .Where(c => !string.Equals(c.NombreJugador, nombreNormalizado, StringComparison.OrdinalIgnoreCase))
+                        .Where(c => !string.Equals(
+                            c.NombreJugador,
+                            nombreNormalizado,
+                            StringComparison.OrdinalIgnoreCase))
                         .ToList();
                 }
 
                 foreach (var cliente in clientesANotificar)
                 {
-                    EjecutarNotificacionSegura(idSalaNormalizado, cliente, cb => cb.NotificarJugadorUnido(nombreNormalizado));
+                    EjecutarNotificacionSegura(
+                        idSalaNormalizado,
+                        cliente,
+                        cb => cb.NotificarJugadorUnido(nombreNormalizado));
                 }
 
                 ConfigurarEventosCanal(idSalaNormalizado, nombreNormalizado);
@@ -127,9 +134,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var nombreNormalizado = nombreJugador.Trim();
                 var mensajeNormalizado = mensaje.Trim();
 
-                NotificarMensajeATodos(idSalaNormalizado, nombreNormalizado, mensajeNormalizado);
-
-                _logger.DebugFormat("Mensaje de '{0}' enviado a sala '{1}'.", nombreNormalizado, idSalaNormalizado);
+                NotificarMensajeATodos(
+                    idSalaNormalizado,
+                    nombreNormalizado,
+                    mensajeNormalizado);
             }
             catch (FaultException)
             {
@@ -149,7 +157,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Permite a un jugador salir del chat de una sala.
-        /// Elimina el callback del cliente y notifica a los demas participantes que el jugador salio.
+        /// Elimina el callback del cliente y notifica a los demas participantes que el jugador 
+        /// salio.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="nombreJugador">Nombre del jugador que sale.</param>
@@ -169,8 +178,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var nombreNormalizado = nombreJugador.Trim();
 
                 RemoverCliente(idSalaNormalizado, nombreNormalizado);
-
-                _logger.InfoFormat("Jugador '{0}' salio del chat de la sala '{1}'.", nombreNormalizado, idSalaNormalizado);
             }
             catch (FaultException)
             {
@@ -227,7 +234,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 var clienteRemovido = clientesSala.RemoveAll(c =>
-                    string.Equals(c.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase)) > 0;
+                    string.Equals(
+                        c.NombreJugador,
+                        nombreJugador,
+                        StringComparison.OrdinalIgnoreCase)) > 0;
 
                 if (clienteRemovido)
                 {
@@ -236,7 +246,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     if (clientesSala.Count == 0)
                     {
                         _clientesPorSala.Remove(idSala);
-                        _logger.InfoFormat("Sala de chat '{0}' eliminada (sin participantes).", idSala);
                     }
                 }
             }
@@ -245,7 +254,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 foreach (var cliente in clientesANotificar)
                 {
-                    EjecutarNotificacionSegura(idSala, cliente, cb => cb.NotificarJugadorSalio(nombreJugador));
+                    EjecutarNotificacionSegura(
+                        idSala,
+                        cliente,
+                        cb => cb.NotificarJugadorSalio(nombreJugador));
                 }
             }
         }
@@ -266,11 +278,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             foreach (var cliente in clientesANotificar)
             {
-                EjecutarNotificacionSegura(idSala, cliente, callback => callback.RecibirMensaje(nombreJugador, mensaje));
+                EjecutarNotificacionSegura(
+                    idSala,
+                    cliente,
+                    callback => callback.RecibirMensaje(nombreJugador, mensaje));
             }
         }
 
-        private void EjecutarNotificacionSegura(string idSala, ClienteChat cliente, Action<IChatManejadorCallback> accion)
+        private void EjecutarNotificacionSegura(string idSala,
+            ClienteChat cliente,
+            Action<IChatManejadorCallback> accion)
         {
             try
             {
@@ -278,19 +295,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (CommunicationException ex)
             {
-                _logger.WarnFormat("Error de comunicacion con jugador '{0}' en sala '{1}'. Se quitara su callback.", cliente.NombreJugador, idSala);
+                _logger.WarnFormat(
+                    "Error de comunicacion con '{0}' en sala '{1}'. Se quitara su callback.",
+                    cliente.NombreJugador,
+                    idSala);
                 _logger.Warn(ex);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException ex)
             {
-                _logger.WarnFormat("Timeout al notificar a jugador '{0}' en sala '{1}'. Se quitara su callback.", cliente.NombreJugador, idSala);
+                _logger.WarnFormat(
+                    "Timeout al notificar a '{0}' en sala '{1}'. Se quitara su callback.",
+                    cliente.NombreJugador,
+                    idSala);
                 _logger.Warn(ex);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operacion invalida en comunicacion WCF. El canal no esta en el estado correcto para la operacion.", ex);
+                _logger.Warn(
+                    "Operacion invalida en comunicacion WCF. Canal incorrecto.",
+                    ex);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
         }
@@ -302,7 +327,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 if (_clientesPorSala.TryGetValue(idSala, out var clientesSala))
                 {
                     clientesSala.RemoveAll(c =>
-                        string.Equals(c.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase));
+                        string.Equals(
+                            c.NombreJugador,
+                            nombreJugador,
+                            StringComparison.OrdinalIgnoreCase));
 
                     if (clientesSala.Count == 0)
                     {

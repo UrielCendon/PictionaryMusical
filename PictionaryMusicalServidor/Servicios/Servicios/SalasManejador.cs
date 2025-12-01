@@ -18,14 +18,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// via callbacks.
     /// Utiliza un diccionario concurrente para almacenar salas activas en memoria.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = 
-        ConcurrencyMode.Multiple)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single,
+        ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class SalasManejador : ISalasManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SalasManejador));
+
         private static readonly ConcurrentDictionary<string, SalaInternaManejador> _salas =
             new ConcurrentDictionary<string, SalaInternaManejador>(
                 StringComparer.OrdinalIgnoreCase);
+
         private readonly INotificadorSalas _notificador;
 
         /// <summary>
@@ -33,19 +35,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         public SalasManejador()
         {
+            // Para el host WCF sin DI container, instanciamos aqui.
+            // En un entorno con DI, esto se inyectaria.
             _notificador = new NotificadorSalas(() => _salas.Values);
         }
 
         /// <summary>
+        /// Constructor con inyeccion de dependencias.
+        /// </summary>
+        public SalasManejador(INotificadorSalas notificador)
+        {
+            _notificador = notificador ??
+                throw new ArgumentNullException(nameof(notificador));
+        }
+
+        /// <summary>
         /// Crea una nueva sala de juego con la configuracion especificada.
-        /// Genera un codigo unico, registra el callback del creador y notifica a todos los 
-        /// suscriptores.
+        /// Genera un codigo unico, registra el callback del creador y notifica a todos.
         /// </summary>
         /// <param name="nombreCreador">Nombre del usuario que crea la sala.</param>
         /// <param name="configuracion">Configuracion de la partida para la sala.</param>
         /// <returns>Datos de la sala creada.</returns>
-        /// <exception cref="FaultException">Se lanza si los datos son invalidos o hay errores 
-        /// al crear la sala.</exception>
         public SalaDTO CrearSala(string nombreCreador, ConfiguracionPartidaDTO configuracion)
         {
             try
@@ -54,13 +64,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 ValidarConfiguracion(configuracion);
 
                 string codigo = GenerarCodigoSala();
-                var callback = 
-                    OperationContext.Current.GetCallbackChannel<ISalasManejadorCallback>();
-                
+                var callback = OperationContext.Current.GetCallbackChannel
+                    <ISalasManejadorCallback>();
+
                 var gestorNotificacionesSala = new GestorNotificacionesSalaInterna();
 
-                var sala = new SalaInternaManejador(codigo, nombreCreador.Trim(), configuracion, 
+                var sala = new SalaInternaManejador(
+                    codigo,
+                    nombreCreador.Trim(),
+                    configuracion,
                     gestorNotificacionesSala);
+
                 sala.AgregarJugador(nombreCreador.Trim(), callback, notificar: false);
 
                 if (!_salas.TryAdd(codigo, sala))
@@ -75,44 +89,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn(
-                    "Operación inválida al crear sala.", 
-                    ex);
+                _logger.Warn("Operacion invalida al crear sala.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (CommunicationException ex)
             {
-                _logger.Error(
-                    "Error de comunicación WCF al crear sala.", 
-                    ex);
+                _logger.Error("Error de comunicacion WCF al crear sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (TimeoutException ex)
             {
-                _logger.Error(
-                    "Timeout al crear sala.",
-                    ex);
+                _logger.Error("Timeout al crear sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (Exception ex)
             {
-                _logger.Error(
-                    "Error inesperado al crear sala.", 
-                    ex);
+                _logger.Error("Error inesperado al crear sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
         }
 
         /// <summary>
         /// Une un usuario a una sala de juego existente.
-        /// Valida que la sala exista, agrega el jugador, registra su callback y notifica a todos
-        /// los participantes.
+        /// Valida sala, agrega jugador, registra callback y notifica.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         /// <param name="nombreUsuario">Nombre del usuario que se une a la sala.</param>
         /// <returns>Datos actualizados de la sala a la que se unio.</returns>
-        /// <exception cref="FaultException">Se lanza si los datos son invalidos, la sala no 
-        /// existe, o hay errores al unirse.</exception>
         public SalaDTO UnirseSala(string codigoSala, string nombreUsuario)
         {
             try
@@ -136,7 +139,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 var callback = OperationContext.Current.GetCallbackChannel
                     <ISalasManejadorCallback>();
-                var resultado = sala.AgregarJugador(nombreUsuario.Trim(), callback, 
+
+                var resultado = sala.AgregarJugador(
+                    nombreUsuario.Trim(),
+                    callback,
                     notificar: true);
 
                 _notificador.NotificarListaSalasATodos();
@@ -149,12 +155,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al unirse a sala.", ex);
+                _logger.Warn("Operacion invalida al unirse a sala.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (CommunicationException ex)
             {
-                _logger.Error("Error de comunicación WCF al unirse a sala.", ex);
+                _logger.Error("Error de comunicacion WCF al unirse a sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (TimeoutException ex)
@@ -171,9 +177,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Obtiene la lista de todas las salas de juego disponibles.
-        /// Retorna todas las salas activas en el sistema.
         /// </summary>
-        /// <returns>Lista de salas disponibles.</returns>
+        /// <returns> Lista de salas disponibles.</returns>
         public IList<SalaDTO> ObtenerSalas()
         {
             try
@@ -182,7 +187,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida al obtener lista de salas.", ex);
+                _logger.Error("Operacion invalida al obtener lista de salas.", ex);
                 return new List<SalaDTO>();
             }
             catch (Exception ex)
@@ -194,13 +199,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Permite a un usuario abandonar una sala de juego.
-        /// Remueve el jugador de la sala, elimina la sala si queda vacia y notifica a todos los 
-        /// suscriptores.
+        /// Remueve jugador, elimina sala si vacia y notifica.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         /// <param name="nombreUsuario">Nombre del usuario que abandona la sala.</param>
-        /// <exception cref="FaultException">Se lanza si los datos son invalidos, la sala no 
-        /// existe, o hay errores al abandonar.</exception>
         public void AbandonarSala(string codigoSala, string nombreUsuario)
         {
             try
@@ -226,12 +228,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al abandonar sala.", ex);
+                _logger.Warn("Operacion invalida al abandonar sala.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al abandonar sala.", ex);
+                _logger.Warn("Operacion invalida al abandonar sala.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (Exception ex)
@@ -243,11 +245,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Suscribe al cliente para recibir notificaciones sobre cambios en la lista de salas.
-        /// Registra el callback del cliente y configura eventos de cierre de canal para 
-        /// limpieza automatica.
         /// </summary>
-        /// <exception cref="FaultException">Se lanza si hay errores de comunicacion o al 
-        /// suscribir.</exception>
         public void SuscribirListaSalas()
         {
             try
@@ -264,17 +262,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 _notificador.NotificarListaSalas(callback);
-                _logger.InfoFormat("Nueva suscripción al lobby de salas. Sesión ID: {0}", 
-                    sesionId);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida al suscribirse a lista de salas.", ex);
+                _logger.Error("Operacion invalida al suscribirse a lista de salas.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (CommunicationException ex)
             {
-                _logger.Error("Error de comunicación WCF al suscribirse a lista de salas.", ex);
+                _logger.Error("Error de comunicacion WCF al suscribirse a lista de salas.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (TimeoutException ex)
@@ -291,56 +287,51 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Cancela la suscripcion del cliente de notificaciones de la lista de salas.
-        /// Elimina el callback del cliente del notificador.
         /// </summary>
         public void CancelarSuscripcionListaSalas()
         {
             try
             {
-                var callback = OperationContext.Current.GetCallbackChannel<ISalasManejadorCallback>();
+                var callback = OperationContext.Current.GetCallbackChannel
+                    <ISalasManejadorCallback>();
                 _notificador.DesuscribirPorCallback(callback);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida al cancelar suscripción a lista de salas.", 
-                    ex);
+                _logger.Error("Operacion invalida al cancelar suscripcion.", ex);
             }
             catch (CommunicationException ex)
             {
-                _logger.Error("Error de comunicación WCF al cancelar suscripción.", 
-                    ex);
+                _logger.Error("Error de comunicacion WCF al cancelar suscripcion.", ex);
             }
             catch (TimeoutException ex)
             {
-                _logger.Error("Timeout al cancelar la suscripción a la lista de salas.", 
-                    ex);
+                _logger.Error("Timeout al cancelar la suscripcion.", ex);
             }
             catch (Exception ex)
             {
-                _logger.Error("Error inesperado al cancelar la suscripción a la lista de salas.", 
-                    ex);
+                _logger.Error("Error inesperado al cancelar la suscripcion.", ex);
             }
         }
 
         /// <summary>
         /// Expulsa un jugador de una sala de juego.
-        /// Valida que el usuario sea el anfitrion, remueve al jugador expulsado y notifica a todos
-        /// los participantes.
+        /// Valida permisos de anfitrion, remueve jugador y notifica.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         /// <param name="nombreHost">Nombre del usuario anfitrion que expulsa.</param>
         /// <param name="nombreJugadorAExpulsar">Nombre del jugador a expulsar.</param>
-        /// <exception cref="FaultException">Se lanza si los datos son invalidos, la sala no 
-        /// existe, el usuario no es anfitrion, o hay errores al expulsar.</exception>
-        public void ExpulsarJugador(string codigoSala, string nombreHost, 
+        public void ExpulsarJugador(
+            string codigoSala,
+            string nombreHost,
             string nombreJugadorAExpulsar)
         {
             try
             {
-                ValidadorNombreUsuario.
-                    Validar(nombreHost, nameof(nombreHost));
-                ValidadorNombreUsuario.
-                    Validar(nombreJugadorAExpulsar, nameof(nombreJugadorAExpulsar));
+                ValidadorNombreUsuario.Validar(nombreHost, nameof(nombreHost));
+                ValidadorNombreUsuario.Validar(
+                    nombreJugadorAExpulsar,
+                    nameof(nombreJugadorAExpulsar));
 
                 if (string.IsNullOrWhiteSpace(codigoSala))
                 {
@@ -367,12 +358,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al expulsar jugador.", ex);
+                _logger.Warn("Operacion invalida al expulsar jugador.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al expulsar jugador.", ex);
+                _logger.Warn("Operacion invalida al expulsar jugador.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (Exception ex)
@@ -384,12 +375,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Obtiene una sala por su codigo identificador.
-        /// Busca la sala en el diccionario de salas activas y retorna su representacion DTO.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         /// <returns>Datos de la sala como DTO.</returns>
-        /// <exception cref="InvalidOperationException">Se lanza si el código es inválido o la sala
-        /// no existe.</exception>
         public SalaDTO ObtenerSalaPorCodigo(string codigoSala)
         {
             if (string.IsNullOrWhiteSpace(codigoSala))
@@ -430,8 +418,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
             }
 
-            _logger.Error(
-                "No se pudo generar un código de sala único después de múltiples intentos.");
+            _logger.Error("No se pudo generar codigo unico de sala.");
             throw new FaultException(MensajesError.Cliente.ErrorGenerarCodigo);
         }
 

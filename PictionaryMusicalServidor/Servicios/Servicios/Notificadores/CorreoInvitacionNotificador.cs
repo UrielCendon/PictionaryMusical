@@ -27,7 +27,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="creador">Nombre del creador de la sala.</param>
         /// <param name="idioma">Idioma del destinatario (es/en).</param>
         /// <returns>True si el correo se envio correctamente.</returns>
-        public async Task<bool> EnviarInvitacionAsync(string correoDestino, string codigoSala, string creador, string idioma)
+        public async Task<bool> EnviarInvitacionAsync(string correoDestino, string codigoSala, 
+            string creador, string idioma)
         {
             if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigoSala))
             {

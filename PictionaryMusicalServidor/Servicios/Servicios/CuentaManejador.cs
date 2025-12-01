@@ -11,42 +11,49 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades; 
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Implementacion del servicio de gestion de cuentas de usuario.
-    /// Maneja el proceso completo de registro incluyendo validacion, verificacion de codigo y creacion de entidades.
+    /// Maneja el proceso completo de registro incluyendo validacion, verificacion y creacion.
     /// Verifica que el correo y usuario no esten duplicados antes de crear la cuenta.
     /// </summary>
     public class CuentaManejador : ICuentaManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CuentaManejador));
-        private readonly IContextoFactory _contextoFactory;
 
-        public CuentaManejador() : this(new ContextoFactory())
+        private readonly IContextoFactory _contextoFactory;
+        private readonly IVerificacionRegistroServicio _verificacionServicio;
+
+        public CuentaManejador() : this(
+            new ContextoFactory(),
+            new VerificacionRegistroServicio(
+                new ContextoFactory(),
+                new NotificacionCodigosServicio(new CorreoCodigoVerificacionNotificador())))
         {
         }
 
-        public CuentaManejador(IContextoFactory contextoFactory)
+        public CuentaManejador(
+            IContextoFactory contextoFactory,
+            IVerificacionRegistroServicio verificacionServicio)
         {
-            _contextoFactory = contextoFactory ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _contextoFactory = contextoFactory ??
+                throw new ArgumentNullException(nameof(contextoFactory));
+
+            _verificacionServicio = verificacionServicio ??
+                throw new ArgumentNullException(nameof(verificacionServicio));
         }
 
         /// <summary>
         /// Registra una nueva cuenta de usuario en el sistema.
         /// Valida datos de entrada, verifica que el usuario y correo no esten registrados,
-        /// crea entidades de clasificacion, jugador y usuario en una transaccion, y limpia la verificacion.
+        /// crea entidades de clasificacion, jugador y usuario en una transaccion, y 
+        /// limpia la verificacion.
         /// </summary>
         /// <param name="nuevaCuenta">Datos completos de la cuenta a registrar.</param>
         /// <returns>Resultado del registro indicando exito o conflictos.</returns>
-        /// <exception cref="ArgumentNullException">Se lanza si nuevaCuenta es null.</exception>
-        /// <exception cref="DbEntityValidationException">Se lanza si hay errores de validacion en entidades de base de datos.</exception>
-        /// <exception cref="DbUpdateException">Se lanza si hay errores al actualizar la base de datos.</exception>
-        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de datos.</exception>
-        /// <exception cref="DataException">Se lanza si hay errores de datos durante el registro.</exception>
-        /// <exception cref="InvalidOperationException">Se lanza si hay operaciones invalidas durante el registro.</exception>
         public ResultadoRegistroCuentaDTO RegistrarCuenta(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
@@ -54,7 +61,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new ArgumentNullException(nameof(nuevaCuenta));
             }
 
-            ResultadoOperacionDTO validacionDatos = EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+            ResultadoOperacionDTO validacionDatos =
+                EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+
             if (!validacionDatos.OperacionExitosa)
             {
                 return new ResultadoRegistroCuentaDTO
@@ -68,7 +77,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    ResultadoRegistroCuentaDTO validacion = ValidarPrecondicionesRegistro(contexto, nuevaCuenta);
+                    ResultadoRegistroCuentaDTO validacion =
+                        ValidarPrecondicionesRegistro(contexto, nuevaCuenta);
+
                     if (!validacion.RegistroExitoso)
                     {
                         return validacion;
@@ -99,9 +110,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                         transaccion.Commit();
 
-                        VerificacionRegistroServicio.LimpiarVerificacion(nuevaCuenta);
-
-                        _logger.InfoFormat("Nueva cuenta registrada exitosamente. Usuario: {0}, Correo: {1}", nuevaCuenta.Usuario, nuevaCuenta.Correo);
+                        _verificacionServicio.LimpiarVerificacion(nuevaCuenta);
 
                         return new ResultadoRegistroCuentaDTO
                         {
@@ -112,7 +121,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbEntityValidationException ex)
             {
-                _logger.Error("Validación de entidad fallida durante el registro de cuenta. Los datos de la entidad no cumplen con las reglas de validación.", ex);
+                _logger.Error(
+                    "Validacion de entidad fallida durante el registro de cuenta.",
+                    ex);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -121,7 +133,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbUpdateException ex)
             {
-                _logger.Error("Error de actualización de base de datos durante el registro de cuenta. Posible conflicto de concurrencia o restricción violada.", ex);
+                _logger.Error(
+                    "Error de actualizacion de base de datos durante el registro.",
+                    ex);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -130,7 +145,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos durante el registro de cuenta. Fallo en la conexión o ejecución de consulta SQL.", ex);
+                _logger.Error(
+                    "Error de base de datos durante el registro de cuenta.",
+                    ex);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -139,7 +157,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos durante el registro de cuenta. Los datos no se pudieron procesar correctamente.", ex);
+                _logger.Error(
+                    "Error de datos durante el registro de cuenta.",
+                    ex);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -148,7 +169,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida durante el registro de cuenta. El estado del contexto no permite la operación.", ex);
+                _logger.Error(
+                    "Operacion invalida durante el registro de cuenta.",
+                    ex);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -157,11 +181,51 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private ResultadoRegistroCuentaDTO ValidarPrecondicionesRegistro(BaseDatosPruebaEntities contexto, NuevaCuentaDTO nuevaCuenta)
+        //// <summary>
+        /// Solicita un codigo de verificacion para registrar una nueva cuenta.
+        /// Delega en VerificacionRegistroServicio para generar y enviar el codigo.
+        /// </summary>
+        /// <param name="nuevaCuenta">Datos de la nueva cuenta a verificar.</param>
+        /// <returns>Resultado de la solicitud del codigo de verificacion.</returns>
+        public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
         {
-            if (!VerificacionRegistroServicio.EstaVerificacionConfirmada(nuevaCuenta))
+            return _verificacionServicio.SolicitarCodigo(nuevaCuenta);
+        }
+
+        /// <summary>
+        /// Reenvia el codigo de verificacion previamente solicitado.
+        /// Delega en VerificacionRegistroServicio para reenviar el codigo.
+        /// </summary>
+        /// <param name="solicitud">Datos para el reenvio del codigo.</param>
+        /// <returns>Resultado del reenvio del codigo de verificacion.</returns>
+        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(
+            ReenvioCodigoVerificacionDTO solicitud)
+        {
+            return _verificacionServicio.ReenviarCodigo(solicitud);
+        }
+
+        /// <summary>
+        /// Confirma el codigo de verificacion ingresado por el usuario.
+        /// Delega en VerificacionRegistroServicio para validar el codigo.
+        /// </summary>
+        /// <param name="confirmacion">Datos de confirmacion del codigo.</param>
+        /// <returns>Resultado de la confirmacion del codigo.</returns>
+        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(
+            ConfirmacionCodigoDTO confirmacion)
+        {
+            return _verificacionServicio.ConfirmarCodigo(confirmacion);
+        }
+
+        private ResultadoRegistroCuentaDTO ValidarPrecondicionesRegistro(
+            BaseDatosPruebaEntities contexto,
+            NuevaCuentaDTO nuevaCuenta)
+        {
+            if (!_verificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
             {
-                _logger.WarnFormat("Intento de registro sin verificación confirmada. Correo: {0}", nuevaCuenta.Correo);
+                _logger.WarnFormat(
+                    "Intento de registro sin verificacion confirmada. Correo: {0}",
+                    nuevaCuenta.Correo);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -169,12 +233,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
-            bool usuarioRegistrado = contexto.Usuario.Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
-            bool correoRegistrado = contexto.Jugador.Any(j => j.Correo == nuevaCuenta.Correo);
+            bool usuarioRegistrado = contexto.Usuario.Any(
+                u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+            bool correoRegistrado = contexto.Jugador.Any(
+                j => j.Correo == nuevaCuenta.Correo);
 
             if (usuarioRegistrado || correoRegistrado)
             {
-                _logger.WarnFormat("Intento de registro duplicado. Usuario existe: {0}, Correo existe: {1}", usuarioRegistrado, correoRegistrado);
+                _logger.WarnFormat(
+                    "Registro duplicado. Usuario: {0}, Correo: {1}",
+                    usuarioRegistrado,
+                    correoRegistrado);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -193,40 +263,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
-            return new ResultadoRegistroCuentaDTO { RegistroExitoso = true }; 
-        }
-
-        /// <summary>
-        /// Solicita un codigo de verificacion para registrar una nueva cuenta.
-        /// Delega en VerificacionRegistroServicio para generar y enviar el codigo.
-        /// </summary>
-        /// <param name="nuevaCuenta">Datos de la nueva cuenta a verificar.</param>
-        /// <returns>Resultado de la solicitud del codigo de verificacion.</returns>
-        public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
-        {
-            return VerificacionRegistroServicio.SolicitarCodigo(nuevaCuenta);
-        }
-
-        /// <summary>
-        /// Reenvia el codigo de verificacion previamente solicitado.
-        /// Delega en VerificacionRegistroServicio para reenviar el codigo.
-        /// </summary>
-        /// <param name="solicitud">Datos para el reenvio del codigo.</param>
-        /// <returns>Resultado del reenvio del codigo de verificacion.</returns>
-        public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(ReenvioCodigoVerificacionDTO solicitud)
-        {
-            return VerificacionRegistroServicio.ReenviarCodigo(solicitud);
-        }
-
-        /// <summary>
-        /// Confirma el codigo de verificacion ingresado por el usuario.
-        /// Delega en VerificacionRegistroServicio para validar el codigo.
-        /// </summary>
-        /// <param name="confirmacion">Datos de confirmacion del codigo.</param>
-        /// <returns>Resultado de la confirmacion del codigo.</returns>
-        public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(ConfirmacionCodigoDTO confirmacion)
-        {
-            return VerificacionRegistroServicio.ConfirmarCodigo(confirmacion);
+            return new ResultadoRegistroCuentaDTO
+            {
+                RegistroExitoso = true
+            };
         }
     }
 }

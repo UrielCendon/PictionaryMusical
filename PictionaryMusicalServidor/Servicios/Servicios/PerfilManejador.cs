@@ -26,13 +26,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger = LogManager.GetLogger(typeof(PerfilManejador));
         private readonly IContextoFactory _contextoFactory;
 
-        public PerfilManejador() : this(new ContextoFactory()) 
+        public PerfilManejador() : this(new ContextoFactory())
         {
         }
 
         public PerfilManejador(IContextoFactory contextoFactory)
         {
-            _contextoFactory = contextoFactory ?? 
+            _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
         }
 
@@ -42,14 +42,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         /// <param name="idUsuario">Identificador unico del usuario.</param>
         /// <returns>Datos completos del perfil del usuario.</returns>
-        /// <exception cref="ArgumentException">Se lanza si idUsuario es menor o igual a 0.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">Se lanza si el usuario no existe o no 
-        /// tiene jugador asociado.</exception>
-        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de 
-        /// datos.</exception>
-        /// <exception cref="DataException">Se lanza si hay errores de datos durante la consulta.
-        /// </exception>
         public UsuarioDTO ObtenerPerfil(int idUsuario)
         {
             try
@@ -99,12 +91,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al obtener perfil.", ex);
+                _logger.Warn("Operacion invalida al obtener perfil.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al obtener perfil.", ex);
+                _logger.Warn("Operacion invalida al obtener perfil.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (EntityException ex)
@@ -119,22 +111,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _logger.Error("Operación inválida al obtener perfil.", ex);
+                _logger.Error("Operacion invalida al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
 
         /// <summary>
         /// Actualiza el perfil de un usuario con nuevos datos personales y de redes sociales.
-        /// Valida los datos de entrada, verifica que el usuario exista y actualiza jugador y redes sociales.
+        /// Valida los datos de entrada, verifica que el usuario exista y actualiza jugador.
         /// </summary>
         /// <param name="solicitud">Datos actualizados del perfil.</param>
         /// <returns>Resultado de la actualizacion del perfil.</returns>
-        /// <exception cref="InvalidOperationException">Se lanza si el usuario no existe o no tiene jugador asociado.</exception>
-        /// <exception cref="DbEntityValidationException">Se lanza si hay errores de validacion en entidades.</exception>
-        /// <exception cref="DbUpdateException">Se lanza si hay errores al actualizar la base de datos.</exception>
-        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de datos.</exception>
-        /// <exception cref="DataException">Se lanza si hay errores de datos durante la actualizacion.</exception>
         public ResultadoOperacionDTO ActualizarPerfil(ActualizacionPerfilDTO solicitud)
         {
             try
@@ -181,37 +168,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al actualizar perfil. Secuencia de operaciones incorrecta.", ex);
+                _logger.Warn("Operacion invalida al actualizar perfil.", ex);
                 return CrearResultadoFallo(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al actualizar perfil. Secuencia de operaciones incorrecta.", ex);
+                _logger.Warn("Operacion invalida al actualizar perfil.", ex);
                 return CrearResultadoFallo(ex.Message);
             }
             catch (DbEntityValidationException ex)
             {
-                _logger.Error("Validación de entidad fallida al actualizar perfil. Los datos no cumplen con las restricciones.", ex);
+                _logger.Error("Validacion de entidad fallida al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DbUpdateException ex)
             {
-                _logger.Error("Error de actualización de base de datos al actualizar perfil. Conflicto de concurrencia detectado.", ex);
+                _logger.Error("Error de actualizacion de BD al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al actualizar perfil. Fallo en la ejecución de la actualización.", ex);
+                _logger.Error("Error de base de datos al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al actualizar perfil. Los datos del perfil no se pudieron procesar.", ex);
+                _logger.Error("Error de datos al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (Exception ex)
             {
-                _logger.Error("Operación inválida al actualizar perfil. Secuencia de operaciones incorrecta.", ex);
+                _logger.Error("Operacion invalida al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }

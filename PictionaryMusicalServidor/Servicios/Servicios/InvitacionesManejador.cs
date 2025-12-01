@@ -1,6 +1,4 @@
-using Datos.Modelo;
 using log4net;
-using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -24,18 +22,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// </summary>
     public class InvitacionesManejador : IInvitacionesManejador
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(InvitacionesManejador));
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(InvitacionesManejador));
+
         private static readonly TimeSpan RegexTimeout = TimeSpan.FromMilliseconds(500);
 
         private static readonly Regex CorreoRegex = new Regex(
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant,RegexTimeout);
+            RegexOptions.Compiled | RegexOptions.CultureInvariant,
+            RegexTimeout);
 
         private readonly IContextoFactory _contextoFactory;
         private readonly ISalasManejador _salasManejador;
         private readonly ICorreoInvitacionNotificador _correoNotificador;
 
-        public InvitacionesManejador() : this(new ContextoFactory(), new SalasManejador(), 
+        public InvitacionesManejador() : this(
+            new ContextoFactory(),
+            new SalasManejador(),
             new CorreoInvitacionNotificador())
         {
         }
@@ -50,8 +53,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             _contextoFactory = contextoFactory
                 ?? throw new ArgumentNullException(nameof(contextoFactory));
+
             _salasManejador = salasManejador
                 ?? throw new ArgumentNullException(nameof(salasManejador));
+
             _correoNotificador = correoNotificador
                 ?? throw new ArgumentNullException(nameof(correoNotificador));
         }
@@ -60,9 +65,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Envia una invitacion a una sala de juego a un usuario via correo electronico.
         /// Valida el correo, verifica que la sala exista y que el usuario no este ya en la sala.
         /// </summary>
-        /// <param name="invitacion">Datos de la invitacion con codigo de sala y correo destino.</param>
+        /// <param name="invitacion">Datos de la invitacion con codigo de sala y correo.</param>
         /// <returns>Resultado del envio indicando exito o fallo con mensaje descriptivo.</returns>
-        public async Task<ResultadoOperacionDTO> EnviarInvitacionAsync(InvitacionSalaDTO invitacion)
+        public async Task<ResultadoOperacionDTO> EnviarInvitacionAsync(
+            InvitacionSalaDTO invitacion)
         {
             try
             {
@@ -75,10 +81,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var sala = _salasManejador.ObtenerSalaPorCodigo(codigoSala);
                 ValidarSala(sala);
 
-                if (sala.Jugadores != null && sala.Jugadores.Count > 0 && 
+                if (sala.Jugadores != null && sala.Jugadores.Count > 0 &&
                     await UsuarioYaEnSalaAsync(correo, sala))
                 {
-                    throw new InvalidOperationException(MensajesError.Cliente.CorreoJugadorEnSala);
+                    throw new InvalidOperationException(
+                        MensajesError.Cliente.CorreoJugadorEnSala);
                 }
 
                 bool enviado = await _correoNotificador.EnviarInvitacionAsync(
@@ -104,27 +111,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Operación inválida al enviar invitación.", ex);
+                _logger.Warn("Operacion invalida al enviar invitacion.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Warn("Operación inválida al enviar invitación.", ex);
+                _logger.Warn("Operacion invalida al enviar invitacion.", ex);
                 return CrearFallo(ex.Message);
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al enviar invitación.", ex);
+                _logger.Error("Error de base de datos al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos al enviar invitación.", ex);
+                _logger.Error("Error de datos al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (Exception ex)
             {
-                _logger.Error("Operación inválida al enviar invitación.", ex);
+                _logger.Error("Operacion invalida al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
         }
@@ -133,7 +140,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (invitacion == null)
             {
-                throw new ArgumentException(MensajesError.Cliente.SolicitudInvitacionInvalida);
+                throw new ArgumentException(
+                    MensajesError.Cliente.SolicitudInvitacionInvalida);
             }
 
             string codigoSala = invitacion.CodigoSala?.Trim();
@@ -141,7 +149,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (string.IsNullOrWhiteSpace(codigoSala) || string.IsNullOrWhiteSpace(correo))
             {
-                throw new ArgumentException(MensajesError.Cliente.DatosInvitacionInvalidos);
+                throw new ArgumentException(
+                    MensajesError.Cliente.DatosInvitacionInvalidos);
             }
 
             if (!CorreoRegex.IsMatch(correo))
@@ -178,7 +187,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 var listaJugadores = (IEnumerable<string>)sala.Jugadores;
                 return listaJugadores.Contains(
-                    usuario.Nombre_Usuario, StringComparer.OrdinalIgnoreCase);
+                    usuario.Nombre_Usuario,
+                    StringComparer.OrdinalIgnoreCase);
             }
         }
 

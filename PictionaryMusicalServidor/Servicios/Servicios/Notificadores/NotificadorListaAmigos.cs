@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.ServiceModel;
 using log4net;
-using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -20,13 +20,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorListaAmigos));
         private readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
         private readonly IAmistadServicio _amistadServicio;
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IUsuarioRepositorio _usuarioRepositorio;
 
-        public NotificadorListaAmigos(ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, IContextoFactory contextoFactory)
+        public NotificadorListaAmigos(
+            ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
+            IAmistadServicio amistadServicio,
+            IUsuarioRepositorio usuarioRepositorio)
         {
             _manejadorCallback = manejadorCallback;
-            _contextoFactory = contextoFactory;
-            _amistadServicio = new AmistadServicio(contextoFactory);
+            _amistadServicio = amistadServicio;
+            _usuarioRepositorio = usuarioRepositorio;
         }
 
         /// <summary>
@@ -87,13 +90,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
         private List<AmigoDTO> ObtenerAmigosPorNombre(string nombreUsuario)
         {
-            using var contexto = _contextoFactory.CrearContexto();
-            var usuarioRepositorio = new UsuarioRepositorio(contexto);
-            var usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
+            var usuario = _usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
+            if (usuario == null)
+            {
+                throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
+            }
 
-            return usuario == null
-                ? throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado)
-                : _amistadServicio.ObtenerAmigosDTO(usuario.idUsuario);
+            return _amistadServicio.ObtenerAmigosDTO(usuario.idUsuario);
         }
     }
 }

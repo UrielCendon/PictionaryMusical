@@ -11,36 +11,54 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Servicio interno para la logica de negocio de verificacion de registro de cuentas.
-    /// Maneja el almacenamiento temporal de solicitudes de registro, generacion y validacion de codigos de verificacion.
+    /// Maneja el almacenamiento temporal de solicitudes y validacion de codigos de verificacion.
     /// Verifica disponibilidad de usuario y correo antes de enviar codigos.
     /// </summary>
-    internal static class VerificacionRegistroServicio
+    public class VerificacionRegistroServicio : IVerificacionRegistroServicio
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(VerificacionRegistroServicio));
-        private static readonly IContextoFactory _contextoFactory = new ContextoFactory();
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(VerificacionRegistroServicio));
+
         private const int MinutosExpiracionCodigo = 5;
 
-        private static readonly ConcurrentDictionary<string, SolicitudCodigoPendiente> _solicitudes =
-            new ConcurrentDictionary<string, SolicitudCodigoPendiente>();
+        private static readonly ConcurrentDictionary<string, SolicitudCodigoPendiente> 
+            _solicitudes = new ConcurrentDictionary<string, SolicitudCodigoPendiente>();
 
         private static readonly ConcurrentDictionary<string, byte> _verificacionesConfirmadas =
             new ConcurrentDictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
 
+        private readonly IContextoFactory _contextoFactory;
+        private readonly INotificacionCodigosServicio _notificacionCodigosServicio;
+
+        /// <summary>
+        /// Constructor con inyeccion de dependencias.
+        /// </summary>
+        public VerificacionRegistroServicio(IContextoFactory contextoFactory, 
+            INotificacionCodigosServicio notificacionCodigosServicio)
+        {
+            _contextoFactory = contextoFactory ??
+                throw new ArgumentNullException(nameof(contextoFactory));
+            _notificacionCodigosServicio = notificacionCodigosServicio ??
+                throw new ArgumentNullException(nameof(notificacionCodigosServicio));
+        }
+
         /// <summary>
         /// Solicita un codigo de verificacion para registrar una nueva cuenta.
-        /// Valida datos, verifica disponibilidad, genera codigo con expiracion, lo envia por correo y almacena la solicitud.
+        /// Valida datos, verifica disponibilidad, genera codigo y lo envia por correo.
         /// </summary>
         /// <param name="nuevaCuenta">Datos de la nueva cuenta a registrar.</param>
-        /// <returns>Resultado indicando si el codigo fue enviado y posibles conflictos de usuario o correo.</returns>
-        /// <exception cref="ArgumentNullException">Se lanza si nuevaCuenta es null.</exception>
-        public static ResultadoSolicitudCodigoDTO SolicitarCodigo(NuevaCuentaDTO nuevaCuenta)
+        /// <returns>Resultado indicando si el codigo fue enviado y posibles conflictos de usuario
+        /// o correo.</returns>
+        public ResultadoSolicitudCodigoDTO SolicitarCodigo(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
                 throw new ArgumentNullException(nameof(nuevaCuenta));
             }
 
-            ResultadoOperacionDTO validacionDatos = EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+            ResultadoOperacionDTO validacionDatos =
+                EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+
             if (!validacionDatos.OperacionExitosa)
             {
                 return new ResultadoSolicitudCodigoDTO
@@ -52,12 +70,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             using (var contexto = _contextoFactory.CrearContexto())
             {
-                bool usuarioRegistrado = contexto.Usuario.Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
-                bool correoRegistrado = contexto.Jugador.Any(j => j.Correo == nuevaCuenta.Correo);
+                bool usuarioRegistrado = contexto.Usuario.Any(
+                    u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+                bool correoRegistrado = contexto.Jugador.Any(
+                    j => j.Correo == nuevaCuenta.Correo);
 
                 if (usuarioRegistrado || correoRegistrado)
                 {
-                    _logger.WarnFormat("Intento de registro duplicado. Usuario existe: {0}, Correo existe: {1}", usuarioRegistrado, correoRegistrado);
+                    _logger.Warn("Registro duplicado. El usuario y el correo existen.");
+
                     return new ResultadoSolicitudCodigoDTO
                     {
                         CodigoEnviado = false,
@@ -72,14 +93,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string codigo = CodigoVerificacionGenerador.GenerarCodigo();
             NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
 
-            bool enviado = NotificacionCodigosServicio.EnviarNotificacion(
+            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
                 datosCuenta.Correo,
                 codigo,
                 datosCuenta.Usuario,
                 datosCuenta.Idioma);
+
             if (!enviado)
             {
-                _logger.ErrorFormat("Error al enviar código de verificación a '{0}'.", datosCuenta.Correo);
+                _logger.ErrorFormat(
+                    "Error al enviar codigo de verificacion a '{0}'.",
+                    datosCuenta.Correo);
+
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -95,7 +120,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
 
             _solicitudes[token] = solicitud;
-            _logger.InfoFormat("Código de verificación de registro generado para '{0}'.", datosCuenta.Correo);
 
             return new ResultadoSolicitudCodigoDTO
             {
@@ -108,10 +132,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Reenvia un codigo de verificacion previamente solicitado para registro.
         /// Valida el token, genera un nuevo codigo con nueva expiracion y lo envia por correo.
         /// </summary>
-        /// <param name="solicitud">Datos con el token de la sesion de verificacion.</param>
-        /// <returns>Resultado indicando si el codigo fue reenviado exitosamente.</returns>
-        /// <exception cref="ArgumentNullException">Se lanza si solicitud es null.</exception>
-        public static ResultadoSolicitudCodigoDTO ReenviarCodigo(ReenvioCodigoVerificacionDTO solicitud)
+        public ResultadoSolicitudCodigoDTO ReenviarCodigo(ReenvioCodigoVerificacionDTO solicitud)
         {
             if (solicitud == null)
             {
@@ -130,7 +151,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente existente))
             {
-                _logger.Warn("Intento de reenvío de código de registro no encontrado o expirado.");
+                _logger.Warn("Intento de reenvio de codigo no encontrado o expirado.");
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -145,16 +166,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             existente.Codigo = nuevoCodigo;
             existente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
 
-            bool enviado = NotificacionCodigosServicio.EnviarNotificacion(
+            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
                 existente.DatosCuenta.Correo,
                 nuevoCodigo,
                 existente.DatosCuenta.Usuario,
                 existente.DatosCuenta.Idioma);
+
             if (!enviado)
             {
                 existente.Codigo = codigoAnterior;
                 existente.Expira = expiracionAnterior;
-                _logger.ErrorFormat("Error al reenviar código de verificación a '{0}'.", existente.DatosCuenta.Correo);
+                _logger.ErrorFormat(
+                    "Error al reenviar codigo de verificacion a '{0}'.",
+                    existente.DatosCuenta.Correo);
 
                 return new ResultadoSolicitudCodigoDTO
                 {
@@ -162,8 +186,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
                 };
             }
-
-            _logger.InfoFormat("Código de verificación de registro reenviado a '{0}'.", existente.DatosCuenta.Correo);
 
             return new ResultadoSolicitudCodigoDTO
             {
@@ -174,12 +196,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Confirma el codigo de verificacion ingresado para registro de cuenta.
-        /// Valida el token, compara el codigo ingresado con el almacenado y marca la verificacion como confirmada.
+        /// Valida el token y el codigo, y marca la verificacion como confirmada.
         /// </summary>
         /// <param name="confirmacion">Datos con el token y codigo ingresado.</param>
         /// <returns>Resultado indicando si el codigo fue confirmado correctamente.</returns>
-        /// <exception cref="ArgumentNullException">Se lanza si confirmacion es null.</exception>
-        public static ResultadoRegistroCuentaDTO ConfirmarCodigo(ConfirmacionCodigoDTO confirmacion)
+        public ResultadoRegistroCuentaDTO ConfirmarCodigo(ConfirmacionCodigoDTO confirmacion)
         {
             if (confirmacion == null)
             {
@@ -187,7 +208,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
-            string codigoIngresado = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
+            string codigoIngresado = EntradaComunValidador.NormalizarTexto(
+                confirmacion.CodigoIngresado);
 
             if (!EntradaComunValidador.EsTokenValido(token) ||
                 !EntradaComunValidador.EsCodigoVerificacionValido(codigoIngresado))
@@ -211,7 +233,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 _solicitudes.TryRemove(token, out _);
-                _logger.WarnFormat("Código de verificación expirado para usuario '{0}'.", pendiente.DatosCuenta.Usuario);
+                _logger.WarnFormat(
+                    "Codigo expirado para usuario '{0}'.",
+                    pendiente.DatosCuenta.Usuario);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -219,9 +244,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
-            if (!string.Equals(pendiente.Codigo, codigoIngresado, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(
+                pendiente.Codigo,
+                codigoIngresado,
+                StringComparison.OrdinalIgnoreCase))
             {
-                _logger.WarnFormat("Código de verificación incorrecto ingresado para usuario '{0}'.", pendiente.DatosCuenta.Usuario);
+                _logger.WarnFormat(
+                    "Codigo incorrecto ingresado para usuario '{0}'.",
+                    pendiente.DatosCuenta.Usuario);
+
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -231,10 +262,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _solicitudes.TryRemove(token, out _);
 
-            string clave = ObtenerClave(pendiente.DatosCuenta.Usuario, pendiente.DatosCuenta.Correo);
-            _verificacionesConfirmadas[clave] = 0;
+            string clave = ObtenerClave(
+                pendiente.DatosCuenta.Usuario,
+                pendiente.DatosCuenta.Correo);
 
-            _logger.InfoFormat("Verificación confirmada exitosamente para usuario '{0}'.", pendiente.DatosCuenta.Usuario);
+            _verificacionesConfirmadas[clave] = 0;
 
             return new ResultadoRegistroCuentaDTO
             {
@@ -244,11 +276,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Verifica si una cuenta tiene una verificacion confirmada pendiente.
-        /// Comprueba si existe una confirmacion de verificacion para el usuario y correo especificados.
         /// </summary>
         /// <param name="nuevaCuenta">Datos de la cuenta a verificar.</param>
-        /// <returns>True si la verificacion esta confirmada, false en caso contrario o si nuevaCuenta es null.</returns>
-        public static bool EstaVerificacionConfirmada(NuevaCuentaDTO nuevaCuenta)
+        /// <returns>True si la verificacion esta confirmada, false en caso contrario o si 
+        /// nuevaCuenta es null.</returns>
+        public bool EstaVerificacionConfirmada(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
@@ -261,10 +293,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Limpia la verificacion confirmada de una cuenta despues de completar el registro.
-        /// Elimina la confirmacion almacenada para el usuario y correo especificados.
         /// </summary>
         /// <param name="nuevaCuenta">Datos de la cuenta cuya verificacion se limpiara.</param>
-        public static void LimpiarVerificacion(NuevaCuentaDTO nuevaCuenta)
+        public void LimpiarVerificacion(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {

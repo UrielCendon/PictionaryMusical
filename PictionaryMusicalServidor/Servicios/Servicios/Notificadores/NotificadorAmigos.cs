@@ -18,11 +18,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
         private readonly IAmistadServicio _amistadServicio;
 
-        public NotificadorAmigos(ManejadorCallback<IAmigosManejadorCallback> manejadorCallback)
-            : this(manejadorCallback, new AmistadServicio(new ContextoFactory()))
-        {
-        }
-
         public NotificadorAmigos(ManejadorCallback<IAmigosManejadorCallback> manejadorCallback, 
             IAmistadServicio amistadServicio)
         {

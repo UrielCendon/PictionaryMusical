@@ -93,10 +93,13 @@
     <Compile Include="Contratos\IAmistadServicio.cs" />
     <Compile Include="Contratos\IListaAmigosManejador.cs" />
     <Compile Include="Contratos\IListaAmigosManejadorCallback.cs" />
+    <Compile Include="Contratos\INotificacionCodigosServicios.cs" />
     <Compile Include="Contratos\IPerfilManejador.cs" />
+    <Compile Include="Contratos\IRecuperacionCuentaServicio.cs" />
     <Compile Include="Contratos\ISalasManejadorCallback.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="Contratos\IContextoFactory.cs" />
+    <Compile Include="Contratos\IVerificacionRegistroServicio.cs" />
     <Compile Include="LogicaNegocio\ControladorPartida.cs" />
     <Compile Include="LogicaNegocio\EstadoPartida.cs" />
     <Compile Include="LogicaNegocio\GestorJugadoresPartida.cs" />

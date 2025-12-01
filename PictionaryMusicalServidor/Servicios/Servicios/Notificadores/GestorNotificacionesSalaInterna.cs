@@ -94,7 +94,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <summary>
         /// Notifica a los integrantes que un jugador ha salido y envia la sala actualizada.
         /// </summary>
-        public void NotificarSalida(string codigoSala, string nombreUsuario, SalaDTO salaActualizada)
+        public void NotificarSalida(string codigoSala, string nombreUsuario, 
+            SalaDTO salaActualizada)
         {
             var destinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in destinatarios)
@@ -134,7 +135,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 return _callbacks
                     .Where(x => !string.Equals(x.Key, usuarioExcluido, 
-                    StringComparison.OrdinalIgnoreCase))
+                        StringComparison.OrdinalIgnoreCase))
                     .Select(x => x.Value)
                     .ToList();
             }

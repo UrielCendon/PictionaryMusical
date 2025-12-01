@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
@@ -14,7 +15,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     internal class NotificadorSalas : INotificadorSalas
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorSalas));
-        private readonly ConcurrentDictionary<Guid, ISalasManejadorCallback> _suscripciones = new();
+        private readonly ConcurrentDictionary<Guid, ISalasManejadorCallback> _suscripciones =
+            new ConcurrentDictionary<Guid, ISalasManejadorCallback>();
         private readonly Func<IEnumerable<SalaInternaManejador>> _obtenerSalas;
 
         public NotificadorSalas(Func<IEnumerable<SalaInternaManejador>> obtenerSalas)
@@ -72,7 +74,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 var salas = _obtenerSalas().Select(s => s.ToDto()).ToArray();
                 callback.NotificarListaSalasActualizada(salas);
             }
-            catch (System.ServiceModel.CommunicationException ex)
+            catch (CommunicationException ex)
             {
                 _logger.Warn(
                     "Error de comunicacion al notificar la lista de salas a los suscriptores.", 
@@ -102,7 +104,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 {
                     kvp.Value.NotificarListaSalasActualizada(salas);
                 }
-                catch (System.ServiceModel.CommunicationException ex)
+                catch (CommunicationException ex)
                 {
                     _logger.Warn(
                         "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.", 

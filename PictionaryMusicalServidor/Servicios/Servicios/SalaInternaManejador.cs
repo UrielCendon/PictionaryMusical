@@ -16,8 +16,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     internal sealed class SalaInternaManejador
     {
         private const int MaximoJugadores = 4;
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(SalaInternaManejador));
-        
+
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(SalaInternaManejador));
+
         private readonly object _sincrono = new object();
         private readonly IGestorNotificacionesSalaInterna _gestorNotificaciones;
         private readonly List<string> _jugadores;
@@ -30,16 +32,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="configuracion">Configuracion de la partida.</param>
         /// <param name="gestorNotificaciones">Dependencia para el manejo de notificaciones.
         /// </param>
-        /// <exception cref="ArgumentNullException">Se lanza si el gestor de notificaciones es 
-        /// nulo.</exception>
-        public SalaInternaManejador(string codigo, string creador, ConfiguracionPartidaDTO configuracion,
+        public SalaInternaManejador(
+            string codigo,
+            string creador,
+            ConfiguracionPartidaDTO configuracion,
             IGestorNotificacionesSalaInterna gestorNotificaciones)
         {
             Codigo = codigo;
             Creador = creador;
             Configuracion = configuracion;
-            _gestorNotificaciones = gestorNotificaciones ?? 
+
+            _gestorNotificaciones = gestorNotificaciones ??
                 throw new ArgumentNullException(nameof(gestorNotificaciones));
+
             _jugadores = new List<string>();
             PartidaIniciada = false;
             DebeEliminarse = false;
@@ -49,27 +54,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         public string Creador { get; }
         public ConfiguracionPartidaDTO Configuracion { get; }
 
-        /// <summary>
-        /// Obtiene una copia segura de la lista de jugadores actuales.
-        /// </summary>
-        public List<string> Jugadores
-        {
-            get
-            {
-                lock (_sincrono)
-                {
-                    return new List<string>(_jugadores);
-                }
-            }
-        }
-
         public bool DebeEliminarse { get; private set; }
         public bool PartidaIniciada { get; set; }
 
         /// <summary>
         /// Genera un objeto de transferencia de datos (DTO) con el estado actual de la sala.
-        /// </summary>
         /// <returns>Instancia de SalaDTO.</returns>
+        /// </summary>
         public SalaDTO ToDto()
         {
             lock (_sincrono)
@@ -91,7 +82,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="callback">Canal de comunicacion del usuario.</param>
         /// <param name="notificar">Indica si se debe notificar el ingreso a los demas.</param>
         /// <returns>DTO actualizado de la sala.</returns>
-        public SalaDTO AgregarJugador(string nombreUsuario, ISalasManejadorCallback callback,
+        public SalaDTO AgregarJugador(
+            string nombreUsuario,
+            ISalasManejadorCallback callback,
             bool notificar)
         {
             lock (_sincrono)
@@ -107,8 +100,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _jugadores.Add(nombreUsuario);
                 _gestorNotificaciones.Registrar(nombreUsuario, callback);
 
-                _logger.Info("Jugador agregado a la sala interna.");
-
                 if (notificar)
                 {
                     _gestorNotificaciones.NotificarIngreso(Codigo, nombreUsuario, ToDto());
@@ -119,8 +110,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         }
 
         /// <summary>
-        /// Remueve a un jugador de la sala y gestiona la logica de abandono (cancelacion o 
-        /// salida).
+        /// Remueve a un jugador de la sala y gestiona la logica de abandono.
         /// </summary>
         /// <param name="nombreUsuario">Usuario a remover.</param>
         public void RemoverJugador(string nombreUsuario)
@@ -134,8 +124,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 _jugadores.Remove(nombreUsuario);
                 _gestorNotificaciones.Remover(nombreUsuario);
-
-                _logger.Info("Jugador removido de la sala interna.");
 
                 ManejarLogicaSalida(nombreUsuario);
             }
@@ -152,16 +140,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 ValidarPermisosExpulsion(nombreHost, nombreJugadorAExpulsar);
 
-                var callbackExpulsado = _gestorNotificaciones.ObtenerCallback
-                    (nombreJugadorAExpulsar);
+                var callbackExpulsado = _gestorNotificaciones.ObtenerCallback(
+                    nombreJugadorAExpulsar);
 
                 _jugadores.Remove(nombreJugadorAExpulsar);
                 _gestorNotificaciones.Remover(nombreJugadorAExpulsar);
 
-                _logger.Info("Jugador expulsado de la sala por el anfitrion.");
-
-                _gestorNotificaciones.NotificarExpulsion(Codigo, nombreJugadorAExpulsar, 
-                    callbackExpulsado, ToDto());
+                _gestorNotificaciones.NotificarExpulsion(
+                    Codigo,
+                    nombreJugadorAExpulsar,
+                    callbackExpulsado,
+                    ToDto());
             }
         }
 
@@ -197,7 +186,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _gestorNotificaciones.NotificarSalida(Codigo, nombreUsuario, salaActualizada);
 
-            bool esAnfitrion = string.Equals(nombreUsuario, Creador, 
+            bool esAnfitrion = string.Equals(
+                nombreUsuario,
+                Creador,
                 StringComparison.OrdinalIgnoreCase);
 
             if (esAnfitrion)

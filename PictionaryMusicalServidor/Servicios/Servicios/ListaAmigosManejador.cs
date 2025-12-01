@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.ServiceModel;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using Datos.Modelo;
@@ -18,36 +17,52 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// Maneja suscripciones para notificaciones de cambios en listas de amigos con notificaciones
     /// en tiempo real via callbacks.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = 
-        ConcurrencyMode.Multiple)]
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single,
+        ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class ListaAmigosManejador : IListaAmigosManejador
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ListaAmigosManejador));
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(ListaAmigosManejador));
 
         private readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
         private readonly IContextoFactory _contextoFactory;
         private readonly IAmistadServicio _amistadServicio;
         private readonly INotificadorListaAmigos _notificador;
 
-        public ListaAmigosManejador()
-            : this(new ContextoFactory(), new AmistadServicio(new ContextoFactory()))
+        /// <summary>
+        /// Constructor vacio utilizado por el Host de WCF.
+        /// Inicializa las dependencias manualmente.
+        /// </summary>
+        public ListaAmigosManejador() : this(
+            new ContextoFactory(),
+            new AmistadServicio(new ContextoFactory()),
+            new NotificadorListaAmigos(
+                new ManejadorCallback<IListaAmigosManejadorCallback>(
+                    StringComparer.OrdinalIgnoreCase),
+                new AmistadServicio(new ContextoFactory()),
+                new UsuarioRepositorio(new ContextoFactory().CrearContexto())))
         {
         }
 
         /// <summary>
         /// Constructor principal.
         /// </summary>
-        public ListaAmigosManejador(IContextoFactory contextoFactory, 
-            IAmistadServicio amistadServicio)
+        public ListaAmigosManejador(
+            IContextoFactory contextoFactory,
+            IAmistadServicio amistadServicio,
+            INotificadorListaAmigos notificador)
         {
-            _contextoFactory = contextoFactory ?? 
+            _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
-            _amistadServicio = amistadServicio ?? 
+
+            _amistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
 
-            _manejadorCallback = new ManejadorCallback<IListaAmigosManejadorCallback>
-                (StringComparer.OrdinalIgnoreCase);
-            _notificador = new NotificadorListaAmigos(_manejadorCallback, _contextoFactory);
+            _notificador = notificador ??
+                throw new ArgumentNullException(nameof(notificador));
+
+            _manejadorCallback = new ManejadorCallback<IListaAmigosManejadorCallback>(
+                StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -55,8 +70,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Obtiene la lista actual de amigos, registra el callback y notifica inmediatamente.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario a suscribir.</param>
-        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido, no 
-        /// existe, o hay errores de base de datos.</exception>
         public void Suscribir(string nombreUsuario)
         {
             try
@@ -65,8 +78,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 var amigosActuales = ObtenerAmigosPorNombre(nombreUsuario);
 
-                IListaAmigosManejadorCallback callback = 
+                IListaAmigosManejadorCallback callback =
                     ManejadorCallback<IListaAmigosManejadorCallback>.ObtenerCallbackActual();
+
                 _manejadorCallback.Suscribir(nombreUsuario, callback);
                 _manejadorCallback.ConfigurarEventosCanal(nombreUsuario);
 
@@ -74,18 +88,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                _logger.Warn("Identificador inválido al suscribirse a la lista de amigos.", ex);
+                _logger.Warn("Identificador invalido al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Datos inválidos al suscribirse a la lista de amigos.", ex);
+                _logger.Warn("Datos invalidos al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
             catch (Exception ex)
             {
                 _logger.Error(
-                    "Error de datos al suscribirse a lista de amigos. No se pudo recuperar la lista de amigos del usuario.",
+                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
                     ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
@@ -95,10 +109,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Cancela la suscripcion de un usuario de notificaciones de lista de amigos.
         /// Elimina el callback del usuario del manejador de callbacks.
         /// </summary>
-        /// <param name="nombreUsuario">Nombre del usuario que cancela la suscripcion.
-        /// </param>
-        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido o 
-        /// hay errores.</exception>
+        /// <param name="nombreUsuario">Nombre del usuario que cancela la suscripcion.</param>
         public void CancelarSuscripcion(string nombreUsuario)
         {
             try
@@ -117,11 +128,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Obtiene la lista de amigos de un usuario especifico.
         /// Recupera todos los amigos del usuario desde la base de datos.
         /// </summary>
-        /// <param name="nombreUsuario">Nombre del usuario cuya lista de amigos se desea obtener.
-        /// </param>
+        /// <param name="nombreUsuario">Nombre del usuario cuya lista se desea obtener.</param>
         /// <returns>Lista de amigos del usuario.</returns>
-        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido, 
-        /// no existe, o hay errores de base de datos.</exception>
         public List<AmigoDTO> ObtenerAmigos(string nombreUsuario)
         {
             try

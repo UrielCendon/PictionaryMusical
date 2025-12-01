@@ -14,12 +14,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Implementacion del servicio de autenticacion de usuarios.
-    /// Valida credenciales comparando identificador (usuario o correo) y contrasena con hash BCrypt.
-    /// Verifica que el identificador y contrasena sean validos antes de buscar el usuario.
+    /// Valida credenciales comparando identificador y contrasena con hash BCrypt.
     /// </summary>
     public class InicioSesionManejador : IInicioSesionManejador
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(InicioSesionManejador));
+        private static readonly ILog _logger = 
+            LogManager.GetLogger(typeof(InicioSesionManejador));
+        
         private readonly IContextoFactory _contextoFactory;
 
         public InicioSesionManejador() : this(new ContextoFactory())
@@ -28,33 +29,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         public InicioSesionManejador(IContextoFactory contextoFactory)
         {
-            _contextoFactory = contextoFactory ?? throw new ArgumentNullException(nameof(contextoFactory));
+            _contextoFactory = contextoFactory ?? 
+                throw new ArgumentNullException(nameof(contextoFactory));
         }
 
         /// <summary>
         /// Inicia sesion de un usuario validando sus credenciales.
-        /// Busca el usuario por nombre de usuario o correo, verifica la contrasena con BCrypt,
-        /// y retorna los datos del usuario si es exitoso.
         /// </summary>
         /// <param name="credenciales">Credenciales de inicio de sesion del usuario.</param>
         /// <returns>Resultado del inicio de sesion con datos del usuario si es exitoso.</returns>
-        /// <exception cref="ArgumentNullException">Se lanza si credenciales es null.</exception>
-        /// <exception cref="EntityException">Se lanza si hay errores de conexion con la base de datos.</exception>
-        /// <exception cref="DataException">Se lanza si hay errores de datos durante el inicio de sesion.</exception>
-        /// <exception cref="InvalidOperationException">Se lanza si hay operaciones invalidas durante el inicio de sesion.</exception>
-        public ResultadoInicioSesionDTO IniciarSesion(CredencialesInicioSesionDTO credenciales)
+        public ResultadoInicioSesionDTO IniciarSesion(
+            CredencialesInicioSesionDTO credenciales)
         {
             if (credenciales == null)
             {
                 throw new ArgumentNullException(nameof(credenciales));
             }
 
-            string identificador = EntradaComunValidador.NormalizarTexto(credenciales.Identificador);
+            string identificador = EntradaComunValidador.NormalizarTexto(
+                credenciales.Identificador);
             string contrasena = credenciales.Contrasena?.Trim();
 
-            if (!EntradaComunValidador.EsLongitudValida(identificador) || string.IsNullOrWhiteSpace(contrasena))
+            if (!EntradaComunValidador.EsLongitudValida(identificador) || 
+                string.IsNullOrWhiteSpace(contrasena))
             {
-                _logger.WarnFormat("Intento de inicio de sesión con datos inválidos. Identificador: {0}", identificador);
+                _logger.WarnFormat(
+                    "Intento de inicio de sesion con datos invalidos. Identificador: {0}", 
+                    identificador);
+                
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = true,
@@ -70,7 +72,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                     if (usuario == null)
                     {
-                        _logger.WarnFormat("Intento de inicio de sesión fallido. Usuario no encontrado: {0}", identificador);
+                        _logger.WarnFormat(
+                            "Inicio de sesion fallido. Usuario no encontrado: {0}", 
+                            identificador);
+                        
                         return new ResultadoInicioSesionDTO
                         {
                             CuentaEncontrada = false,
@@ -80,15 +85,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                     if (!BCryptNet.Verify(contrasena, usuario.Contrasena))
                     {
-                        _logger.WarnFormat("Intento de inicio de sesión fallido. Contraseña incorrecta para: {0}", usuario.Nombre_Usuario);
+                        _logger.WarnFormat(
+                            "Inicio de sesion fallido. Contrasena incorrecta para: {0}", 
+                            usuario.Nombre_Usuario);
+                        
                         return new ResultadoInicioSesionDTO
                         {
                             ContrasenaIncorrecta = true,
                             Mensaje = MensajesError.Cliente.CredencialesIncorrectas
                         };
                     }
-
-                    _logger.InfoFormat("Inicio de sesión exitoso. Usuario: {0}, ID: {1}", usuario.Nombre_Usuario, usuario.idUsuario);
 
                     return new ResultadoInicioSesionDTO
                     {
@@ -99,7 +105,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos durante el inicio de sesión. Fallo en la consulta de usuario.", ex);
+                _logger.Error("Error de base de datos durante el inicio de sesion.", ex);
                 return new ResultadoInicioSesionDTO
                 {
                     InicioSesionExitoso = false,
@@ -108,7 +114,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException ex)
             {
-                _logger.Error("Error de datos durante el inicio de sesión. Los datos del usuario no se pudieron recuperar.", ex);
+                _logger.Error("Error de datos durante el inicio de sesion.", ex);
                 return new ResultadoInicioSesionDTO
                 {
                     InicioSesionExitoso = false,
@@ -117,7 +123,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error("Operación inválida durante el inicio de sesión. Estado inconsistente del contexto.", ex);
+                _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
                 return new ResultadoInicioSesionDTO
                 {
                     InicioSesionExitoso = false,
@@ -126,14 +132,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private static Usuario BuscarUsuarioPorIdentificador(BaseDatosPruebaEntities contexto, string identificador)
+        private static Usuario BuscarUsuarioPorIdentificador(
+            BaseDatosPruebaEntities contexto, 
+            string identificador)
         {
             var usuariosPorNombre = contexto.Usuario
                 .Where(u => u.Nombre_Usuario == identificador)
                 .ToList();
 
-            Usuario usuario = usuariosPorNombre
-                .FirstOrDefault(u => string.Equals(u.Nombre_Usuario, identificador, StringComparison.Ordinal));
+            Usuario usuario = usuariosPorNombre.FirstOrDefault(
+                u => string.Equals(
+                    u.Nombre_Usuario, 
+                    identificador, 
+                    StringComparison.Ordinal));
 
             if (usuario != null)
             {
@@ -144,8 +155,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 .Where(u => u.Jugador.Correo == identificador)
                 .ToList();
 
-            return usuariosPorCorreo
-                .FirstOrDefault(u => string.Equals(u.Jugador?.Correo, identificador, StringComparison.Ordinal));
+            return usuariosPorCorreo.FirstOrDefault(
+                u => string.Equals(
+                    u.Jugador?.Correo, 
+                    identificador, 
+                    StringComparison.Ordinal));
         }
 
         private static UsuarioDTO MapearUsuario(Usuario usuario)

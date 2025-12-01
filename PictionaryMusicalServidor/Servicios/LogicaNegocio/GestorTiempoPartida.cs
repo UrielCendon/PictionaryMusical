@@ -42,13 +42,22 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             { 
                 AutoReset = false 
             };
-            _timerRonda.Elapsed += (s, e) => TiempoRondaAgotado?.Invoke();
 
-            _timerTransicion = new Timer 
-            { 
-                AutoReset = false, Interval = duracionTransicionSegundos * 1000
+            _timerRonda.Elapsed += (s, e) =>
+            {
+                TiempoRondaAgotado?.Invoke();
             };
-            _timerTransicion.Elapsed += (s, e) => TiempoTransicionAgotado?.Invoke();
+
+            _timerTransicion = new Timer
+            {
+                AutoReset = false,
+                Interval = duracionTransicionSegundos * 1000
+            };
+
+            _timerTransicion.Elapsed += (s, e) =>
+            {
+                TiempoTransicionAgotado?.Invoke();
+            };
         }
 
         /// <summary>
@@ -87,7 +96,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// </returns>
         public int CalcularPuntosPorTiempo()
         {
-            if (!_timerRonda.Enabled) return 0;
+            if (!_timerRonda.Enabled)
+            {
+                return 0;
+            }
 
             var transcurrido = (int)(DateTime.UtcNow - _inicioRonda).TotalSeconds;
             var restante = _duracionRondaSegundos - transcurrido;
