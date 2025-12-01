@@ -20,16 +20,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private const int LimiteTopJugadores = 10;
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(ClasificacionManejador));
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
 
-        public ClasificacionManejador() : this(new ContextoFactory()) 
+        public ClasificacionManejador() : this(new ContextoFactoria()) 
         { 
         }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public ClasificacionManejador(IContextoFactory contextoFactory)
+        public ClasificacionManejador(IContextoFactoria contextoFactory)
         {
             _contextoFactory = contextoFactory
                 ?? throw new ArgumentNullException(nameof(contextoFactory));

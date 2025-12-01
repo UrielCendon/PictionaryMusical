@@ -29,7 +29,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         public CambioContrasenaManejador() : this(
             new RecuperacionCuentaServicio(
-                new ContextoFactory(),
+                new ContextoFactoria(),
                 new NotificacionCodigosServicio(new CorreoCodigoVerificacionNotificador())))
         {
         }
@@ -208,7 +208,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.ActualizarContrasena(solicitud);
                 if (!resultado.OperacionExitosa)
                 {
-                    _logger.Warn("No se pudo actualizar la contraseña mediante recuperacion.");
+                    _logger.Warn("No se pudo actualizar la contrasena mediante recuperacion.");
                 }
                 return resultado;
             }

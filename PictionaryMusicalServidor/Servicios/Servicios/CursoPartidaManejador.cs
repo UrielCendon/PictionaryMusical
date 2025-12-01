@@ -39,19 +39,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static readonly object _sincronizacion = new object();
 
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly ISalasManejador _salasManejador;
         private readonly ICatalogoCanciones _catalogoCanciones;
 
         public CursoPartidaManejador() : this(
-            new ContextoFactory(),
+            new ContextoFactoria(),
             new SalasManejador(),
             new CatalogoCanciones())
         {
         }
 
         public CursoPartidaManejador(
-            IContextoFactory contextoFactory,
+            IContextoFactoria contextoFactory,
             ISalasManejador salasManejador,
             ICatalogoCanciones catalogoCanciones)
         {

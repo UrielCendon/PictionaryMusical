@@ -29,24 +29,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 StringComparer.OrdinalIgnoreCase);
 
         private readonly INotificadorSalas _notificador;
+        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         /// <summary>
         /// Constructor por defecto que inicializa las dependencias.
         /// </summary>
         public SalasManejador()
         {
-            // Para el host WCF sin DI container, instanciamos aqui.
-            // En un entorno con DI, esto se inyectaria.
             _notificador = new NotificadorSalas(() => _salas.Values);
+            new ValidadorNombreUsuario();
         }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public SalasManejador(INotificadorSalas notificador)
+        public SalasManejador(INotificadorSalas notificador, 
+            IValidadorNombreUsuario validadorUsuario)
         {
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
+            _validadorUsuario = validadorUsuario ??
+                throw new ArgumentNullException(nameof(validadorUsuario));
         }
 
         /// <summary>
@@ -60,7 +63,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreCreador, nameof(nombreCreador));
+                _validadorUsuario.Validar(nombreCreador, nameof(nombreCreador));
                 ValidarConfiguracion(configuracion);
 
                 string codigo = GenerarCodigoSala();
@@ -120,7 +123,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
 
                 if (string.IsNullOrWhiteSpace(codigoSala))
                 {
@@ -207,7 +210,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
 
                 if (string.IsNullOrWhiteSpace(codigoSala))
                 {
@@ -328,8 +331,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreHost, nameof(nombreHost));
-                ValidadorNombreUsuario.Validar(
+                _validadorUsuario.Validar(nombreHost, nameof(nombreHost));
+                _validadorUsuario.Validar(
                     nombreJugadorAExpulsar,
                     nameof(nombreJugadorAExpulsar));
 

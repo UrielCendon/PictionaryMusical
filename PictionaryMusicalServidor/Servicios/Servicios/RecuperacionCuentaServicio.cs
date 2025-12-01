@@ -31,10 +31,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _solicitudesRecuperacion =
             new ConcurrentDictionary<string, SolicitudRecuperacionPendiente>();
 
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly INotificacionCodigosServicio _notificacionCodigosServicio;
 
-        public RecuperacionCuentaServicio(IContextoFactory contextoFactory,
+        public RecuperacionCuentaServicio(IContextoFactoria contextoFactory,
             INotificacionCodigosServicio notificacionCodigosServicio)
         {
             _contextoFactory = contextoFactory ??

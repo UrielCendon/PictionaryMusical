@@ -32,12 +32,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
             RegexTimeout);
 
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly ISalasManejador _salasManejador;
         private readonly ICorreoInvitacionNotificador _correoNotificador;
 
         public InvitacionesManejador() : this(
-            new ContextoFactory(),
+            new ContextoFactoria(),
             new SalasManejador(),
             new CorreoInvitacionNotificador())
         {
@@ -47,7 +47,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Constructor con inyeccion de dependencias.
         /// </summary>
         public InvitacionesManejador(
-            IContextoFactory contextoFactory,
+            IContextoFactoria contextoFactory,
             ISalasManejador salasManejador,
             ICorreoInvitacionNotificador correoNotificador)
         {

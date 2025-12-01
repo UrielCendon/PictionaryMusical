@@ -1,7 +1,6 @@
 using log4net;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Datos.Utilidades;
-using PictionaryMusicalServidor.Servicios.Contratos;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
@@ -9,9 +8,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// Factoria para la creacion de contextos de base de datos.
     /// Centraliza la logica de creacion de instancias de contexto.
     /// </summary>
-    public class ContextoFactory : IContextoFactory
+    public class ContextoFactoria : IContextoFactoria
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ContextoFactory));
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(ContextoFactoria));
 
         /// <summary>
         /// Crea una nueva instancia del contexto de base de datos.

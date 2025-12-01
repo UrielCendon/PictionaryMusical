@@ -8,8 +8,8 @@ using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -18,44 +18,55 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// Maneja suscripciones para notificaciones, envio y respuesta de solicitudes de amistad,
     /// y eliminacion de relaciones de amistad con notificaciones en tiempo real via callbacks.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode = 
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode =
         ConcurrencyMode.Multiple)]
     public class AmigosManejador : IAmigosManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AmigosManejador));
+
         private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
         private readonly INotificadorAmigos _notificador;
         private readonly INotificadorListaAmigos _notificadorListaAmigos;
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly IAmistadServicio _amistadServicio;
+        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         public AmigosManejador() : this(
-            new ContextoFactory(),
-            new AmistadServicio(new ContextoFactory()),
+            new ContextoFactoria(),
+            new AmistadServicio(new ContextoFactoria()),
             new NotificadorListaAmigos(
                 new ManejadorCallback<IListaAmigosManejadorCallback>(
                     StringComparer.OrdinalIgnoreCase),
-                new AmistadServicio(new ContextoFactory()),
-                new UsuarioRepositorio(new ContextoFactory().CrearContexto())
-            ))
+                new AmistadServicio(new ContextoFactoria()),
+                new UsuarioRepositorio(new ContextoFactoria().CrearContexto())),
+            new ValidadorNombreUsuario())
         {
         }
 
         /// <summary>
         /// Constructor por defecto para compatibilidad con WCF.
         /// </summary>
-        public AmigosManejador(IContextoFactory contextoFactory, IAmistadServicio amistadServicio,
-            INotificadorListaAmigos notificadorLista)
+        public AmigosManejador(
+            IContextoFactoria contextoFactory,
+            IAmistadServicio amistadServicio,
+            INotificadorListaAmigos notificadorLista,
+            IValidadorNombreUsuario validadorUsuario)
         {
-            _contextoFactory = contextoFactory ?? 
+            _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
-            _amistadServicio = amistadServicio ?? 
+
+            _amistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
-            _notificadorListaAmigos = notificadorLista ?? 
+
+            _validadorUsuario = validadorUsuario ??
+                throw new ArgumentNullException(nameof(validadorUsuario));
+
+            _notificadorListaAmigos = notificadorLista ??
                 throw new ArgumentNullException(nameof(notificadorLista));
 
-            _manejadorCallback = new ManejadorCallback<IAmigosManejadorCallback>
-                (StringComparer.OrdinalIgnoreCase);
+            _manejadorCallback = new ManejadorCallback<IAmigosManejadorCallback>(
+                StringComparer.OrdinalIgnoreCase);
+
             _notificador = new NotificadorAmigos(_manejadorCallback, _amistadServicio);
         }
 
@@ -64,46 +75,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Normaliza el nombre de usuario, registra el callback y notifica solicitudes pendientes.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario a suscribir.</param>
-        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido, 
-        /// no existe, o hay errores de base de datos.</exception>
         public void Suscribir(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                throw new FaultException
-                    (MensajesError.Cliente.NombreUsuarioObligatorioSuscripcion);
-            }
-
-            Usuario usuario;
-            string nombreNormalizado;
+            ValidarEntradaSuscripcion(nombreUsuario);
 
             try
             {
-                using (var contexto = _contextoFactory.CrearContexto())
-                {
-                    var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                    usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
+                var datosUsuario = ObtenerDatosUsuarioSuscripcion(nombreUsuario);
 
-                    if (usuario == null)
-                    {
-                        throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
-                    }
-                    nombreNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                        (usuario.Nombre_Usuario, nombreUsuario);
-                }
+                RegistrarCallback(nombreUsuario, datosUsuario.NombreNormalizado);
 
-                if (string.IsNullOrWhiteSpace(nombreNormalizado))
-                {
-                    throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
-                }
-
-                RegistrarCallback(nombreUsuario, nombreNormalizado);
-                _notificador.NotificarSolicitudesPendientesAlSuscribir(nombreNormalizado, 
-                    usuario.idUsuario);
+                _notificador.NotificarSolicitudesPendientesAlSuscribir(
+                    datosUsuario.NombreNormalizado,
+                    datosUsuario.IdUsuario);
             }
             catch (EntityException ex)
             {
-                _logger.Error("Error de base de datos al suscribir a notificaciones de amistad.",
+                _logger.Error(
+                    "Error de base de datos al suscribir a notificaciones de amistad.",
                     ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
@@ -119,14 +108,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Elimina el callback del usuario del manejador de callbacks.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario que cancela la suscripcion.</param>
-        /// <exception cref="FaultException">Se lanza si el nombre de usuario es invalido.
-        /// </exception>
         public void CancelarSuscripcion(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                throw new FaultException
-                    (MensajesError.Cliente.NombreUsuarioObligatorioCancelar);
+                throw new FaultException(
+                    MensajesError.Cliente.NombreUsuarioObligatorioCancelar);
             }
 
             _manejadorCallback.Desuscribir(nombreUsuario);
@@ -134,41 +121,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Envia una solicitud de amistad de un usuario a otro.
-        /// Valida que ambos usuarios existan, crea la solicitud en la base de datos y notifica al
-        /// receptor.
+        /// Valida que ambos usuarios existan, crea la solicitud y notifica al receptor.
         /// </summary>
         /// <param name="nombreUsuarioEmisor">Nombre del usuario que envia la solicitud.</param>
         /// <param name="nombreUsuarioReceptor">Nombre del usuario que recibe la solicitud.</param>
-        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios no
-        /// existen, o hay errores de base de datos.</exception>
-        public void EnviarSolicitudAmistad(string nombreUsuarioEmisor, 
+        public void EnviarSolicitudAmistad(
+            string nombreUsuarioEmisor,
             string nombreUsuarioReceptor)
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreUsuarioEmisor, 
-                    nameof(nombreUsuarioEmisor));
-                ValidadorNombreUsuario.Validar(nombreUsuarioReceptor, 
-                    nameof(nombreUsuarioReceptor));
+                ValidarEntradasInteraccion(nombreUsuarioEmisor, nombreUsuarioReceptor);
 
-                Usuario usuarioEmisor;
-                Usuario usuarioReceptor;
+                var usuarios = EjecutarCreacionSolicitudEnBaseDatos(
+                    nombreUsuarioEmisor,
+                    nombreUsuarioReceptor);
 
-                using (var contexto = _contextoFactory.CrearContexto())
-                {
-                    var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                    usuarioEmisor = 
-                        usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioEmisor);
-                    usuarioReceptor = 
-                        usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioReceptor);
-
-                    ValidarUsuariosExistentes(usuarioEmisor, usuarioReceptor);
-
-                    _amistadServicio.CrearSolicitud(usuarioEmisor.idUsuario, 
-                        usuarioReceptor.idUsuario);
-                }
-
-                NotificarSolicitudNueva(usuarioEmisor, nombreUsuarioEmisor, usuarioReceptor, 
+                NotificarSolicitudNueva(
+                    usuarios.Emisor,
+                    nombreUsuarioEmisor,
+                    usuarios.Receptor,
                     nombreUsuarioReceptor);
             }
             catch (FaultException)
@@ -194,54 +166,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Responde una solicitud de amistad aceptandola.
-        /// Actualiza la solicitud en la base de datos, notifica a ambos usuarios y actualiza sus 
-        /// listas de amigos.
+        /// Actualiza la solicitud, notifica a ambos usuarios y actualiza sus listas de amigos.
         /// </summary>
-        /// <param name="nombreUsuarioEmisor">Nombre del usuario que envio la solicitud original.
-        /// </param>
-        /// <param name="nombreUsuarioReceptor">Nombre del usuario que responde la solicitud.
-        /// </param>
-        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios 
-        /// no existen, o hay errores de base de datos.</exception>
-        public void ResponderSolicitudAmistad(string nombreUsuarioEmisor, 
+        /// <param name="nombreUsuarioEmisor">Usuario que envio la solicitud original.</param>
+        /// <param name="nombreUsuarioReceptor">Usuario que responde la solicitud.</param>
+        public void ResponderSolicitudAmistad(
+            string nombreUsuarioEmisor,
             string nombreUsuarioReceptor)
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreUsuarioEmisor, nameof(nombreUsuarioEmisor));
-                ValidadorNombreUsuario.
-                    Validar(nombreUsuarioReceptor, nameof(nombreUsuarioReceptor));
+                ValidarEntradasInteraccion(nombreUsuarioEmisor, nombreUsuarioReceptor);
 
-                string nombreEmisorNormalizado;
-                string nombreReceptorNormalizado;
+                var nombresNormalizados = EjecutarAceptacionSolicitudEnBaseDatos(
+                    nombreUsuarioEmisor,
+                    nombreUsuarioReceptor);
 
-                using (var contexto = _contextoFactory.CrearContexto())
-                {
-                    var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                    var usuarioEmisor = usuarioRepositorio.ObtenerPorNombreUsuario
-                        (nombreUsuarioEmisor);
-                    var usuarioReceptor = usuarioRepositorio.ObtenerPorNombreUsuario
-                        (nombreUsuarioReceptor);
-
-                    if (usuarioEmisor == null || usuarioReceptor == null)
-                    {
-                        throw new FaultException
-                            (MensajesError.Cliente.UsuariosEspecificadosNoExisten);
-                    }
-
-                    _amistadServicio.AceptarSolicitud(usuarioEmisor.idUsuario, 
-                        usuarioReceptor.idUsuario);
-
-                    nombreEmisorNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                        (usuarioEmisor.Nombre_Usuario, nombreUsuarioEmisor);
-                    nombreReceptorNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                        (usuarioReceptor.Nombre_Usuario, nombreUsuarioReceptor);
-                }
-
-                NotificarSolicitudAceptada(nombreEmisorNormalizado, nombreReceptorNormalizado);
-
-                _notificadorListaAmigos.NotificarCambioAmistad(nombreEmisorNormalizado);
-                _notificadorListaAmigos.NotificarCambioAmistad(nombreReceptorNormalizado);
+                EjecutarNotificacionesRespuesta(nombresNormalizados);
             }
             catch (InvalidOperationException ex)
             {
@@ -262,49 +203,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Elimina la relacion de amistad entre dos usuarios.
-        /// Elimina la amistad de la base de datos, notifica a ambos usuarios y actualiza sus 
-        /// listas de amigos.
+        /// Elimina la amistad, notifica a ambos usuarios y actualiza sus listas de amigos.
         /// </summary>
         /// <param name="nombreUsuarioA">Nombre del primer usuario.</param>
         /// <param name="nombreUsuarioB">Nombre del segundo usuario.</param>
-        /// <exception cref="FaultException">Se lanza si los nombres son invalidos, los usuarios
-        /// no existen, o hay errores de base de datos.</exception>
         public void EliminarAmigo(string nombreUsuarioA, string nombreUsuarioB)
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreUsuarioA, nameof(nombreUsuarioA));
-                ValidadorNombreUsuario.Validar(nombreUsuarioB, nameof(nombreUsuarioB));
+                ValidarEntradasInteraccion(nombreUsuarioA, nombreUsuarioB);
 
-                Amigo relacionEliminada;
-                string nombreUsuarioANormalizado;
-                string nombreUsuarioBNormalizado;
+                var resultadoEliminacion = EjecutarEliminacionEnBaseDatos(
+                    nombreUsuarioA,
+                    nombreUsuarioB);
 
-                using (var contexto = _contextoFactory.CrearContexto())
-                {
-                    var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                    var usuarioA = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioA);
-                    var usuarioB = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuarioB);
-
-                    if (usuarioA == null || usuarioB == null)
-                    {
-                        throw new FaultException
-                            (MensajesError.Cliente.UsuariosEspecificadosNoExisten);
-                    }
-
-                    relacionEliminada = _amistadServicio.EliminarAmistad
-                        (usuarioA.idUsuario, usuarioB.idUsuario);
-                    nombreUsuarioANormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                        (usuarioA.Nombre_Usuario, nombreUsuarioA);
-                    nombreUsuarioBNormalizado = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                        (usuarioB.Nombre_Usuario, nombreUsuarioB);
-                }
-
-                NotificarEliminacion(relacionEliminada, nombreUsuarioANormalizado, 
-                    nombreUsuarioBNormalizado);
-
-                _notificadorListaAmigos.NotificarCambioAmistad(nombreUsuarioANormalizado);
-                _notificadorListaAmigos.NotificarCambioAmistad(nombreUsuarioBNormalizado);
+                EjecutarNotificacionesEliminacion(resultadoEliminacion);
             }
             catch (InvalidOperationException ex)
             {
@@ -318,37 +231,181 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
+        private void ValidarEntradaSuscripcion(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                throw new FaultException(
+                    MensajesError.Cliente.NombreUsuarioObligatorioSuscripcion);
+            }
+        }
+
+        private (int IdUsuario, string NombreNormalizado) ObtenerDatosUsuarioSuscripcion(
+            string nombreUsuario)
+        {
+            using (var contexto = _contextoFactory.CrearContexto())
+            {
+                var usuarioRepositorio = new UsuarioRepositorio(contexto);
+                var usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
+
+                if (usuario == null)
+                {
+                    throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
+                }
+
+                string nombreNormalizado = _validadorUsuario.ObtenerNombreNormalizado(
+                    usuario.Nombre_Usuario,
+                    nombreUsuario);
+
+                if (string.IsNullOrWhiteSpace(nombreNormalizado))
+                {
+                    throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
+                }
+
+                return (usuario.idUsuario, nombreNormalizado);
+            }
+        }
+
         private void RegistrarCallback(string nombreUsuario, string nombreNormalizado)
         {
             var callback = ManejadorCallback<IAmigosManejadorCallback>.ObtenerCallbackActual();
             _manejadorCallback.Suscribir(nombreNormalizado, callback);
 
-            if (!string.Equals(nombreUsuario, nombreNormalizado, StringComparison.Ordinal))
+            if (!string.Equals(
+                nombreUsuario,
+                nombreNormalizado,
+                StringComparison.Ordinal))
             {
                 _manejadorCallback.Desuscribir(nombreUsuario);
             }
+
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
+        }
+
+        private void ValidarEntradasInteraccion(string usuarioA, string usuarioB)
+        {
+            _validadorUsuario.Validar(usuarioA, nameof(usuarioA));
+            _validadorUsuario.Validar(usuarioB, nameof(usuarioB));
+        }
+
+        private (Usuario Emisor, Usuario Receptor) EjecutarCreacionSolicitudEnBaseDatos(
+            string nombreEmisor,
+            string nombreReceptor)
+        {
+            using (var contexto = _contextoFactory.CrearContexto())
+            {
+                var (emisor, receptor) = ObtenerUsuariosParaInteraccion(
+                    contexto,
+                    nombreEmisor,
+                    nombreReceptor);
+
+                _amistadServicio.CrearSolicitud(emisor.idUsuario, receptor.idUsuario);
+
+                return (emisor, receptor);
+            }
+        }
+
+        private (string NormalizadoEmisor, string NormalizadoReceptor)
+            EjecutarAceptacionSolicitudEnBaseDatos(
+                string nombreEmisor,
+                string nombreReceptor)
+        {
+            using (var contexto = _contextoFactory.CrearContexto())
+            {
+                var (usuarioEmisor, usuarioReceptor) = ObtenerUsuariosParaInteraccion(
+                    contexto,
+                    nombreEmisor,
+                    nombreReceptor);
+
+                _amistadServicio.AceptarSolicitud(
+                    usuarioEmisor.idUsuario,
+                    usuarioReceptor.idUsuario);
+
+                string normEmisor = _validadorUsuario.ObtenerNombreNormalizado(
+                    usuarioEmisor.Nombre_Usuario,
+                    nombreEmisor);
+
+                string normReceptor = _validadorUsuario.ObtenerNombreNormalizado(
+                    usuarioReceptor.Nombre_Usuario,
+                    nombreReceptor);
+
+                return (normEmisor, normReceptor);
+            }
+        }
+
+        private ResultadoEliminacionAmistad EjecutarEliminacionEnBaseDatos(
+            string nombreA,
+            string nombreB)
+        {
+            using (var contexto = _contextoFactory.CrearContexto())
+            {
+                var (usuarioA, usuarioB) = ObtenerUsuariosParaInteraccion(
+                    contexto,
+                    nombreA,
+                    nombreB);
+
+                var relacion = _amistadServicio.EliminarAmistad(
+                    usuarioA.idUsuario,
+                    usuarioB.idUsuario);
+
+                string normA = _validadorUsuario.ObtenerNombreNormalizado(
+                    usuarioA.Nombre_Usuario,
+                    nombreA);
+
+                string normB = _validadorUsuario.ObtenerNombreNormalizado(
+                    usuarioB.Nombre_Usuario,
+                    nombreB);
+
+                return new ResultadoEliminacionAmistad
+                {
+                    Relacion = relacion,
+                    NombreANormalizado = normA,
+                    NombreBNormalizado = normB
+                };
+            }
+        }
+
+        private (Usuario Emisor, Usuario Receptor) ObtenerUsuariosParaInteraccion(
+            BaseDatosPruebaEntities contexto,
+            string nombreEmisor,
+            string nombreReceptor)
+        {
+            var usuarioRepositorio = new UsuarioRepositorio(contexto);
+            var usuarioEmisor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreEmisor);
+            var usuarioReceptor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreReceptor);
+
+            ValidarUsuariosExistentes(usuarioEmisor, usuarioReceptor);
+
+            return (usuarioEmisor, usuarioReceptor);
         }
 
         private void ValidarUsuariosExistentes(Usuario emisor, Usuario receptor)
         {
             if (emisor == null)
             {
-                throw new FaultException(MensajesError.Cliente.JugadorNoAsociado);
+                throw new FaultException(
+                    MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
             if (receptor == null)
             {
-                throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
+                throw new FaultException(
+                    MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
         }
 
-        private void NotificarSolicitudNueva(Usuario emisor, string nombreEmisorInput, 
-            Usuario receptor, string nombreReceptorInput)
+        private void NotificarSolicitudNueva(
+            Usuario emisor,
+            string nombreEmisorInput,
+            Usuario receptor,
+            string nombreReceptorInput)
         {
-            string nombreEmisor = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                (emisor.Nombre_Usuario, nombreEmisorInput);
-            string nombreReceptor = ValidadorNombreUsuario.ObtenerNombreNormalizado
-                (receptor.Nombre_Usuario, nombreReceptorInput);
+            string nombreEmisor = _validadorUsuario.ObtenerNombreNormalizado(
+                emisor.Nombre_Usuario,
+                nombreEmisorInput);
+
+            string nombreReceptor = _validadorUsuario.ObtenerNombreNormalizado(
+                receptor.Nombre_Usuario,
+                nombreReceptorInput);
 
             var solicitud = new SolicitudAmistadDTO
             {
@@ -358,6 +415,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
 
             _notificador.NotificarSolicitudActualizada(nombreReceptor, solicitud);
+        }
+
+        private void EjecutarNotificacionesRespuesta(
+            (string Emisor, string Receptor) nombres)
+        {
+            NotificarSolicitudAceptada(nombres.Emisor, nombres.Receptor);
+            _notificadorListaAmigos.NotificarCambioAmistad(nombres.Emisor);
+            _notificadorListaAmigos.NotificarCambioAmistad(nombres.Receptor);
         }
 
         private void NotificarSolicitudAceptada(string emisor, string receptor)
@@ -373,6 +438,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _notificador.NotificarSolicitudActualizada(receptor, solicitud);
         }
 
+        private void EjecutarNotificacionesEliminacion(ResultadoEliminacionAmistad resultado)
+        {
+            NotificarEliminacion(
+                resultado.Relacion,
+                resultado.NombreANormalizado,
+                resultado.NombreBNormalizado);
+
+            _notificadorListaAmigos.NotificarCambioAmistad(resultado.NombreANormalizado);
+            _notificadorListaAmigos.NotificarCambioAmistad(resultado.NombreBNormalizado);
+        }
+
         private void NotificarEliminacion(Amigo relacion, string usuarioA, string usuarioB)
         {
             if (relacion == null)
@@ -380,6 +456,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Se solicito notificar una eliminacion de amistad sin relacion.");
                 return;
             }
+
             var solicitud = new SolicitudAmistadDTO
             {
                 UsuarioEmisor = usuarioA,
@@ -389,6 +466,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _notificador.NotificarAmistadEliminada(usuarioA, solicitud);
             _notificador.NotificarAmistadEliminada(usuarioB, solicitud);
+        }
+
+        /// <summary>
+        /// Clase auxiliar interna para transportar datos de eliminacion.
+        /// </summary>
+        private class ResultadoEliminacionAmistad
+        {
+            public Amigo Relacion { get; set; }
+            public string NombreANormalizado { get; set; }
+            public string NombreBNormalizado { get; set; }
         }
     }
 }

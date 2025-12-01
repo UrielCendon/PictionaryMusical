@@ -24,19 +24,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CuentaManejador));
 
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly IVerificacionRegistroServicio _verificacionServicio;
 
         public CuentaManejador() : this(
-            new ContextoFactory(),
+            new ContextoFactoria(),
             new VerificacionRegistroServicio(
-                new ContextoFactory(),
+                new ContextoFactoria(),
                 new NotificacionCodigosServicio(new CorreoCodigoVerificacionNotificador())))
         {
         }
 
         public CuentaManejador(
-            IContextoFactory contextoFactory,
+            IContextoFactoria contextoFactory,
             IVerificacionRegistroServicio verificacionServicio)
         {
             _contextoFactory = contextoFactory ??

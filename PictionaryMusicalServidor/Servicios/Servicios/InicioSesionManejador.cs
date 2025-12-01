@@ -21,13 +21,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(InicioSesionManejador));
         
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
 
-        public InicioSesionManejador() : this(new ContextoFactory())
+        public InicioSesionManejador() : this(new ContextoFactoria())
         {
         }
 
-        public InicioSesionManejador(IContextoFactory contextoFactory)
+        public InicioSesionManejador(IContextoFactoria contextoFactory)
         {
             _contextoFactory = contextoFactory ?? 
                 throw new ArgumentNullException(nameof(contextoFactory));

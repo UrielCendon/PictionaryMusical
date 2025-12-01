@@ -27,13 +27,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ConcurrentDictionary<string, byte> _verificacionesConfirmadas =
             new ConcurrentDictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
 
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
         private readonly INotificacionCodigosServicio _notificacionCodigosServicio;
 
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public VerificacionRegistroServicio(IContextoFactory contextoFactory, 
+        public VerificacionRegistroServicio(IContextoFactoria contextoFactory, 
             INotificacionCodigosServicio notificacionCodigosServicio)
         {
             _contextoFactory = contextoFactory ??

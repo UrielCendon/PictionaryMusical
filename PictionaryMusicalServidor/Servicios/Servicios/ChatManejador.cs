@@ -20,6 +20,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ChatManejador));
         private static readonly Dictionary<string, List<ClienteChat>> _clientesPorSala = new(StringComparer.OrdinalIgnoreCase);
         private static readonly object _sincronizacion = new();
+        private readonly IValidadorNombreUsuario _validadorUsuario;
+
+        /// <summary>
+        /// Constructor por defecto para WCF.
+        /// Inicializa las dependencias manualmente.
+        /// </summary>
+        public ChatManejador() : this(new ValidadorNombreUsuario())
+        {
+        }
+
+        /// <summary>
+        /// Constructor con inyeccion de dependencias.
+        /// </summary>
+        public ChatManejador(IValidadorNombreUsuario validadorUsuario)
+        {
+            _validadorUsuario = validadorUsuario ??
+                throw new ArgumentNullException(nameof(validadorUsuario));
+        }
 
         /// <summary>
         /// Permite a un jugador unirse al chat de una sala especifica.
@@ -34,7 +52,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreJugador, nameof(nombreJugador));
+                _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
                 if (string.IsNullOrWhiteSpace(idSala))
                 {
@@ -118,7 +136,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreJugador, nameof(nombreJugador));
+                _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
                 if (string.IsNullOrWhiteSpace(idSala))
                 {
@@ -167,7 +185,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidadorNombreUsuario.Validar(nombreJugador, nameof(nombreJugador));
+                _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
                 if (string.IsNullOrWhiteSpace(idSala))
                 {

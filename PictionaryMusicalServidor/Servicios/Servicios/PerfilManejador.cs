@@ -24,13 +24,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     public class PerfilManejador : IPerfilManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(PerfilManejador));
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
 
-        public PerfilManejador() : this(new ContextoFactory())
+        public PerfilManejador() : this(new ContextoFactoria())
         {
         }
 
-        public PerfilManejador(IContextoFactory contextoFactory)
+        public PerfilManejador(IContextoFactoria contextoFactory)
         {
             _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));

@@ -5,7 +5,7 @@ using Datos.Modelo;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -16,13 +16,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// </summary>
     public class AmistadServicio : IAmistadServicio
     {
-        private readonly IContextoFactory _contextoFactory;
+        private readonly IContextoFactoria _contextoFactory;
 
         /// <summary>
         /// Constructor que inyecta la factoria de contextos.
         /// </summary>
         /// <param name="contextoFactory">Factoria para crear contextos de base de datos.</param>
-        public AmistadServicio(IContextoFactory contextoFactory)
+        public AmistadServicio(IContextoFactoria contextoFactory)
         {
             _contextoFactory = contextoFactory ?? 
                 throw new ArgumentNullException(nameof(contextoFactory));

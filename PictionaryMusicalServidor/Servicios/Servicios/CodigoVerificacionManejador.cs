@@ -31,10 +31,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         public CodigoVerificacionManejador() : this(
             new VerificacionRegistroServicio(
-                new ContextoFactory(),
+                new ContextoFactoria(),
                 new NotificacionCodigosServicio(new CorreoCodigoVerificacionNotificador())),
             new RecuperacionCuentaServicio(
-                new ContextoFactory(),
+                new ContextoFactoria(),
                 new NotificacionCodigosServicio(new CorreoCodigoVerificacionNotificador())))
         {
         }
