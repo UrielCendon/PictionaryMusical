@@ -827,6 +827,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Recursos\Reloj_Alarma.png" />
+    <Resource Include="Recursos\Reportar.png" />
     <Content Include="Recursos\ventana_principal_musica.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

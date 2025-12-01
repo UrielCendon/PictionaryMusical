@@ -56,11 +56,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             catch (ArgumentOutOfRangeException ex)
             {
                 _logger.Warn(
-                    "Identificador inv√°lido al actualizar la lista de amigos del usuario.", ex);
+                    "Identificador inv·lido al actualizar la lista de amigos del usuario.", ex);
             }
             catch (ArgumentException ex)
             {
-                _logger.Warn("Datos inv√°lidos al actualizar la lista de amigos del usuario.", 
+                _logger.Warn("Datos inv·lidos al actualizar la lista de amigos del usuario.", 
                     ex);
             }
             catch (DataException ex)

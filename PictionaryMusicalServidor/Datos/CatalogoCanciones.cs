@@ -118,10 +118,10 @@ namespace PictionaryMusicalServidor.Datos
         }
 
         /// <summary>
-        /// Obtiene una canción por su identificador.
+        /// Obtiene una cancion por su identificador.
         /// </summary>
-        /// <param name="idCancion">Identificador de la canción.</param>
-        /// <returns>La canción correspondiente o null si no existe.</returns>
+        /// <param name="idCancion">Identificador de la cancion.</param>
+        /// <returns>La cancion correspondiente o null si no existe.</returns>
         public Cancion ObtenerCancionPorId(int idCancion)
         {
             if (_canciones.TryGetValue(idCancion, out var cancion))
@@ -129,7 +129,7 @@ namespace PictionaryMusicalServidor.Datos
                 return cancion;
             }
 
-            _logger.WarnFormat("No se encontró la canción con id {0} en el catálogo.", idCancion);
+            _logger.WarnFormat("No se encontro la cancion con id {0} en el catalogo.", idCancion);
             return null;
         }
 
@@ -211,7 +211,7 @@ namespace PictionaryMusicalServidor.Datos
             string idiomaMapeado, string idiomaNorm)
         {
             _logger.WarnFormat(
-                "Fallo al buscar canción. Idioma Entrante: {0}, Mapeado: {1}, Normalizado: {2}.",
+                "Fallo al buscar cancion. Idioma Entrante: {0}, Mapeado: {1}, Normalizado: {2}.",
                 idiomaOriginal, idiomaMapeado, idiomaNorm);
         }
 
