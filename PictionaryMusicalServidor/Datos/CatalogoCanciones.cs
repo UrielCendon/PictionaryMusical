@@ -71,7 +71,7 @@ namespace PictionaryMusicalServidor.Datos
         /// Obtiene una cancion aleatoria segun el idioma solicitado y excluyendo los 
         /// identificadores proporcionados.
         /// </summary>
-        /// <param name="idioma">Idioma de la cancion ("Español" o "Ingles").</param>
+        /// <param name="idioma">Idioma de la cancion ("Espanol" o "Ingles").</param>
         /// <param name="idsExcluidos">Coleccion de identificadores que no deben considerarse.
         /// </param>
         /// <returns>Una instancia de <see cref="Cancion"/> que cumple los criterios.</returns>
