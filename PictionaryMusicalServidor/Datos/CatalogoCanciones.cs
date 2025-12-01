@@ -20,27 +20,27 @@ namespace PictionaryMusicalServidor.Datos
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCanciones));
         private static readonly Dictionary<int, Cancion> _canciones = new Dictionary<int, Cancion>
         {
-            { 1, CrearCancion(1, "Gasolina", "Daddy Yankee", "Reggaeton", "Español") },
-            { 2, CrearCancion(2, "Bocanada", "Gustavo Cerati", "Rock Alternativo", "Español") },
-            { 3, CrearCancion(3, "La Nave Del Olvido", "José José", "Balada", "Español") },
-            { 4, CrearCancion(4, "Tiburón", "Proyecto Uno", "Merengue House", "Español") },
-            { 5, CrearCancion(5, "Pupilas De Gato", "Luis Miguel", "Pop Latino", "Español") },
-            { 6, CrearCancion(6, "El Triste", "José José", "Balada", "Español") },
-            { 7, CrearCancion(7, "El Reloj", "Luis Miguel", "Bolero", "Español") },
-            { 8, CrearCancion(8, "La Camisa Negra", "Juanes", "Pop Rock", "Español") },
-            { 9, CrearCancion(9, "Rosas", "La Oreja de Van Gogh", "Pop", "Español") },
-            { 10, CrearCancion(10, "La Bicicleta", "Shakira", "Vallenato Pop", "Español") },
-            { 11, CrearCancion(11, "El Taxi", "Pitbull", "Urbano", "Español") },
+            { 1, CrearCancion(1, "Gasolina", "Daddy Yankee", "Reggaeton", "Espanol") },
+            { 2, CrearCancion(2, "Bocanada", "Gustavo Cerati", "Rock Alternativo", "Espanol") },
+            { 3, CrearCancion(3, "La Nave Del Olvido", "José José", "Balada", "Espanol") },
+            { 4, CrearCancion(4, "Tiburón", "Proyecto Uno", "Merengue House", "Espanol") },
+            { 5, CrearCancion(5, "Pupilas De Gato", "Luis Miguel", "Pop Latino", "Espanol") },
+            { 6, CrearCancion(6, "El Triste", "José José", "Balada", "Espanol") },
+            { 7, CrearCancion(7, "El Reloj", "Luis Miguel", "Bolero", "Espanol") },
+            { 8, CrearCancion(8, "La Camisa Negra", "Juanes", "Pop Rock", "Espanol") },
+            { 9, CrearCancion(9, "Rosas", "La Oreja de Van Gogh", "Pop", "Espanol") },
+            { 10, CrearCancion(10, "La Bicicleta", "Shakira", "Vallenato Pop", "Espanol") },
+            { 11, CrearCancion(11, "El Taxi", "Pitbull", "Urbano", "Espanol") },
             { 12, CrearCancion
-                (12, "La Puerta Negra", "Los Tigres del Norte", "Norteño", "Español") },
-            { 13, CrearCancion(13, "Baraja de Oro", "Chalino Sánchez", "Corrido", "Español") },
-            { 14, CrearCancion(14, "Los Luchadores", "La Sonora Santanera", "Cumbia", "Español") },
-            { 15, CrearCancion(15, "El Oso Polar", "Nelson Kanzela", "Cumbia", "Español") },
-            { 16, CrearCancion(16, "El Teléfono", "Wisin & Yandel", "Reggaeton", "Español") },
-            { 17, CrearCancion(17, "La Planta", "Caos", "Pop Rock", "Español") },
-            { 18, CrearCancion(18, "Lluvia", "Eddie Santiago", "Salsa", "Español") },
-            { 19, CrearCancion(19, "Pose", "Daddy Yankee", "Reggaeton", "Español") },
-            { 20, CrearCancion(20, "Cama y Mesa", "Roberto Carlos", "Balada", "Español") },
+                (12, "La Puerta Negra", "Los Tigres del Norte", "Norteño", "Espanol") },
+            { 13, CrearCancion(13, "Baraja de Oro", "Chalino Sánchez", "Corrido", "Espanol") },
+            { 14, CrearCancion(14, "Los Luchadores", "La Sonora Santanera", "Cumbia", "Espanol") },
+            { 15, CrearCancion(15, "El Oso Polar", "Nelson Kanzela", "Cumbia", "Espanol") },
+            { 16, CrearCancion(16, "El Teléfono", "Wisin & Yandel", "Reggaeton", "Espanol") },
+            { 17, CrearCancion(17, "La Planta", "Caos", "Pop Rock", "Espanol") },
+            { 18, CrearCancion(18, "Lluvia", "Eddie Santiago", "Salsa", "Espanol") },
+            { 19, CrearCancion(19, "Pose", "Daddy Yankee", "Reggaeton", "Espanol") },
+            { 20, CrearCancion(20, "Cama y Mesa", "Roberto Carlos", "Balada", "Espanol") },
 
             { 21, CrearCancion(21, "Black Or White", "Michael Jackson", "Pop", "Ingles") },
             { 22, CrearCancion(22, "Don't Stop The Music", "Rihanna", "Dance Pop", "Ingles") },
@@ -180,7 +180,7 @@ namespace PictionaryMusicalServidor.Datos
         {
             if (idiomaEntrada.StartsWith("es", StringComparison.OrdinalIgnoreCase))
             {
-                return "Español";
+                return "Espanol";
             }
 
             if (idiomaEntrada.StartsWith("en", StringComparison.OrdinalIgnoreCase))

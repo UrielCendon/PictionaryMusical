@@ -34,7 +34,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private readonly int _duracionRondaSegundos;
         private readonly string _dificultad;
         private readonly int _totalRondas;
-        private string _idiomaCanciones = "Español";
+        private string _idiomaCanciones = "Espanol";
 
         private EstadoPartida _estadoActual;
         private int _rondaActual;
