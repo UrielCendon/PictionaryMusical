@@ -21,7 +21,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private const int MinutosExpiracionCodigo = 5;
 
-        private static readonly ConcurrentDictionary<string, SolicitudCodigoPendiente> 
+        private static readonly ConcurrentDictionary<string, SolicitudCodigoPendiente>
             _solicitudes = new ConcurrentDictionary<string, SolicitudCodigoPendiente>();
 
         private static readonly ConcurrentDictionary<string, byte> _verificacionesConfirmadas =
@@ -33,62 +33,173 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public VerificacionRegistroServicio(IContextoFactoria contextoFactory, 
+        public VerificacionRegistroServicio(IContextoFactoria contextoFactory,
             INotificacionCodigosServicio notificacionCodigosServicio)
         {
             _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
+
             _notificacionCodigosServicio = notificacionCodigosServicio ??
                 throw new ArgumentNullException(nameof(notificacionCodigosServicio));
         }
 
         /// <summary>
         /// Solicita un codigo de verificacion para registrar una nueva cuenta.
-        /// Valida datos, verifica disponibilidad, genera codigo y lo envia por correo.
         /// </summary>
-        /// <param name="nuevaCuenta">Datos de la nueva cuenta a registrar.</param>
-        /// <returns>Resultado indicando si el codigo fue enviado y posibles conflictos de usuario
-        /// o correo.</returns>
         public ResultadoSolicitudCodigoDTO SolicitarCodigo(NuevaCuentaDTO nuevaCuenta)
+        {
+            var validacionDatos = ValidarDatosSolicitud(nuevaCuenta);
+            if (!validacionDatos.OperacionExitosa)
+            {
+                return CrearFalloSolicitud(validacionDatos.Mensaje);
+            }
+
+            var disponibilidad = VerificarDisponibilidadCuenta(nuevaCuenta);
+            if (!disponibilidad.DisponibilidadExitosa)
+            {
+                return disponibilidad.Resultado;
+            }
+
+            var generacion = GenerarYEnviarCodigo(nuevaCuenta);
+            if (!generacion.Exito)
+            {
+                return CrearFalloSolicitud(MensajesError.Cliente.ErrorSolicitudVerificacion);
+            }
+
+            AlmacenarSolicitud(generacion.Token, generacion.Solicitud);
+
+            _logger.Info("Codigo de verificacion de registro generado correctamente.");
+
+            return new ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = true,
+                TokenCodigo = generacion.Token
+            };
+        }
+
+        /// <summary>
+        /// Reenvia un codigo de verificacion previamente solicitado para registro.
+        /// </summary>
+        public ResultadoSolicitudCodigoDTO ReenviarCodigo(ReenvioCodigoVerificacionDTO solicitud)
+        {
+            if (!ValidarTokenReenvio(solicitud))
+            {
+                return CrearFalloReenvio(MensajesError.Cliente.DatosReenvioCodigo);
+            }
+
+            var pendiente = ObtenerSolicitudPendiente(solicitud.TokenCodigo);
+            if (pendiente == null)
+            {
+                return CrearFalloReenvio(
+                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+            }
+
+            return ProcesarReenvioCodigo(solicitud.TokenCodigo, pendiente);
+        }
+
+        /// <summary>
+        /// Confirma el codigo de verificacion ingresado para registro de cuenta.
+        /// </summary>
+        public ResultadoRegistroCuentaDTO ConfirmarCodigo(ConfirmacionCodigoDTO confirmacion)
+        {
+            if (!ValidarDatosConfirmacion(confirmacion))
+            {
+                return CrearFalloConfirmacion(MensajesError.Cliente.DatosConfirmacionInvalidos);
+            }
+
+            var pendiente = ObtenerSolicitudPendiente(confirmacion.TokenCodigo);
+            if (pendiente == null)
+            {
+                return CrearFalloConfirmacion(
+                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+            }
+
+            var verificacion = VerificarCodigoIngresado(
+                pendiente,
+                confirmacion.TokenCodigo,
+                confirmacion.CodigoIngresado);
+
+            if (!verificacion.Exito)
+            {
+                return CrearFalloConfirmacion(verificacion.MensajeError);
+            }
+
+            RegistrarConfirmacion(pendiente);
+            _solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
+
+            _logger.Info("Verificacion confirmada exitosamente.");
+
+            return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
+        }
+
+        /// <summary>
+        /// Verifica si una cuenta tiene una verificacion confirmada pendiente.
+        /// </summary>
+        public bool EstaVerificacionConfirmada(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (nuevaCuenta == null)
+            {
+                return false;
+            }
+
+            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
+            return _verificacionesConfirmadas.ContainsKey(clave);
+        }
+
+        /// <summary>
+        /// Limpia la verificacion confirmada de una cuenta despues de completar el registro.
+        /// </summary>
+        public void LimpiarVerificacion(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (nuevaCuenta == null)
+            {
+                return;
+            }
+
+            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
+            _verificacionesConfirmadas.TryRemove(clave, out _);
+        }
+
+        private ResultadoOperacionDTO ValidarDatosSolicitud(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
                 throw new ArgumentNullException(nameof(nuevaCuenta));
             }
+            return EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+        }
 
-            ResultadoOperacionDTO validacionDatos =
-                EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
-
-            if (!validacionDatos.OperacionExitosa)
-            {
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = validacionDatos.Mensaje
-                };
-            }
-
+        private (bool DisponibilidadExitosa, ResultadoSolicitudCodigoDTO Resultado)
+            VerificarDisponibilidadCuenta(NuevaCuentaDTO nuevaCuenta)
+        {
             using (var contexto = _contextoFactory.CrearContexto())
             {
                 bool usuarioRegistrado = contexto.Usuario.Any(
                     u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+
                 bool correoRegistrado = contexto.Jugador.Any(
                     j => j.Correo == nuevaCuenta.Correo);
 
                 if (usuarioRegistrado || correoRegistrado)
                 {
-                    _logger.Warn("Registro duplicado. El usuario y el correo existen.");
+                    _logger.Warn("Registro duplicado intentado (usuario o correo existente).");
 
-                    return new ResultadoSolicitudCodigoDTO
+                    var resultado = new ResultadoSolicitudCodigoDTO
                     {
                         CodigoEnviado = false,
                         UsuarioRegistrado = usuarioRegistrado,
                         CorreoRegistrado = correoRegistrado,
                         Mensaje = MensajesError.Cliente.UsuarioOCorreoRegistrado
                     };
+                    return (false, resultado);
                 }
             }
+            return (true, null);
+        }
 
+        private (bool Exito, string Token, SolicitudCodigoPendiente Solicitud)
+            GenerarYEnviarCodigo(NuevaCuentaDTO nuevaCuenta)
+        {
             string token = TokenGenerador.GenerarToken();
             string codigo = CodigoVerificacionGenerador.GenerarCodigo();
             NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
@@ -101,15 +212,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!enviado)
             {
-                _logger.ErrorFormat(
-                    "Error al enviar codigo de verificacion a '{0}'.",
-                    datosCuenta.Correo);
-
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
-                };
+                _logger.Error("Error al enviar codigo de verificacion.");
+                return (false, null, null);
             }
 
             var solicitud = new SolicitudCodigoPendiente
@@ -119,46 +223,44 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo)
             };
 
-            _solicitudes[token] = solicitud;
+            return (true, token, solicitud);
+        }
 
+        private void AlmacenarSolicitud(string token, SolicitudCodigoPendiente solicitud)
+        {
+            _solicitudes[token] = solicitud;
+        }
+
+        private ResultadoSolicitudCodigoDTO CrearFalloSolicitud(string mensaje)
+        {
             return new ResultadoSolicitudCodigoDTO
             {
-                CodigoEnviado = true,
-                TokenCodigo = token
+                CodigoEnviado = false,
+                Mensaje = mensaje
             };
         }
 
-        /// <summary>
-        /// Reenvia un codigo de verificacion previamente solicitado para registro.
-        /// Valida el token, genera un nuevo codigo con nueva expiracion y lo envia por correo.
-        /// </summary>
-        public ResultadoSolicitudCodigoDTO ReenviarCodigo(ReenvioCodigoVerificacionDTO solicitud)
+        private bool ValidarTokenReenvio(ReenvioCodigoVerificacionDTO solicitud)
         {
-            if (solicitud == null)
-            {
-                throw new ArgumentNullException(nameof(solicitud));
-            }
-
+            if (solicitud == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
-            if (!EntradaComunValidador.EsTokenValido(token))
-            {
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.DatosReenvioCodigo
-                };
-            }
+            return EntradaComunValidador.EsTokenValido(token);
+        }
 
+        private SolicitudCodigoPendiente ObtenerSolicitudPendiente(string token)
+        {
             if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente existente))
             {
-                _logger.Warn("Intento de reenvio de codigo no encontrado o expirado.");
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.SolicitudVerificacionNoEncontrada
-                };
+                _logger.Warn("Token no encontrado o expirado en cache.");
+                return null;
             }
+            return existente;
+        }
 
+        private ResultadoSolicitudCodigoDTO ProcesarReenvioCodigo(
+            string token,
+            SolicitudCodigoPendiente existente)
+        {
             string codigoAnterior = existente.Codigo;
             DateTime expiracionAnterior = existente.Expira;
 
@@ -176,15 +278,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 existente.Codigo = codigoAnterior;
                 existente.Expira = expiracionAnterior;
-                _logger.ErrorFormat(
-                    "Error al reenviar codigo de verificacion a '{0}'.",
-                    existente.DatosCuenta.Correo);
 
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
-                };
+                _logger.Error("Error al reenviar codigo de verificacion.");
+
+                return CrearFalloReenvio(
+                    MensajesError.Cliente.ErrorReenviarCodigoVerificacion);
             }
 
             return new ResultadoSolicitudCodigoDTO
@@ -194,54 +292,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        /// <summary>
-        /// Confirma el codigo de verificacion ingresado para registro de cuenta.
-        /// Valida el token y el codigo, y marca la verificacion como confirmada.
-        /// </summary>
-        /// <param name="confirmacion">Datos con el token y codigo ingresado.</param>
-        /// <returns>Resultado indicando si el codigo fue confirmado correctamente.</returns>
-        public ResultadoRegistroCuentaDTO ConfirmarCodigo(ConfirmacionCodigoDTO confirmacion)
+        private ResultadoSolicitudCodigoDTO CrearFalloReenvio(string mensaje)
         {
-            if (confirmacion == null)
+            return new ResultadoSolicitudCodigoDTO
             {
-                throw new ArgumentNullException(nameof(confirmacion));
-            }
+                CodigoEnviado = false,
+                Mensaje = mensaje
+            };
+        }
 
+        private bool ValidarDatosConfirmacion(ConfirmacionCodigoDTO confirmacion)
+        {
+            if (confirmacion == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
-            string codigoIngresado = EntradaComunValidador.NormalizarTexto(
-                confirmacion.CodigoIngresado);
+            string codigo = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
 
-            if (!EntradaComunValidador.EsTokenValido(token) ||
-                !EntradaComunValidador.EsCodigoVerificacionValido(codigoIngresado))
-            {
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.DatosConfirmacionInvalidos
-                };
-            }
+            return EntradaComunValidador.EsTokenValido(token) &&
+                   EntradaComunValidador.EsCodigoVerificacionValido(codigo);
+        }
 
-            if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente pendiente))
-            {
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.SolicitudVerificacionNoEncontrada
-                };
-            }
-
+        private (bool Exito, string MensajeError) VerificarCodigoIngresado(
+            SolicitudCodigoPendiente pendiente,
+            string token,
+            string codigoIngresado)
+        {
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 _solicitudes.TryRemove(token, out _);
-                _logger.WarnFormat(
-                    "Codigo expirado para usuario '{0}'.",
-                    pendiente.DatosCuenta.Usuario);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.CodigoVerificacionExpirado
-                };
+                return (false, MensajesError.Cliente.CodigoVerificacionExpirado);
             }
 
             if (!string.Equals(
@@ -249,61 +327,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 codigoIngresado,
                 StringComparison.OrdinalIgnoreCase))
             {
-                _logger.WarnFormat(
-                    "Codigo incorrecto ingresado para usuario '{0}'.",
-                    pendiente.DatosCuenta.Usuario);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.CodigoVerificacionIncorrecto
-                };
+                return (false, MensajesError.Cliente.CodigoVerificacionIncorrecto);
             }
 
-            _solicitudes.TryRemove(token, out _);
+            return (true, null);
+        }
 
+        private void RegistrarConfirmacion(SolicitudCodigoPendiente pendiente)
+        {
             string clave = ObtenerClave(
                 pendiente.DatosCuenta.Usuario,
                 pendiente.DatosCuenta.Correo);
 
             _verificacionesConfirmadas[clave] = 0;
+        }
 
+        private ResultadoRegistroCuentaDTO CrearFalloConfirmacion(string mensaje)
+        {
             return new ResultadoRegistroCuentaDTO
             {
-                RegistroExitoso = true
+                RegistroExitoso = false,
+                Mensaje = mensaje
             };
-        }
-
-        /// <summary>
-        /// Verifica si una cuenta tiene una verificacion confirmada pendiente.
-        /// </summary>
-        /// <param name="nuevaCuenta">Datos de la cuenta a verificar.</param>
-        /// <returns>True si la verificacion esta confirmada, false en caso contrario o si 
-        /// nuevaCuenta es null.</returns>
-        public bool EstaVerificacionConfirmada(NuevaCuentaDTO nuevaCuenta)
-        {
-            if (nuevaCuenta == null)
-            {
-                return false;
-            }
-
-            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
-            return _verificacionesConfirmadas.ContainsKey(clave);
-        }
-
-        /// <summary>
-        /// Limpia la verificacion confirmada de una cuenta despues de completar el registro.
-        /// </summary>
-        /// <param name="nuevaCuenta">Datos de la cuenta cuya verificacion se limpiara.</param>
-        public void LimpiarVerificacion(NuevaCuentaDTO nuevaCuenta)
-        {
-            if (nuevaCuenta == null)
-            {
-                return;
-            }
-
-            string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
-            _verificacionesConfirmadas.TryRemove(clave, out _);
         }
 
         private static NuevaCuentaDTO CopiarCuenta(NuevaCuentaDTO original)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using log4net;
@@ -13,8 +14,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
     /// </summary>
     public class ClasificacionRepositorio : IClasificacionRepositorio
     {
-        private static readonly ILog _logger = LogManager.
-            GetLogger(typeof(ClasificacionRepositorio));
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(ClasificacionRepositorio));
+
         private readonly BaseDatosPruebaEntities _contexto;
 
         /// <summary>
@@ -30,7 +32,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// <summary>
         /// Crea un registro de clasificacion inicial con contadores en cero para un nuevo jugador.
         /// </summary>
-        /// <returns>La entidad de clasificacion creada.</returns>
         public Clasificacion CrearClasificacionInicial()
         {
             try
@@ -56,13 +57,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// <summary>
         /// Actualiza las estadisticas de puntos y partidas ganadas de un jugador especifico.
         /// </summary>
-        /// <param name="jugadorId">Identificador del jugador a actualizar.</param>
-        /// <param name="puntosObtenidos">Cantidad de puntos a sumar.</param>
-        /// <param name="ganoPartida">Indica si el jugador gano la partida para incrementar el 
-        /// contador.</param>
-        /// <returns>True si la actualizacion fue exitosa, False si no se encontro la 
-        /// clasificacion.</returns>
-        public bool ActualizarEstadisticas(int jugadorId, int puntosObtenidos, bool ganoPartida)
+        public bool ActualizarEstadisticas(
+            int jugadorId,
+            int puntosObtenidos,
+            bool ganoPartida)
         {
             try
             {
@@ -72,18 +70,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (jugador?.Clasificacion == null)
                 {
-                    _logger.WarnFormat("No se encontro clasificacion para el jugador con ID {0}.",
+                    _logger.WarnFormat(
+                        "No se encontro clasificacion para el jugador con ID {0}.",
                         jugadorId);
                     return false;
                 }
 
-                jugador.Clasificacion.Puntos_Ganados = (jugador.Clasificacion.Puntos_Ganados ?? 0)
-                    + puntosObtenidos;
+                jugador.Clasificacion.Puntos_Ganados =
+                    (jugador.Clasificacion.Puntos_Ganados ?? 0) + puntosObtenidos;
 
                 if (ganoPartida)
                 {
-                    jugador.Clasificacion.Rondas_Ganadas = (jugador.Clasificacion.Rondas_Ganadas 
-                        ?? 0) + 1;
+                    jugador.Clasificacion.Rondas_Ganadas =
+                        (jugador.Clasificacion.Rondas_Ganadas ?? 0) + 1;
                 }
 
                 _contexto.SaveChanges();
@@ -92,7 +91,32 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             catch (Exception ex)
             {
                 _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.", jugadorId, ex);
+                    "Error al actualizar la clasificacion del jugador con ID {0}.",
+                    jugadorId,
+                    ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene la lista de usuarios con sus clasificaciones ordenadas por puntuacion.
+        /// </summary>
+        public IList<Usuario> ObtenerMejoresJugadores(int cantidad)
+        {
+            try
+            {
+                return _contexto.Usuario
+                    .Include(u => u.Jugador.Clasificacion)
+                    .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
+                    .OrderByDescending(u => u.Jugador.Clasificacion.Puntos_Ganados)
+                    .ThenByDescending(u => u.Jugador.Clasificacion.Rondas_Ganadas)
+                    .ThenBy(u => u.Nombre_Usuario)
+                    .Take(cantidad)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error al consultar los mejores jugadores.", ex);
                 throw;
             }
         }

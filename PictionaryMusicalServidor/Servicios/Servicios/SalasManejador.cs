@@ -37,7 +37,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         public SalasManejador()
         {
             _notificador = new NotificadorSalas(() => _salas.Values);
-            new ValidadorNombreUsuario();
+            _validadorUsuario = new ValidadorNombreUsuario();
         }
 
         /// <summary>

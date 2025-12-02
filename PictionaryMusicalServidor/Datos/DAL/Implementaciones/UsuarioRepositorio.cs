@@ -1,8 +1,10 @@
-using System;
-using System.Linq;
+using Datos.Modelo;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
-using Datos.Modelo;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 {
@@ -43,16 +45,16 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == 
+                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario ==
                 nombreNormalizado);
 
                 return usuario != null
-                    && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, 
+                    && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
                     StringComparison.Ordinal);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat("Error al verificar existencia del usuario '{0}'.", 
+                _logger.ErrorFormat("Error al verificar existencia del usuario '{0}'.",
                     nombreUsuario, ex);
                 throw;
             }
@@ -84,7 +86,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             catch (Exception ex)
             {
                 _logger.ErrorFormat(
-                    "Error al guardar el nuevo usuario '{0}' en la base de datos.", 
+                    "Error al guardar el nuevo usuario '{0}' en la base de datos.",
                     usuario.Nombre_Usuario, ex);
                 throw;
             }
@@ -102,7 +104,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                var ex = new ArgumentException("El nombre de usuario es obligatorio.", 
+                var ex = new ArgumentException("El nombre de usuario es obligatorio.",
                     nameof(nombreUsuario));
                 _logger.Error("Intento de busqueda de usuario con nombre vacio o nulo.", ex);
                 throw ex;
@@ -111,10 +113,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario == 
+                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario ==
                 nombreNormalizado);
 
-                if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado, 
+                if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
                     StringComparison.Ordinal))
                 {
                     return usuario;
@@ -126,6 +128,161 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 _logger.ErrorFormat(
                     "Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario, ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene un usuario buscando por el correo electronico de su jugador asociado.
+        /// Realiza una busqueda exacta (case-sensitive) sobre el correo.
+        /// </summary>
+        /// <param name="correo">Correo electronico a buscar.</param>
+        /// <returns>Usuario encontrado o null si no existe.</returns>
+        /// <exception cref="ArgumentException">Se lanza si el correo es nulo o vacio.</exception>
+        public Usuario ObtenerPorCorreo(string correo)
+        {
+            if (string.IsNullOrWhiteSpace(correo))
+            {
+                var ex = new ArgumentException("El correo es obligatorio.", nameof(correo));
+                _logger.Error("Intento de busqueda de usuario con correo vacio.", ex);
+                throw ex;
+            }
+
+            try
+            {
+                var usuariosCandidatos = _contexto.Usuario
+                    .Include("Jugador")
+                    .Where(u => u.Jugador.Correo == correo)
+                    .ToList();
+
+                return usuariosCandidatos.FirstOrDefault(u =>
+                    string.Equals(u.Jugador?.Correo, correo, StringComparison.Ordinal));
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al obtener usuario por correo '{0}'.", correo, ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene un usuario de forma asincrona buscando por el correo electronico de su jugador
+        /// asociado.
+        /// </summary>
+        /// <param name="correo">Correo electronico a buscar.</param>
+        /// <returns>Una tarea que representa la operacion asincrona. El resultado contiene el
+        /// usuario encontrado o null si no existe.</returns>
+        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta a la base
+        /// de datos.</exception>
+        public async Task<Usuario> ObtenerPorCorreoAsync(string correo)
+        {
+            if (string.IsNullOrWhiteSpace(correo))
+            {
+                return null;
+            }
+
+            try
+            {
+                return await _contexto.Usuario
+                    .Include(u => u.Jugador)
+                    .FirstOrDefaultAsync(u => u.Jugador.Correo == correo);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error asincrono al obtener usuario por correo '{0}'.",
+                    correo,
+                    ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Obtiene un usuario por su identificador, incluyendo la carga explicita de datos del
+        /// jugador y sus redes sociales asociadas.
+        /// </summary>
+        /// <param name="idUsuario">Identificador unico del usuario.</param>
+        /// <returns>El usuario encontrado con sus relaciones cargadas o null si no existe.
+        /// </returns>
+        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta a la base
+        /// de datos.</exception>
+        public Usuario ObtenerPorIdConRedesSociales(int idUsuario)
+        {
+            if (idUsuario <= 0)
+            {
+                return null;
+            }
+
+            try
+            {
+                return _contexto.Usuario
+                    .Include(u => u.Jugador.RedSocial)
+                    .FirstOrDefault(u => u.idUsuario == idUsuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al obtener usuario con redes sociales ID: {0}",
+                    idUsuario,
+                    ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Actualiza la contrasena de un usuario.
+        /// </summary>
+        /// <param name="usuarioId">Identificador unico del usuario.</param>
+        /// <param name="nuevaContrasenaHash">Nueva contrasena hasheada.</param>
+        /// <exception cref="Exception">Se lanza si ocurre un error durante la actualizacion 
+        /// a la base de datos.</exception>
+        public void ActualizarContrasena(int usuarioId, string nuevaContrasenaHash)
+        {
+            try
+            {
+                var usuario = _contexto.Usuario.FirstOrDefault(u => u.idUsuario == usuarioId);
+                if (usuario != null)
+                {
+                    usuario.Contrasena = nuevaContrasenaHash;
+                    _contexto.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat("Error al actualizar contrasena del usuario ID {0}.",
+                    usuarioId, ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Busca los datos de un Jugador con el Nombre del Usuario.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del Usuario.</param>
+        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta
+        /// a la base de datos.</exception>
+        public Usuario ObtenerPorNombreConJugador(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return null;
+            }
+
+            try
+            {
+                string nombreNormalizado = nombreUsuario.Trim();
+
+                return _contexto.Usuario
+                    .Include(u => u.Jugador)
+                    .FirstOrDefault(u => u.Nombre_Usuario == nombreNormalizado);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al obtener usuario con jugador por nombre '{0}'.",
+                    nombreUsuario,
+                    ex);
                 throw;
             }
         }

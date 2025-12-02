@@ -18,7 +18,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// <summary>
     /// Implementacion del servicio de gestion de cuentas de usuario.
     /// Maneja el proceso completo de registro incluyendo validacion, verificacion y creacion.
-    /// Verifica que el correo y usuario no esten duplicados antes de crear la cuenta.
     /// </summary>
     public class CuentaManejador : ICuentaManejador
     {
@@ -48,28 +47,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Registra una nueva cuenta de usuario en el sistema.
-        /// Valida datos de entrada, verifica que el usuario y correo no esten registrados,
-        /// crea entidades de clasificacion, jugador y usuario en una transaccion, y 
-        /// limpia la verificacion.
+        /// Valida datos, verifica duplicados, crea entidades en transaccion y limpia verificacion.
         /// </summary>
-        /// <param name="nuevaCuenta">Datos completos de la cuenta a registrar.</param>
-        /// <returns>Resultado del registro indicando exito o conflictos.</returns>
         public ResultadoRegistroCuentaDTO RegistrarCuenta(NuevaCuentaDTO nuevaCuenta)
         {
-            if (nuevaCuenta == null)
-            {
-                throw new ArgumentNullException(nameof(nuevaCuenta));
-            }
-
-            ResultadoOperacionDTO validacionDatos =
-                EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
-
-            if (!validacionDatos.OperacionExitosa)
+            var validacionInicial = ValidarDatosEntrada(nuevaCuenta);
+            if (!validacionInicial.OperacionExitosa)
             {
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
-                    Mensaje = validacionDatos.Mensaje
+                    Mensaje = validacionInicial.Mensaje
                 };
             }
 
@@ -77,116 +65,52 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    ResultadoRegistroCuentaDTO validacion =
-                        ValidarPrecondicionesRegistro(contexto, nuevaCuenta);
-
-                    if (!validacion.RegistroExitoso)
+                    var validacionNegocio = VerificarReglasDeNegocio(contexto, nuevaCuenta);
+                    if (!validacionNegocio.RegistroExitoso)
                     {
-                        return validacion;
+                        return validacionNegocio;
                     }
 
-                    using (var transaccion = contexto.Database.BeginTransaction())
+                    EjecutarTransaccionRegistro(contexto, nuevaCuenta);
+
+                    _verificacionServicio.LimpiarVerificacion(nuevaCuenta);
+
+                    return new ResultadoRegistroCuentaDTO
                     {
-                        var clasificacionRepositorio = new ClasificacionRepositorio(contexto);
-                        var clasificacion = clasificacionRepositorio.CrearClasificacionInicial();
-
-                        var jugadorRepositorio = new JugadorRepositorio(contexto);
-                        var jugador = jugadorRepositorio.CrearJugador(new Jugador
-                        {
-                            Nombre = nuevaCuenta.Nombre,
-                            Apellido = nuevaCuenta.Apellido,
-                            Correo = nuevaCuenta.Correo,
-                            Id_Avatar = nuevaCuenta.AvatarId,
-                            Clasificacion_idClasificacion = clasificacion.idClasificacion
-                        });
-
-                        var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                        usuarioRepositorio.CrearUsuario(new Usuario
-                        {
-                            Nombre_Usuario = nuevaCuenta.Usuario,
-                            Contrasena = BCryptNet.HashPassword(nuevaCuenta.Contrasena),
-                            Jugador_idJugador = jugador.idJugador
-                        });
-
-                        transaccion.Commit();
-
-                        _verificacionServicio.LimpiarVerificacion(nuevaCuenta);
-
-                        return new ResultadoRegistroCuentaDTO
-                        {
-                            RegistroExitoso = true
-                        };
-                    }
+                        RegistroExitoso = true
+                    };
                 }
             }
             catch (DbEntityValidationException ex)
             {
-                _logger.Error(
-                    "Validacion de entidad fallida durante el registro de cuenta.",
-                    ex);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorRegistrarCuenta
-                };
+                _logger.Error("Validacion de entidad fallida durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DbUpdateException ex)
             {
-                _logger.Error(
-                    "Error de actualizacion de base de datos durante el registro.",
-                    ex);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorRegistrarCuenta
-                };
+                _logger.Error("Error de actualizacion de BD durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (EntityException ex)
             {
-                _logger.Error(
-                    "Error de base de datos durante el registro de cuenta.",
-                    ex);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorRegistrarCuenta
-                };
+                _logger.Error("Error de base de datos durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DataException ex)
             {
-                _logger.Error(
-                    "Error de datos durante el registro de cuenta.",
-                    ex);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorRegistrarCuenta
-                };
+                _logger.Error("Error de datos durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (InvalidOperationException ex)
             {
-                _logger.Error(
-                    "Operacion invalida durante el registro de cuenta.",
-                    ex);
-
-                return new ResultadoRegistroCuentaDTO
-                {
-                    RegistroExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorRegistrarCuenta
-                };
+                _logger.Error("Operacion invalida durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
         }
 
-        //// <summary>
+        /// <summary>
         /// Solicita un codigo de verificacion para registrar una nueva cuenta.
-        /// Delega en VerificacionRegistroServicio para generar y enviar el codigo.
         /// </summary>
-        /// <param name="nuevaCuenta">Datos de la nueva cuenta a verificar.</param>
-        /// <returns>Resultado de la solicitud del codigo de verificacion.</returns>
         public ResultadoSolicitudCodigoDTO SolicitarCodigoVerificacion(NuevaCuentaDTO nuevaCuenta)
         {
             return _verificacionServicio.SolicitarCodigo(nuevaCuenta);
@@ -194,10 +118,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Reenvia el codigo de verificacion previamente solicitado.
-        /// Delega en VerificacionRegistroServicio para reenviar el codigo.
         /// </summary>
-        /// <param name="solicitud">Datos para el reenvio del codigo.</param>
-        /// <returns>Resultado del reenvio del codigo de verificacion.</returns>
         public ResultadoSolicitudCodigoDTO ReenviarCodigoVerificacion(
             ReenvioCodigoVerificacionDTO solicitud)
         {
@@ -206,26 +127,29 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Confirma el codigo de verificacion ingresado por el usuario.
-        /// Delega en VerificacionRegistroServicio para validar el codigo.
         /// </summary>
-        /// <param name="confirmacion">Datos de confirmacion del codigo.</param>
-        /// <returns>Resultado de la confirmacion del codigo.</returns>
         public ResultadoRegistroCuentaDTO ConfirmarCodigoVerificacion(
             ConfirmacionCodigoDTO confirmacion)
         {
             return _verificacionServicio.ConfirmarCodigo(confirmacion);
         }
 
-        private ResultadoRegistroCuentaDTO ValidarPrecondicionesRegistro(
+        private ResultadoOperacionDTO ValidarDatosEntrada(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (nuevaCuenta == null)
+            {
+                throw new ArgumentNullException(nameof(nuevaCuenta));
+            }
+
+            return EntradaComunValidador.ValidarNuevaCuenta(nuevaCuenta);
+        }
+
+        private ResultadoRegistroCuentaDTO VerificarReglasDeNegocio(
             BaseDatosPruebaEntities contexto,
             NuevaCuentaDTO nuevaCuenta)
         {
-            if (!_verificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
+            if (!VerificarEstadoValidacion(nuevaCuenta))
             {
-                _logger.WarnFormat(
-                    "Intento de registro sin verificacion confirmada. Correo: {0}",
-                    nuevaCuenta.Correo);
-
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -233,23 +157,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
-            bool usuarioRegistrado = contexto.Usuario.Any(
-                u => u.Nombre_Usuario == nuevaCuenta.Usuario);
-            bool correoRegistrado = contexto.Jugador.Any(
-                j => j.Correo == nuevaCuenta.Correo);
-
-            if (usuarioRegistrado || correoRegistrado)
+            if (VerificarDuplicados(contexto, nuevaCuenta))
             {
-                _logger.WarnFormat(
-                    "Registro duplicado. Usuario: {0}, Correo: {1}",
-                    usuarioRegistrado,
-                    correoRegistrado);
-
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
-                    UsuarioRegistrado = usuarioRegistrado,
-                    CorreoRegistrado = correoRegistrado,
+                    UsuarioRegistrado = true,
+                    CorreoRegistrado = true,
                     Mensaje = null
                 };
             }
@@ -263,9 +177,75 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
+            return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
+        }
+
+        private bool VerificarEstadoValidacion(NuevaCuentaDTO nuevaCuenta)
+        {
+            if (!_verificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
+            {
+                _logger.Warn("Intento de registro sin verificacion confirmada.");
+                return false;
+            }
+            return true;
+        }
+
+        private bool VerificarDuplicados(
+            BaseDatosPruebaEntities contexto,
+            NuevaCuentaDTO nuevaCuenta)
+        {
+            bool usuarioRegistrado = contexto.Usuario.Any(
+                u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+
+            bool correoRegistrado = contexto.Jugador.Any(
+                j => j.Correo == nuevaCuenta.Correo);
+
+            if (usuarioRegistrado || correoRegistrado)
+            {
+                _logger.Warn("Registro duplicado detectado (usuario o correo existente).");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void EjecutarTransaccionRegistro(
+            BaseDatosPruebaEntities contexto,
+            NuevaCuentaDTO nuevaCuenta)
+        {
+            using (var transaccion = contexto.Database.BeginTransaction())
+            {
+                var clasificacionRepositorio = new ClasificacionRepositorio(contexto);
+                var clasificacion = clasificacionRepositorio.CrearClasificacionInicial();
+
+                var jugadorRepositorio = new JugadorRepositorio(contexto);
+                var jugador = jugadorRepositorio.CrearJugador(new Jugador
+                {
+                    Nombre = nuevaCuenta.Nombre,
+                    Apellido = nuevaCuenta.Apellido,
+                    Correo = nuevaCuenta.Correo,
+                    Id_Avatar = nuevaCuenta.AvatarId,
+                    Clasificacion_idClasificacion = clasificacion.idClasificacion
+                });
+
+                var usuarioRepositorio = new UsuarioRepositorio(contexto);
+                usuarioRepositorio.CrearUsuario(new Usuario
+                {
+                    Nombre_Usuario = nuevaCuenta.Usuario,
+                    Contrasena = BCryptNet.HashPassword(nuevaCuenta.Contrasena),
+                    Jugador_idJugador = jugador.idJugador
+                });
+
+                transaccion.Commit();
+            }
+        }
+
+        private static ResultadoRegistroCuentaDTO CrearFalloRegistro(string mensaje)
+        {
             return new ResultadoRegistroCuentaDTO
             {
-                RegistroExitoso = true
+                RegistroExitoso = false,
+                Mensaje = mensaje
             };
         }
     }

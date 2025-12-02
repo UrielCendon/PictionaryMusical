@@ -2,13 +2,14 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using Datos.Modelo;
 using System;
-using System.Linq;
 using log4net;
 using BCryptNet = BCrypt.Net.BCrypt;
 using System.Data;
 using System.Data.Entity.Core;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -18,9 +19,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
     /// </summary>
     public class InicioSesionManejador : IInicioSesionManejador
     {
-        private static readonly ILog _logger = 
+        private static readonly ILog _logger =
             LogManager.GetLogger(typeof(InicioSesionManejador));
-        
+
         private readonly IContextoFactoria _contextoFactory;
 
         public InicioSesionManejador() : this(new ContextoFactoria())
@@ -29,7 +30,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         public InicioSesionManejador(IContextoFactoria contextoFactory)
         {
-            _contextoFactory = contextoFactory ?? 
+            _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
         }
 
@@ -46,120 +47,150 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new ArgumentNullException(nameof(credenciales));
             }
 
-            string identificador = EntradaComunValidador.NormalizarTexto(
-                credenciales.Identificador);
-            string contrasena = credenciales.Contrasena?.Trim();
-
-            if (!EntradaComunValidador.EsLongitudValida(identificador) || 
-                string.IsNullOrWhiteSpace(contrasena))
+            if (!SonCredencialesValidas(credenciales))
             {
-                _logger.WarnFormat(
-                    "Intento de inicio de sesion con datos invalidos. Identificador: {0}", 
-                    identificador);
-                
-                return new ResultadoInicioSesionDTO
-                {
-                    CuentaEncontrada = true,
-                    Mensaje = MensajesError.Cliente.CredencialesInvalidas
-                };
+                _logger.Warn("Intento de inicio de sesion con formato de datos invalido.");
+                return CrearRespuestaDatosInvalidos();
             }
 
             try
             {
                 using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    Usuario usuario = BuscarUsuarioPorIdentificador(contexto, identificador);
-
-                    if (usuario == null)
-                    {
-                        _logger.WarnFormat(
-                            "Inicio de sesion fallido. Usuario no encontrado: {0}", 
-                            identificador);
-                        
-                        return new ResultadoInicioSesionDTO
-                        {
-                            CuentaEncontrada = false,
-                            Mensaje = MensajesError.Cliente.CredencialesIncorrectas
-                        };
-                    }
-
-                    if (!BCryptNet.Verify(contrasena, usuario.Contrasena))
-                    {
-                        _logger.WarnFormat(
-                            "Inicio de sesion fallido. Contrasena incorrecta para: {0}", 
-                            usuario.Nombre_Usuario);
-                        
-                        return new ResultadoInicioSesionDTO
-                        {
-                            ContrasenaIncorrecta = true,
-                            Mensaje = MensajesError.Cliente.CredencialesIncorrectas
-                        };
-                    }
-
-                    return new ResultadoInicioSesionDTO
-                    {
-                        InicioSesionExitoso = true,
-                        Usuario = MapearUsuario(usuario)
-                    };
+                    return ProcesarAutenticacion(contexto, credenciales);
                 }
             }
             catch (EntityException ex)
             {
                 _logger.Error("Error de base de datos durante el inicio de sesion.", ex);
-                return new ResultadoInicioSesionDTO
-                {
-                    InicioSesionExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
-                };
+                return CrearErrorGenerico();
             }
             catch (DataException ex)
             {
                 _logger.Error("Error de datos durante el inicio de sesion.", ex);
-                return new ResultadoInicioSesionDTO
-                {
-                    InicioSesionExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
-                };
+                return CrearErrorGenerico();
             }
             catch (InvalidOperationException ex)
             {
                 _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
-                return new ResultadoInicioSesionDTO
-                {
-                    InicioSesionExitoso = false,
-                    Mensaje = MensajesError.Cliente.ErrorInicioSesion
-                };
+                return CrearErrorGenerico();
             }
         }
 
-        private static Usuario BuscarUsuarioPorIdentificador(
-            BaseDatosPruebaEntities contexto, 
-            string identificador)
+        private bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)
         {
-            var usuariosPorNombre = contexto.Usuario
-                .Where(u => u.Nombre_Usuario == identificador)
-                .ToList();
+            string identificador = EntradaComunValidador.NormalizarTexto(
+                credenciales.Identificador);
 
-            Usuario usuario = usuariosPorNombre.FirstOrDefault(
-                u => string.Equals(
-                    u.Nombre_Usuario, 
-                    identificador, 
-                    StringComparison.Ordinal));
+            string contrasena = credenciales.Contrasena?.Trim();
 
-            if (usuario != null)
+            if (!EntradaComunValidador.EsLongitudValida(identificador))
             {
-                return usuario;
+                return false;
             }
 
-            var usuariosPorCorreo = contexto.Usuario
-                .Where(u => u.Jugador.Correo == identificador)
-                .ToList();
+            if (string.IsNullOrWhiteSpace(contrasena))
+            {
+                return false;
+            }
 
-            return usuariosPorCorreo.FirstOrDefault(
-                u => string.Equals(
-                    u.Jugador?.Correo, 
-                    identificador, 
-                    StringComparison.Ordinal));
+            return true;
+        }
+
+        private ResultadoInicioSesionDTO CrearRespuestaDatosInvalidos()
+        {
+            return new ResultadoInicioSesionDTO
+            {
+                CuentaEncontrada = true,
+                Mensaje = MensajesError.Cliente.CredencialesInvalidas
+            };
+        }
+
+        private ResultadoInicioSesionDTO ProcesarAutenticacion(
+            BaseDatosPruebaEntities contexto,
+            CredencialesInicioSesionDTO credenciales)
+        {
+            string identificador = EntradaComunValidador.NormalizarTexto(
+                credenciales.Identificador);
+
+            var usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
+
+            if (usuario == null)
+            {
+                _logger.Warn("Inicio de sesion fallido. Usuario no encontrado.");
+
+                return new ResultadoInicioSesionDTO
+                {
+                    CuentaEncontrada = false,
+                    Mensaje = MensajesError.Cliente.CredencialesIncorrectas
+                };
+            }
+
+            if (!VerificarContrasena(credenciales.Contrasena, usuario.Contrasena))
+            {
+                _logger.Warn("Inicio de sesion fallido. Contrasena incorrecta.");
+
+                return new ResultadoInicioSesionDTO
+                {
+                    ContrasenaIncorrecta = true,
+                    Mensaje = MensajesError.Cliente.CredencialesIncorrectas
+                };
+            }
+
+            return new ResultadoInicioSesionDTO
+            {
+                InicioSesionExitoso = true,
+                Usuario = MapearUsuario(usuario)
+            };
+        }
+
+        private bool VerificarContrasena(string contrasenaEntrada, string hashAlmacenado)
+        {
+            if (string.IsNullOrWhiteSpace(contrasenaEntrada) ||
+                string.IsNullOrWhiteSpace(hashAlmacenado))
+            {
+                return false;
+            }
+
+            return BCryptNet.Verify(contrasenaEntrada.Trim(), hashAlmacenado);
+        }
+
+        private static ResultadoInicioSesionDTO CrearErrorGenerico()
+        {
+            return new ResultadoInicioSesionDTO
+            {
+                InicioSesionExitoso = false,
+                Mensaje = MensajesError.Cliente.ErrorInicioSesion
+            };
+        }
+
+        private Usuario ObtenerUsuarioPorCredencial(
+            BaseDatosPruebaEntities contexto,
+            string identificador)
+        {
+            var usuarioPorNombre = BuscarPorNombreUsuario(contexto, identificador);
+            if (usuarioPorNombre != null)
+            {
+                return usuarioPorNombre;
+            }
+
+            return BuscarPorCorreoElectronico(contexto, identificador);
+        }
+
+        private Usuario BuscarPorNombreUsuario(
+            BaseDatosPruebaEntities contexto,
+            string nombreUsuario)
+        {
+            IUsuarioRepositorio repositorio = new UsuarioRepositorio(contexto);
+            return repositorio.ObtenerPorNombreUsuario(nombreUsuario);
+        }
+
+        private Usuario BuscarPorCorreoElectronico(
+            BaseDatosPruebaEntities contexto,
+            string correo)
+        {
+            IUsuarioRepositorio repositorio = new UsuarioRepositorio(contexto);
+            return repositorio.ObtenerPorCorreo(correo);
         }
 
         private static UsuarioDTO MapearUsuario(Usuario usuario)

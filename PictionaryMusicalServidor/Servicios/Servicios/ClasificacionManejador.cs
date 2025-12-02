@@ -1,11 +1,13 @@
+using Datos.Modelo;
 using log4net;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Data.Entity.Core;
 using System.Linq;
 
@@ -48,20 +50,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 using (var contexto = _contextoFactory.CrearContexto())
                 {
-                    return contexto.Usuario
-                        .Include(u => u.Jugador.Clasificacion)
-                        .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
-                        .Select(u => new ClasificacionUsuarioDTO
-                        {
-                            Usuario = u.Nombre_Usuario,
-                            Puntos = u.Jugador.Clasificacion.Puntos_Ganados ?? 0,
-                            RondasGanadas = u.Jugador.Clasificacion.Rondas_Ganadas ?? 0
-                        })
-                        .OrderByDescending(c => c.Puntos)
-                        .ThenByDescending(c => c.RondasGanadas)
-                        .ThenBy(c => c.Usuario)
-                        .Take(LimiteTopJugadores)
-                        .ToList();
+                    IClasificacionRepositorio repositorio =
+                        new ClasificacionRepositorio(contexto);
+
+                    IList<Usuario> usuarios = repositorio.ObtenerMejoresJugadores(
+                        LimiteTopJugadores);
+
+                    return usuarios.Select(u => new ClasificacionUsuarioDTO
+                    {
+                        Usuario = u.Nombre_Usuario,
+                        Puntos = u.Jugador.Clasificacion.Puntos_Ganados ?? 0,
+                        RondasGanadas = u.Jugador.Clasificacion.Rondas_Ganadas ?? 0
+                    }).ToList();
                 }
             }
             catch (EntityException ex)

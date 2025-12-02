@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Data;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using System.Data.Entity;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
@@ -17,8 +14,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 {
     /// <summary>
     /// Servicio interno para la logica de negocio de recuperacion y cambio de contrasena.
-    /// Maneja el almacenamiento temporal de solicitudes, generacion y validacion de codigos,
-    /// y actualizacion de contrasenas con encriptacion BCrypt.
+    /// Maneja el almacenamiento temporal de solicitudes, generacion y validacion de codigos.
+    /// Delega el acceso a datos a los repositorios correspondientes.
     /// </summary>
     public class RecuperacionCuentaServicio : IRecuperacionCuentaServicio
     {
@@ -32,393 +29,205 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             new ConcurrentDictionary<string, SolicitudRecuperacionPendiente>();
 
         private readonly IContextoFactoria _contextoFactory;
-        private readonly INotificacionCodigosServicio _notificacionCodigosServicio;
+        private readonly INotificacionCodigosServicio _notificacionServicio;
 
-        public RecuperacionCuentaServicio(IContextoFactoria contextoFactory,
-            INotificacionCodigosServicio notificacionCodigosServicio)
+        public RecuperacionCuentaServicio(
+            IContextoFactoria contextoFactory,
+            INotificacionCodigosServicio notificacionServicio)
         {
             _contextoFactory = contextoFactory ??
                 throw new ArgumentNullException(nameof(contextoFactory));
-            _notificacionCodigosServicio = notificacionCodigosServicio ??
-                throw new ArgumentNullException(nameof(notificacionCodigosServicio));
+
+            _notificacionServicio = notificacionServicio ??
+                throw new ArgumentNullException(nameof(notificacionServicio));
         }
 
         /// <summary>
         /// Solicita un codigo de recuperacion para una cuenta de usuario.
-        /// Busca el usuario, genera un codigo con expiracion, lo envia por correo y almacena la 
-        /// solicitud.
         /// </summary>
         public ResultadoSolicitudRecuperacionDTO SolicitarCodigoRecuperacion(
             SolicitudRecuperarCuentaDTO solicitud)
         {
-            if (solicitud == null)
+            if (!ValidarSolicitudEntrada(solicitud))
             {
-                throw new ArgumentNullException(nameof(solicitud));
+                return CrearFalloSolicitud(
+                    MensajesError.Cliente.SolicitudRecuperacionIdentificadorObligatorio);
             }
 
-            string identificador = EntradaComunValidador.NormalizarTexto(solicitud.Identificador);
-            if (!EntradaComunValidador.EsLongitudValida(identificador))
+            var usuario = BuscarUsuarioParaRecuperacion(solicitud.Identificador);
+            if (usuario == null)
             {
-                return new ResultadoSolicitudRecuperacionDTO
-                {
-                    CuentaEncontrada = false,
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionIdentificadorObligatorio
-                };
+                return CrearFalloSolicitud(
+                    MensajesError.Cliente.SolicitudRecuperacionCuentaNoEncontrada);
             }
 
-            using (var contexto = _contextoFactory.CrearContexto())
+            LimpiarSolicitudesRecuperacion(usuario.idUsuario);
+
+            var generacion = GenerarYEnviarCodigo(usuario, solicitud.Idioma);
+            if (!generacion.Exito)
             {
-                Usuario usuario = BuscarUsuarioPorIdentificador(contexto, identificador);
-
-                if (usuario == null)
-                {
-                    return new ResultadoSolicitudRecuperacionDTO
-                    {
-                        CuentaEncontrada = false,
-                        CodigoEnviado = false,
-                        Mensaje = MensajesError.Cliente.SolicitudRecuperacionCuentaNoEncontrada
-                    };
-                }
-
-                LimpiarSolicitudesRecuperacion(usuario.idUsuario);
-
-                string token = TokenGenerador.GenerarToken();
-                string codigo = CodigoVerificacionGenerador.GenerarCodigo();
-
-                var pendiente = new SolicitudRecuperacionPendiente
-                {
-                    UsuarioId = usuario.idUsuario,
-                    Correo = usuario.Jugador?.Correo,
-                    NombreUsuario = usuario.Nombre_Usuario,
-                    Codigo = codigo,
-                    Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo),
-                    Confirmado = false,
-                    Idioma = solicitud.Idioma
-                };
-
-                bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
-                    pendiente.Correo,
-                    codigo,
-                    pendiente.NombreUsuario,
-                    pendiente.Idioma);
-
-                if (!enviado)
-                {
-                    _logger.Error(
-                        "Fallo critico al enviar correo de recuperacion.");
-
-                    return new ResultadoSolicitudRecuperacionDTO
-                    {
-                        CuentaEncontrada = true,
-                        CodigoEnviado = false,
-                        Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
-                    };
-                }
-
-                _solicitudesRecuperacion[token] = pendiente;
-
-                return new ResultadoSolicitudRecuperacionDTO
-                {
-                    CuentaEncontrada = true,
-                    CodigoEnviado = true,
-                    CorreoDestino = pendiente.Correo,
-                    TokenCodigo = token
-                };
+                return CrearFalloSolicitud(MensajesError.Cliente.ErrorRecuperarCuenta);
             }
+
+            AlmacenarSolicitud(generacion.Token, generacion.Pendiente);
+
+            return new ResultadoSolicitudRecuperacionDTO
+            {
+                CuentaEncontrada = true,
+                CodigoEnviado = true,
+                CorreoDestino = generacion.Pendiente.Correo,
+                TokenCodigo = generacion.Token
+            };
         }
 
         /// <summary>
         /// Reenvia un codigo de recuperacion previamente solicitado.
-        /// Valida el token, genera un nuevo codigo con nueva expiracion y lo envia por correo.
         /// </summary>
         public ResultadoSolicitudCodigoDTO ReenviarCodigoRecuperacion(ReenvioCodigoDTO solicitud)
         {
-            if (solicitud == null)
+            if (!ValidarReenvioEntrada(solicitud))
             {
-                throw new ArgumentNullException(nameof(solicitud));
-            }
-
-            string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
-            if (!EntradaComunValidador.EsTokenValido(token))
-            {
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.DatosReenvioCodigo
-                };
+                return CrearFalloReenvio(MensajesError.Cliente.DatosReenvioCodigo);
             }
 
             if (!_solicitudesRecuperacion.TryGetValue(
-                token,
+                solicitud.TokenCodigo,
                 out SolicitudRecuperacionPendiente pendiente))
             {
-                _logger.Warn(
-                    "Intento de reenvio de codigo de recuperacion con token invalido o expirado.");
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionNoEncontrada
-                };
-            }
-
-            if (pendiente.Expira < DateTime.UtcNow)
-            {
-                _solicitudesRecuperacion.TryRemove(token, out _);
-                _logger.Warn("Solicitud de recuperacion expirada.");
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.CodigoRecuperacionExpirado
-                };
-            }
-
-            string codigoAnterior = pendiente.Codigo;
-            DateTime expiracionAnterior = pendiente.Expira;
-            bool confirmadoAnterior = pendiente.Confirmado;
-
-            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
-            pendiente.Codigo = nuevoCodigo;
-            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
-            pendiente.Confirmado = false;
-
-            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
-                pendiente.Correo,
-                nuevoCodigo,
-                pendiente.NombreUsuario,
-                pendiente.Idioma);
-
-            if (!enviado)
-            {
-                pendiente.Codigo = codigoAnterior;
-                pendiente.Expira = expiracionAnterior;
-                pendiente.Confirmado = confirmadoAnterior;
-
-                _logger.Error(
-                    "Fallo critico al reenviar correo de recuperacion.");
-
-                return new ResultadoSolicitudCodigoDTO
-                {
-                    CodigoEnviado = false,
-                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoRecuperacion
-                };
-            }
-
-            return new ResultadoSolicitudCodigoDTO
-            {
-                CodigoEnviado = true,
-                TokenCodigo = token
-            };
-        }
-
-        /// <summary>
-        /// Confirma el codigo de recuperacion ingresado por el usuario.
-        /// Valida el token, compara el codigo ingresado con el almacenado y marca la confirmacion.
-        /// </summary>
-        /// <param name="confirmacion">Datos con el token y codigo ingresado.</param>
-        /// <returns>Resultado indicando si el codigo fue confirmado correctamente.</returns>
-        public ResultadoOperacionDTO ConfirmarCodigoRecuperacion(
-            ConfirmacionCodigoDTO confirmacion)
-        {
-            if (confirmacion == null)
-            {
-                throw new ArgumentNullException(nameof(confirmacion));
-            }
-
-            string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
-            string codigoIngresado = EntradaComunValidador.NormalizarTexto(
-                confirmacion.CodigoIngresado);
-
-            if (!EntradaComunValidador.EsTokenValido(token) ||
-                !EntradaComunValidador.EsCodigoVerificacionValido(codigoIngresado))
-            {
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.DatosConfirmacionInvalidos
-                };
-            }
-
-            if (!_solicitudesRecuperacion.TryGetValue(
-                token,
-                out SolicitudRecuperacionPendiente pendiente))
-            {
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionNoEncontrada
-                };
-            }
-
-            if (pendiente.Expira < DateTime.UtcNow)
-            {
-                _solicitudesRecuperacion.TryRemove(token, out _);
-                _logger.Warn("Intento de confirmacion con codigo expirado.");
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.CodigoRecuperacionExpirado
-                };
-            }
-
-            if (!string.Equals(
-                pendiente.Codigo,
-                codigoIngresado,
-                StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.Warn("Codigo de recuperacion incorrecto.");
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.CodigoRecuperacionIncorrecto
-                };
-            }
-
-            pendiente.Confirmado = true;
-            pendiente.Codigo = null;
-            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
-
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = true
-            };
-        }
-
-        /// <summary>
-        /// Actualiza la contrasena de un usuario despues de confirmar el codigo de recuperacion.
-        /// Valida el token y confirmacion, encripta la nueva contrasena con BCrypt y actualiza.
-        /// </summary>
-        /// <param name="solicitud">Datos con el token y la nueva contrasena.</param>
-        /// <returns>Resultado indicando si la contrasena fue actualizada exitosamente.</returns>
-        public ResultadoOperacionDTO ActualizarContrasena(ActualizacionContrasenaDTO solicitud)
-        {
-            if (solicitud == null)
-            {
-                throw new ArgumentNullException(nameof(solicitud));
-            }
-
-            string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
-            string contrasena = EntradaComunValidador.NormalizarTexto(solicitud.NuevaContrasena);
-
-            if (!EntradaComunValidador.EsTokenValido(token) ||
-                !EntradaComunValidador.EsContrasenaValida(contrasena))
-            {
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.DatosActualizacionContrasena
-                };
-            }
-
-            if (!_solicitudesRecuperacion.TryGetValue(
-                token,
-                out SolicitudRecuperacionPendiente pendiente))
-            {
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionNoEncontrada
-                };
-            }
-
-            if (!pendiente.Confirmado)
-            {
-                _logger.Warn("Intento de actualizar contrasena sin confirmar codigo");
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionNoVigente
-                };
+                return CrearFalloReenvio(
+                    MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 _solicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out _);
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.SolicitudRecuperacionInvalida
-                };
+                return CrearFalloReenvio(MensajesError.Cliente.CodigoRecuperacionExpirado);
             }
 
-            try
+            return ProcesarReenvio(solicitud.TokenCodigo, pendiente);
+        }
+
+        /// <summary>
+        /// Confirma el codigo de recuperacion ingresado por el usuario.
+        /// </summary>
+        public ResultadoOperacionDTO ConfirmarCodigoRecuperacion(
+            ConfirmacionCodigoDTO confirmacion)
+        {
+            if (!ValidarConfirmacionEntrada(confirmacion))
             {
-                using (var contexto = _contextoFactory.CrearContexto())
+                return CrearFalloOperacion(MensajesError.Cliente.DatosConfirmacionInvalidos);
+            }
+
+            if (!_solicitudesRecuperacion.TryGetValue(
+                confirmacion.TokenCodigo,
+                out SolicitudRecuperacionPendiente pendiente))
+            {
+                return CrearFalloOperacion(
+                    MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
+            }
+
+            return VerificarCodigo(pendiente, confirmacion.TokenCodigo, 
+                confirmacion.CodigoIngresado);
+        }
+
+        /// <summary>
+        /// Actualiza la contrasena de un usuario despues de confirmar el codigo de recuperacion.
+        /// </summary>
+        public ResultadoOperacionDTO ActualizarContrasena(ActualizacionContrasenaDTO solicitud)
+        {
+            if (!ValidarActualizacionEntrada(solicitud))
+            {
+                return CrearFalloOperacion(MensajesError.Cliente.DatosActualizacionContrasena);
+            }
+
+            var validacionToken = VerificarTokenYExpiracion(solicitud.TokenCodigo);
+            if (!validacionToken.Exito)
+            {
+                return CrearFalloOperacion(validacionToken.MensajeError);
+            }
+
+            var pendiente = validacionToken.Pendiente;
+            if (!pendiente.Confirmado)
+            {
+                return CrearFalloOperacion(
+                    MensajesError.Cliente.SolicitudRecuperacionNoVigente);
+            }
+
+            return EjecutarCambioContrasena(
+                pendiente.UsuarioId,
+                solicitud.NuevaContrasena,
+                solicitud.TokenCodigo);
+        }
+
+        private bool ValidarSolicitudEntrada(SolicitudRecuperarCuentaDTO solicitud)
+        {
+            if (solicitud == null) return false;
+            string identificador = EntradaComunValidador.NormalizarTexto(solicitud.Identificador);
+            return EntradaComunValidador.EsLongitudValida(identificador);
+        }
+
+        private Usuario BuscarUsuarioParaRecuperacion(string identificador)
+        {
+            using (var contexto = _contextoFactory.CrearContexto())
+            {
+                IUsuarioRepositorio repositorio = new UsuarioRepositorio(contexto);
+                string idNormalizado = EntradaComunValidador.NormalizarTexto(identificador);
+                var usuarioPorNombre = repositorio.ObtenerPorNombreConJugador(idNormalizado);
+
+                if (usuarioPorNombre != null)
                 {
-                    Usuario usuario = contexto.Usuario.FirstOrDefault(
-                        u => u.idUsuario == pendiente.UsuarioId);
-
-                    if (usuario == null)
-                    {
-                        _logger.Error(
-                            "Error critico: Usuario no encontrado en actualizacion.");
-
-                        return new ResultadoOperacionDTO
-                        {
-                            OperacionExitosa = false,
-                            Mensaje = MensajesError.Cliente.UsuarioNoEncontrado
-                        };
-                    }
-
-                    usuario.Contrasena = BCrypt.Net.BCrypt.HashPassword(solicitud.NuevaContrasena);
-                    contexto.SaveChanges();
+                    return usuarioPorNombre;
                 }
 
-                _solicitudesRecuperacion.TryRemove(token, out _);
-
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = true
-                };
+                return repositorio.ObtenerPorCorreo(idNormalizado);
             }
-            catch (DbEntityValidationException ex)
+        }
+
+        private (bool Exito, string Token, SolicitudRecuperacionPendiente Pendiente)
+            GenerarYEnviarCodigo(Usuario usuario, string idioma)
+        {
+            string token = TokenGenerador.GenerarToken();
+            string codigo = CodigoVerificacionGenerador.GenerarCodigo();
+
+            var pendiente = new SolicitudRecuperacionPendiente
             {
-                _logger.Error(
-                    "Validacion de entidad fallida al actualizar contrasena.",
-                    ex);
+                UsuarioId = usuario.idUsuario,
+                Correo = usuario.Jugador?.Correo,
+                NombreUsuario = usuario.Nombre_Usuario,
+                Codigo = codigo,
+                Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo),
+                Confirmado = false,
+                Idioma = idioma
+            };
 
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.ErrorActualizarContrasena
-                };
-            }
-            catch (DbUpdateException ex)
+            bool enviado = _notificacionServicio.EnviarNotificacion(
+                pendiente.Correo,
+                codigo,
+                pendiente.NombreUsuario,
+                pendiente.Idioma);
+
+            if (!enviado)
             {
-                _logger.Error(
-                    "Error de actualizacion de BD al actualizar contrasena.",
-                    ex);
-
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.ErrorActualizarContrasena
-                };
+                _logger.Error("Fallo critico al enviar correo de recuperacion.");
+                return (false, null, null);
             }
-            catch (EntityException ex)
+
+            return (true, token, pendiente);
+        }
+
+        private void AlmacenarSolicitud(string token, SolicitudRecuperacionPendiente pendiente)
+        {
+            _solicitudesRecuperacion[token] = pendiente;
+        }
+
+        private ResultadoSolicitudRecuperacionDTO CrearFalloSolicitud(string mensaje)
+        {
+            return new ResultadoSolicitudRecuperacionDTO
             {
-                _logger.Error(
-                    "Error de base de datos al actualizar contrasena.",
-                    ex);
-
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.ErrorActualizarContrasena
-                };
-            }
-            catch (DataException ex)
-            {
-                _logger.Error(
-                    "Error de datos al actualizar contrasena.",
-                    ex);
-
-                return new ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = MensajesError.Cliente.ErrorActualizarContrasena
-                };
-            }
+                CuentaEncontrada = false,
+                CodigoEnviado = false,
+                Mensaje = mensaje
+            };
         }
 
         private static void LimpiarSolicitudesRecuperacion(int usuarioId)
@@ -433,36 +242,155 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private static Usuario BuscarUsuarioPorIdentificador(
-            BaseDatosPruebaEntities contexto,
-            string identificador)
+        private bool ValidarReenvioEntrada(ReenvioCodigoDTO solicitud)
         {
-            var usuariosPorNombre = contexto.Usuario
-                .Include(u => u.Jugador)
-                .Where(u => u.Nombre_Usuario == identificador)
-                .ToList();
+            if (solicitud == null) return false;
+            string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
+            return EntradaComunValidador.EsTokenValido(token);
+        }
 
-            Usuario usuario = usuariosPorNombre.FirstOrDefault(u =>
-                string.Equals(
-                    u.Nombre_Usuario,
-                    identificador,
-                    StringComparison.Ordinal));
+        private ResultadoSolicitudCodigoDTO ProcesarReenvio(
+            string token,
+            SolicitudRecuperacionPendiente pendiente)
+        {
+            string codigoAnterior = pendiente.Codigo;
+            DateTime expiracionAnterior = pendiente.Expira;
+            bool confirmadoAnterior = pendiente.Confirmado;
 
-            if (usuario != null)
+            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
+            pendiente.Codigo = nuevoCodigo;
+            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
+            pendiente.Confirmado = false;
+
+            bool enviado = _notificacionServicio.EnviarNotificacion(
+                pendiente.Correo,
+                nuevoCodigo,
+                pendiente.NombreUsuario,
+                pendiente.Idioma);
+
+            if (!enviado)
             {
-                return usuario;
+                pendiente.Codigo = codigoAnterior;
+                pendiente.Expira = expiracionAnterior;
+                pendiente.Confirmado = confirmadoAnterior;
+
+                _logger.Error("Fallo critico al reenviar correo de recuperacion.");
+                return CrearFalloReenvio(MensajesError.Cliente.ErrorReenviarCodigoRecuperacion);
             }
 
-            var usuariosPorCorreo = contexto.Usuario
-                .Include(u => u.Jugador)
-                .Where(u => u.Jugador.Correo == identificador)
-                .ToList();
+            return new ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = true,
+                TokenCodigo = token
+            };
+        }
 
-            return usuariosPorCorreo.FirstOrDefault(u =>
-                string.Equals(
-                    u.Jugador?.Correo,
-                    identificador,
-                    StringComparison.Ordinal));
+        private ResultadoSolicitudCodigoDTO CrearFalloReenvio(string mensaje)
+        {
+            return new ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = false,
+                Mensaje = mensaje
+            };
+        }
+
+        private bool ValidarConfirmacionEntrada(ConfirmacionCodigoDTO confirmacion)
+        {
+            if (confirmacion == null) return false;
+            string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
+            string codigo = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
+
+            return EntradaComunValidador.EsTokenValido(token) &&
+                   EntradaComunValidador.EsCodigoVerificacionValido(codigo);
+        }
+
+        private ResultadoOperacionDTO VerificarCodigo(
+            SolicitudRecuperacionPendiente pendiente,
+            string token,
+            string codigoIngresado)
+        {
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                _solicitudesRecuperacion.TryRemove(token, out _);
+                return CrearFalloOperacion(MensajesError.Cliente.CodigoRecuperacionExpirado);
+            }
+
+            if (!string.Equals(
+                pendiente.Codigo,
+                codigoIngresado,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return CrearFalloOperacion(MensajesError.Cliente.CodigoRecuperacionIncorrecto);
+            }
+
+            pendiente.Confirmado = true;
+            pendiente.Codigo = null;
+            pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
+
+            return new ResultadoOperacionDTO { OperacionExitosa = true };
+        }
+
+        private bool ValidarActualizacionEntrada(ActualizacionContrasenaDTO solicitud)
+        {
+            if (solicitud == null) return false;
+            string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
+            string pass = EntradaComunValidador.NormalizarTexto(solicitud.NuevaContrasena);
+
+            return EntradaComunValidador.EsTokenValido(token) &&
+                   EntradaComunValidador.EsContrasenaValida(pass);
+        }
+
+        private (bool Exito, SolicitudRecuperacionPendiente Pendiente, string MensajeError)
+            VerificarTokenYExpiracion(string token)
+        {
+            if (!_solicitudesRecuperacion.TryGetValue(
+                token,
+                out SolicitudRecuperacionPendiente pendiente))
+            {
+                return (false, null, MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
+            }
+
+            if (pendiente.Expira < DateTime.UtcNow)
+            {
+                _solicitudesRecuperacion.TryRemove(token, out _);
+                return (false, null, MensajesError.Cliente.SolicitudRecuperacionInvalida);
+            }
+
+            return (true, pendiente, null);
+        }
+
+        private ResultadoOperacionDTO EjecutarCambioContrasena(
+            int usuarioId,
+            string nuevaContrasena,
+            string token)
+        {
+            try
+            {
+                using (var contexto = _contextoFactory.CrearContexto())
+                {
+                    IUsuarioRepositorio repositorio = new UsuarioRepositorio(contexto);
+                    string hash = BCrypt.Net.BCrypt.HashPassword(nuevaContrasena);
+
+                    repositorio.ActualizarContrasena(usuarioId, hash);
+                }
+
+                _solicitudesRecuperacion.TryRemove(token, out _);
+                return new ResultadoOperacionDTO { OperacionExitosa = true };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+        }
+
+        private ResultadoOperacionDTO CrearFalloOperacion(string mensaje)
+        {
+            return new ResultadoOperacionDTO
+            {
+                OperacionExitosa = false,
+                Mensaje = mensaje
+            };
         }
 
         private sealed class SolicitudRecuperacionPendiente

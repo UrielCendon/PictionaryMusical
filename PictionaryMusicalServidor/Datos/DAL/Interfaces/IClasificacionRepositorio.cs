@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
@@ -25,5 +26,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         /// <returns><c>true</c> si la actualizacion se aplico correctamente; de lo contrario, 
         /// <c>false</c>.</returns>
         bool ActualizarEstadisticas(int jugadorId, int puntosObtenidos, bool ganoPartida);
+
+        /// <summary>
+        /// Obtiene la lista de usuarios con sus clasificaciones ordenadas por puntuacion.
+        /// </summary>
+        /// <param name="cantidad">Numero maximo de registros a recuperar.</param>
+        /// <returns>Lista de entidades de Usuario con datos cargados.</returns>
+        IList<Usuario> ObtenerMejoresJugadores(int cantidad);
     }
 }

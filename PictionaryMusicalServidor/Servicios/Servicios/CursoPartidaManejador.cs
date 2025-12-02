@@ -150,9 +150,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <summary>
         /// Procesa un trazo dibujado por el jugador actual de la sala.
         /// </summary>
-        /// <param name="trazo">Trazo a procesar.</param>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="idJugador">Identificador del jugador.</param>
         public void EnviarTrazo(TrazoDTO trazo, string idSala, string idJugador)
         {
             if (string.IsNullOrWhiteSpace(idSala))
@@ -200,101 +197,148 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private void SuscribirEventos(ControladorPartida controlador, string idSala)
         {
-            controlador.PartidaIniciada += () =>
-                NotificarCallbacks(idSala, callback => callback.NotificarPartidaIniciada());
+            controlador.PartidaIniciada += () => ManejarPartidaIniciada(idSala);
 
-            controlador.InicioRonda += rondaBase => Task.Run(() =>
-            {
-                var jugadoresEstado = controlador.ObtenerJugadores();
-                var dibujante = jugadoresEstado.FirstOrDefault(j => j.EsDibujante);
-                string nombreDibujante = dibujante?.NombreUsuario ?? string.Empty;
-
-                List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-                lock (_sincronizacion)
-                {
-                    if (!_callbacksPorSala.TryGetValue(idSala, out var callbacksSala))
-                    {
-                        return;
-                    }
-                    callbacks = callbacksSala.ToList();
-                }
-
-                var cancionActual = _catalogoCanciones.ObtenerCancionPorId(
-                    rondaBase.IdCancion);
-
-                foreach (var par in callbacks)
-                {
-                    var idJugador = par.Key;
-                    var callback = par.Value;
-
-                    var datosJugador = jugadoresEstado.FirstOrDefault(j =>
-                        string.Equals(
-                            j.IdConexion,
-                            idJugador,
-                            StringComparison.OrdinalIgnoreCase));
-
-                    bool esDibujante = datosJugador != null && datosJugador.EsDibujante;
-
-                    string pistaArtista = rondaBase.PistaArtista;
-                    string pistaGenero = rondaBase.PistaGenero;
-
-                    if (esDibujante && cancionActual != null)
-                    {
-                        pistaArtista = cancionActual.Artista;
-                        pistaGenero = cancionActual.Genero;
-                    }
-
-                    var rondaPersonalizada = new RondaDTO
-                    {
-                        IdCancion = rondaBase.IdCancion,
-                        PistaArtista = pistaArtista,
-                        PistaGenero = pistaGenero,
-                        TiempoSegundos = rondaBase.TiempoSegundos,
-                        Rol = esDibujante ? "Dibujante" : "Adivinador",
-                        NombreDibujante = nombreDibujante
-                    };
-
-                    try
-                    {
-                        callback.NotificarInicioRonda(rondaPersonalizada);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.WarnFormat(
-                            "Error notificando inicio de ronda a {0}",
-                            idJugador,
-                            ex);
-
-                        RemoverCallback(idSala, idJugador);
-                    }
-                }
-            });
+            controlador.InicioRonda += (ronda) =>
+                Task.Run(() => ManejarInicioRonda(idSala, ronda, controlador));
 
             controlador.JugadorAdivino += (jugador, puntos) =>
-                NotificarCallbacks(
-                    idSala,
-                    callback => callback.NotificarJugadorAdivino(jugador, puntos));
+                ManejarJugadorAdivino(idSala, jugador, puntos);
 
             controlador.MensajeChatRecibido += (jugador, mensaje) =>
-                NotificarCallbacks(
-                    idSala,
-                    callback => callback.NotificarMensajeChat(jugador, mensaje));
+                ManejarMensajeChat(idSala, jugador, mensaje);
 
-            controlador.TrazoRecibido += trazo =>
-                NotificarCallbacks(
-                    idSala,
-                    callback => callback.NotificarTrazoRecibido(trazo));
+            controlador.TrazoRecibido += (trazo) =>
+                ManejarTrazoRecibido(idSala, trazo);
 
-            controlador.FinRonda += () =>
-                NotificarCallbacks(idSala, callback => callback.NotificarFinRonda());
+            controlador.FinRonda += () => ManejarFinRonda(idSala);
 
-            controlador.FinPartida += resultado =>
+            controlador.FinPartida += (resultado) =>
+                ManejarFinPartida(idSala, resultado, controlador);
+        }
+
+        private void ManejarPartidaIniciada(string idSala)
+        {
+            NotificarCallbacks(idSala, cb => cb.NotificarPartidaIniciada());
+        }
+
+        private void ManejarInicioRonda(
+            string idSala,
+            RondaDTO rondaBase,
+            ControladorPartida controlador)
+        {
+            var jugadoresEstado = controlador.ObtenerJugadores();
+            var dibujante = jugadoresEstado.FirstOrDefault(j => j.EsDibujante);
+            string nombreDibujante = dibujante?.NombreUsuario ?? string.Empty;
+
+            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
+
+            lock (_sincronizacion)
             {
-                Task.Run(() => ActualizarClasificacionPartida(controlador, resultado));
-                NotificarCallbacks(
+                if (!_callbacksPorSala.TryGetValue(idSala, out var callbacksSala))
+                {
+                    return;
+                }
+                callbacks = callbacksSala.ToList();
+            }
+
+            var cancionActual = _catalogoCanciones.ObtenerCancionPorId(rondaBase.IdCancion);
+
+            foreach (var par in callbacks)
+            {
+                NotificarInicioRondaIndividual(
                     idSala,
-                    callback => callback.NotificarFinPartida(resultado));
+                    par.Key,
+                    par.Value,
+                    rondaBase,
+                    jugadoresEstado,
+                    nombreDibujante,
+                    cancionActual);
+            }
+        }
+
+        private void NotificarInicioRondaIndividual(
+            string idSala,
+            string idJugador,
+            ICursoPartidaManejadorCallback callback,
+            RondaDTO rondaBase,
+            IEnumerable<JugadorPartida> jugadoresEstado,
+            string nombreDibujante,
+            Datos.Entidades.Cancion cancionActual)
+        {
+            var datosJugador = jugadoresEstado.FirstOrDefault(j =>
+                string.Equals(
+                    j.IdConexion,
+                    idJugador,
+                    StringComparison.OrdinalIgnoreCase));
+
+            bool esDibujante = datosJugador != null && datosJugador.EsDibujante;
+
+            string pistaArtista = rondaBase.PistaArtista;
+            string pistaGenero = rondaBase.PistaGenero;
+
+            if (esDibujante && cancionActual != null)
+            {
+                pistaArtista = cancionActual.Artista;
+                pistaGenero = cancionActual.Genero;
+            }
+
+            var rondaPersonalizada = new RondaDTO
+            {
+                IdCancion = rondaBase.IdCancion,
+                PistaArtista = pistaArtista,
+                PistaGenero = pistaGenero,
+                TiempoSegundos = rondaBase.TiempoSegundos,
+                Rol = esDibujante ? "Dibujante" : "Adivinador",
+                NombreDibujante = nombreDibujante
             };
+
+            try
+            {
+                callback.NotificarInicioRonda(rondaPersonalizada);
+            }
+            catch (Exception ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+        }
+
+        private void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
+        {
+            NotificarCallbacks(
+                idSala,
+                cb => cb.NotificarJugadorAdivino(jugador, puntos));
+        }
+
+        private void ManejarMensajeChat(string idSala, string jugador, string mensaje)
+        {
+            NotificarCallbacks(
+                idSala,
+                cb => cb.NotificarMensajeChat(jugador, mensaje));
+        }
+
+        private void ManejarTrazoRecibido(string idSala, TrazoDTO trazo)
+        {
+            NotificarCallbacks(idSala, cb => cb.NotificarTrazoRecibido(trazo));
+        }
+
+        private void ManejarFinRonda(string idSala)
+        {
+            NotificarCallbacks(idSala, cb => cb.NotificarFinRonda());
+        }
+
+        private void ManejarFinPartida(
+            string idSala,
+            ResultadoPartidaDTO resultado,
+            ControladorPartida controlador)
+        {
+            Task.Run(() => ActualizarClasificacionPartida(controlador, resultado));
+            NotificarCallbacks(idSala, cb => cb.NotificarFinPartida(resultado));
         }
 
         private void ActualizarClasificacionPartida(
@@ -310,35 +354,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
             {
-                _logger.Info(
-                    "Partida finalizada anticipada o con mensaje. No se actualiza clasificacion.");
+                _logger.Info("Partida finalizada sin clasificacion por mensaje de error.");
                 return;
             }
 
-            List<JugadorPartida> jugadoresFinales;
-
-            try
-            {
-                jugadoresFinales = controlador.ObtenerJugadores()?.ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
-                return;
-            }
+            var jugadoresFinales = ObtenerJugadoresFinales(controlador);
 
             if (jugadoresFinales == null || jugadoresFinales.Count == 0)
             {
                 return;
             }
 
-            int puntajeMaximo = jugadoresFinales.Max(j => j.PuntajeTotal);
-            var ganadores = jugadoresFinales
-                .Where(j => j.PuntajeTotal == puntajeMaximo)
-                .Select(j => j.IdConexion)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var ganadores = CalcularGanadores(jugadoresFinales);
 
             try
             {
@@ -348,35 +375,68 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                     foreach (var jugador in jugadoresFinales)
                     {
-                        if (!int.TryParse(jugador.IdConexion, out int jugadorId) ||
-                            jugadorId <= 0)
-                        {
-                            continue;
-                        }
-
-                        bool ganoPartida = ganadores.Contains(jugador.IdConexion);
-
-                        try
-                        {
-                            clasificacionRepositorio.ActualizarEstadisticas(
-                                jugadorId,
-                                jugador.PuntajeTotal,
-                                ganoPartida);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.ErrorFormat(
-                                "No se pudo actualizar clasificacion del jugador {0}.",
-                                jugadorId,
-                                ex);
-                        }
+                        PersistirEstadisticasJugador(
+                            clasificacionRepositorio,
+                            jugador,
+                            ganadores);
                     }
                 }
             }
             catch (Exception ex)
             {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
+        }
+
+        private List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)
+        {
+            try
+            {
+                return controlador.ObtenerJugadores()?.ToList();
+            }
+            catch (Exception ex)
+            {
                 _logger.Error(
-                    "Error inesperado al actualizar clasificaciones.",
+                    "Error al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return null;
+            }
+        }
+
+        private HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
+        {
+            int puntajeMaximo = jugadores.Max(j => j.PuntajeTotal);
+
+            return jugadores
+                .Where(j => j.PuntajeTotal == puntajeMaximo)
+                .Select(j => j.IdConexion)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+
+        private void PersistirEstadisticasJugador(
+            ClasificacionRepositorio repositorio,
+            JugadorPartida jugador,
+            HashSet<string> ganadores)
+        {
+            if (!int.TryParse(jugador.IdConexion, out int jugadorId) || jugadorId <= 0)
+            {
+                return;
+            }
+
+            bool ganoPartida = ganadores.Contains(jugador.IdConexion);
+
+            try
+            {
+                repositorio.ActualizarEstadisticas(
+                    jugadorId,
+                    jugador.PuntajeTotal,
+                    ganoPartida);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
                     ex);
             }
         }
