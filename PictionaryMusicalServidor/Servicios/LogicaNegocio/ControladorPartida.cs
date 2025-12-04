@@ -473,12 +473,28 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void CancelarPartida()
         {
-            _gestorTiempos.DetenerTodo();
-            FinPartida?.Invoke(new ResultadoPartidaDTO
+            bool debeNotificar = false;
+
+            lock (_sincronizacion)
             {
-                Clasificacion = _gestorJugadores.GenerarClasificacion(),
-                Mensaje = MensajesError.Cliente.PartidaCanceladaFaltaJugadores
-            });
+                if (_estadoActual == EstadoPartida.Finalizada)
+                {
+                    return;
+                }
+
+                _estadoActual = EstadoPartida.Finalizada;
+                _gestorTiempos.DetenerTodo();
+                debeNotificar = true;
+            }
+
+            if (debeNotificar)
+            {
+                FinPartida?.Invoke(new ResultadoPartidaDTO
+                {
+                    Clasificacion = _gestorJugadores.GenerarClasificacion(),
+                    Mensaje = MensajesError.Cliente.PartidaCanceladaFaltaJugadores
+                });
+            }
         }
 
         private void NotificarFinPartida()
