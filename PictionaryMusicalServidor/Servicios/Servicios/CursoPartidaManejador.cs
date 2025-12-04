@@ -337,6 +337,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             ResultadoPartidaDTO resultado,
             ControladorPartida controlador)
         {
+            _salasManejador.MarcarPartidaComoFinalizada(idSala);
             Task.Run(() => ActualizarClasificacionPartida(controlador, resultado));
             NotificarCallbacks(idSala, cb => cb.NotificarFinPartida(resultado));
         }
@@ -556,7 +557,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     callbacks.Remove(idJugador);
                 }
 
-                if (_partidasActivas.TryGetValue(idSala, out var controlador))
+                if (_partidasActivas.TryGetValue(idSala, out var controlador)
+                    && !controlador.EstaFinalizada)
                 {
                     controlador.RemoverJugador(idJugador);
                 }

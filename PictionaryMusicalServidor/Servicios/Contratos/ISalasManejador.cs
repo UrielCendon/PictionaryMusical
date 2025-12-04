@@ -82,5 +82,13 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         [OperationContract]
         void MarcarPartidaComoIniciada(string codigoSala);
+        
+        /// <summary>
+        /// Marca una partida como finalizada para prevenir mandar mensajes de salida
+        /// posteriores a la finalización.
+        /// </summary>
+        /// <param name="codigoSala">Codigo identificador de la sala.</param>
+        [OperationContract]
+        void MarcarPartidaComoFinalizada(string codigoSala);
     }
 }

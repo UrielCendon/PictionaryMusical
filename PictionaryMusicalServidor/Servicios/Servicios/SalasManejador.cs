@@ -407,6 +407,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
+        public void MarcarPartidaComoFinalizada(string codigoSala)
+        {
+            if (_salas.TryGetValue(codigoSala, out var sala))
+            {
+                sala.PartidaFinalizada = true;
+            }
+        }
+
+
         private string GenerarCodigoSala()
         {
             var random = new Random();

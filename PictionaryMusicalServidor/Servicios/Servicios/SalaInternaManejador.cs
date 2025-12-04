@@ -47,6 +47,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _jugadores = new List<string>();
             PartidaIniciada = false;
+            PartidaFinalizada = false;
             DebeEliminarse = false;
         }
 
@@ -56,6 +57,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         public bool DebeEliminarse { get; private set; }
         public bool PartidaIniciada { get; set; }
+        public bool PartidaFinalizada { get; set; }
 
         /// <summary>
         /// Genera un objeto de transferencia de datos (DTO) con el estado actual de la sala.
@@ -182,14 +184,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private void ManejarLogicaSalida(string nombreUsuario)
         {
-            var salaActualizada = ToDto();
-
-            _gestorNotificaciones.NotificarSalida(Codigo, nombreUsuario, salaActualizada);
-
             bool esAnfitrion = string.Equals(
                 nombreUsuario,
                 Creador,
                 StringComparison.OrdinalIgnoreCase);
+
+            if (PartidaFinalizada && esAnfitrion)
+            {
+                _gestorNotificaciones.Limpiar();
+                DebeEliminarse = true;
+                return;
+            }
+
+            var salaActualizada = ToDto();
+
+            _gestorNotificaciones.NotificarSalida(Codigo, nombreUsuario, salaActualizada);
 
             if (esAnfitrion)
             {

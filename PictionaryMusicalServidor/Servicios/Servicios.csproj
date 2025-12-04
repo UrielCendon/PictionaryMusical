@@ -98,6 +98,7 @@
     <Compile Include="Contratos\IRecuperacionCuentaServicio.cs" />
     <Compile Include="Contratos\ISalasManejadorCallback.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
+    <Compile Include="Servicios\Utilidades\AdministradorCallbackGlobal.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />
     <Compile Include="Contratos\IVerificacionRegistroServicio.cs" />
     <Compile Include="LogicaNegocio\ControladorPartida.cs" />

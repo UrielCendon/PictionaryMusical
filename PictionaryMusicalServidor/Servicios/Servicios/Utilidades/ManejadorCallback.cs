@@ -119,9 +119,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (!TryGetCallback(nombreUsuario, out var callback))
             {
-                _logger.WarnFormat(
-                    "Intento de notificacion a '{0}' fallido: No se encontro callback activo.", 
-                    nombreUsuario);
                 return;
             }
 

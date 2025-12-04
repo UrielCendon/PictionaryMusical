@@ -118,6 +118,20 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public event Action<ResultadoPartidaDTO> FinPartida;
 
         /// <summary>
+        /// Indica si la partida ya llego a su estado finalizado.
+        /// </summary>
+        public bool EstaFinalizada
+        {
+            get
+            {
+                lock (_sincronizacion)
+                {
+                    return _estadoActual == EstadoPartida.Finalizada;
+                }
+            }
+        }
+
+        /// <summary>
         /// Configura el idioma que se utilizara para seleccionar las canciones.
         /// </summary>
         /// <param name="idioma">Nombre del idioma (Ej. Espanol, Ingles).</param>
