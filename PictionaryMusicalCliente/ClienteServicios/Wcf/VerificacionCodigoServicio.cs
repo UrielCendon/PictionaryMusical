@@ -12,10 +12,44 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// <summary>
     /// Servicio para manejar la confirmacion y reenvio de codigos de verificacion.
     /// </summary>
-    public class VerificacionCodigoServicio : IVerificacionCodigoServicio
+    public class VerificacionCodigoServicio : ICodigoVerificacionServicio
     {
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(VerificacionCodigoServicio));
+
+        /// <summary>
+        /// Solicita un codigo de verificacion para el registro de una nueva cuenta.
+        /// </summary>
+        public async Task<DTOs.ResultadoSolicitudCodigoDTO> SolicitarCodigoRegistroAsync(
+            DTOs.NuevaCuentaDTO solicitud)
+        {
+            if (solicitud == null)
+            {
+                throw new ArgumentNullException(nameof(solicitud));
+            }
+
+            DTOs.ResultadoSolicitudCodigoDTO resultado = await EjecutarOperacionAsync(
+                () => CodigoVerificacionServicioAyudante.SolicitarCodigoRegistroAsync(solicitud),
+                Lang.errorTextoServidorSolicitudCodigo).ConfigureAwait(false);
+
+            if (resultado == null)
+            {
+                _logger.Warn("El servicio de solicitud de código retornó null.");
+                return null;
+            }
+
+            if (resultado.CodigoEnviado)
+            {
+                _logger.Info("Código de registro solicitado exitosamente.");
+            }
+            else
+            {
+                _logger.WarnFormat("Solicitud de código fallida. Razón: {0}", 
+                    resultado.Mensaje);
+            }
+
+            return resultado;
+        }
 
         /// <summary>
         /// Valida el codigo ingresado por el usuario contra el token del servidor.

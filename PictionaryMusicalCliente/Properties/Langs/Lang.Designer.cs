@@ -1609,6 +1609,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo solicitar el código de verificación. Por favor, intente más tarde..
+        /// </summary>
+        public static string errorTextoServidorSolicitudCodigo {
+            get {
+                return ResourceManager.GetString("errorTextoServidorSolicitudCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El servidor tardó demasiado tiempo en responder. Intente más tarde..
         /// </summary>
         public static string errorTextoServidorTiempoAgotado {

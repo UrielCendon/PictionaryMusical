@@ -1053,4 +1053,7 @@
   <data name="partidaTextoPerdisteMensaje" xml:space="preserve">
     <value>Perdiste esta partida, ¡suerte para la próxima!</value>
   </data>
+  <data name="errorTextoServidorSolicitudCodigo" xml:space="preserve">
+    <value>No se pudo solicitar el código de verificación. Por favor, intente más tarde.</value>
+  </data>
 </root>

@@ -72,6 +72,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClienteServicios\Abstracciones\IChatServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISalasServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
     <Compile Include="Connected Services\PictionaryServidorServicioAmigos\Reference.cs">
@@ -166,7 +167,6 @@
     <Compile Include="ClienteServicios\Abstracciones\ISeleccionarAvatarServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IVerificacionCodigoDialogoServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IPerfilServicio.cs" />
-    <Compile Include="ClienteServicios\Abstracciones\IVerificacionCodigoServicio.cs" />
     <Compile Include="ClienteServicios\Dialogos\RecuperacionCuentaDialogoServicio.cs" />
     <Compile Include="ClienteServicios\Dialogos\SeleccionAvatarDialogoServicio.cs" />
     <Compile Include="ClienteServicios\Dialogos\VerificacionCodigoDialogoServicio.cs" />
