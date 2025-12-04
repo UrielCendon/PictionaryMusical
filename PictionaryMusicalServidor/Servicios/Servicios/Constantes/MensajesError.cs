@@ -15,6 +15,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperado = "Ocurrio un error inesperado. Por favor, intente nuevamente.";
             public const string OperacionExitosa = "La operacion se completo correctamente.";
 
+            public const string ErrorCrearReporte = "No fue posible registrar el reporte.";
+            public const string ReporteRegistrado = "Reporte enviado correctamente.";
+            public const string ReporteDuplicado = "Ya has reportado a este jugador.";
+            public const string ReporteMotivoObligatorio = "El motivo del reporte es obligatorio.";
+            public const string ReporteMismoUsuario = "No puedes reportarte a ti mismo.";
+
             public const string DatosInvalidos = "Los datos proporcionados no son validos. Por favor, verifique la informacion.";
             public const string CredencialesInvalidas = "Las credenciales proporcionadas no son validas.";
             public const string CredencialesIncorrectas = "Usuario o contrasena incorrectos.";

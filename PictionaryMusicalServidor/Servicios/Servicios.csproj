@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contratos\DTOs\ConfiguracionPartidaDTO.cs" />
+    <Compile Include="Contratos\DTOs\ReporteJugadorDTO.cs" />
     <Compile Include="Contratos\DTOs\SalaDTO.cs" />
     <Compile Include="Contratos\IAmigosManejador.cs" />
     <Compile Include="Contratos\IAmigosManejadorCallback.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Contratos\INotificacionCodigosServicios.cs" />
     <Compile Include="Contratos\IPerfilManejador.cs" />
     <Compile Include="Contratos\IRecuperacionCuentaServicio.cs" />
+    <Compile Include="Contratos\IReportesManejador.cs" />
     <Compile Include="Contratos\ISalasManejadorCallback.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />
