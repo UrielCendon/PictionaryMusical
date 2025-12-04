@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="6fb8937d-4ce8-45bb-bad1-6225a6b96b48" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="3fc79c68-dd40-4292-bcf4-eb3e43ff7670" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
@@ -22,11 +22,11 @@
     <MetadataSource Address="http://localhost:8527/Pictionary/Reportes" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Reportes.xsd" MetadataType="Schema" ID="8773be0d-07f9-4170-a0e8-70ef9e07985c" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd2" />
-    <MetadataFile FileName="Reportes1.xsd" MetadataType="Schema" ID="e26d740b-8122-4137-a0b3-5132cc28b683" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd1" />
-    <MetadataFile FileName="ReportesManejador.wsdl" MetadataType="Wsdl" ID="aa68f50f-fcf2-4ea0-8209-59a5a9eb470a" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?wsdl" />
-    <MetadataFile FileName="Reportes.disco" MetadataType="Disco" ID="e44b570d-8c5f-420c-a13e-60944e044844" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?disco" />
-    <MetadataFile FileName="Reportes2.xsd" MetadataType="Schema" ID="8bb7d68c-51df-4e6c-b677-9e361458ffce" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd0" />
+    <MetadataFile FileName="Reportes.xsd" MetadataType="Schema" ID="34b92ddb-a197-49f1-8b62-54eae519f080" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd2" />
+    <MetadataFile FileName="Reportes1.xsd" MetadataType="Schema" ID="09b525d9-e899-4f49-95c0-8293ea67af73" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd1" />
+    <MetadataFile FileName="ReportesManejador.wsdl" MetadataType="Wsdl" ID="8a05e0e9-1834-4ab9-9776-9a00ffe2d3a2" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?wsdl" />
+    <MetadataFile FileName="Reportes.disco" MetadataType="Disco" ID="62065f23-ac07-4cd2-aced-73f48f6a0b57" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?disco" />
+    <MetadataFile FileName="Reportes2.xsd" MetadataType="Schema" ID="48ae742f-7a30-441d-b7b0-f88c60e3bcc9" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

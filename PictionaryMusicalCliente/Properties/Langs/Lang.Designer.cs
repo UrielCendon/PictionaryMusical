@@ -1501,6 +1501,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Ocurrió un error al enviar el reporte.
+        /// </summary>
+        public static string errorTextoReportarJugador {
+            get {
+                return ResourceManager.GetString("errorTextoReportarJugador", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a La sala a la que intentas unirte está llena..
         /// </summary>
         public static string errorTextoSalaLlena {
@@ -2640,6 +2649,78 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string relacionAmistadNoExiste {
             get {
                 return ResourceManager.GetString("relacionAmistadNoExiste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No puedes reportarte a ti mismo.
+        /// </summary>
+        public static string reportarJugadorTextoAutoReporte {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoAutoReporte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a REPORTAR.
+        /// </summary>
+        public static string reportarJugadorTextoConfirmar {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoConfirmar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Vas a reportar a {0}.
+        /// </summary>
+        public static string reportarJugadorTextoDescripcion {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoDescripcion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ya has reportado a este jugador.
+        /// </summary>
+        public static string reportarJugadorTextoDuplicado {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoDuplicado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El reporte se envió correctamente.
+        /// </summary>
+        public static string reportarJugadorTextoExito {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoExito", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Motivo del reporte.
+        /// </summary>
+        public static string reportarJugadorTextoMotivoEtiqueta {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoMotivoEtiqueta", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El motivo del reporte es obligatorio.
+        /// </summary>
+        public static string reportarJugadorTextoMotivoRequerido {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoMotivoRequerido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a REPORTAR JUGADOR.
+        /// </summary>
+        public static string reportarJugadorTextoTitulo {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoTitulo", resourceCulture);
             }
         }
         

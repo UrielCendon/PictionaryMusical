@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="eZt1ZlXBtNuLhiznHatM5egsyau4iFnd8H4aOrrDc8Y=">
+<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="HdVr+1ZtAqRLKOjOxTHu5q2eb7WewAHs2aYcLita7EY=">
   <bindingConfigurations>
-    <bindingConfiguration bindingType="basicHttpBinding" name="BasicHttpBinding_IReportesManejador">
+    <bindingConfiguration bindingType="basicHttpBinding" name="BasicHttpBinding_IReportesManejador1">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>BasicHttpBinding_IReportesManejador</serializedValue>
+          <serializedValue>BasicHttpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -110,10 +110,10 @@
         </property>
       </properties>
     </bindingConfiguration>
-    <bindingConfiguration bindingType="netTcpBinding" name="NetTcpBinding_IReportesManejador">
+    <bindingConfiguration bindingType="netTcpBinding" name="NetTcpBinding_IReportesManejador1">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetTcpBinding_IReportesManejador</serializedValue>
+          <serializedValue>NetTcpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -230,7 +230,7 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="BasicHttpBinding_IReportesManejador" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="basicHttpBinding" address="http://localhost:8527/Pictionary/Reportes/Reportes" bindingConfiguration="BasicHttpBinding_IReportesManejador">
+    <endpoint name="BasicHttpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="basicHttpBinding" address="http://localhost:8527/Pictionary/Reportes/Reportes" bindingConfiguration="BasicHttpBinding_IReportesManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>http://localhost:8527/Pictionary/Reportes/Reportes</serializedValue>
@@ -242,7 +242,7 @@
           <serializedValue>basicHttpBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>BasicHttpBinding_IReportesManejador</serializedValue>
+          <serializedValue>BasicHttpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>PictionaryServidorServicioReportes.IReportesManejador</serializedValue>
@@ -305,7 +305,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>BasicHttpBinding_IReportesManejador</serializedValue>
+          <serializedValue>BasicHttpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -315,7 +315,7 @@
         </property>
       </properties>
     </endpoint>
-    <endpoint name="NetTcpBinding_IReportesManejador" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="netTcpBinding" address="net.tcp://localhost:8528/Pictionary/Reportes/Reportes" bindingConfiguration="NetTcpBinding_IReportesManejador">
+    <endpoint name="NetTcpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="netTcpBinding" address="net.tcp://localhost:8528/Pictionary/Reportes/Reportes" bindingConfiguration="NetTcpBinding_IReportesManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>net.tcp://localhost:8528/Pictionary/Reportes/Reportes</serializedValue>
@@ -327,7 +327,7 @@
           <serializedValue>netTcpBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetTcpBinding_IReportesManejador</serializedValue>
+          <serializedValue>NetTcpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>PictionaryServidorServicioReportes.IReportesManejador</serializedValue>
@@ -390,7 +390,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>NetTcpBinding_IReportesManejador</serializedValue>
+          <serializedValue>NetTcpBinding_IReportesManejador1</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
