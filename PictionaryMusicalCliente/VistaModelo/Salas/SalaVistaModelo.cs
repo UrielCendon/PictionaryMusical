@@ -1235,6 +1235,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             string mensajeOriginal = resultado?.Mensaje;
             string mensaje = mensajeOriginal;
+            bool esCancelacionPorFaltaDeJugadores = string.Equals(
+                mensajeOriginal,
+                "Partida cancelada por falta de jugadores.",
+                StringComparison.OrdinalIgnoreCase);
+
             if (!string.IsNullOrWhiteSpace(mensaje))
             {
                 mensaje = MensajeServidorAyudante.Localizar(mensaje, mensaje);
@@ -1242,27 +1247,40 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.Invoke(() =>
             {
+                if (_salaCancelada)
+                {
+                    return;
+                }
+
+                if (esCancelacionPorFaltaDeJugadores && !_esHost)
+                {
+                    return;
+                }
+
                 _partidaVistaModelo.NotificarFinPartida();
                 BotonIniciarPartidaHabilitado = false;
 
-                bool esMensajeJugadoresInsuficientes = string.Equals(
-                        mensajeOriginal,
-                        "Partida cancelada por falta de jugadores.",
-                        StringComparison.OrdinalIgnoreCase);
-
-                if (!esMensajeJugadoresInsuficientes || _esHost)
+                if (esCancelacionPorFaltaDeJugadores)
                 {
                     if (!string.IsNullOrWhiteSpace(mensaje))
                     {
                         MostrarMensaje?.Invoke(mensaje);
                     }
 
-                    ManejarNavegacion?.Invoke(DestinoNavegacion.VentanaPrincipal);
+                    DestinoNavegacion destino = _esInvitado
+                        ? DestinoNavegacion.InicioSesion
+                        : DestinoNavegacion.VentanaPrincipal;
+
+                    if (destino == DestinoNavegacion.InicioSesion)
+                    {
+                        _aplicacionCerrando = true;
+                    }
+
+                    ManejarNavegacion?.Invoke(destino);
+                    return;
                 }
-                else
-                {
-                    MostrarResultadoFinalPartida(resultado);
-                }
+
+                MostrarResultadoFinalPartida(resultado);
             });
         }
 
