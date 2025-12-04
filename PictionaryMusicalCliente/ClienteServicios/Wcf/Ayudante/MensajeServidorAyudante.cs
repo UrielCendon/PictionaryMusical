@@ -26,6 +26,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     = () => LangResources.Lang.errorTextoPartidaYaIniciada,
                 ["Partida cancelada por falta de jugadores."]
                     = () => LangResources.Lang.partidaTextoJugadoresInsuficientes,
+                ["Reporte enviado correctamente."]
+                    = () => LangResources.Lang.reportarJugadorTextoExito,
+                ["No fue posible registrar el reporte."]
+                    = () => LangResources.Lang.errorTextoReportarJugador,
+                ["Ya has reportado a este jugador."]
+                    = () => LangResources.Lang.reportarJugadorTextoDuplicado,
+                ["El motivo del reporte es obligatorio."]
+                    = () => LangResources.Lang.reportarJugadorTextoMotivoRequerido,
+                ["No puedes reportarte a ti mismo."]
+                    = () => LangResources.Lang.reportarJugadorTextoAutoReporte,
                 ["No fue posible procesar la solicitud de verificacion."]
                     = () => LangResources.Lang.errorTextoProcesarSolicitudVerificacion,
                 ["No fue posible reenviar el codigo de verificacion."]

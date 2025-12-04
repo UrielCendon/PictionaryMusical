@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
+using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.VistaModelo.Salas;
@@ -62,6 +63,7 @@ namespace PictionaryMusicalCliente
             _vistaModelo.LimpiarTrazos = LimpiarLienzo;
             _vistaModelo.MostrarMensaje = AvisoAyudante.Mostrar;
             _vistaModelo.MostrarConfirmacion = MostrarConfirmacion;
+            _vistaModelo.SolicitarDatosReporte = SolicitarDatosReporte;
             _vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;
 
             _vistaModelo.ManejarNavegacion = EjecutarNavegacion;
@@ -321,6 +323,23 @@ namespace PictionaryMusicalCliente
             bool? resultado = ventana.ShowDialog();
 
             return resultado == true;
+        }
+
+        private ResultadoReporteJugador SolicitarDatosReporte(string nombreJugador)
+        {
+            var vistaModelo = new ReportarJugadorVistaModelo(nombreJugador);
+            var ventana = new ReportarJugador(vistaModelo)
+            {
+                Owner = this
+            };
+
+            bool? resultado = ventana.ShowDialog();
+
+            return new ResultadoReporteJugador
+            {
+                Confirmado = resultado == true,
+                Motivo = vistaModelo.Motivo
+            };
         }
 
         private void AbrirDialogo(Window ventana)

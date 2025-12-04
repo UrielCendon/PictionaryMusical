@@ -456,6 +456,36 @@
   <data name="expulsarTextoRazonExpulsion" xml:space="preserve">
     <value>Add the reason for the expulsion...</value>
   </data>
+  <data name="reportarJugadorTextoTitulo" xml:space="preserve">
+    <value>REPORT PLAYER</value>
+  </data>
+  <data name="reportarJugadorTextoDescripcion" xml:space="preserve">
+    <value>You are going to report {0}</value>
+  </data>
+  <data name="reportarJugadorTextoMotivoEtiqueta" xml:space="preserve">
+    <value>Report reason</value>
+  </data>
+  <data name="reportarJugadorTextoConfirmar" xml:space="preserve">
+    <value>REPORT</value>
+  </data>
+  <data name="reportarJugadorTextoCancelar" xml:space="preserve">
+    <value>CANCEL</value>
+  </data>
+  <data name="reportarJugadorTextoMotivoRequerido" xml:space="preserve">
+    <value>Report reason is required.</value>
+  </data>
+  <data name="reportarJugadorTextoExito" xml:space="preserve">
+    <value>The report was sent successfully.</value>
+  </data>
+  <data name="reportarJugadorTextoDuplicado" xml:space="preserve">
+    <value>You have already reported this player.</value>
+  </data>
+  <data name="reportarJugadorTextoAutoReporte" xml:space="preserve">
+    <value>You cannot report yourself.</value>
+  </data>
+  <data name="errorTextoReportarJugador" xml:space="preserve">
+    <value>An error occurred while sending the report.</value>
+  </data>
   <data name="invitarAmigosTextoInvitarAmigos" xml:space="preserve">
     <value>INVITE FRIENDS</value>
   </data>

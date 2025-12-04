@@ -135,6 +135,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Modelo\JugadorElemento.cs" />
+    <Compile Include="Modelo\ResultadoReporteJugador.cs" />
     <Compile Include="Utilidades\CancionManejador.cs" />
     <Compile Include="Utilidades\MusicaManejador.cs" />
     <Compile Include="Utilidades\EntradaNumerica.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="ClienteServicios\Abstracciones\ICuentaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ILocalizacionServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IInicioSesionServicio.cs" />
+    <Compile Include="ClienteServicios\Abstracciones\IReportesServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IRecuperacionCuentaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISeleccionarAvatarServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IVerificacionCodigoDialogoServicio.cs" />
@@ -179,6 +181,7 @@
     <Compile Include="ClienteServicios\Wcf\InvitacionesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\AmigosServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ListaAmigosServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\InicioSesionServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\PerfilServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\VerificacionCodigoServicio.cs" />
@@ -220,6 +223,7 @@
     <Compile Include="VistaModelo\Salas\PartidaIniciadaVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ChatVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ExpulsionJugadorVistaModelo.cs" />
+    <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\IngresoPartidaInvitadoVistaModelo.cs" />
     <Compile Include="VistaModelo\VentanaPrincipal\VentanaPrincipalVistaModelo.cs" />
     <Compile Include="VistaModelo\Perfil\VerificacionCodigoVistaModelo.cs" />
@@ -258,6 +262,9 @@
     </Compile>
     <Compile Include="Vista\ExpulsionJugador.xaml.cs">
       <DependentUpon>ExpulsionJugador.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Vista\ReportarJugador.xaml.cs">
+      <DependentUpon>ReportarJugador.xaml</DependentUpon>
     </Compile>
     <Compile Include="Vista\InicioSesion.xaml.cs">
       <DependentUpon>InicioSesion.xaml</DependentUpon>
@@ -549,6 +556,10 @@
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Vista\ExpulsionJugador.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Vista\ReportarJugador.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>

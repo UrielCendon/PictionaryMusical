@@ -13,6 +13,8 @@ namespace PictionaryMusicalCliente.Modelo
         private string _nombre;
         private bool _mostrarBotonExpulsar;
         private ICommand _expulsarComando;
+        private bool _mostrarBotonReportar;
+        private ICommand _reportarComando;
         private int _puntos;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -43,6 +45,25 @@ namespace PictionaryMusicalCliente.Modelo
         {
             get => _expulsarComando;
             set => EstablecerPropiedad(ref _expulsarComando, value);
+        }
+
+        /// <summary>
+        /// Determina si el botón de reportar debe ser visible para este elemento.
+        /// Visible para cualquier jugador distinto al usuario actual.
+        /// </summary>
+        public bool MostrarBotonReportar
+        {
+            get => _mostrarBotonReportar;
+            set => EstablecerPropiedad(ref _mostrarBotonReportar, value);
+        }
+
+        /// <summary>
+        /// Comando a ejecutar al presionar el botón de reportar.
+        /// </summary>
+        public ICommand ReportarComando
+        {
+            get => _reportarComando;
+            set => EstablecerPropiedad(ref _reportarComando, value);
         }
 
         /// <summary>
