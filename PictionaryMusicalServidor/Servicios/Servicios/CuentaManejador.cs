@@ -229,7 +229,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 });
 
                 var usuarioRepositorio = new UsuarioRepositorio(contexto);
-                usuarioRepositorio.CrearUsuario(new Usuario
+                var usuarioCreado = usuarioRepositorio.CrearUsuario(new Usuario
                 {
                     Nombre_Usuario = nuevaCuenta.Usuario,
                     Contrasena = BCryptNet.HashPassword(nuevaCuenta.Contrasena),
@@ -237,6 +237,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 });
 
                 transaccion.Commit();
+
+                _logger.InfoFormat(
+                    "Cuenta creada exitosamente con usuario id {0} y jugador id {1}.",
+                    usuarioCreado.idUsuario,
+                    jugador.idJugador);
             }
         }
 

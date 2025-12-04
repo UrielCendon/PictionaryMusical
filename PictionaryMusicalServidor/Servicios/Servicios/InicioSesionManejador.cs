@@ -137,6 +137,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
+            _logger.InfoFormat(
+                "Inicio de sesion exitoso para usuario con id {0}.",
+                usuario.idUsuario);
+
             return new ResultadoInicioSesionDTO
             {
                 InicioSesionExitoso = true,

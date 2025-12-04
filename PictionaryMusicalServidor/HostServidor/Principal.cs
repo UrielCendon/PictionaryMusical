@@ -100,6 +100,13 @@ namespace PictionaryMusicalServidor.HostServidor
             foreach (var host in _listaHosts)
             {
                 host.Open();
+
+                string nombreServicio = host.Description?.ServiceType?.Name ??
+                    host.GetType().Name;
+
+                _logger.InfoFormat(
+                    "Servicio {0} levantado correctamente.",
+                    nombreServicio);
             }
 
             _logger.Info("Servicios iniciados correctamente.");

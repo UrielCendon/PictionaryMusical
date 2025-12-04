@@ -90,6 +90,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 esHost);
 
             RegistrarCallback(idSala.Trim(), idJugador.Trim(), callback);
+
+            _logger.InfoFormat(
+                "Jugador id {0} suscrito para partida en sala {1}.",
+                idJugador.Trim(),
+                idSala.Trim());
         }
 
         /// <summary>
@@ -104,6 +109,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 throw new FaultException("El identificador de sala es obligatorio.");
             }
+
+            _logger.InfoFormat(
+                "Inicio de partida solicitado para sala {0} por jugador id {1}.",
+                idSala.Trim(),
+                idJugadorSolicitante?.Trim());
 
             _salasManejador.MarcarPartidaComoIniciada(idSala.Trim());
             var controlador = ObtenerOCrearControlador(idSala.Trim());
@@ -400,7 +410,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
                     ex);
-                return null;
+                return new List<JugadorPartida>();
             }
         }
 
@@ -591,11 +601,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception ex)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala {0}. Usando defecto.",
+                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
                     idSala);
                 _logger.Warn(ex);
-                return null;
+                return CrearConfiguracionPorDefecto();
             }
+        }
+
+        private ConfiguracionPartidaDTO CrearConfiguracionPorDefecto()
+        {
+            return new ConfiguracionPartidaDTO
+            {
+                TiempoPorRondaSegundos = TiempoRondaPorDefectoSegundos,
+                NumeroRondas = NumeroRondasPorDefecto,
+                Dificultad = DificultadPorDefecto,
+                IdiomaCanciones = "Espanol"
+            };
         }
     }
 }

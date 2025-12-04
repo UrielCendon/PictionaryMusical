@@ -1,15 +1,14 @@
-using Datos.Modelo;
-using log4net;
-using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Servicios.Contratos;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
+using Datos.Modelo;
+using log4net;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -39,7 +38,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             new ContextoFactoria(),
             new AmistadServicio(new ContextoFactoria()),
             new NotificadorListaAmigos(
-                AdministradorCallbacksGlobal.ListaAmigos,
+                new ManejadorCallback<IListaAmigosManejadorCallback>(
+                    StringComparer.OrdinalIgnoreCase),
                 new AmistadServicio(new ContextoFactoria()),
                 new UsuarioRepositorio(new ContextoFactoria().CrearContexto())),
             new ValidadorNombreUsuario())

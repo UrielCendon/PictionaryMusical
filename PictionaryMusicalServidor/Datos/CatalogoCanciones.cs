@@ -121,7 +121,9 @@ namespace PictionaryMusicalServidor.Datos
         /// Obtiene una cancion por su identificador.
         /// </summary>
         /// <param name="idCancion">Identificador de la cancion.</param>
-        /// <returns>La cancion correspondiente o null si no existe.</returns>
+        /// <returns>La cancion correspondiente.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si el identificador no existe en el 
+        /// catalogo.</exception>
         public Cancion ObtenerCancionPorId(int idCancion)
         {
             if (_canciones.TryGetValue(idCancion, out var cancion))
@@ -129,8 +131,12 @@ namespace PictionaryMusicalServidor.Datos
                 return cancion;
             }
 
-            _logger.WarnFormat("No se encontro la cancion con id {0} en el catalogo.", idCancion);
-            return null;
+            _logger.WarnFormat(
+                "No se encontro la cancion con id {0} en el catalogo.", 
+                idCancion);
+            
+            throw new KeyNotFoundException(
+                "La cancion solicitada no se encuentra en el catalogo interno.");
         }
 
         /// <summary>

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
+﻿using log4net;
+using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using log4net;
-using PictionaryMusicalServidor.Servicios.Contratos;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -87,14 +88,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearFalloReenvio(MensajesError.Cliente.DatosReenvioCodigo);
             }
 
-            var pendiente = ObtenerSolicitudPendiente(solicitud.TokenCodigo);
-            if (pendiente == null)
+            try
+            {
+                var pendiente = ObtenerSolicitudPendiente(solicitud.TokenCodigo);
+                return ProcesarReenvioCodigo(solicitud.TokenCodigo, pendiente);
+            }
+            catch (KeyNotFoundException)
             {
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
-
-            return ProcesarReenvioCodigo(solicitud.TokenCodigo, pendiente);
         }
 
         /// <summary>
@@ -107,29 +110,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearFalloConfirmacion(MensajesError.Cliente.DatosConfirmacionInvalidos);
             }
 
-            var pendiente = ObtenerSolicitudPendiente(confirmacion.TokenCodigo);
-            if (pendiente == null)
+            try
+            {
+                var pendiente = ObtenerSolicitudPendiente(confirmacion.TokenCodigo);
+
+                var verificacion = VerificarCodigoIngresado(
+                    pendiente,
+                    confirmacion.TokenCodigo,
+                    confirmacion.CodigoIngresado);
+
+                if (!verificacion.Exito)
+                {
+                    return CrearFalloConfirmacion(verificacion.MensajeError);
+                }
+
+                RegistrarConfirmacion(pendiente);
+                _solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
+
+                _logger.Info("Verificacion confirmada exitosamente.");
+
+                return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
+            }
+            catch (KeyNotFoundException)
             {
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
-
-            var verificacion = VerificarCodigoIngresado(
-                pendiente,
-                confirmacion.TokenCodigo,
-                confirmacion.CodigoIngresado);
-
-            if (!verificacion.Exito)
-            {
-                return CrearFalloConfirmacion(verificacion.MensajeError);
-            }
-
-            RegistrarConfirmacion(pendiente);
-            _solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
-
-            _logger.Info("Verificacion confirmada exitosamente.");
-
-            return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
         }
 
         /// <summary>
@@ -252,7 +258,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente existente))
             {
                 _logger.Warn("Token no encontrado o expirado en cache.");
-                return null;
+                throw new KeyNotFoundException("La solicitud de verificacion no existe.");
             }
             return existente;
         }

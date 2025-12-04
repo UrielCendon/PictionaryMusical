@@ -86,6 +86,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     throw new FaultException(MensajesError.Cliente.ErrorCrearSala);
                 }
 
+                _logger.InfoFormat(
+                    "Sala creada exitosamente con codigo {0}.",
+                    codigo);
+
                 _notificador.NotificarListaSalasATodos();
 
                 return sala.ToDto();
@@ -147,6 +151,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     nombreUsuario.Trim(),
                     callback,
                     notificar: true);
+
+                _logger.InfoFormat(
+                    "Usuario unido exitosamente a sala con codigo {0}.",
+                    codigoSala.Trim());
 
                 _notificador.NotificarListaSalasATodos();
 

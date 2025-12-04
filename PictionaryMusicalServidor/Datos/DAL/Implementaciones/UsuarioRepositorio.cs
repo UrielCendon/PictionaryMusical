@@ -2,6 +2,7 @@ using Datos.Modelo;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -122,7 +123,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     return usuario;
                 }
 
-                return null;
+                throw new KeyNotFoundException(
+                    $"El usuario '{nombreUsuario}' no existe en la base de datos.");
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -179,7 +185,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (string.IsNullOrWhiteSpace(correo))
             {
-                return null;
+                throw new ArgumentException(
+                    "El correo electronico es obligatorio para la busqueda asincrona.",
+                    nameof(correo));
             }
 
             try
@@ -211,7 +219,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (idUsuario <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException(
+                    nameof(idUsuario),
+                    "El identificador del usuario debe ser mayor que cero.");
             }
 
             try
@@ -266,7 +276,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
-                return null;
+                throw new ArgumentException(
+                    "El nombre de usuario es obligatorio para la busqueda con jugador.",
+                    nameof(nombreUsuario));
             }
 
             try
