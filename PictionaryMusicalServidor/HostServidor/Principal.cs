@@ -86,7 +86,8 @@ namespace PictionaryMusicalServidor.HostServidor
                 typeof(SalasManejador),
                 typeof(InvitacionesManejador),
                 typeof(CursoPartidaManejador),
-                typeof(ChatManejador)
+                typeof(ChatManejador),
+                typeof(ReportesManejador)
             };
 
             foreach (var tipo in tiposServicios)
