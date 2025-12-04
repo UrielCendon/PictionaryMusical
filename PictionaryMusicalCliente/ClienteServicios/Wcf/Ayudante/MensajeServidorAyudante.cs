@@ -24,7 +24,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             {
                 ["La partida ya comenzo"]
                     = () => LangResources.Lang.errorTextoPartidaYaIniciada,
-                ["No hay suficientes jugadores para seguir jugando, se cancelo la partida."]
+                ["Partida cancelada por falta de jugadores."]
                     = () => LangResources.Lang.partidaTextoJugadoresInsuficientes,
                 ["No fue posible procesar la solicitud de verificacion."]
                     = () => LangResources.Lang.errorTextoProcesarSolicitudVerificacion,
