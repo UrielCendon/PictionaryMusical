@@ -34,6 +34,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     = () => LangResources.Lang.reportarJugadorTextoDuplicado,
                 ["El motivo del reporte es obligatorio."]
                     = () => LangResources.Lang.reportarJugadorTextoMotivoRequerido,
+                ["El motivo del reporte no debe exceder 100 caracteres."]
+                    = () => LangResources.Lang.reportarJugadorTextoMotivoLongitud,
                 ["No puedes reportarte a ti mismo."]
                     = () => LangResources.Lang.reportarJugadorTextoAutoReporte,
                 ["No fue posible procesar la solicitud de verificacion."]

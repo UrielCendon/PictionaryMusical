@@ -139,9 +139,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 "usuario reportado");
 
             string motivo = EntradaComunValidador.NormalizarTexto(reporte.Motivo);
-            if (!EntradaComunValidador.EsLongitudValidaReporte(motivo))
+            if (motivo == null)
             {
                 throw new FaultException(MensajesError.Cliente.ReporteMotivoObligatorio);
+            }
+
+            if (!EntradaComunValidador.EsLongitudValidaReporte(motivo))
+            {
+                throw new FaultException(MensajesError.Cliente.ReporteMotivoLongitud);
             }
         }
 

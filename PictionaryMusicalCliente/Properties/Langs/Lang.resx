@@ -1083,4 +1083,7 @@
   <data name="errorTextoReportarJugador" xml:space="preserve">
     <value>Ocurrió un error al enviar el reporte</value>
   </data>
+  <data name="reportarJugadorTextoMotivoLongitud" xml:space="preserve">
+    <value>El motivo del reporte no debe exceder 100 caracteres</value>
+  </data>
 </root>
