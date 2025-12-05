@@ -73,7 +73,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 ["Debe proporcionar el usuario o correo registrado y no debe exceder 50 caracteres."]
                     = () => LangResources.Lang.errorTextoIdentificadorRecuperacionRequerido,
                 ["No se encontro una cuenta con el usuario o correo proporcionado."]
-                    = () => LangResources.Lang.errorTextoCredencialesIncorrectas,
+                    = () => LangResources.Lang.errorTextoCuentaNoRegistrada,
                 ["No se encontro una solicitud de recuperacion activa."]
                     = () => LangResources.Lang.errorTextoSolicitudRecuperacionActiva,
                 ["El codigo de verificacion ha expirado. Solicite uno nuevo."]

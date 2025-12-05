@@ -112,7 +112,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
                 return (false, validacion.Error);
             }
 
-            MostrarAvisoCodigoVerificado();
+            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
             return (true, null);
         }
 
@@ -136,11 +136,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             }
 
             return (true, null);
-        }
-
-        private void MostrarAvisoCodigoVerificado()
-        {
-            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
         }
 
         private Task<DTOs.ResultadoOperacionDTO> ProcesarCambioContrasena(

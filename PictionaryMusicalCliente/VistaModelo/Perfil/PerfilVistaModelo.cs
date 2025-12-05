@@ -196,6 +196,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         }
 
         /// <summary>
+        /// Acción para solicitar a la vista el reinicio de la sesión tras un cambio de contraseña.
+        /// </summary>
+        public Action SolicitarReinicioSesion { get; set; }
+        /// <summary>
         /// Comando para guardar los cambios realizados en el perfil.
         /// </summary>
         public IComandoAsincrono GuardarCambiosComando { get; }
@@ -474,6 +478,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 {
                     _logger.Info("Cambio de contraseña finalizado correctamente.");
                     SonidoManejador.ReproducirExito();
+                    FinalizarSesionPorCambioContrasena();
                 }
             }
             catch (ServicioExcepcion ex)
@@ -487,6 +492,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 EstaCambiandoContrasena = false;
                 EstaProcesando = false;
             }
+        }
+
+        private void FinalizarSesionPorCambioContrasena()
+        {
+            AvisoAyudante.Mostrar(Lang.avisoTextoReinicioSesion);
+            SesionUsuarioActual.CerrarSesion();
+            SolicitarReinicioSesion?.Invoke();
         }
 
         private void AplicarPerfil(DTOs.UsuarioDTO perfil)

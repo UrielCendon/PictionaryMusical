@@ -1,14 +1,15 @@
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.ClienteServicios.Dialogos;
+using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.VistaModelo.Perfil;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.ClienteServicios.Dialogos;
-using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.VistaModelo.Perfil;
 
 namespace PictionaryMusicalCliente
 {
@@ -44,6 +45,7 @@ namespace PictionaryMusicalCliente
             };
 
             vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
+            vistaModelo.SolicitarReinicioSesion = NavegarAlInicioSesion;
 
             DataContext = vistaModelo;
         }
@@ -96,6 +98,24 @@ namespace PictionaryMusicalCliente
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Apellido)))
             {
                 ControlVisual.MarcarCampoInvalido(campoTextoApellido);
+            }
+        }
+
+        private void NavegarAlInicioSesion()
+        {
+            var inicioSesion = new InicioSesion();
+
+            var ventanasACerrar = Application.Current.Windows
+                .Cast<Window>()
+                .Where(v => v != inicioSesion)
+                .ToList();
+
+            inicioSesion.Show();
+            Application.Current.MainWindow = inicioSesion;
+
+            foreach (var ventana in ventanasACerrar)
+            {
+                ventana.Close();
             }
         }
     }

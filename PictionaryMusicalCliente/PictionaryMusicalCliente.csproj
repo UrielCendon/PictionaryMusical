@@ -176,7 +176,7 @@
     <Compile Include="ClienteServicios\Abstracciones\IInicioSesionServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IRecuperacionCuentaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISeleccionarAvatarServicio.cs" />
-    <Compile Include="ClienteServicios\Abstracciones\IVerificacionCodigoDialogoServicio.cs" />
+    <Compile Include="ClienteServicios\Abstracciones\IVerificacionCodigoServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IPerfilServicio.cs" />
     <Compile Include="ClienteServicios\Dialogos\RecuperacionCuentaDialogoServicio.cs" />
     <Compile Include="ClienteServicios\Dialogos\SeleccionAvatarDialogoServicio.cs" />

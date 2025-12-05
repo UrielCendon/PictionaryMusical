@@ -421,6 +421,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un cambio en su cuenta, tiene que volver a iniciar sesión..
+        /// </summary>
+        public static string avisoTextoReinicioSesion {
+            get {
+                return ResourceManager.GetString("avisoTextoReinicioSesion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El servidor tardó demasiado en responder. Se mostrarán los datos actuales de la sesión..
         /// </summary>
         public static string avisoTextoServidorTiempoSesion {

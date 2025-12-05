@@ -1104,4 +1104,7 @@
   <data name="errorTextoNoCargaronAvatares" xml:space="preserve">
     <value>The avatars could not be loaded, please try again later.</value>
   </data>
+  <data name="avisoTextoReinicioSesion" xml:space="preserve">
+    <value>There was a change in your account, you need to sign in again.</value>
+  </data>
 </root>
