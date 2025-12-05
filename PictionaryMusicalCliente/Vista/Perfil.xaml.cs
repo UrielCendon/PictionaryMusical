@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente
                 new SeleccionAvatarDialogoServicio();
             ICambioContrasenaServicio cambioContrasenaServicio =
                 new CambioContrasenaServicio();
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio =
+            IVerificacionCodigoServicio verificarCodigoDialogoServicio =
                 new VerificacionCodigoDialogoServicio();
             IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio =
                 new RecuperacionCuentaDialogoServicio(verificarCodigoDialogoServicio);

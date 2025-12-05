@@ -6,7 +6,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
     /// <summary>
     /// Abstrae la logica de interfaz de usuario para mostrar ventanas emergentes de verificacion.
     /// </summary>
-    public interface IVerificacionCodigoDialogoServicio
+    public interface IVerificacionCodigoServicio
     {
         /// <summary>
         /// Despliega un dialogo modal para ingresar el codigo de verificacion enviado por correo.

@@ -11,186 +11,210 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {
     /// <summary>
     /// Gestiona el flujo visual completo para la recuperacion de una cuenta de usuario.
+    /// Orquesta la solicitud de codigo, verificacion y cambio de contrasena.
     /// </summary>
     public class RecuperacionCuentaDialogoServicio : IRecuperacionCuentaServicio
     {
-        private static readonly ILog _logger = 
+        private static readonly ILog _logger =
             LogManager.GetLogger(typeof(RecuperacionCuentaDialogoServicio));
-        private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
 
-        /// <summary>
-        /// Inicializa el servicio con la dependencia de dialogos de verificacion.
-        /// </summary>
+        private readonly IVerificacionCodigoServicio _verificarCodigoDialogoServicio;
+
         public RecuperacionCuentaDialogoServicio(
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio)
+            IVerificacionCodigoServicio verificarCodigoDialogoServicio)
         {
             _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
                 throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
         }
 
         /// <summary>
-        /// Ejecuta la orquestacion de pasos para recuperar la cuenta.
+        /// Ejecuta el proceso de recuperacion de cuenta paso a paso.
         /// </summary>
         public async Task<DTOs.ResultadoOperacionDTO> RecuperarCuentaAsync(
             string identificador,
-            ICambioContrasenaServicio cambioContrasenaServicio)
+            ICambioContrasenaServicio servicio)
         {
-            if (cambioContrasenaServicio == null)
+            if (servicio == null) throw new ArgumentNullException(nameof(servicio));
+
+            var resultadoSolicitud = await ProcesarSolicitudCodigo(identificador, servicio);
+            if (!resultadoSolicitud.Exito)
             {
-                throw new ArgumentNullException(nameof(cambioContrasenaServicio));
+                return resultadoSolicitud.Error;
             }
 
-            _logger.InfoFormat("Iniciando flujo de recuperación de cuenta para: {0}", 
-                identificador);
+            var resultadoVerificacion = await ProcesarVerificacionCodigo(
+                resultadoSolicitud.Token,
+                servicio);
 
-            var (solicitudExitosa, solicitudDTO, errorSolicitud) =
-                await SolicitarCodigoAsync(
-                    identificador,
-                    cambioContrasenaServicio).ConfigureAwait(true);
-
-            if (!solicitudExitosa)
+            if (!resultadoVerificacion.Exito)
             {
-                _logger.WarnFormat("Flujo detenido: No se pudo solicitar el código. Mensaje: {0}",
-                    errorSolicitud?.Mensaje);
-                return errorSolicitud;
+                return resultadoVerificacion.Error;
+            }
+
+            return await ProcesarCambioContrasena(
+                resultadoSolicitud.Token,
+                servicio);
+        }
+
+        private async Task<(bool Exito, string Token, DTOs.ResultadoOperacionDTO Error)>
+            ProcesarSolicitudCodigo(string identificador, ICambioContrasenaServicio servicio)
+        {
+            var respuestaServidor = await servicio.SolicitarCodigoRecuperacionAsync(identificador)
+                .ConfigureAwait(true);
+
+            var validacion = ValidarRespuestaSolicitud(respuestaServidor);
+            if (!validacion.Exito)
+            {
+                return (false, null, validacion.Error);
             }
 
             AvisoAyudante.Mostrar(Lang.avisoTextoCodigoEnviado);
-
-            var (verificacionExitosa, errorVerificacion) =
-                await VerificarCodigoAsync(
-                    solicitudDTO,
-                    cambioContrasenaServicio).ConfigureAwait(true);
-
-            if (!verificacionExitosa)
-            {
-                _logger.Warn("Flujo detenido: Verificación de código fallida o cancelada.");
-                return errorVerificacion;
-            }
-
-            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
-
-            return await MostrarDialogoCambioContrasenaAsync(
-                solicitudDTO.TokenCodigo,
-                cambioContrasenaServicio).ConfigureAwait(true);
+            return (true, respuestaServidor.TokenCodigo, null);
         }
 
-        private async Task<(bool Exitoso,
-            DTOs.ResultadoSolicitudRecuperacionDTO Resultado,
-            DTOs.ResultadoOperacionDTO Error)> SolicitarCodigoAsync(
-            string identificador,
-            ICambioContrasenaServicio servicio)
+        private (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarRespuestaSolicitud(
+            DTOs.ResultadoSolicitudRecuperacionDTO respuesta)
         {
-            DTOs.ResultadoSolicitudRecuperacionDTO resultadoSolicitud =
-                await servicio.SolicitarCodigoRecuperacionAsync(identificador).
-                    ConfigureAwait(true);
-
-            if (resultadoSolicitud == null)
+            if (respuesta == null)
             {
-                return (false, null, null);
+                return (false, CrearError(null, Lang.errorTextoServidorNoDisponible));
             }
 
-            if (!resultadoSolicitud.CuentaEncontrada)
+            if (!respuesta.CuentaEncontrada)
             {
-                string mensaje = ObtenerMensaje(
-                    resultadoSolicitud.Mensaje,
-                    Lang.errorTextoCuentaNoRegistrada);
-                return (false, null, new DTOs.ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = mensaje
-                });
+                return (false, CrearError(respuesta.Mensaje, Lang.errorTextoCuentaNoRegistrada));
             }
 
-            if (!resultadoSolicitud.CodigoEnviado)
+            if (!respuesta.CodigoEnviado)
             {
-                string mensaje = ObtenerMensaje(
-                    resultadoSolicitud.Mensaje,
-                    Lang.errorTextoServidorSolicitudCambioContrasena);
-                return (false, null, new DTOs.ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = mensaje
-                });
-            }
-
-            return (true, resultadoSolicitud, null);
-        }
-
-        private async Task<(bool Exitoso, DTOs.ResultadoOperacionDTO Error)> VerificarCodigoAsync(
-            DTOs.ResultadoSolicitudRecuperacionDTO solicitud,
-            ICambioContrasenaServicio servicio)
-        {
-            var adaptador = new ServicioCodigoRecuperacionAdaptador(servicio);
-            DTOs.ResultadoRegistroCuentaDTO resultadoVerificacion =
-                await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
-                    Lang.cambiarContrasenaTextoCodigoVerificacion,
-                    solicitud.TokenCodigo,
-                    adaptador).ConfigureAwait(true);
-
-            if (resultadoVerificacion == null)
-            {
-                return (false, null);
-            }
-
-            if (!resultadoVerificacion.RegistroExitoso)
-            {
-                string mensaje = ObtenerMensaje(
-                    resultadoVerificacion.Mensaje,
-                    Lang.errorTextoCodigoIncorrecto);
-                return (false, new DTOs.ResultadoOperacionDTO
-                {
-                    OperacionExitosa = false,
-                    Mensaje = mensaje
-                });
+                return (false, CrearError(
+                    respuesta.Mensaje,
+                    Lang.errorTextoServidorSolicitudCambioContrasena));
             }
 
             return (true, null);
         }
 
-        private Task<DTOs.ResultadoOperacionDTO> MostrarDialogoCambioContrasenaAsync(
-            string token, ICambioContrasenaServicio servicio)
+        private async Task<(bool Exito, DTOs.ResultadoOperacionDTO Error)>
+            ProcesarVerificacionCodigo(string token, ICambioContrasenaServicio servicio)
+        {
+            var adaptador = CrearAdaptadorVerificacion(servicio);
+
+            var respuestaDialogo = await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
+                Lang.cambiarContrasenaTextoCodigoVerificacion,
+                token,
+                adaptador).ConfigureAwait(true);
+
+            var validacion = ValidarRespuestaVerificacion(respuestaDialogo);
+            if (!validacion.Exito)
+            {
+                _logger.Warn("Verificacion de codigo fallida.");
+                return (false, validacion.Error);
+            }
+
+            MostrarAvisoCodigoVerificado();
+            return (true, null);
+        }
+
+        private ICodigoVerificacionServicio CrearAdaptadorVerificacion(
+            ICambioContrasenaServicio servicio)
+        {
+            return new ServicioCodigoRecuperacionAdaptador(servicio);
+        }
+
+        private (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarRespuestaVerificacion(
+            DTOs.ResultadoRegistroCuentaDTO respuesta)
+        {
+            if (respuesta == null)
+            {
+                return (false, null);
+            }
+
+            if (!respuesta.RegistroExitoso)
+            {
+                return (false, CrearError(respuesta.Mensaje, Lang.errorTextoCodigoIncorrecto));
+            }
+
+            return (true, null);
+        }
+
+        private void MostrarAvisoCodigoVerificado()
+        {
+            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
+        }
+
+        private Task<DTOs.ResultadoOperacionDTO> ProcesarCambioContrasena(
+            string token,
+            ICambioContrasenaServicio servicio)
+        {
+            return MostrarDialogoCambio(token, servicio);
+        }
+
+        private Task<DTOs.ResultadoOperacionDTO> MostrarDialogoCambio(
+            string token,
+            ICambioContrasenaServicio servicio)
         {
             var ventana = new CambioContrasena();
             var vistaModelo = new CambioContrasenaVistaModelo(token, servicio);
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoOperacionDTO>();
 
+            ConfigurarEventosVistaModelo(vistaModelo, ventana, finalizacion);
+            ConfigurarCierreVentana(ventana, finalizacion);
+
+            ventana.ConfigurarVistaModelo(vistaModelo);
+            ventana.ShowDialog();
+
+            return finalizacion.Task;
+        }
+
+        private void ConfigurarEventosVistaModelo(
+            CambioContrasenaVistaModelo vistaModelo,
+            CambioContrasena ventana,
+            TaskCompletionSource<DTOs.ResultadoOperacionDTO> tcs)
+        {
             vistaModelo.CambioContrasenaCompletado = resultado =>
             {
-                _logger.Info("Cambio de contraseña completado exitosamente.");
-                finalizacion.TrySetResult(
-                    resultado ?? new DTOs.ResultadoOperacionDTO
-                    {
-                        OperacionExitosa = true,
-                        Mensaje = Lang.avisoTextoContrasenaActualizada
-                    });
+                _logger.Info("Cambio de contrasena completado.");
+                tcs.TrySetResult(resultado ?? CrearExitoDefecto());
                 ventana.Close();
             };
 
             vistaModelo.Cancelado = () =>
             {
-                _logger.Info("Diálogo de cambio de contraseña cancelado.");
-                finalizacion.TrySetResult(null);
+                tcs.TrySetResult(null);
                 ventana.Close();
             };
-
-            ventana.ConfigurarVistaModelo(vistaModelo);
-
-            ventana.Closed += (_, __) =>
-            {
-                if (!finalizacion.Task.IsCompleted)
-                {
-                    finalizacion.TrySetResult(null);
-                }
-            };
-
-            ventana.ShowDialog();
-            return finalizacion.Task;
         }
 
-        private static string ObtenerMensaje(string mensaje, string fallback)
+        private void ConfigurarCierreVentana(
+            CambioContrasena ventana,
+            TaskCompletionSource<DTOs.ResultadoOperacionDTO> tcs)
         {
-            return string.IsNullOrWhiteSpace(mensaje) ? fallback : mensaje;
+            ventana.Closed += (_, __) =>
+            {
+                if (!tcs.Task.IsCompleted)
+                {
+                    tcs.TrySetResult(null);
+                }
+            };
+        }
+
+        private static DTOs.ResultadoOperacionDTO CrearError(string mensajeServer, string fallback)
+        {
+            return new DTOs.ResultadoOperacionDTO
+            {
+                OperacionExitosa = false,
+                Mensaje = string.IsNullOrWhiteSpace(mensajeServer) ? fallback : mensajeServer
+            };
+        }
+
+        private static DTOs.ResultadoOperacionDTO CrearExitoDefecto()
+        {
+            return new DTOs.ResultadoOperacionDTO
+            {
+                OperacionExitosa = true,
+                Mensaje = Lang.avisoTextoContrasenaActualizada
+            };
         }
     }
 }

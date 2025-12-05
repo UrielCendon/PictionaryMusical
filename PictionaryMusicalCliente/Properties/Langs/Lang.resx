@@ -1092,4 +1092,7 @@
   <data name="MensajeChatTextoMotivoLongitud" xml:space="preserve">
     <value>El mensaje supera el limite de caracteres.</value>
   </data>
+  <data name="errorTextoNoCargaronAvatares" xml:space="preserve">
+    <value>No se pudieron cargar los avatares.</value>
+  </data>
 </root>

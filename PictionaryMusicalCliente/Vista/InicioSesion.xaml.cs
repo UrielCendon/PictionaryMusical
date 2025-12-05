@@ -33,7 +33,7 @@ namespace PictionaryMusicalCliente
 
             IInicioSesionServicio inicioSesionServicio = new InicioSesionServicio();
             ICambioContrasenaServicio cambioContrasenaServicio = new CambioContrasenaServicio();
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio =
+            IVerificacionCodigoServicio verificarCodigoDialogoServicio =
                 new VerificacionCodigoDialogoServicio();
             IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio =
                 new RecuperacionCuentaDialogoServicio(verificarCodigoDialogoServicio);

@@ -12,9 +12,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     /// <summary>
     /// Servicio de dialogo para manejar la interfaz de verificacion de codigo.
     /// </summary>
-    public class VerificacionCodigoDialogoServicio : IVerificacionCodigoDialogoServicio
+    public class VerificacionCodigoDialogoServicio : IVerificacionCodigoServicio
     {
-        private static readonly ILog _logger = 
+        private static readonly ILog _logger =
             LogManager.GetLogger(typeof(VerificacionCodigoDialogoServicio));
 
         /// <summary>
@@ -25,39 +25,66 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             string tokenCodigo,
             ICodigoVerificacionCli codigoVerificacionServicio)
         {
-            if (codigoVerificacionServicio == null)
-            {
-                var ex = new ArgumentNullException(nameof(codigoVerificacionServicio));
-                _logger.Error("Intento de abrir diálogo de verificación con servicio nulo.", ex);
-                throw ex;
-            }
+            ValidarServicio(codigoVerificacionServicio);
 
-            _logger.Info("Abriendo diálogo de verificación de código.");
-
+            var finalizacion = new TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO>();
             var ventana = new VerificacionCodigo();
-            var vistaModelo = new VerificacionCodigoVistaModelo(
+
+            var vistaModelo = CrearVistaModelo(
                 descripcion,
                 tokenCodigo,
                 codigoVerificacionServicio);
 
-            var finalizacion = new TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO>();
+            ConfigurarEventos(vistaModelo, ventana, finalizacion);
+            ConfigurarCierreVentana(ventana, finalizacion);
 
+            ventana.ConfigurarVistaModelo(vistaModelo);
+            ventana.ShowDialog();
+
+            return finalizacion.Task;
+        }
+
+        private void ValidarServicio(ICodigoVerificacionCli servicio)
+        {
+            if (servicio == null)
+            {
+                var ex = new ArgumentNullException(nameof(servicio));
+                _logger.Error("Intento de abrir dialogo de verificacion con servicio nulo.", ex);
+                throw ex;
+            }
+        }
+
+        private VerificacionCodigoVistaModelo CrearVistaModelo(
+            string descripcion,
+            string token,
+            ICodigoVerificacionCli servicio)
+        {
+            return new VerificacionCodigoVistaModelo(descripcion, token, servicio);
+        }
+
+        private void ConfigurarEventos(
+            VerificacionCodigoVistaModelo vistaModelo,
+            VerificacionCodigo ventana,
+            TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO> finalizacion)
+        {
             vistaModelo.VerificacionCompletada = resultado =>
             {
-                _logger.Info("Verificación de código completada exitosamente en el diálogo.");
+                _logger.Info("Verificacion de codigo completada exitosamente.");
                 finalizacion.TrySetResult(resultado);
                 ventana.Close();
             };
 
             vistaModelo.Cancelado = () =>
             {
-                _logger.Info("Verificación de código cancelada por el usuario.");
                 finalizacion.TrySetResult(null);
                 ventana.Close();
             };
+        }
 
-            ventana.ConfigurarVistaModelo(vistaModelo);
-
+        private void ConfigurarCierreVentana(
+            VerificacionCodigo ventana,
+            TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO> finalizacion)
+        {
             ventana.Closed += (_, __) =>
             {
                 if (!finalizacion.Task.IsCompleted)
@@ -65,10 +92,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
                     finalizacion.TrySetResult(null);
                 }
             };
-
-            ventana.ShowDialog();
-
-            return finalizacion.Task;
         }
     }
 }

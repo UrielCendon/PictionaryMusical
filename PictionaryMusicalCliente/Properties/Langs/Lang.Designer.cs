@@ -1420,6 +1420,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudieron cargar los avatares..
+        /// </summary>
+        public static string errorTextoNoCargaronAvatares {
+            get {
+                return ResourceManager.GetString("errorTextoNoCargaronAvatares", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se encontró una partida con el código ingresado. Intente con otro distinto..
         /// </summary>
         public static string errorTextoNoEncuentraPartida {
