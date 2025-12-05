@@ -19,6 +19,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ReporteRegistrado = "Reporte enviado correctamente.";
             public const string ReporteDuplicado = "Ya has reportado a este jugador.";
             public const string ReporteMotivoObligatorio = "El motivo del reporte es obligatorio.";
+            public const string ReporteMotivoLongitud = "El motivo del reporte no debe exceder 100 caracteres.";
             public const string ReporteMismoUsuario = "No puedes reportarte a ti mismo.";
 
             public const string DatosInvalidos = "Los datos proporcionados no son validos. Por favor, verifique la informacion.";

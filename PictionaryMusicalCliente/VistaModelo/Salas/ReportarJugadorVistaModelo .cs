@@ -34,6 +34,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     return;
                 }
 
+                if (Motivo.Trim().Length > 100)
+                {
+                    MensajeError = Lang.reportarJugadorTextoMotivoLongitud;
+                    return;
+                }
+
                 Logger.InfoFormat("Usuario confirmó reporte contra: {0}", NombreJugador);
                 MensajeError = string.Empty;
                 Cerrar?.Invoke(true);

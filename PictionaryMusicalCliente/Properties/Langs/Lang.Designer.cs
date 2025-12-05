@@ -2705,7 +2705,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("reportarJugadorTextoMotivoEtiqueta", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Busca una cadena traducida similar a El motivo del reporte es obligatorio.
         /// </summary>
@@ -2714,7 +2714,16 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("reportarJugadorTextoMotivoRequerido", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a El motivo del reporte no debe exceder 100 caracteres.
+        /// </summary>
+        public static string reportarJugadorTextoMotivoLongitud {
+            get {
+                return ResourceManager.GetString("reportarJugadorTextoMotivoLongitud", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a REPORTAR JUGADOR.
         /// </summary>

@@ -1071,6 +1071,9 @@
   <data name="reportarJugadorTextoMotivoRequerido" xml:space="preserve">
     <value>El motivo del reporte es obligatorio</value>
   </data>
+  <data name="reportarJugadorTextoMotivoLongitud" xml:space="preserve">
+    <value>El motivo del reporte no debe exceder 100 caracteres</value>
+  </data>
   <data name="reportarJugadorTextoExito" xml:space="preserve">
     <value>El reporte se envió correctamente</value>
   </data>
