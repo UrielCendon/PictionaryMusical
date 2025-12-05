@@ -21,7 +21,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             LogManager.GetLogger(typeof(ControladorPartida));
 
         private const string RolDibujante = "Dibujante";
-        private const int LimitePalabrasMensaje = 150;
+        private const int LimiteCaracteresMensaje = 150;
         private const int TiempoOverlayClienteSegundos = 5;
 
         private readonly object _sincronizacion = new object();
@@ -529,7 +529,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             return string.IsNullOrWhiteSpace(id) ||
                    string.IsNullOrWhiteSpace(mensaje) ||
-                   mensaje.Split(' ').Length > LimitePalabrasMensaje;
+                   mensaje.Length > LimiteCaracteresMensaje;
         }
 
         private static bool EsMensajeAciertoProtocolo(string mensaje, out int puntos)

@@ -24,7 +24,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private const int TiempoRondaPorDefectoSegundos = 90;
         private const int NumeroRondasPorDefecto = 3;
         private const string DificultadPorDefecto = "Media";
-        private const int LimitePalabrasMensaje = 150;
+        private const int LimiteCaracteresMensaje = 150;
 
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CursoPartidaManejador));
@@ -133,28 +133,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException("El identificador de sala es obligatorio.");
             }
 
-            if (SuperaLimitePalabras(mensaje))
+            if (SuperaLimiteCaracteres(mensaje))
             {
                 throw new FaultException(
-                    $"El mensaje supera el limite de {LimitePalabrasMensaje} palabras.");
+                    $"El mensaje supera el limite de {LimiteCaracteresMensaje} caracteres.");
             }
 
             var controlador = ObtenerOCrearControlador(idSala.Trim());
             controlador.ProcesarMensaje(idJugador?.Trim(), mensaje);
         }
 
-        private static bool SuperaLimitePalabras(string mensaje)
+        private static bool SuperaLimiteCaracteres(string mensaje)
         {
             if (string.IsNullOrWhiteSpace(mensaje))
             {
                 return false;
             }
 
-            var palabras = mensaje.Split(
-                (char[])null,
-                StringSplitOptions.RemoveEmptyEntries);
-
-            return palabras.Length > LimitePalabrasMensaje;
+            return mensaje.Length > LimiteCaracteresMensaje;
         }
 
         /// <summary>
@@ -601,7 +597,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception ex)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usarï¿½ la sala por defecto.",
                     idSala);
                 _logger.Warn(ex);
                 return CrearConfiguracionPorDefecto();

@@ -68,7 +68,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool _rondaTerminadaTemprano;
         private string _mensajeChat;
 
-        private const int LimitePalabrasChat = 150;
+        private const int LimiteCaracteresChat = 150;
         private const double PorcentajePuntosDibujante = 0.2;
 
         /// <summary>
@@ -532,7 +532,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         public string MensajeChat
         {
             get => _mensajeChat;
-            set => EstablecerPropiedad(ref _mensajeChat, LimitarMensajePorPalabras(value));
+            set => EstablecerPropiedad(ref _mensajeChat, LimitarMensajePorCaracteres(value));
         }
 
         /// <summary>
@@ -900,21 +900,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             AbrirAjustesPartida?.Invoke(_partidaVistaModelo.ManejadorCancion);
         }
 
-        private static string LimitarMensajePorPalabras(string mensaje)
+        private static string LimitarMensajePorCaracteres(string mensaje)
         {
             if (string.IsNullOrWhiteSpace(mensaje))
             {
                 return mensaje;
             }
 
-            var palabras = mensaje.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-
-            if (palabras.Length <= LimitePalabrasChat)
+            if (mensaje.Length <= LimiteCaracteresChat)
             {
                 return mensaje;
             }
 
-            return string.Join(" ", palabras.Take(LimitePalabrasChat));
+            return mensaje.Substring(0, LimiteCaracteresChat);
         }
 
         private void EjecutarEnviarMensajeChat()
