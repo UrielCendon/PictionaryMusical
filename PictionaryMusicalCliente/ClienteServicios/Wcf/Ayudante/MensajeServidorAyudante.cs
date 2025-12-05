@@ -229,7 +229,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 ["La contrasena debe tener entre 8 y 15 caracteres, incluir una letra mayuscula, un numero y un caracter especial."]
                     = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
                 ["La dificultad es obligatoria."]
-                    = () => LangResources.Lang.errorTextoErrorProcesarSolicitud
+                    = () => LangResources.Lang.errorTextoErrorProcesarSolicitud,
+                ["Tu cuenta ha sido suspendida por mala conducta."]
+                    = () => LangResources.Lang.errorTextoUsuarioBaneado
             };
 
         /// <summary>

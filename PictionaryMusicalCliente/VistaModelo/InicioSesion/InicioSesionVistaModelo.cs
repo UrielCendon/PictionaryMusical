@@ -371,6 +371,12 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             {
                 mensaje = Lang.errorTextoCredencialesIncorrectas;
             }
+            else
+            {
+                mensaje = MensajeServidorAyudante.Localizar(
+                    mensaje,
+                    Lang.errorTextoCredencialesIncorrectas);
+            }
 
             if (!string.IsNullOrWhiteSpace(mensaje))
             {

@@ -1258,6 +1258,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Tu cuenta ha sido suspendida por mala conducta..
+        /// </summary>
+        public static string errorTextoUsuarioBaneado {
+            get {
+                return ResourceManager.GetString("errorTextoUsuarioBaneado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se pudo iniciar sesión.
         /// </summary>
         public static string errorTextoCredencialesTitulo {
