@@ -29,6 +29,12 @@ namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
         public bool ContrasenaIncorrecta { get; set; }
 
         /// <summary>
+        /// Indica si el usuario esta baneado por tener demasiados reportes.
+        /// </summary>
+        [DataMember]
+        public bool UsuarioBaneado { get; set; }
+
+        /// <summary>
         /// Mensaje descriptivo del resultado del inicio de sesion.
         /// </summary>
         [DataMember]

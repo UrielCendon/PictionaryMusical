@@ -24,6 +24,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private readonly IContextoFactoria _contextoFactory;
 
+        private const int LIMITE_REPORTES_PARA_BANEO = 3;
+
         public InicioSesionManejador() : this(new ContextoFactoria())
         {
         }
@@ -137,6 +139,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
+            if (EstaUsuarioBaneado(contexto, usuario.idUsuario))
+            {
+                _logger.WarnFormat(
+                    "Inicio de sesion bloqueado. Usuario {0} baneado por reportes.",
+                    usuario.idUsuario);
+
+                return new ResultadoInicioSesionDTO
+                {
+                    UsuarioBaneado = true,
+                    Mensaje = MensajesError.Cliente.UsuarioBaneadoPorReportes
+                };
+            }
+
             _logger.InfoFormat(
                 "Inicio de sesion exitoso para usuario con id {0}.",
                 usuario.idUsuario);
@@ -146,6 +161,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 InicioSesionExitoso = true,
                 Usuario = MapearUsuario(usuario)
             };
+        }
+
+        private bool EstaUsuarioBaneado(BaseDatosPruebaEntities contexto, int idUsuario)
+        {
+            var reporteRepositorio = new ReporteRepositorio(contexto);
+            int cantidadReportes = reporteRepositorio.ContarReportesRecibidos(idUsuario);
+            return cantidadReportes >= LIMITE_REPORTES_PARA_BANEO;
         }
 
         private bool VerificarContrasena(string contrasenaEntrada, string hashAlmacenado)

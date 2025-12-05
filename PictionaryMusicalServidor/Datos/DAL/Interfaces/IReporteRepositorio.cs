@@ -22,5 +22,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         /// <param name="reporte">Entidad de reporte a almacenar.</param>
         /// <returns>Entidad persistida con su identificador asignado.</returns>
         Reporte CrearReporte(Reporte reporte);
+
+        /// <summary>
+        /// Cuenta el numero de reportes recibidos por un usuario.
+        /// </summary>
+        /// <param name="idUsuario">Identificador del usuario reportado.</param>
+        /// <returns>Numero de reportes recibidos por el usuario.</returns>
+        int ContarReportesRecibidos(int idUsuario);
     }
 }

@@ -25,6 +25,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string DatosInvalidos = "Los datos proporcionados no son validos. Por favor, verifique la informacion.";
             public const string CredencialesInvalidas = "Las credenciales proporcionadas no son validas.";
             public const string CredencialesIncorrectas = "Usuario o contrasena incorrectos.";
+            public const string UsuarioBaneadoPorReportes = "Tu cuenta ha sido suspendida por mala conducta.";
 
             public const string UsuarioNoEncontrado = "No se encontro el usuario especificado.";
             public const string UsuariosNoEncontrados = "No se encontraron todos los usuarios especificados.";

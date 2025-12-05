@@ -593,6 +593,9 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoCredencialesIncorrectas" xml:space="preserve">
     <value>Credenciales incorrectas.</value>
   </data>
+  <data name="errorTextoUsuarioBaneado" xml:space="preserve">
+    <value>Tu cuenta ha sido suspendida por mala conducta.</value>
+  </data>
   <data name="errorTextoSolicitudRecuperacionInvalida" xml:space="preserve">
     <value>La solicitud de recuperación no es válida.</value>
   </data>

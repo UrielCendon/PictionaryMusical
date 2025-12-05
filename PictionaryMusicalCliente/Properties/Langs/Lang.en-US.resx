@@ -591,6 +591,9 @@
   <data name="errorTextoCredencialesIncorrectas" xml:space="preserve">
     <value>The credentials you entered are incorrect.</value>
   </data>
+  <data name="errorTextoUsuarioBaneado" xml:space="preserve">
+    <value>Your account has been suspended due to misconduct.</value>
+  </data>
   <data name="errorTextoSolicitudRecuperacionInvalida" xml:space="preserve">
     <value>The recovery request is not valid.</value>
   </data>
