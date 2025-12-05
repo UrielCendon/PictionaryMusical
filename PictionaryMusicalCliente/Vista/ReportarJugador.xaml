@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
         Title="{x:Static language:Lang.reportarJugadorTextoTitulo}"
-        Height="260" Width="360"
+        Height="290" Width="360"
         WindowStartupLocation="CenterOwner"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent"
         ShowInTaskbar="False">
@@ -25,7 +25,7 @@
                            FontFamily="Comic Sans MS" Margin="0,0,0,4"/>
 
                 <TextBox x:Name="campoMotivoReporte" Text="{Binding Motivo, UpdateSourceTrigger=PropertyChanged}"
-                         AcceptsReturn="True" Height="80" MaxLength="250"
+                         AcceptsReturn="True" Height="80" MaxLength="100"
                          TextWrapping="Wrap" FontFamily="Comic Sans MS"/>
 
                 <TextBlock Text="{Binding MensajeError}" Foreground="Red"

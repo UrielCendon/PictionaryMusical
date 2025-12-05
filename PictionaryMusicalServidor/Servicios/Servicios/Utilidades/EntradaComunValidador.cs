@@ -16,6 +16,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     internal static class EntradaComunValidador
     {
         internal const int LongitudMaximaTexto = 50;
+        internal const int LongitudMaximaReporte = 100;
         internal const int LongitudMaximaContrasena = 15;
         internal const int LongitudCodigoVerificacion = 6;
 
@@ -53,6 +54,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         public static bool EsLongitudValida(string valor)
         {
             return !string.IsNullOrWhiteSpace(valor) && valor.Length <= LongitudMaximaTexto;
+        }
+
+        /// <summary>
+        /// Verifica si un texto tiene una longitud valida segun el limite maximo.
+        /// </summary>
+        /// <param name="valor">Texto a validar.</param>
+        /// <returns>True si el texto no es vacio y no excede la longitud maxima.</returns>
+        public static bool EsLongitudValidaReporte(string valor)
+        {
+            return !string.IsNullOrWhiteSpace(valor) && valor.Length <= LongitudMaximaReporte;
         }
 
         /// <summary>

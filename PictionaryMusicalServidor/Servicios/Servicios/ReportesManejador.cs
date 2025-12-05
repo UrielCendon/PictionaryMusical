@@ -139,23 +139,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 "usuario reportado");
 
             string motivo = EntradaComunValidador.NormalizarTexto(reporte.Motivo);
-            if (!EntradaComunValidador.EsLongitudValida(motivo))
+            if (!EntradaComunValidador.EsLongitudValidaReporte(motivo))
             {
                 throw new FaultException(MensajesError.Cliente.ReporteMotivoObligatorio);
             }
         }
 
         private (int IdReportante, int IdReportado) ObtenerIdentificadoresUsuarios(
-            BaseDatosPruebaEntities contexto,
-            ReporteJugadorDTO reporte)
+           BaseDatosPruebaEntities contexto,
+           ReporteJugadorDTO reporte)
         {
-            var usuarioRepositorio = new UsuarioRepositorio(contexto);
-            var reportante = usuarioRepositorio.ObtenerPorNombreUsuario(
-                EntradaComunValidador.NormalizarTexto(reporte.NombreUsuarioReportante));
-            var reportado = usuarioRepositorio.ObtenerPorNombreUsuario(
-                EntradaComunValidador.NormalizarTexto(reporte.NombreUsuarioReportado));
+            try
+            {
+                var usuarioRepositorio = new UsuarioRepositorio(contexto);
+                var reportante = usuarioRepositorio.ObtenerPorNombreUsuario(
+                    EntradaComunValidador.NormalizarTexto(reporte.NombreUsuarioReportante));
+                var reportado = usuarioRepositorio.ObtenerPorNombreUsuario(
+                    EntradaComunValidador.NormalizarTexto(reporte.NombreUsuarioReportado));
 
-            return (reportante.idUsuario, reportado.idUsuario);
+                if (reportante == null || reportado == null)
+                {
+                    throw new FaultException(
+                        MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+                }
+
+                return (reportante.idUsuario, reportado.idUsuario);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.Warn("Intento de reporte con usuarios no registrados.", ex);
+                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+            }
         }
 
         private ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
