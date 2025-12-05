@@ -1,27 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using PictionaryMusicalCliente.VistaModelo.Salas;
 
 namespace PictionaryMusicalCliente.Vista
+
 {
     /// <summary>
     /// Lógica de interacción para ReportarJugador.xaml
     /// </summary>
     public partial class ReportarJugador : Window
     {
-        public ReportarJugador()
+        private readonly ReportarJugadorVistaModelo _vistaModelo;
+
+        public ReportarJugador(string nombreJugador)
+            : this(new ReportarJugadorVistaModelo(nombreJugador))
         {
+        }
+
+        public ReportarJugador(ReportarJugadorVistaModelo vistaModelo)
+        {
+            _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
             InitializeComponent();
+            DataContext = _vistaModelo;
+            _vistaModelo.Cerrar = resultado => DialogResult = resultado;
+
+            Closed += ReportarJugador_Closed;
+        }
+
+        private void ReportarJugador_Closed(object sender, EventArgs e)
+        {
+            _vistaModelo.Cerrar = null;
+            Closed -= ReportarJugador_Closed;
         }
     }
 }

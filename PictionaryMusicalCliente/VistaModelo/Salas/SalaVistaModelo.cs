@@ -42,6 +42,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private readonly IInvitacionesServicio _invitacionesServicio;
         private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IPerfilServicio _perfilServicio;
+        private readonly IReportesServicio _reportesServicio;
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
         private readonly bool _esInvitado;
@@ -97,6 +98,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IInvitacionesServicio invitacionesServicio,
             IListaAmigosServicio listaAmigosServicio,
             IPerfilServicio perfilServicio,
+            IReportesServicio reportesServicio,
             string nombreJugador = null,
             bool esInvitado = false)
         {
@@ -109,6 +111,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(listaAmigosServicio));
             _perfilServicio = perfilServicio ??
                 throw new ArgumentNullException(nameof(perfilServicio));
+            _reportesServicio = reportesServicio ??
+                throw new ArgumentNullException(nameof(reportesServicio));
 
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
@@ -172,6 +176,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 new InvitacionesServicio(),
                 new ListaAmigosServicio(),
                 new PerfilServicio(),
+                new ReportesServicio(),
                 nombreJugador,
                 esInvitado)
         {
@@ -224,6 +229,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             MostrarBotonIniciarPartida = _esHost && !juegoIniciado;
             ActualizarVisibilidadBotonesExpulsion();
+            ActualizarVisibilidadBotonesReporte();
             _chatVistaModelo.EsPartidaIniciada = juegoIniciado;
         }
 
@@ -666,6 +672,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// Funcion para solicitar confirmacion al usuario.
         /// </summary>
         public Func<string, bool> MostrarConfirmacion { get; set; }
+
+        /// <summary>
+        /// Solicita los datos necesarios para enviar un reporte.
+        /// </summary>
+        public Func<string, ResultadoReporteJugador> SolicitarDatosReporte { get; set; }
 
         /// <summary>
         /// Accion para cerrar la ventana fisica.
@@ -1522,6 +1533,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             AjustarProgresoRondaTrasCambioJugadores();
             ActualizarVisibilidadBotonesExpulsion();
+            ActualizarVisibilidadBotonesReporte();
         }
 
         private void AgregarJugador(string nombreJugador)
@@ -1532,6 +1544,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 MostrarBotonExpulsar = PuedeExpulsarJugador(nombreJugador),
                 ExpulsarComando = new ComandoAsincrono(async _ =>
                     await EjecutarExpulsarJugadorAsync(nombreJugador)),
+                MostrarBotonReportar = PuedeReportarJugador(nombreJugador),
+                ReportarComando = new ComandoAsincrono(async _ =>
+                    await EjecutarReportarJugadorAsync(nombreJugador)),
                 Puntos = 0
             };
 
@@ -1571,6 +1586,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             return _esHost && !JuegoIniciado && !esElMismo && !esCreador;
         }
 
+        private bool PuedeReportarJugador(string nombreJugador)
+        {
+            if (string.IsNullOrWhiteSpace(nombreJugador))
+            {
+                return false;
+            }
+
+            return !string.Equals(
+                nombreJugador,
+                _nombreUsuarioSesion,
+                StringComparison.OrdinalIgnoreCase);
+        }
+
         private void ActualizarVisibilidadBotonesExpulsion()
         {
             if (Jugadores == null)
@@ -1581,6 +1609,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             foreach (var jugador in Jugadores)
             {
                 jugador.MostrarBotonExpulsar = PuedeExpulsarJugador(jugador?.Nombre);
+            }
+        }
+
+        private void ActualizarVisibilidadBotonesReporte()
+        {
+            if (Jugadores == null)
+            {
+                return;
+            }
+
+            foreach (var jugador in Jugadores)
+            {
+                jugador.MostrarBotonReportar = PuedeReportarJugador(jugador?.Nombre);
             }
         }
 
@@ -1624,6 +1665,59 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 					nombreJugador, ex);
                 SonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoExpulsarJugador);
+            }
+        }
+
+        private async Task EjecutarReportarJugadorAsync(string nombreJugador)
+        {
+            if (SolicitarDatosReporte == null)
+            {
+                return;
+            }
+
+            var resultado = SolicitarDatosReporte.Invoke(nombreJugador);
+            if (resultado == null || !resultado.Confirmado)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(resultado.Motivo))
+            {
+                MostrarMensaje?.Invoke(Lang.reportarJugadorTextoMotivoRequerido);
+                return;
+            }
+
+            var reporte = new DTOs.ReporteJugadorDTO
+            {
+                NombreUsuarioReportado = nombreJugador,
+                NombreUsuarioReportante = _nombreUsuarioSesion,
+                Motivo = resultado.Motivo
+            };
+
+            try
+            {
+                _logger.InfoFormat("Enviando reporte contra: {0}", nombreJugador);
+                DTOs.ResultadoOperacionDTO respuesta = await _reportesServicio
+                    .ReportarJugadorAsync(reporte)
+                    .ConfigureAwait(true);
+
+                if (respuesta?.OperacionExitosa == true)
+                {
+                    SonidoManejador.ReproducirExito();
+                    MostrarMensaje?.Invoke(Lang.reportarJugadorTextoExito);
+                }
+                else
+                {
+                    SonidoManejador.ReproducirError();
+                    MostrarMensaje?.Invoke(
+                        respuesta?.Mensaje ?? Lang.errorTextoReportarJugador);
+                }
+            }
+            catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
+            {
+                _logger.ErrorFormat("Error al reportar jugador {0}.", nombreJugador, ex);
+                SonidoManejador.ReproducirError();
+                MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoReportarJugador);
             }
         }
 
@@ -1741,6 +1835,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             (_listaAmigosServicio as IDisposable)?.Dispose();
             (_invitacionesServicio as IDisposable)?.Dispose();
             (_perfilServicio as IDisposable)?.Dispose();
+            (_reportesServicio as IDisposable)?.Dispose();
         }
 
         /// <summary>
