@@ -1,15 +1,16 @@
-using System;
-using System.Data;
-using System.Data.Entity.Core;
-using System.ServiceModel;
-using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using Datos.Modelo;
 using log4net;
+using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Core;
+using System.ServiceModel;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -142,6 +143,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     nombreUsuarioEmisor,
                     usuarios.Receptor,
                     nombreUsuarioReceptor);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.Warn("Intento de enviar solicitud a usuario inexistente.", ex);
+                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
             catch (FaultException)
             {

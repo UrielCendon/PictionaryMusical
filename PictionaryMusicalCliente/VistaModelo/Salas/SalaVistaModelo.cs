@@ -39,9 +39,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             StringComparer.OrdinalIgnoreCase;
 
         private readonly ISalasServicio _salasServicio;
-        private readonly IInvitacionesServicio _invitacionesServicio;
-        private readonly IListaAmigosServicio _listaAmigosServicio;
-        private readonly IPerfilServicio _perfilServicio;
+        private readonly IInvitacionSalaServicio _invitacionSalaServicio;
         private readonly IReportesServicio _reportesServicio;
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
@@ -99,20 +97,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IListaAmigosServicio listaAmigosServicio,
             IPerfilServicio perfilServicio,
             IReportesServicio reportesServicio,
+            IInvitacionSalaServicio invitacionSalaServicio = null,
             string nombreJugador = null,
             bool esInvitado = false)
         {
             _sala = sala ?? throw new ArgumentNullException(nameof(sala));
             _salasServicio = salasServicio ??
                 throw new ArgumentNullException(nameof(salasServicio));
-            _invitacionesServicio = invitacionesServicio ??
-                throw new ArgumentNullException(nameof(invitacionesServicio));
-            _listaAmigosServicio = listaAmigosServicio ??
-                throw new ArgumentNullException(nameof(listaAmigosServicio));
-            _perfilServicio = perfilServicio ??
-                throw new ArgumentNullException(nameof(perfilServicio));
             _reportesServicio = reportesServicio ??
                 throw new ArgumentNullException(nameof(reportesServicio));
+            _invitacionSalaServicio = invitacionSalaServicio ??
+                new InvitacionSalaServicio(
+                    invitacionesServicio ?? 
+                    throw new ArgumentNullException(nameof(invitacionesServicio)),
+                    listaAmigosServicio ?? 
+                    throw new ArgumentNullException(nameof(listaAmigosServicio)),
+                    perfilServicio ?? throw new ArgumentNullException(nameof(perfilServicio)));
 
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
@@ -130,13 +130,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _rondaTerminadaTemprano = false;
 
             _partidaVistaModelo = new PartidaIniciadaVistaModelo();
-            _chatVistaModelo = new ChatVistaModelo();
+            _chatVistaModelo = CrearChatVistaModelo();
             _chatVistaModelo.PropertyChanged += ChatVistaModelo_PropertyChanged;
 
             _partidaVistaModelo.PropertyChanged += PartidaIniciadaVistaModelo_PropertyChanged;
 
             ConfigurarPartidaVistaModelo();
-            ConfigurarChatVistaModelo();
 
             _textoBotonIniciarPartida = Lang.partidaAdminTextoIniciarPartida;
             _botonIniciarPartidaHabilitado = _esHost;
@@ -177,6 +176,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 new ListaAmigosServicio(),
                 new PerfilServicio(),
                 new ReportesServicio(),
+                null,
                 nombreJugador,
                 esInvitado)
         {
@@ -202,12 +202,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _rondaTerminadaTemprano = false;
         }
 
-        private void ConfigurarChatVistaModelo()
+        private ChatVistaModelo CrearChatVistaModelo()
         {
-            _chatVistaModelo.EnviarMensajeAlServidor = EjecutarEnviarMensaje;
-            _chatVistaModelo.ObtenerNombreJugadorActual = () => _nombreUsuarioSesion;
-            _chatVistaModelo.RegistrarAciertoEnServidor = EjecutarRegistrarAciertoAsync;
+            var chatMensajeria = new ChatMensajeriaDelegado(EjecutarEnviarMensaje);
+            var chatAciertos = new ChatAciertosDelegado(
+                () => _nombreUsuarioSesion,
+                EjecutarRegistrarAciertoAsync);
+            var chatReglas = new ChatReglasPartida(chatAciertos);
+
+            return new ChatVistaModelo(chatMensajeria, chatReglas);
         }
+
 
         private void ChatVistaModelo_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -771,127 +776,42 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private async Task EjecutarInvitarCorreoAsync()
         {
-            string correo = CorreoInvitacion?.Trim();
+            var resultado = await _invitacionSalaServicio
+                .InvitarPorCorreoAsync(_codigoSala, CorreoInvitacion)
+                .ConfigureAwait(true);
 
-            if (string.IsNullOrWhiteSpace(correo))
+            if (resultado.Exitoso)
             {
-                SonidoManejador.ReproducirError();
-                MostrarMensaje?.Invoke(Lang.errorTextoCorreoInvalido);
+                SonidoManejador.ReproducirExito();
+                MostrarMensaje?.Invoke(resultado.Mensaje);
+                CorreoInvitacion = string.Empty;
                 return;
             }
 
-            var resultadoValidacion = ValidacionEntrada.ValidarCorreo(correo);
-            if (!resultadoValidacion.OperacionExitosa)
-            {
-                SonidoManejador.ReproducirError();
-                MostrarMensaje?.Invoke(
-                    resultadoValidacion.Mensaje ?? Lang.errorTextoCorreoInvalido);
-                return;
-            }
-
-            try
-            {
-				_logger.InfoFormat("Enviando invitación por correo a: {0}",
-					correo);
-                var resultado = await _invitacionesServicio
-                    .EnviarInvitacionAsync(_codigoSala, correo)
-                    .ConfigureAwait(true);
-
-                if (resultado != null && resultado.OperacionExitosa)
-                {
-                    SonidoManejador.ReproducirExito();
-                    MostrarMensaje?.Invoke(Lang.invitarCorreoTextoEnviado);
-                    CorreoInvitacion = string.Empty;
-                }
-                else
-                {
-                    _logger.WarnFormat("Fallo al enviar invitación: {0}",
-						resultado?.Mensaje);
-                    SonidoManejador.ReproducirError();
-					MostrarMensaje?.Invoke(resultado?.Mensaje ?? Lang.errorTextoEnviarCorreo);
-				}
-			}
-			catch (ServicioExcepcion ex)
-			{
-				_logger.Error("Excepción de servicio al enviar invitación.", ex);
-				SonidoManejador.ReproducirError();
-				MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoEnviarCorreo);
-			}
-			catch (ArgumentException ex)
-			{
-				_logger.Error("Error de argumento al enviar invitación.", ex);
-				SonidoManejador.ReproducirError();
-				MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
-			}
-                        catch (Exception ex)
-                        {
-                                _logger.Error("Error inesperado al invitar.", ex);
-                                SonidoManejador.ReproducirError();
-                                MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
-                        }
-                }
+            SonidoManejador.ReproducirError();
+            MostrarMensaje?.Invoke(resultado.Mensaje);
+        }
 
         private async Task EjecutarInvitarAmigosAsync()
         {
-            SonidoManejador.ReproducirClick();
+            var resultado = await _invitacionSalaServicio
+                .ObtenerInvitacionAmigosAsync(
+                    _codigoSala,
+                    _nombreUsuarioSesion,
+                    _amigosInvitados,
+                    mensaje => MostrarMensaje?.Invoke(mensaje))
+                .ConfigureAwait(true);
 
-            if (_listaAmigosServicio == null ||
-                _invitacionesServicio == null ||
-                _perfilServicio == null)
-            {
-                _logger.Warn("Servicios de invitación no inicializados.");
-                MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
-            {
-                _logger.Warn("Intento de invitar amigos sin usuario de sesión.");
-                MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
-                return;
-            }
-
-            IReadOnlyList<DTOs.AmigoDTO> amigos;
-
-            try
-            {
-                amigos = await _listaAmigosServicio
-                    .ObtenerAmigosAsync(_nombreUsuarioSesion)
-                    .ConfigureAwait(true);
-            }
-            catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
-            {
-                _logger.Error("Error al obtener lista de amigos para invitar.", ex);
-                SonidoManejador.ReproducirError();
-                MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
-                return;
-            }
-
-            if (amigos == null || amigos.Count == 0)
+            if (!resultado.Exitoso)
             {
                 SonidoManejador.ReproducirError();
-                MostrarMensaje?.Invoke(Lang.invitarAmigosTextoSinAmigos);
+                MostrarMensaje?.Invoke(resultado.Mensaje);
                 return;
             }
 
-            var vistaModelo = new InvitarAmigosVistaModelo(
-                amigos,
-                _invitacionesServicio,
-                _perfilServicio,
-                _codigoSala,
-                id => _amigosInvitados.Contains(id),
-                id =>
-                {
-                    if (!_amigosInvitados.Contains(id))
-                    {
-                        _amigosInvitados.Add(id);
-                    }
-                },
-                mensaje => MostrarMensaje?.Invoke(mensaje));
-
-            if (MostrarInvitarAmigos != null)
+            if (MostrarInvitarAmigos != null && resultado.VistaModelo != null)
             {
-                await MostrarInvitarAmigos(vistaModelo).ConfigureAwait(true);
+                await MostrarInvitarAmigos(resultado.VistaModelo).ConfigureAwait(true);
             }
         }
 
@@ -1840,9 +1760,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
 
             (_salasServicio as IDisposable)?.Dispose();
-            (_listaAmigosServicio as IDisposable)?.Dispose();
-            (_invitacionesServicio as IDisposable)?.Dispose();
-            (_perfilServicio as IDisposable)?.Dispose();
+            (_invitacionSalaServicio as IDisposable)?.Dispose();
             (_reportesServicio as IDisposable)?.Dispose();
         }
 

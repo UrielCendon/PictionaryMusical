@@ -1,15 +1,16 @@
-using PictionaryMusicalServidor.Servicios.Contratos;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using Datos.Modelo;
-using System;
 using log4net;
-using BCryptNet = BCrypt.Net.BCrypt;
-using System.Data;
-using System.Data.Entity.Core;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Core;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -115,12 +116,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string identificador = EntradaComunValidador.NormalizarTexto(
                 credenciales.Identificador);
 
-            var usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
-
-            if (usuario == null)
+            Usuario usuario;
+            try
+            {
+                usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
+            }
+            catch
             {
                 _logger.Warn("Inicio de sesion fallido. Usuario no encontrado.");
-
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = false,
@@ -196,13 +199,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             BaseDatosPruebaEntities contexto,
             string identificador)
         {
-            var usuarioPorNombre = BuscarPorNombreUsuario(contexto, identificador);
-            if (usuarioPorNombre != null)
+            try
             {
-                return usuarioPorNombre;
+                return BuscarPorNombreUsuario(contexto, identificador);
             }
-
-            return BuscarPorCorreoElectronico(contexto, identificador);
+            catch (KeyNotFoundException)
+            {
+                return BuscarPorCorreoElectronico(contexto, identificador);
+            }
         }
 
         private Usuario BuscarPorNombreUsuario(
@@ -218,7 +222,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string correo)
         {
             IUsuarioRepositorio repositorio = new UsuarioRepositorio(contexto);
-            return repositorio.ObtenerPorCorreo(correo);
+            var usuario = repositorio.ObtenerPorCorreo(correo);
+
+            if (usuario == null)
+            {
+                throw new KeyNotFoundException("Usuario no encontrado por correo.");
+            }
+            return usuario;
         }
 
         private static UsuarioDTO MapearUsuario(Usuario usuario)

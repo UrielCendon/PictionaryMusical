@@ -72,9 +72,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ClienteServicios\Abstracciones\IChatServicio.cs" />
+    <Compile Include="ClienteServicios\Abstracciones\IInvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IReportesServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISalasServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
+    <Compile Include="ClienteServicios\Wcf\ChatServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
     <Compile Include="Connected Services\PictionaryServidorServicioAmigos\Reference.cs">
