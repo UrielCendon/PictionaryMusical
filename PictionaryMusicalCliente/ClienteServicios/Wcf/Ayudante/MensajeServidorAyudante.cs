@@ -19,6 +19,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             @"^El identificador de (.+) no debe exceder (\d+) caracteres\.$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
 
+        private static readonly Regex MensajeSuperaLimiteCaracteresRegex = new Regex(
+            @"^El mensaje supera el limite de (\d+) caracteres\.$",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
+
         private static readonly Dictionary<string, Func<string>> MapaMensajes =
             new Dictionary<string, Func<string>>(StringComparer.Ordinal)
             {
@@ -282,6 +286,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     LangResources.Lang.errorTextoIdentificadorRedSocialLongitud,
                     identificador.Groups[1].Value,
                     identificador.Groups[2].Value);
+                return true;
+            }
+
+            Match mensajeLimite = MensajeSuperaLimiteCaracteresRegex.Match(mensaje);
+            if (mensajeLimite.Success)
+            {
+                traducido = string.Format(
+                    CultureInfo.CurrentCulture,
+                    LangResources.Lang.errorTextoMensajeSuperaLimiteCaracteres,
+                    mensajeLimite.Groups[1].Value);
                 return true;
             }
 
