@@ -88,6 +88,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string CodigoVerificacionIncorrecto = "El codigo ingresado no es correcto.";
             public const string UsuarioOCorreoRegistrado = "El correo o usuario ya esta registrado.";
 
+            public const string UsuarioBaneadoPorReportes = "Has sido baneado del juego por mala conducta.";
+
             public const string ErrorCrearSala = "No fue posible crear la sala.";
             public const string ErrorInesperadoCrearSala = "Ocurrio un error al crear la sala.";
             public const string ErrorInesperadoUnirse = "Ocurrio un error al unirse a la sala.";

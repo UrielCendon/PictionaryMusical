@@ -84,6 +84,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                     = () => LangResources.Lang.errorTextoRegistrarCuentaMasTarde,
                 ["No fue posible iniciar sesion. Por favor, intente nuevamente."]
                     = () => LangResources.Lang.errorTextoServidorInicioSesion,
+                ["Has sido baneado del juego por mala conducta."]
+                    = () => LangResources.Lang.errorTextoUsuarioBaneado,
                 ["Usuario o contrasena incorrectos."]
                     = () => LangResources.Lang.errorTextoCredencialesIncorrectas,
                 ["Las credenciales proporcionadas no son validas."]

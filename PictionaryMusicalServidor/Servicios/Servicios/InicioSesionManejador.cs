@@ -22,6 +22,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(InicioSesionManejador));
 
+        private const int LimiteReportesParaBaneo = 3;
+
         private readonly IContextoFactoria _contextoFactory;
 
         public InicioSesionManejador() : this(new ContextoFactoria())
@@ -137,6 +139,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
 
+            if (UsuarioAlcanzoLimiteReportes(contexto, usuario.idUsuario))
+            {
+                _logger.WarnFormat(
+                    "Usuario con id {0} bloqueado por superar limite de reportes.",
+                    usuario.idUsuario);
+
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    CuentaEncontrada = true,
+                    Mensaje = MensajesError.Cliente.UsuarioBaneadoPorReportes
+                };
+            }
+
             _logger.InfoFormat(
                 "Inicio de sesion exitoso para usuario con id {0}.",
                 usuario.idUsuario);
@@ -157,6 +173,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             return BCryptNet.Verify(contrasenaEntrada.Trim(), hashAlmacenado);
+        }
+
+        private bool UsuarioAlcanzoLimiteReportes(BaseDatosPruebaEntities contexto, int usuarioId)
+        {
+            IReporteRepositorio reporteRepositorio = new ReporteRepositorio(contexto);
+            int totalReportes = reporteRepositorio.ContarReportesRecibidos(usuarioId);
+
+            return totalReportes >= LimiteReportesParaBaneo;
         }
 
         private static ResultadoInicioSesionDTO CrearErrorGenerico()

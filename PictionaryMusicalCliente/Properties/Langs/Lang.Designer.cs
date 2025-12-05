@@ -1733,7 +1733,16 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("errorTextoTokenCodigoObligatorio", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Busca una cadena traducida similar a Has sido baneado del juego por mala conducta.. 
+        /// </summary>
+        public static string errorTextoUsuarioBaneado {
+            get {
+                return ResourceManager.GetString("errorTextoUsuarioBaneado", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Busca una cadena traducida similar a Nombre de usuario en uso.
         /// </summary>
