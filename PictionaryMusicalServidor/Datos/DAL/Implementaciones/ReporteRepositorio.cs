@@ -71,5 +71,29 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
         }
+
+        /// <summary>
+        /// Cuenta la cantidad de reportes que ha recibido un usuario.
+        /// </summary>
+        /// <param name="idReportado">Identificador del usuario reportado.</param>
+        /// <returns>Total de reportes registrados en su contra.</returns>
+        public int ContarReportesRecibidos(int idReportado)
+        {
+            if (idReportado <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(idReportado),
+                    "El identificador del usuario reportado debe ser mayor a cero.");
+            }
+
+            try
+            {
+                return _contexto.Reporte.Count(r => r.idReportado == idReportado);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
+                throw;
+            }
+        }
     }
 }

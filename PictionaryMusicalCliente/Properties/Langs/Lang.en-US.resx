@@ -885,6 +885,9 @@
   <data name="errorInicioSesion" xml:space="preserve">
     <value>Could not log in. Please try again.</value>
   </data>
+  <data name="errorTextoUsuarioBaneado" xml:space="preserve">
+    <value>You have been banned from the game for misconduct.</value>
+  </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>Could not establish connection with the server.</value>
   </data>
