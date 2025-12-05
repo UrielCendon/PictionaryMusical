@@ -356,4 +356,132 @@ internal const int LongitudCodigoVerificacion = 6;
 
 ---
 
+## 9. Plan de Simplificación de Validaciones
+
+### Objetivo
+Simplificar las validaciones del chat para mantener solo:
+1. ✅ Máximo de 150 caracteres (cliente y servidor)
+2. ✅ Mensaje no vacío
+3. ✅ Comparación para respuesta correcta
+
+### Cambios Requeridos
+
+#### 9.1 Cliente - SalaVistaModelo.cs
+
+**Archivo:** `PictionaryMusicalCliente/VistaModelo/Salas/SalaVistaModelo.cs`
+
+| Acción | Ubicación | Descripción |
+|--------|-----------|-------------|
+| **ELIMINAR** | Línea 71 | Constante `LimitePalabrasChat = 150` |
+| **ELIMINAR** | Líneas 903-918 | Método `LimitarMensajePorPalabras()` |
+| **MODIFICAR** | Línea 535 | Cambiar `LimitarMensajePorPalabras(value)` por `value` directamente |
+
+**Código a eliminar:**
+```csharp
+// Eliminar línea 71:
+private const int LimitePalabrasChat = 150;
+
+// Eliminar método completo (líneas 903-918):
+private static string LimitarMensajePorPalabras(string mensaje)
+{
+    if (string.IsNullOrWhiteSpace(mensaje))
+    {
+        return mensaje;
+    }
+
+    var palabras = mensaje.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+
+    if (palabras.Length <= LimitePalabrasChat)
+    {
+        return mensaje;
+    }
+
+    return string.Join(" ", palabras.Take(LimitePalabrasChat));
+}
+```
+
+**Código a modificar:**
+```csharp
+// ANTES (línea 535):
+set => EstablecerPropiedad(ref _mensajeChat, LimitarMensajePorPalabras(value));
+
+// DESPUÉS:
+set => EstablecerPropiedad(ref _mensajeChat, value);
+```
+
+#### 9.2 Servidor - ChatManejador.cs
+
+**Archivo:** `PictionaryMusicalServidor/Servicios/Servicios/ChatManejador.cs`
+
+| Acción | Ubicación | Descripción |
+|--------|-----------|-------------|
+| **AGREGAR** | Después de línea 117 | Validación de longitud máxima de 150 caracteres |
+
+**Código a agregar después de la validación de mensaje vacío:**
+```csharp
+// Después de la validación de mensaje vacío (línea 117):
+if (mensaje.Trim().Length > 150)
+{
+    return; // Ignora mensajes que excedan 150 caracteres
+}
+```
+
+**Alternativa con constante (recomendado):**
+
+Agregar constante en `EntradaComunValidador.cs`:
+```csharp
+internal const int LongitudMaximaMensajeChat = 150;
+```
+
+Y usar en `ChatManejador.cs`:
+```csharp
+if (mensaje.Trim().Length > EntradaComunValidador.LongitudMaximaMensajeChat)
+{
+    return;
+}
+```
+
+### Validaciones que se Mantienen Sin Cambios
+
+| Validación | Ubicación | Código |
+|------------|-----------|--------|
+| MaxLength=150 en UI | Sala.xaml:365 | `MaxLength="150"` |
+| Mensaje vacío (cliente) | ChatVistaModelo.cs:116-119 | `if (string.IsNullOrWhiteSpace(mensaje)) { return; }` |
+| Mensaje vacío (servidor) | ChatManejador.cs:114-117 | `if (string.IsNullOrWhiteSpace(mensaje)) { return; }` |
+| Respuesta correcta | ChatVistaModelo.cs:191-202 | `EsRespuestaCorrecta()` |
+| Rol dibujante | ChatVistaModelo.cs:128-132 | `if (EsDibujante) { return; }` |
+
+### Resumen de Cambios
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    VALIDACIONES DESPUÉS DEL CAMBIO                   │
+└─────────────────────────────────────────────────────────────────────┘
+
+CLIENTE (Sala.xaml):
+  └── MaxLength=150 ✅ (ya existe)
+
+CLIENTE (ChatVistaModelo.cs):
+  ├── Mensaje vacío ✅ (ya existe)
+  ├── Rol dibujante ✅ (ya existe)
+  └── Respuesta correcta ✅ (ya existe)
+
+SERVIDOR (ChatManejador.cs):
+  ├── Mensaje vacío ✅ (ya existe)
+  └── Longitud máx 150 chars 🆕 (AGREGAR)
+
+ELIMINADO:
+  └── Límite de palabras en SalaVistaModelo.cs ❌ (ELIMINAR)
+```
+
+### Orden de Implementación Sugerido
+
+1. **Paso 1:** Agregar validación de longitud en servidor (`ChatManejador.cs`)
+2. **Paso 2:** Eliminar constante `LimitePalabrasChat` de `SalaVistaModelo.cs`
+3. **Paso 3:** Eliminar método `LimitarMensajePorPalabras()` de `SalaVistaModelo.cs`
+4. **Paso 4:** Modificar setter de `MensajeChat` para no usar el método eliminado
+5. **Paso 5:** Compilar y probar
+
+---
+
 *Documento generado como resultado de la investigación solicitada sobre validación de mensajes del chat.*
