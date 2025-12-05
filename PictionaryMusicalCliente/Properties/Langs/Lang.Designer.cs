@@ -1733,16 +1733,16 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("errorTextoTokenCodigoObligatorio", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Busca una cadena traducida similar a Has sido baneado del juego por mala conducta.. 
+        ///   Busca una cadena traducida similar a Has sido baneado del juego por mala conducta..
         /// </summary>
         public static string errorTextoUsuarioBaneado {
             get {
                 return ResourceManager.GetString("errorTextoUsuarioBaneado", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Busca una cadena traducida similar a Nombre de usuario en uso.
         /// </summary>
@@ -2271,6 +2271,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string jugadorNoAsociado {
             get {
                 return ResourceManager.GetString("jugadorNoAsociado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El mensaje supera el limite de caracteres..
+        /// </summary>
+        public static string MensajeChatTextoMotivoLongitud {
+            get {
+                return ResourceManager.GetString("MensajeChatTextoMotivoLongitud", resourceCulture);
             }
         }
         

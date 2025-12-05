@@ -1089,4 +1089,7 @@
   <data name="reportarJugadorTextoMotivoLongitud" xml:space="preserve">
     <value>El motivo del reporte no debe exceder 100 caracteres</value>
   </data>
+  <data name="MensajeChatTextoMotivoLongitud" xml:space="preserve">
+    <value>El mensaje supera el limite de caracteres.</value>
+  </data>
 </root>
