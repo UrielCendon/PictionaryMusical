@@ -1593,6 +1593,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return false;
             }
 
+            if (_esInvitado)
+            {
+                return false;
+            }
+
             return !string.Equals(
                 nombreJugador,
                 _nombreUsuarioSesion,
@@ -1671,6 +1676,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private async Task EjecutarReportarJugadorAsync(string nombreJugador)
         {
             if (SolicitarDatosReporte == null)
+            {
+                return;
+            }
+
+            if (_esInvitado)
             {
                 return;
             }

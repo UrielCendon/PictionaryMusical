@@ -1014,7 +1014,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
                 MostrarBotonExpulsar = esHost && !esElMismo && !esCreador,
                 ExpulsarComando = new ComandoAsincrono(async _ =>
                     await EjecutarExpulsarJugadorAsync(nombreJugador)),
-                MostrarBotonReportar = !esElMismo,
+                MostrarBotonReportar = !_esInvitado && !esElMismo,
                 ReportarComando = new ComandoAsincrono(async _ =>
                     await EjecutarReportarJugadorAsync(nombreJugador))
             };
@@ -1063,6 +1063,11 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
         private async Task EjecutarReportarJugadorAsync(string nombreJugador)
         {
             if (SolicitarDatosReporte == null)
+            {
+                return;
+            }
+
+            if (_esInvitado)
             {
                 return;
             }
