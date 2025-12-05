@@ -19,6 +19,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         internal const int LongitudMaximaReporte = 100;
         internal const int LongitudMaximaContrasena = 15;
         internal const int LongitudCodigoVerificacion = 6;
+        internal const int LongitudMaximaMensajeChat = 150;
 
         private static readonly Regex CorreoRegex = new Regex(
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",

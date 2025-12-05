@@ -116,6 +116,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return;
                 }
 
+                if (mensaje.Trim().Length > EntradaComunValidador.LongitudMaximaMensajeChat)
+                {
+                    return;
+                }
+
                 var idSalaNormalizado = idSala.Trim();
                 var nombreNormalizado = nombreJugador.Trim();
                 var mensajeNormalizado = mensaje.Trim();
