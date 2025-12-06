@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Concurrent;
+using System.Data;
+using System.Data.Entity.Core;
 using System.Linq;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using log4net;
@@ -377,9 +380,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _solicitudesRecuperacion.TryRemove(token, out _);
                 return new ResultadoOperacionDTO { OperacionExitosa = true };
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.Error("Error al actualizar contrasena.", ex);
+                _logger.Error("Error de base de datos al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error de datos al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Contexto desechado al actualizar contrasena.", ex);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
         }

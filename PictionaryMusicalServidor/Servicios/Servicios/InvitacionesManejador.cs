@@ -3,6 +3,7 @@ using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
@@ -11,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
 using System.Linq;
+using System.Net.Mail;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -106,7 +108,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
-            catch (Exception ex)
+            catch (SmtpException ex)
+            {
+                _logger.Error("Error de SMTP al enviar invitacion.", ex);
+                return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
+            }
+            catch (ServicioExternoExcepcion ex)
+            {
+                _logger.Error("Error de servicio externo al enviar invitacion.", ex);
+                return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);

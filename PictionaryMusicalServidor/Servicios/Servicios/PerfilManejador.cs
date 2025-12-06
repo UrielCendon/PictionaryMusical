@@ -4,6 +4,7 @@ using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
@@ -72,7 +73,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Contexto desechado al obtener perfil.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
@@ -133,7 +139,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Contexto desechado al actualizar perfil.", ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);

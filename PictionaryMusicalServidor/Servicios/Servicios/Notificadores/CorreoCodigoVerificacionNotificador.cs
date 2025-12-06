@@ -1,4 +1,5 @@
 using log4net;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using System;
 using System.Configuration;
@@ -171,9 +172,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 _logger.Error("Argumentos invalidos para enviar correo.", ex);
                 return false;
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
-                _logger.Error("Error inesperado al enviar codigo de verificacion.", ex);
+                _logger.Error("Cliente SMTP desechado al enviar codigo de verificacion.", ex);
+                return false;
+            }
+            catch (ServicioExternoExcepcion ex)
+            {
+                _logger.Error("Error de servicio externo al enviar codigo de verificacion.", ex);
                 return false;
             }
         }

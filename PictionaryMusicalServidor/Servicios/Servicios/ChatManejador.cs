@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
@@ -86,7 +87,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de comunicacion al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Objeto desechado al unirse al chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
@@ -134,7 +140,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al enviar mensaje.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Objeto desechado al enviar mensaje de chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al enviar mensaje de chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
@@ -172,7 +183,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al salir del chat.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Objeto desechado al salir del chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al salir del chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);

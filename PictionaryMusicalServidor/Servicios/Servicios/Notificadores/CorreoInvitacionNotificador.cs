@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
@@ -127,9 +128,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 _logger.Error("Argumentos invalidos para enviar correo.", ex);
                 return false;
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
-                _logger.Error("Error inesperado al enviar invitacion.", ex);
+                _logger.Error("Cliente SMTP desechado al enviar invitacion.", ex);
+                return false;
+            }
+            catch (ServicioExternoExcepcion ex)
+            {
+                _logger.Error("Error de servicio externo al enviar invitacion.", ex);
                 return false;
             }
         }

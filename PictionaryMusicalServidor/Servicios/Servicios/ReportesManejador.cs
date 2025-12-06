@@ -8,6 +8,7 @@ using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
@@ -117,7 +118,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al registrar reporte.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Contexto desechado al registrar reporte.", ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al registrar reporte.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);

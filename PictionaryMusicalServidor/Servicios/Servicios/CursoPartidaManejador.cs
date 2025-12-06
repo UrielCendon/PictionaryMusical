@@ -3,10 +3,13 @@ using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -302,10 +305,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 callback.NotificarInicioRonda(rondaPersonalizada);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
             {
                 _logger.WarnFormat(
-                    "Error notificando inicio de ronda a {0}",
+                    "Error de comunicacion notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.WarnFormat(
+                    "Timeout notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (ObjectDisposedException ex)
+            {
+                _logger.WarnFormat(
+                    "Objeto desechado notificando inicio de ronda a {0}",
                     idJugador,
                     ex);
 
@@ -388,7 +409,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.Error("Error de base de datos al actualizar clasificaciones.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error de datos al actualizar clasificaciones.", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al actualizar clasificaciones.", ex);
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
@@ -400,10 +433,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return controlador.ObtenerJugadores()?.ToList();
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
+                    "Operacion invalida al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return new List<JugadorPartida>();
+            }
+            catch (ArgumentNullException ex)
+            {
+                _logger.Error(
+                    "Argumento nulo al obtener jugadores para actualizar clasificacion.",
                     ex);
                 return new List<JugadorPartida>();
             }
@@ -438,10 +478,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     jugador.PuntajeTotal,
                     ganoPartida);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    "Error de base de datos al actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.ErrorFormat(
+                    "Operacion invalida al actualizar clasificacion del jugador {0}.",
                     jugadorId,
                     ex);
             }
@@ -593,10 +647,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return _salasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "Operacion invalida al obtener configuracion de sala. Usara la sala por defecto.",
+                    idSala);
+                _logger.Warn(ex);
+                return CrearConfiguracionPorDefecto();
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.WarnFormat(
+                    "Argumento invalido al obtener configuracion de sala. Usara la sala por defecto.",
                     idSala);
                 _logger.Warn(ex);
                 return CrearConfiguracionPorDefecto();

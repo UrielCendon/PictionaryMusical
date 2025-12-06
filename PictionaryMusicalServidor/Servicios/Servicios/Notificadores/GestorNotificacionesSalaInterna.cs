@@ -5,6 +5,7 @@ using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Excepciones;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
@@ -172,9 +173,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", ex);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
-                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
+                _logger.Error("Callback desechado al ejecutar notificacion WCF en sala.", ex);
+            }
+            catch (ComunicacionServicioExcepcion ex)
+            {
+                _logger.Error("Error de comunicacion al ejecutar notificacion WCF en sala.", ex);
             }
         }
 

@@ -1,6 +1,8 @@
+using PictionaryMusicalServidor.Servicios.Excepciones;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using log4net;
 using System;
+using System.Net.Mail;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
@@ -68,7 +70,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 return tarea.GetAwaiter().GetResult();
             }
-            catch (Exception ex)
+            catch (SmtpException ex)
+            {
+                _logger.Error("Error de SMTP al enviar notificacion de codigo.", ex);
+                return false;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al enviar notificacion de codigo.", ex);
+                return false;
+            }
+            catch (ServicioExternoExcepcion ex)
+            {
+                _logger.Error("Error de servicio externo al enviar notificacion de codigo.", ex);
+                return false;
+            }
+            catch (OperacionServicioExcepcion ex)
             {
                 _logger.Error("Error critico al enviar notificacion de codigo.", ex);
                 return false;
