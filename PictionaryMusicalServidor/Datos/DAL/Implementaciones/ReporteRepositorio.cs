@@ -1,4 +1,7 @@
 using System;
+using System.Data;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
@@ -34,7 +37,16 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 return _contexto.Reporte.Any(r => r.idReportante == idReportante
                     && r.idReportado == idReportado);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                    idReportante,
+                    idReportado,
+                    ex);
+                throw;
+            }
+            catch (DataException ex)
             {
                 _logger.ErrorFormat(
                     "Error al verificar existencia del reporte entre {0} y {1}.",
@@ -65,7 +77,17 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
                 return entidad;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error al guardar el reporte en la base de datos.", ex);
+                throw;
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error("Error al guardar el reporte en la base de datos.", ex);
+                throw;
+            }
+            catch (DataException ex)
             {
                 _logger.Error("Error al guardar el reporte en la base de datos.", ex);
                 throw;
@@ -89,7 +111,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Reporte.Count(r => r.idReportado == idReportado);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
+                throw;
+            }
+            catch (DataException ex)
             {
                 _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
                 throw;

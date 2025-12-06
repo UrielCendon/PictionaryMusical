@@ -68,7 +68,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 return tarea.GetAwaiter().GetResult();
             }
-            catch (Exception ex)
+            catch (AggregateException ex)
+            {
+                _logger.Error("Error critico al enviar notificacion de codigo.", ex);
+                return false;
+            }
+            catch (InvalidOperationException ex)
             {
                 _logger.Error("Error critico al enviar notificacion de codigo.", ex);
                 return false;

@@ -377,7 +377,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _solicitudesRecuperacion.TryRemove(token, out _);
                 return new ResultadoOperacionDTO { OperacionExitosa = true };
             }
-            catch (Exception ex)
+            catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+            {
+                _logger.Error("Error al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                _logger.Error("Error al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (System.Data.DataException ex)
             {
                 _logger.Error("Error al actualizar contrasena.", ex);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);

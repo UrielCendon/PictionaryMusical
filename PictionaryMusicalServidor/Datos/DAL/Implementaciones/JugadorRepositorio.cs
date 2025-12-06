@@ -1,4 +1,7 @@
 using System;
+using System.Data;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
@@ -36,7 +39,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Jugador.Any(j => j.Correo == correo);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.", 
+                    correo, ex);
+                throw;
+            }
+            catch (DataException ex)
             {
                 _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.", 
                     correo, ex);
@@ -67,7 +76,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return entidad;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
+            {
+                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.", 
+                    jugador.Correo, ex);
+                throw;
+            }
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.", 
+                    jugador.Correo, ex);
+                throw;
+            }
+            catch (DataException ex)
             {
                 _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.", 
                     jugador.Correo, ex);
