@@ -52,12 +52,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Idiomas
         /// </summary>
         public void EstablecerCultura(CultureInfo cultura)
         {
-            if (cultura == null)
-            {
-                return;
-            }
-
-            if (CulturaActual?.Name == cultura.Name)
+            if (cultura == null || CulturaActual?.Name == cultura.Name)
             {
                 return;
             }

@@ -77,6 +77,7 @@
     <Compile Include="ClienteServicios\Abstracciones\ISalasServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
     <Compile Include="ClienteServicios\Wcf\ChatServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Gestores\AmigosSolicitudesGestor.cs" />
     <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
@@ -203,7 +204,7 @@
     <Compile Include="Utilidades\Idiomas\LocalizacionContexto.cs" />
     <Compile Include="Utilidades\SonidoManejador.cs" />
     <Compile Include="Utilidades\ValidacionEntrada.cs" />
-    <Compile Include="ClienteServicios\Wcf\Ayudante\CodigoVerificacionServicioAyudante.cs" />
+    <Compile Include="ClienteServicios\Wcf\Ayudante\VerificacionCodigoServicioAyudante.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ErrorServicioAyudante.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\MensajeServidorAyudante.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\UsuarioMapeador.cs" />

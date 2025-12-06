@@ -33,16 +33,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             DTOs.ResultadoSolicitudRecuperacionDTO resultado =
                 await EjecutarConManejoDeErroresAsync(
-                () => CodigoVerificacionServicioAyudante.SolicitarCodigoRecuperacionAsync
+                () => VerificacionCodigoServicioAyudante.SolicitarCodigoRecuperacionAsync
                 (identificador),
                 Lang.errorTextoServidorSolicitudCambioContrasena
             ).ConfigureAwait(false);
-
-            if (resultado != null && resultado.CodigoEnviado)
-            {
-                _logger.InfoFormat("Código de recuperación solicitado para: {0}", 
-                    identificador);
-            }
 
             return resultado == null ? null : new DTOs.ResultadoSolicitudRecuperacionDTO
             {
@@ -68,15 +62,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             DTOs.ResultadoSolicitudCodigoDTO resultado = await EjecutarConManejoDeErroresAsync(
-                () => CodigoVerificacionServicioAyudante.ReenviarCodigoRecuperacionAsync
+                () => VerificacionCodigoServicioAyudante.ReenviarCodigoRecuperacionAsync
                 (tokenCodigo),
                 Lang.errorTextoServidorReenviarCodigo
             ).ConfigureAwait(false);
-
-            if (resultado != null && resultado.CodigoEnviado)
-            {
-                _logger.Info("Reenvío de código de recuperación solicitado.");
-            }
 
             return resultado == null ? null : new DTOs.ResultadoSolicitudCodigoDTO
             {
@@ -108,16 +97,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             DTOs.ResultadoOperacionDTO resultado = await EjecutarConManejoDeErroresAsync(
-                () => CodigoVerificacionServicioAyudante.ConfirmarCodigoRecuperacionAsync(
+                () => VerificacionCodigoServicioAyudante.ConfirmarCodigoRecuperacionAsync(
                     tokenCodigo,
                     codigoIngresado),
                 Lang.errorTextoServidorValidarCodigo
             ).ConfigureAwait(false);
-
-            if (resultado != null && resultado.OperacionExitosa)
-            {
-                _logger.Info("Código de recuperación confirmado.");
-            }
 
             return resultado == null ? null : new DTOs.ResultadoOperacionDTO
             {
@@ -183,8 +167,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (FaultException ex)
             {
-                _logger.WarnFormat("Error de servidor en flujo de cambio de contraseña: {0}",
-                    mensajeFallaPredeterminado, ex);
+                _logger.Warn("Error de servidor controlado en flujo de cambio de contraseña.", ex);
                 string mensaje = ErrorServicioAyudante.ObtenerMensaje(
                     ex,
                     mensajeFallaPredeterminado);

@@ -239,32 +239,48 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         /// <summary>
         /// Intenta traducir un mensaje del servidor usando el mapa o expresiones regulares.
         /// </summary>
+        /// <param name="mensaje">Mensaje recibido del servidor.</param>
+        /// <param name="mensajePredeterminado">Mensaje alternativo si no hay traduccion.</param>
+        /// <returns>Mensaje traducido o el predeterminado.</returns>
         public static string Localizar(string mensaje, string mensajePredeterminado)
         {
-            if (!string.IsNullOrWhiteSpace(mensaje))
+            if (string.IsNullOrWhiteSpace(mensaje))
             {
-                string mensajeNormalizado = mensaje.Trim();
-
-                if (TryLocalizarMensajeDinamico(mensajeNormalizado, out string mensajeTraducido))
-                {
-                    return mensajeTraducido;
-                }
-
-                if (MapaMensajes.TryGetValue(mensajeNormalizado, out Func<string> traductor))
-                {
-                    return traductor();
-                }
+                return ObtenerMensajeFallback(mensajePredeterminado);
             }
 
-            if (!string.IsNullOrWhiteSpace(mensajePredeterminado))
+            string mensajeNormalizado = mensaje.Trim();
+
+            if (TryLocalizarMensajeDinamico(mensajeNormalizado, out string mensajeTraducido))
             {
-                return mensajePredeterminado;
+                return mensajeTraducido;
             }
 
-            return LangResources.Lang.errorTextoErrorProcesarSolicitud;
+            if (TryLocalizarMensajeEstatico(mensajeNormalizado, out string mensajeEstatico))
+            {
+                return mensajeEstatico;
+            }
+
+            return ObtenerMensajeFallback(mensajePredeterminado);
         }
 
         private static bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)
+        {
+            if (IntentarCoincidenciaEsperaCodigo(mensaje, out traducido))
+            {
+                return true;
+            }
+
+            if (IntentarCoincidenciaRedSocial(mensaje, out traducido))
+            {
+                return true;
+            }
+
+            traducido = null;
+            return false;
+        }
+
+        private static bool IntentarCoincidenciaEsperaCodigo(string mensaje, out string traducido)
         {
             Match espera = EsperaCodigoRegex.Match(mensaje);
             if (espera.Success)
@@ -276,6 +292,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 return true;
             }
 
+            traducido = null;
+            return false;
+        }
+
+        private static bool IntentarCoincidenciaRedSocial(string mensaje, out string traducido)
+        {
             Match identificador = IdentificadorRedSocialRegex.Match(mensaje);
             if (identificador.Success)
             {
@@ -289,6 +311,28 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 
             traducido = null;
             return false;
+        }
+
+        private static bool TryLocalizarMensajeEstatico(string mensaje, out string traducido)
+        {
+            if (MapaMensajes.TryGetValue(mensaje, out Func<string> traductor))
+            {
+                traducido = traductor();
+                return true;
+            }
+
+            traducido = null;
+            return false;
+        }
+
+        private static string ObtenerMensajeFallback(string mensajePredeterminado)
+        {
+            if (!string.IsNullOrWhiteSpace(mensajePredeterminado))
+            {
+                return mensajePredeterminado;
+            }
+
+            return LangResources.Lang.errorTextoErrorProcesarSolicitud;
         }
     }
 }

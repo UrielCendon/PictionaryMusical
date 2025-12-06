@@ -112,7 +112,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return ChatDecision.IntentoFallido;
             }
 
-            await RegistrarAciertoAsync().ConfigureAwait(false);
+            await CalcularYRegistrarPuntosAsync().ConfigureAwait(false);
             return ChatDecision.AciertoRegistrado;
         }
 
@@ -129,17 +129,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        private async Task RegistrarAciertoAsync()
+        private async Task CalcularYRegistrarPuntosAsync()
         {
             string nombreJugador = _chatAciertosServicio.ObtenerNombreJugadorActual();
-            int puntosAdivinador = TiempoRestante;
-            int puntosDibujante = (int)(puntosAdivinador * PorcentajePuntosDibujante);
+            (int puntosAdivinador, int puntosDibujante) = CalcularPuntos(TiempoRestante);
 
             await _chatAciertosServicio.RegistrarAciertoAsync(
                 nombreJugador,
                 puntosAdivinador,
                 puntosDibujante)
                 .ConfigureAwait(false);
+        }
+
+        private static (int Adivinador, int Dibujante) CalcularPuntos(int tiempoRestante)
+        {
+            int puntosAdivinador = tiempoRestante;
+            int puntosDibujante = (int)(puntosAdivinador * PorcentajePuntosDibujante);
+            return (puntosAdivinador, puntosDibujante);
         }
     }
 }

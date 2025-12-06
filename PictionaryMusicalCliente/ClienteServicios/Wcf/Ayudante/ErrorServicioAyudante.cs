@@ -12,27 +12,39 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         /// <summary>
         /// Obtiene un mensaje localizado a partir de una excepcion FaultException.
         /// </summary>
+        /// <param name="excepcion">La excepcion capturada.</param>
+        /// <param name="mensajePredeterminado">Mensaje a retornar si no se encuentra uno 
+        /// especifico.</param>
+        /// <returns>Mensaje localizado listo para mostrar.</returns>
         public static string ObtenerMensaje(
             FaultException excepcion,
             string mensajePredeterminado)
         {
             string mensajeDetalle = ObtenerMensajeDetalle(excepcion);
+            string mensajeExcepcion = excepcion?.Message;
 
-            if (!string.IsNullOrWhiteSpace(mensajeDetalle))
+            return DeterminarMensajeFinal(
+                mensajeDetalle,
+                mensajeExcepcion,
+                mensajePredeterminado);
+        }
+
+        private static string DeterminarMensajeFinal(
+            string detalle,
+            string mensajeBase,
+            string predeterminado)
+        {
+            if (!string.IsNullOrWhiteSpace(detalle))
             {
-                return MensajeServidorAyudante.Localizar(
-                    mensajeDetalle,
-                    mensajePredeterminado);
+                return MensajeServidorAyudante.Localizar(detalle, predeterminado);
             }
 
-            if (!string.IsNullOrWhiteSpace(excepcion?.Message))
+            if (!string.IsNullOrWhiteSpace(mensajeBase))
             {
-                return MensajeServidorAyudante.Localizar(
-                    excepcion.Message,
-                    mensajePredeterminado);
+                return MensajeServidorAyudante.Localizar(mensajeBase, predeterminado);
             }
 
-            return MensajeServidorAyudante.Localizar(null, mensajePredeterminado);
+            return MensajeServidorAyudante.Localizar(null, predeterminado);
         }
 
         private static string ObtenerMensajeDetalle(FaultException excepcion)
@@ -44,27 +56,36 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 
             Type tipoExcepcion = excepcion.GetType();
 
-            if (!tipoExcepcion.GetTypeInfo().IsGenericType)
+            if (!EsFaultExceptionGenerica(tipoExcepcion))
             {
                 return null;
             }
 
-            if (tipoExcepcion.GetGenericTypeDefinition() != typeof(FaultException<>))
-            {
-                return null;
-            }
+            object detalle = ObtenerObjetoDetalle(excepcion, tipoExcepcion);
+            return ObtenerTextoMensajeDeDetalle(detalle);
+        }
 
-            PropertyInfo detallePropiedad = tipoExcepcion.GetRuntimeProperty("Detail");
-            object detalle = detallePropiedad?.GetValue(excepcion);
+        private static bool EsFaultExceptionGenerica(Type tipo)
+        {
+            return tipo.GetTypeInfo().IsGenericType &&
+                   tipo.GetGenericTypeDefinition() == typeof(FaultException<>);
+        }
 
+        private static object ObtenerObjetoDetalle(FaultException excepcion, Type tipo)
+        {
+            PropertyInfo detallePropiedad = tipo.GetRuntimeProperty("Detail");
+            return detallePropiedad?.GetValue(excepcion);
+        }
+
+        private static string ObtenerTextoMensajeDeDetalle(object detalle)
+        {
             if (detalle == null)
             {
                 return null;
             }
 
             PropertyInfo mensajePropiedad = detalle.GetType().GetRuntimeProperty("Mensaje");
-            object mensaje = mensajePropiedad?.GetValue(detalle);
-            return mensaje as string;
+            return mensajePropiedad?.GetValue(detalle) as string;
         }
     }
 }

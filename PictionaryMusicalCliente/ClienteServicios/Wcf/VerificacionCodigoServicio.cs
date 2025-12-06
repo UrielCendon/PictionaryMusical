@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             DTOs.ResultadoSolicitudCodigoDTO resultado = await EjecutarOperacionAsync(
-                () => CodigoVerificacionServicioAyudante.SolicitarCodigoRegistroAsync(solicitud),
+                () => VerificacionCodigoServicioAyudante.SolicitarCodigoRegistroAsync(solicitud),
                 Lang.errorTextoServidorSolicitudCodigo).ConfigureAwait(false);
 
             if (resultado == null)
@@ -66,7 +66,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             DTOs.ResultadoRegistroCuentaDTO resultado = await EjecutarOperacionAsync(
-                () => CodigoVerificacionServicioAyudante.ConfirmarCodigoRegistroAsync(
+                () => VerificacionCodigoServicioAyudante.ConfirmarCodigoRegistroAsync(
                     tokenCodigo,
                     codigoIngresado),
                 Lang.errorTextoServidorValidarCodigo).ConfigureAwait(false);
@@ -105,7 +105,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             DTOs.ResultadoSolicitudCodigoDTO resultado = await EjecutarOperacionAsync(
-                () => CodigoVerificacionServicioAyudante.ReenviarCodigoRegistroAsync(tokenCodigo),
+                () => VerificacionCodigoServicioAyudante.ReenviarCodigoRegistroAsync(tokenCodigo),
                 Lang.errorTextoServidorReenviarCodigo).ConfigureAwait(false);
 
             if (resultado == null)

@@ -7,7 +7,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
     /// </summary>
     public class InvitacionCorreoResultado
     {
+        /// <summary>
+        /// Indica si la operación de invitación fue exitosa.
+        /// </summary>
         public bool Exitoso { get; private set; }
+
+        /// <summary>
+        /// Obtiene el mensaje descriptivo del resultado de la operación.
+        /// </summary>
         public string Mensaje { get; private set; }
 
         private InvitacionCorreoResultado(bool exitoso, string mensaje)
@@ -16,11 +23,25 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
             Mensaje = mensaje;
         }
 
-        public static InvitacionCorreoResultado Exito(string mensaje) =>
-            new InvitacionCorreoResultado(true, mensaje);
+        /// <summary>
+        /// Crea una instancia de resultado exitoso.
+        /// </summary>
+        /// <param name="mensaje">Mensaje de éxito asociado.</param>
+        /// <returns>Una nueva instancia indicando éxito.</returns>
+        public static InvitacionCorreoResultado Exito(string mensaje)
+        {
+            return new InvitacionCorreoResultado(true, mensaje);
+        }
 
-        public static InvitacionCorreoResultado Fallo(string mensaje) =>
-            new InvitacionCorreoResultado(false, mensaje);
+        /// <summary>
+        /// Crea una instancia de resultado fallido.
+        /// </summary>
+        /// <param name="mensaje">Mensaje de error asociado.</param>
+        /// <returns>Una nueva instancia indicando fallo.</returns>
+        public static InvitacionCorreoResultado Fallo(string mensaje)
+        {
+            return new InvitacionCorreoResultado(false, mensaje);
+        }
     }
 
     /// <summary>
@@ -28,8 +49,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
     /// </summary>
     public class InvitacionAmigosResultado
     {
+        /// <summary>
+        /// Indica si la preparación de la invitación fue exitosa.
+        /// </summary>
         public bool Exitoso { get; private set; }
+
+        /// <summary>
+        /// Obtiene el mensaje de error en caso de fallo, o vacío en caso de éxito.
+        /// </summary>
         public string Mensaje { get; private set; }
+
+        /// <summary>
+        /// Obtiene la vista modelo preparada para la invitación de amigos.
+        /// </summary>
         public InvitarAmigosVistaModelo VistaModelo { get; private set; }
 
         private InvitacionAmigosResultado(
@@ -42,10 +74,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
             VistaModelo = vistaModelo;
         }
 
-        public static InvitacionAmigosResultado Exito(InvitarAmigosVistaModelo vistaModelo) =>
-            new InvitacionAmigosResultado(true, string.Empty, vistaModelo);
+        /// <summary>
+        /// Crea una instancia de resultado exitoso con el ViewModel preparado.
+        /// </summary>
+        /// <param name="vistaModelo">ViewModel de invitación de amigos inicializado.</param>
+        /// <returns>Una nueva instancia indicando éxito.</returns>
+        public static InvitacionAmigosResultado Exito(InvitarAmigosVistaModelo vistaModelo)
+        {
+            return new InvitacionAmigosResultado(true, string.Empty, vistaModelo);
+        }
 
-        public static InvitacionAmigosResultado Fallo(string mensaje) =>
-            new InvitacionAmigosResultado(false, mensaje, null);
+        /// <summary>
+        /// Crea una instancia de resultado fallido.
+        /// </summary>
+        /// <param name="mensaje">Mensaje de error asociado.</param>
+        /// <returns>Una nueva instancia indicando fallo y sin ViewModel.</returns>
+        public static InvitacionAmigosResultado Fallo(string mensaje)
+        {
+            return new InvitacionAmigosResultado(false, mensaje, null);
+        }
     }
 }

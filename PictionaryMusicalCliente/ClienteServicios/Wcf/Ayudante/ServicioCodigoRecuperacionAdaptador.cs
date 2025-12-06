@@ -47,7 +47,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         public Task<DTOs.ResultadoSolicitudCodigoDTO> ReenviarCodigoRegistroAsync
             (string tokenCodigo)
         {
-            _logger.Info("Redirigiendo solicitud de reenvío de código (Recuperación).");
             return _cambioContrasenaServicio.ReenviarCodigoRecuperacionAsync(tokenCodigo);
         }
 
@@ -58,8 +57,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             string tokenCodigo,
             string codigoIngresado)
         {
-            _logger.Info("Redirigiendo confirmación de código (Recuperación).");
-
             DTOs.ResultadoOperacionDTO resultado =
                 await _cambioContrasenaServicio.ConfirmarCodigoRecuperacionAsync(
                     tokenCodigo,
