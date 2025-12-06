@@ -75,6 +75,7 @@
     <Compile Include="ClienteServicios\Abstracciones\IInvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IReportesServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISalasServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Administrador\SolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
     <Compile Include="ClienteServicios\Wcf\ChatServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />

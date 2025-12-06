@@ -1,6 +1,7 @@
 ﻿using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador;
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
@@ -21,8 +22,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private const string NombreEndpoint = "NetTcpBinding_IAmigosManejador";
 
         private readonly SemaphoreSlim _semaforo = new(1, 1);
-        private readonly object _solicitudesBloqueo = new();
-        private readonly List<DTOs.SolicitudAmistadDTO> _solicitudes = new();
+        private readonly SolicitudesAmistadAdministrador _administradorSolicitudes = new();
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
         private string _usuarioSuscrito;
@@ -41,12 +41,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             get
             {
-                lock (_solicitudesBloqueo)
-                {
-                    return _solicitudes.Count == 0
-                        ? Array.Empty<DTOs.SolicitudAmistadDTO>()
-                        : _solicitudes.ToArray();
-                }
+                return _administradorSolicitudes.ObtenerSolicitudes();
             }
         }
 
@@ -106,9 +101,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarSolicitudActualizada(DTOs.SolicitudAmistadDTO solicitud)
         {
-            if (solicitud == null ||
-                string.IsNullOrWhiteSpace(solicitud.UsuarioEmisor) ||
-                string.IsNullOrWhiteSpace(solicitud.UsuarioReceptor))
+            if (!EsSolicitudValida(solicitud))
             {
                 return;
             }
@@ -120,12 +113,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return;
             }
 
-            bool modificada = ActualizarSolicitudInterna(solicitud, usuarioActual);
+            bool modificada = _administradorSolicitudes.ActualizarSolicitud(
+                solicitud,
+                usuarioActual);
 
-            if (modificada)
-            {
-                NotificarSolicitudesActualizadas();
-            }
+            NotificarCambiosSiCorresponde(modificada);
         }
 
         /// <summary>
@@ -133,7 +125,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarAmistadEliminada(DTOs.SolicitudAmistadDTO solicitud)
         {
-            if (solicitud == null)
+            if (!EsSolicitudValida(solicitud))
             {
                 return;
             }
@@ -147,25 +139,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return;
             }
 
-            bool modificada = false;
+            RegistrarEventoAmistadEliminada(solicitud);
 
-            lock (_solicitudesBloqueo)
-            {
-                int indice = _solicitudes.FindIndex(s =>
-                    s.UsuarioEmisor == solicitud.UsuarioEmisor &&
-                    s.UsuarioReceptor == usuarioActual);
+            bool modificada = _administradorSolicitudes.EliminaAmistadParaUsuario(
+                solicitud,
+                usuarioActual);
 
-                if (indice >= 0)
-                {
-                    _solicitudes.RemoveAt(indice);
-                    modificada = true;
-                }
-            }
-
-            if (modificada)
-            {
-                NotificarSolicitudesActualizadas();
-            }
+            NotificarCambiosSiCorresponde(modificada);
         }
 
         /// <summary>
@@ -181,7 +161,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                     _cliente = null;
                     _usuarioSuscrito = null;
-                    LimpiarSolicitudes();
+                    _administradorSolicitudes.LimpiarSolicitudes();
 
                     _semaforo?.Dispose();
                 }
@@ -264,42 +244,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private bool ActualizarSolicitudInterna(
-            DTOs.SolicitudAmistadDTO solicitud,
-            string usuarioActual)
-        {
-            lock (_solicitudesBloqueo)
-            {
-                int indice = _solicitudes.FindIndex(s =>
-                    s.UsuarioEmisor == solicitud.UsuarioEmisor &&
-                    s.UsuarioReceptor == usuarioActual);
-
-                if (solicitud.SolicitudAceptada)
-                {
-                    if (indice >= 0)
-                    {
-                        _solicitudes.RemoveAt(indice);
-                        return true;
-                    }
-                }
-                else if (string.Equals( solicitud.UsuarioReceptor, usuarioActual,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    if (indice >= 0)
-                    {
-                        _solicitudes[indice] = solicitud;
-                    }
-                    else
-                    {
-                        _solicitudes.Add(solicitud);
-                    }
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private async Task ManejarExcepcionOperacionAsync(
             Exception ex,
             ICommunicationObject cliente,
@@ -337,7 +281,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             if (cliente == null)
             {
-                LimpiarSolicitudes();
+                _administradorSolicitudes.LimpiarSolicitudes();
                 NotificarSolicitudesActualizadas();
                 return;
             }
@@ -386,7 +330,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                LimpiarSolicitudes();
+                _administradorSolicitudes.LimpiarSolicitudes();
                 NotificarSolicitudesActualizadas();
             }
         }
@@ -494,7 +438,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task SuscribirNuevoClienteAsync(string nombreUsuario)
         {
             await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
-            LimpiarSolicitudes();
+            _administradorSolicitudes.LimpiarSolicitudes();
 
             var cliente = CrearCliente();
             _usuarioSuscrito = nombreUsuario;
@@ -504,8 +448,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
                 _cliente = cliente;
                 NotificarSolicitudesActualizadas();
-                _logger.InfoFormat("Suscripción a servicio de amigos exitosa para: {0}",
-                    nombreUsuario);
             }
             catch (FaultException ex)
             {
@@ -641,22 +583,30 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private void LimpiarSolicitudes()
+        private void NotificarSolicitudesActualizadas()
         {
-            lock (_solicitudesBloqueo)
+            var instantaneo = _administradorSolicitudes.ObtenerSolicitudes();
+            SolicitudesActualizadas?.Invoke(this, instantaneo);
+        }
+
+        private static bool EsSolicitudValida(DTOs.SolicitudAmistadDTO solicitud)
+        {
+            return solicitud != null &&
+                !string.IsNullOrWhiteSpace(solicitud.UsuarioEmisor) &&
+                !string.IsNullOrWhiteSpace(solicitud.UsuarioReceptor);
+        }
+
+        private void NotificarCambiosSiCorresponde(bool modificada)
+        {
+            if (modificada)
             {
-                _solicitudes.Clear();
+                NotificarSolicitudesActualizadas();
             }
         }
 
-        private void NotificarSolicitudesActualizadas()
+        private void RegistrarEventoAmistadEliminada(DTOs.SolicitudAmistadDTO solicitud)
         {
-            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> instantaneo;
-            lock (_solicitudesBloqueo)
-            {
-                instantaneo = _solicitudes.ToArray();
-            }
-            SolicitudesActualizadas?.Invoke(this, instantaneo);
+            _logger.Info("Callback recibido: Amistad eliminada notificada.");
         }
     }
 }
