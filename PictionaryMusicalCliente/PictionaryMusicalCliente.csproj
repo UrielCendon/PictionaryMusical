@@ -152,8 +152,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Modelo\Catalogos\ICatalogos.cs" />
+    <Compile Include="Modelo\IUsuarioAutenticado.cs" />
     <Compile Include="Modelo\JugadorElemento.cs" />
     <Compile Include="Modelo\ResultadoReporteJugador.cs" />
+    <Compile Include="Utilidades\Abstracciones\IRecursosManejador.cs" />
+    <Compile Include="Utilidades\Abstracciones\INombreInvitadoGenerador.cs" />
+    <Compile Include="Utilidades\Abstracciones\IValidadorEntrada.cs" />
     <Compile Include="Utilidades\CancionManejador.cs" />
     <Compile Include="Utilidades\MusicaManejador.cs" />
     <Compile Include="Utilidades\EntradaNumerica.cs" />
@@ -202,13 +207,12 @@
     <Compile Include="Modelo\OpcionEntero.cs" />
     <Compile Include="Modelo\OpcionTexto.cs" />
     <Compile Include="Modelo\SolicitudAmistadEntrada.cs" />
-    <Compile Include="Sesiones\SesionUsuarioActual.cs" />
     <Compile Include="Modelo\UsuarioAutenticado.cs" />
     <Compile Include="ClienteServicios\Wcf\AvisoServicio.cs" />
     <Compile Include="Utilidades\ControlVisual.cs" />
     <Compile Include="Utilidades\Idiomas\LocalizacionContexto.cs" />
     <Compile Include="Utilidades\SonidoManejador.cs" />
-    <Compile Include="Utilidades\ValidacionEntrada.cs" />
+    <Compile Include="Utilidades\ValidadorEntrada.cs" />
     <Compile Include="ClienteServicios\Wcf\ManejadorErrorServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\LocalizadorServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\UsuarioMapeador.cs" />

@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Ajustes;
 
 namespace PictionaryMusicalCliente
@@ -16,7 +16,7 @@ namespace PictionaryMusicalCliente
         /// </summary>
         /// <param name="servicioCancion">Servicio para controlar el volumen de la música del 
         /// juego.</param>
-        public AjustesPartida(CancionManejador servicioCancion)
+        public AjustesPartida(ICancionManejador servicioCancion)
         {
             InitializeComponent();
 

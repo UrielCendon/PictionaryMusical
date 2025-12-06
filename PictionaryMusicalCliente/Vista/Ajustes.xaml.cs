@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using PictionaryMusicalCliente.ClienteServicios;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Ajustes;
 
 namespace PictionaryMusicalCliente
@@ -16,7 +16,7 @@ namespace PictionaryMusicalCliente
         /// necesarias.
         /// </summary>
         /// <param name="servicioMusica">El servicio encargado del control de audio global.</param>
-        public Ajustes(MusicaManejador servicioMusica)
+        public Ajustes(IMusicaManejador servicioMusica)
         {
             InitializeComponent();
 

@@ -1,6 +1,6 @@
+using System;
 using System.Windows;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal;
 
 namespace PictionaryMusicalCliente
@@ -11,13 +11,18 @@ namespace PictionaryMusicalCliente
     public partial class Clasificacion : Window
     {
         /// <summary>
-        /// Inicializa la ventana de clasificacion y su contexto de datos.
+        /// Inicializa la ventana de clasificacion inyectando el servicio requerido.
         /// </summary>
-        public Clasificacion()
+        /// <param name="clasificacionServicio">Servicio para obtener los datos del ranking.
+        /// </param>
+        public Clasificacion(IClasificacionServicio clasificacionServicio)
         {
-            InitializeComponent();
+            if (clasificacionServicio == null)
+            {
+                throw new ArgumentNullException(nameof(clasificacionServicio));
+            }
 
-            IClasificacionServicio clasificacionServicio = new ClasificacionServicio();
+            InitializeComponent();
 
             var vistaModelo = new ClasificacionVistaModelo(clasificacionServicio)
             {
