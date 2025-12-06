@@ -1,9 +1,12 @@
 using Datos.Modelo;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -53,11 +56,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
                     StringComparison.Ordinal);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.ErrorFormat("Error al verificar existencia del usuario '{0}'.",
+                _logger.ErrorFormat("Error de base de datos al verificar existencia del usuario '{0}'.",
                     nombreUsuario, ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al verificar existencia del usuario '{nombreUsuario}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error de datos al verificar existencia del usuario '{0}'.",
+                    nombreUsuario, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al verificar existencia del usuario '{nombreUsuario}'.", ex);
             }
         }
 
@@ -84,12 +95,21 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return entidad;
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al guardar el nuevo usuario '{0}' en la base de datos.",
+                    "Error de base de datos al guardar el nuevo usuario '{0}'.",
                     usuario.Nombre_Usuario, ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al guardar el nuevo usuario '{usuario.Nombre_Usuario}' en la base de datos.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al guardar el nuevo usuario '{0}'.",
+                    usuario.Nombre_Usuario, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al guardar el nuevo usuario '{usuario.Nombre_Usuario}' en la base de datos.", ex);
             }
         }
 
@@ -130,11 +150,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario, ex);
-                throw;
+                    "Error de base de datos al obtener el usuario '{0}'.", nombreUsuario, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener el usuario '{nombreUsuario}' de la base de datos.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al obtener el usuario '{0}'.", nombreUsuario, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener el usuario '{nombreUsuario}' de la base de datos.", ex);
             }
         }
 
@@ -164,11 +192,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 return usuariosCandidatos.FirstOrDefault(u =>
                     string.Equals(u.Jugador?.Correo, correo, StringComparison.Ordinal));
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al obtener usuario por correo '{0}'.", correo, ex);
-                throw;
+                    "Error de base de datos al obtener usuario por correo '{0}'.", correo, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario por correo '{correo}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al obtener usuario por correo '{0}'.", correo, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario por correo '{correo}'.", ex);
             }
         }
 
@@ -196,13 +232,23 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Include(u => u.Jugador)
                     .FirstOrDefaultAsync(u => u.Jugador.Correo == correo);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error asincrono al obtener usuario por correo '{0}'.",
+                    "Error de base de datos asincrono al obtener usuario por correo '{0}'.",
                     correo,
                     ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error asincrono al obtener usuario por correo '{correo}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos asincrono al obtener usuario por correo '{0}'.",
+                    correo,
+                    ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error asincrono al obtener usuario por correo '{correo}'.", ex);
             }
         }
 
@@ -230,13 +276,23 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Include(u => u.Jugador.RedSocial)
                     .FirstOrDefault(u => u.idUsuario == idUsuario);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al obtener usuario con redes sociales ID: {0}",
+                    "Error de base de datos al obtener usuario con redes sociales ID: {0}",
                     idUsuario,
                     ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario con redes sociales ID: {idUsuario}", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al obtener usuario con redes sociales ID: {0}",
+                    idUsuario,
+                    ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario con redes sociales ID: {idUsuario}", ex);
             }
         }
 
@@ -258,11 +314,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     _contexto.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.ErrorFormat("Error al actualizar contrasena del usuario ID {0}.",
+                _logger.ErrorFormat("Error de base de datos al actualizar contrasena del usuario ID {0}.",
                     usuarioId, ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al actualizar contrasena del usuario ID {usuarioId}.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error de datos al actualizar contrasena del usuario ID {0}.",
+                    usuarioId, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al actualizar contrasena del usuario ID {usuarioId}.", ex);
             }
         }
 
@@ -289,13 +353,23 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Include(u => u.Jugador)
                     .FirstOrDefault(u => u.Nombre_Usuario == nombreNormalizado);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al obtener usuario con jugador por nombre '{0}'.",
+                    "Error de base de datos al obtener usuario con jugador por nombre '{0}'.",
                     nombreUsuario,
                     ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario con jugador por nombre '{nombreUsuario}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al obtener usuario con jugador por nombre '{0}'.",
+                    nombreUsuario,
+                    ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al obtener usuario con jugador por nombre '{nombreUsuario}'.", ex);
             }
         }
     }

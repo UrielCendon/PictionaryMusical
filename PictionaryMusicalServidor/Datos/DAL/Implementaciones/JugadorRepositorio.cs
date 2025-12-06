@@ -1,7 +1,10 @@
 using System;
+using System.Data;
+using System.Data.Entity.Core;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
@@ -36,11 +39,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Jugador.Any(j => j.Correo == correo);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.", 
+                _logger.ErrorFormat("Error de base de datos al verificar existencia del correo '{0}'.", 
                     correo, ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al verificar existencia del correo '{correo}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error de datos al verificar existencia del correo '{0}'.", 
+                    correo, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al verificar existencia del correo '{correo}'.", ex);
             }
         }
 
@@ -67,11 +78,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return entidad;
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.", 
+                _logger.ErrorFormat("Error de base de datos al guardar el jugador con correo '{0}'.", 
                     jugador.Correo, ex);
-                throw;
+                throw new AccesoDatosExcepcion(
+                    $"Error al guardar el jugador con correo '{jugador.Correo}'.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error de datos al guardar el jugador con correo '{0}'.", 
+                    jugador.Correo, ex);
+                throw new AccesoDatosExcepcion(
+                    $"Error al guardar el jugador con correo '{jugador.Correo}'.", ex);
             }
         }
     }
