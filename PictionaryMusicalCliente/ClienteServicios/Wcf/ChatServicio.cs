@@ -97,14 +97,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             bool esPartidaIniciada,
             bool esDibujante)
         {
-            if (!esPartidaIniciada)
-            {
-                return ChatDecision.CanalLibre;
-            }
+            ChatDecision? decisionPorEstado = ObtenerDecisionPorEstado(
+                esPartidaIniciada,
+                esDibujante);
 
-            if (esDibujante)
+            if (decisionPorEstado.HasValue)
             {
-                return ChatDecision.MensajeBloqueado;
+                return decisionPorEstado.Value;
             }
 
             if (!EsRespuestaCorrecta(mensaje))
@@ -112,7 +111,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return ChatDecision.IntentoFallido;
             }
 
-            await CalcularYRegistrarPuntosAsync().ConfigureAwait(false);
+            await RegistrarAciertoConPuntajeAsync().ConfigureAwait(false);
             return ChatDecision.AciertoRegistrado;
         }
 
@@ -129,7 +128,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        private async Task CalcularYRegistrarPuntosAsync()
+        private async Task RegistrarAciertoConPuntajeAsync()
         {
             string nombreJugador = _chatAciertosServicio.ObtenerNombreJugadorActual();
             (int puntosAdivinador, int puntosDibujante) = CalcularPuntos(TiempoRestante);
@@ -139,6 +138,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 puntosAdivinador,
                 puntosDibujante)
                 .ConfigureAwait(false);
+        }
+
+        private static ChatDecision? ObtenerDecisionPorEstado(
+            bool esPartidaIniciada,
+            bool esDibujante)
+        {
+            if (!esPartidaIniciada)
+            {
+                return ChatDecision.CanalLibre;
+            }
+
+            if (esDibujante)
+            {
+                return ChatDecision.MensajeBloqueado;
+            }
+
+            return null;
         }
 
         private static (int Adivinador, int Dibujante) CalcularPuntos(int tiempoRestante)
