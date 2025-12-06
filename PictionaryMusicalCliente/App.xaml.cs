@@ -7,6 +7,7 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties;
+using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Utilidades.Idiomas;
 using PictionaryMusicalCliente.Vista;
@@ -17,57 +18,49 @@ using System.Windows;
 namespace PictionaryMusicalCliente
 {
     /// <summary>
-    /// Lógica de interacción para App.xaml
-    /// Actúa como la Raíz de Composición (Composition Root) de la aplicación.
+    /// Logica de interaccion para App.xaml. Raiz de composicion de la aplicacion.
     /// </summary>
     public partial class App : Application
     {
         private IUsuarioAutenticado _usuarioGlobal;
 
+        /// <inheritdoc />
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             log4net.Config.XmlConfigurator.Configure();
 
-            IWcfClienteFabrica fabricaClientes = new WcfClienteFabrica();
+            IWcfClienteFabrica fabricaWcf = new WcfClienteFabrica();
             IWcfClienteEjecutor ejecutorWcf = new WcfClienteEjecutor();
+            ISonidoManejador sonidoManejador = new SonidoManejador();
+            IMusicaManejador musicaManejador = new MusicaManejador();
+            IValidadorEntrada validador = new ValidadorEntrada();
 
             _usuarioGlobal = new UsuarioAutenticado();
             ICatalogoAvatares catalogoAvatares = new CatalogoAvataresLocales();
             ICatalogoImagenesPerfil catalogoImagenes = new CatalogoImagenesPerfilLocales();
 
-            ILocalizadorServicio servicioTraductor = new LocalizadorServicio();
-            ILocalizacionServicio servicioIdioma = new LocalizacionServicio();
-            IManejadorErrorServicio manejadorError = new ManejadorErrorServicio(servicioTraductor);
+            ILocalizadorServicio localizador = new LocalizadorServicio(); 
+            ILocalizacionServicio servicioIdioma = new LocalizacionServicio(); 
+            IManejadorErrorServicio manejadorError = new ManejadorErrorServicio(localizador);
             IUsuarioMapeador usuarioMapeador = new UsuarioMapeador(_usuarioGlobal);
             IAvisoServicio avisoServicio = new AvisoServicio();
-            IMusicaManejador musicaManejador = new MusicaManejador();
 
-            string codigoIdioma = Settings.Default.idiomaCodigo;
             try
             {
-                servicioIdioma.EstablecerIdioma(codigoIdioma);
+                servicioIdioma.EstablecerIdioma(Settings.Default.idiomaCodigo);
             }
             catch (CultureNotFoundException)
             {
                 servicioIdioma.EstablecerCultura(CultureInfo.CurrentUICulture);
             }
-
-            var contextoLocalizacion = new LocalizacionContexto(servicioIdioma);
-            this.Resources.Add("Localizacion", contextoLocalizacion);
+            this.Resources.Add("Localizacion", new LocalizacionContexto(servicioIdioma));
 
             IInicioSesionServicio inicioSesionServicio = new InicioSesionServicio(
-                ejecutorWcf,
-                fabricaClientes,
-                manejadorError,
-                usuarioMapeador,
-                servicioTraductor);
+                ejecutorWcf, fabricaWcf, manejadorError, usuarioMapeador, localizador);
 
             ICambioContrasenaServicio cambioPassServicio = new CambioContrasenaServicio(
-                ejecutorWcf,
-                fabricaClientes,
-                manejadorError,
-                servicioTraductor);
+                ejecutorWcf, fabricaWcf, manejadorError, localizador);
 
             IVerificacionCodigoDialogoServicio verifCodigoDialogo =
                 new VerificacionCodigoDialogoServicio();
@@ -76,17 +69,25 @@ namespace PictionaryMusicalCliente
                 new RecuperacionCuentaDialogoServicio(verifCodigoDialogo, avisoServicio);
 
             Func<ISalasServicio> fabricaSalas = () =>
-                new SalasServicio(fabricaClientes, manejadorError);
+                new SalasServicio(fabricaWcf, manejadorError);
 
             var ventanaInicio = new InicioSesion(
                 musicaManejador,
                 inicioSesionServicio,
                 cambioPassServicio,
                 recupCuentaDialogo,
-                servicioTraductor,
+                servicioIdioma,
                 fabricaSalas,
+                fabricaWcf,
+                ejecutorWcf,
+                manejadorError,
+                localizador,
+                avisoServicio,
                 catalogoAvatares,
-                avisoServicio
+                sonidoManejador,
+                validador,
+                _usuarioGlobal,
+                catalogoImagenes
             );
 
             ventanaInicio.Show();

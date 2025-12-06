@@ -1,274 +1,164 @@
-﻿using PictionaryMusicalCliente.Properties.Langs;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
-using log4net;
-using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Implementacion
 {
     /// <summary>
-    /// Administra la conexion Duplex para mantener actualizada la lista de amigos.
+    /// Encapsula la logica de invitaciones para reducir la carga del ViewModel principal.
     /// </summary>
-    public sealed class ListaAmigosServicio : IListaAmigosServicio,
-        PictionaryServidorServicioListaAmigos.IListaAmigosManejadorCallback
+    public class InvitacionSalaServicio : IInvitacionSalaServicio
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(ListaAmigosServicio));
-        private const string Endpoint = "NetTcpBinding_IListaAmigosManejador";
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(InvitacionSalaServicio));
 
-        private readonly SemaphoreSlim _semaforo = new(1, 1);
-        private readonly object _amigosBloqueo = new();
-        private readonly List<DTOs.AmigoDTO> _amigos = new();
-        private readonly IManejadorErrorServicio _manejadorError;
-
-        private PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient _cliente;
-        private string _usuarioSuscrito;
+        private readonly IInvitacionesServicio _invitacionesServicio;
+        private readonly IListaAmigosServicio _listaAmigosServicio;
+        private readonly IPerfilServicio _perfilServicio;
+        private readonly IValidadorEntrada _validador;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly ILocalizadorServicio _localizador;
+        private bool _disposed;
 
         /// <summary>
-        /// Inicializa el servicio de lista de amigos.
+        /// Inicializa el servicio facade de invitaciones de sala.
         /// </summary>
-        public ListaAmigosServicio(IManejadorErrorServicio manejadorError)
+        public InvitacionSalaServicio(
+            IInvitacionesServicio invitacionesServicio,
+            IListaAmigosServicio listaAmigosServicio,
+            IPerfilServicio perfilServicio,
+            IValidadorEntrada validador,
+            ISonidoManejador sonidoManejador,
+            ILocalizadorServicio localizador)
         {
-            _manejadorError = manejadorError ??
-                throw new ArgumentNullException(nameof(manejadorError));
-        }
-
-        /// <inheritdoc />
-        public event EventHandler<IReadOnlyList<DTOs.AmigoDTO>> ListaActualizada;
-
-        /// <inheritdoc />
-        public IReadOnlyList<DTOs.AmigoDTO> ListaActual
-        {
-            get
-            {
-                lock (_amigosBloqueo)
-                {
-                    return _amigos.Count == 0
-                        ? Array.Empty<DTOs.AmigoDTO>()
-                        : _amigos.ToArray();
-                }
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task SuscribirAsync(string nombreUsuario)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-                throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
-
-            await _semaforo.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                if (EsSuscripcionActiva(nombreUsuario)) return;
-
-                await CancelarSuscripcionInternaAsync();
-
-                var cliente = CrearCliente();
-                await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
-
-                _cliente = cliente;
-                _usuarioSuscrito = nombreUsuario;
-                _logger.InfoFormat("Usuario '{0}' suscrito a amigos.", nombreUsuario);
-            }
-            catch (Exception ex)
-            {
-                ManejarErrorSuscripcion(ex);
-            }
-            finally
-            {
-                _semaforo.Release();
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task CancelarSuscripcionAsync(string nombreUsuario)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario)) return;
-
-            await _semaforo.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                if (EsSuscripcionActiva(nombreUsuario))
-                {
-                    await CancelarSuscripcionInternaAsync();
-                }
-            }
-            finally
-            {
-                _semaforo.Release();
-            }
-        }
-
-        /// <inheritdoc />
-        public async Task<IReadOnlyList<DTOs.AmigoDTO>> ObtenerAmigosAsync(string nombreUsuario)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-                throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
-
-            await _semaforo.WaitAsync().ConfigureAwait(false);
-
-            var cliente = _cliente ?? CrearCliente();
-            bool esTemporal = (_cliente == null);
-
-            try
-            {
-                var amigos = await cliente.ObtenerAmigosAsync(nombreUsuario).ConfigureAwait(false);
-                var lista = ConvertirLista(amigos);
-
-                if (!esTemporal) ActualizarListaInterna(lista);
-                else CerrarClienteSeguro(cliente);
-
-                return lista;
-            }
-            catch (Exception ex)
-            {
-                if (esTemporal) cliente.Abort();
-                throw ConvertirExcepcion(ex);
-            }
-            finally
-            {
-                _semaforo.Release();
-            }
+            _invitacionesServicio = invitacionesServicio ??
+                throw new ArgumentNullException(nameof(invitacionesServicio));
+            _listaAmigosServicio = listaAmigosServicio ??
+                throw new ArgumentNullException(nameof(listaAmigosServicio));
+            _perfilServicio = perfilServicio ??
+                throw new ArgumentNullException(nameof(perfilServicio));
+            _validador = validador ??
+                throw new ArgumentNullException(nameof(validador));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
-        /// Callback del servidor: Actualiza la lista local de amigos.
+        /// Envia una invitacion por correo validando el formato previamente.
         /// </summary>
-        public void NotificarListaAmigosActualizada(DTOs.AmigoDTO[] amigos)
+        public async Task<InvitacionCorreoResultado> InvitarPorCorreoAsync(
+            string codigoSala,
+            string correo)
         {
-            var lista = ConvertirLista(amigos);
-            ActualizarListaInterna(lista);
-            ListaActualizada?.Invoke(this, lista);
+            if (string.IsNullOrWhiteSpace(codigoSala))
+            {
+                throw new ArgumentNullException(nameof(codigoSala));
+            }
+
+            string correoLimpio = correo?.Trim();
+
+            var validacion = _validador.ValidarCorreo(correoLimpio);
+
+            if (!validacion.OperacionExitosa)
+            {
+                return InvitacionCorreoResultado.Fallo(
+                    validacion.Mensaje ?? Lang.errorTextoCorreoInvalido);
+            }
+
+            return await ProcesarEnvioCorreoAsync(codigoSala, correoLimpio).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Prepara el ViewModel para invitar amigos conectados.
+        /// </summary>
+        public async Task<InvitacionAmigosResultado> ObtenerInvitacionAmigosAsync(
+            string codigoSala,
+            string nombreUsuarioSesion,
+            ISet<int> amigosInvitados,
+            Action<string> mostrarMensaje)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuarioSesion))
+            {
+                _logger.Warn("Intento de invitar amigos sin usuario de sesion.");
+                return InvitacionAmigosResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
+            }
+
+            try
+            {
+                var amigos = await _listaAmigosServicio
+                    .ObtenerAmigosAsync(nombreUsuarioSesion)
+                    .ConfigureAwait(false);
+
+                if (amigos == null || amigos.Count == 0)
+                {
+                    return InvitacionAmigosResultado.Fallo(Lang.invitarAmigosTextoSinAmigos);
+                }
+
+                var vm = new InvitarAmigosVistaModelo(
+                    amigos,
+                    _invitacionesServicio,
+                    _perfilServicio,
+                    _sonidoManejador,
+                    _localizador,
+                    codigoSala,
+                    id => amigosInvitados?.Contains(id) ?? false,
+                    id => amigosInvitados?.Add(id),
+                    mostrarMensaje ?? (_ => { })
+                );
+
+                return InvitacionAmigosResultado.Exito(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error al obtener lista de amigos para invitar.", ex);
+                return InvitacionAmigosResultado.Fallo(
+                    ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+            }
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            CerrarClienteSeguro(_cliente);
-            _cliente = null;
-            _usuarioSuscrito = null;
-            _semaforo?.Dispose();
+            if (_disposed) return;
+
+            (_invitacionesServicio as IDisposable)?.Dispose();
+            (_listaAmigosServicio as IDisposable)?.Dispose();
+            (_perfilServicio as IDisposable)?.Dispose();
+
+            _disposed = true;
         }
 
-        private bool EsSuscripcionActiva(string usuario)
+        private async Task<InvitacionCorreoResultado> ProcesarEnvioCorreoAsync(
+            string codigoSala,
+            string correo)
         {
-            return _cliente != null &&
-                   string.Equals(_usuarioSuscrito, usuario, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private async Task CancelarSuscripcionInternaAsync()
-        {
-            var cliente = _cliente;
-            var usuario = _usuarioSuscrito;
-
-            _cliente = null;
-            _usuarioSuscrito = null;
-
-            if (cliente == null) return;
-
             try
             {
-                if (!string.IsNullOrWhiteSpace(usuario))
+                _logger.InfoFormat("Enviando invitacion a: {0}", correo);
+                var resultado = await _invitacionesServicio
+                    .EnviarInvitacionAsync(codigoSala, correo)
+                    .ConfigureAwait(false);
+
+                if (resultado != null && resultado.OperacionExitosa)
                 {
-                    await cliente.CancelarSuscripcionAsync(usuario).ConfigureAwait(false);
+                    return InvitacionCorreoResultado.Exito(Lang.invitarCorreoTextoEnviado);
                 }
-                CerrarClienteSeguro(cliente);
+
+                return InvitacionCorreoResultado.Fallo(
+                    resultado?.Mensaje ?? Lang.errorTextoEnviarCorreo);
             }
             catch (Exception ex)
             {
-                _logger.Warn("Error al cancelar suscripcion.", ex);
-                cliente.Abort();
-            }
-        }
-
-        private void ManejarErrorSuscripcion(Exception ex)
-        {
-            _cliente?.Abort();
-            _cliente = null;
-            _usuarioSuscrito = null;
-            throw ConvertirExcepcion(ex);
-        }
-
-        private Exception ConvertirExcepcion(Exception ex)
-        {
-            if (ex is FaultException fe)
-            {
-                string msg = _manejadorError.ObtenerMensaje(
-                    fe,
-                    Lang.errorTextoErrorProcesarSolicitud);
-                return new ServicioExcepcion(TipoErrorServicio.FallaServicio, msg, fe);
-            }
-
-            if (ex is CommunicationException || ex is EndpointNotFoundException)
-            {
-                return new ServicioExcepcion(
-                    TipoErrorServicio.Comunicacion,
-                    Lang.errorTextoServidorNoDisponible,
-                    ex);
-            }
-
-            if (ex is TimeoutException)
-            {
-                return new ServicioExcepcion(
-                    TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
-                    ex);
-            }
-
-            return new ServicioExcepcion(
-                TipoErrorServicio.Desconocido,
-                Lang.errorTextoErrorProcesarSolicitud,
-                ex);
-        }
-
-        private PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient CrearCliente()
-        {
-            return new PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient(
-                new InstanceContext(this),
-                Endpoint);
-        }
-
-        private static void CerrarClienteSeguro(ICommunicationObject cliente)
-        {
-            if (cliente == null) return;
-            try
-            {
-                if (cliente.State == CommunicationState.Opened) cliente.Close();
-                else cliente.Abort();
-            }
-            catch (Exception)
-            {
-                cliente.Abort();
-            }
-        }
-
-        private static IReadOnlyList<DTOs.AmigoDTO> ConvertirLista(
-            IEnumerable<DTOs.AmigoDTO> amigos)
-        {
-            if (amigos == null) return Array.Empty<DTOs.AmigoDTO>();
-
-            var lista = amigos
-                .Where(a => !string.IsNullOrWhiteSpace(a?.NombreUsuario))
-                .Select(a => new DTOs.AmigoDTO
-                {
-                    UsuarioId = a.UsuarioId,
-                    NombreUsuario = a.NombreUsuario
-                })
-                .ToList();
-
-            return lista.AsReadOnly();
-        }
-
-        private void ActualizarListaInterna(IReadOnlyList<DTOs.AmigoDTO> lista)
-        {
-            lock (_amigosBloqueo)
-            {
-                _amigos.Clear();
-                _amigos.AddRange(lista);
+                _logger.Error("Error al procesar envio de correo.", ex);
+                return InvitacionCorreoResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
             }
         }
     }
