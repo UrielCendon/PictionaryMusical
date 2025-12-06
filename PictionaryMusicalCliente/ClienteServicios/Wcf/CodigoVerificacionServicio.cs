@@ -36,7 +36,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                var resultado = await WcfClienteAyudante
+                var resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.SolicitarCodigoVerificacionAsync
                         (solicitud))
                     .ConfigureAwait(false);
@@ -112,7 +112,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     TokenCodigo = tokenCodigo.Trim()
                 };
 
-                var resultado = await WcfClienteAyudante
+                var resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(
                         cliente,
                         c => c.ReenviarCodigoVerificacionAsync(reenvioCodigoVerificacionDto))
@@ -191,7 +191,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     CodigoIngresado = codigoIngresado
                 };
 
-                var resultado = await WcfClienteAyudante
+                var resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(
                         cliente,
                         c => c.ConfirmarCodigoVerificacionAsync(confirmacionCodigoDto))

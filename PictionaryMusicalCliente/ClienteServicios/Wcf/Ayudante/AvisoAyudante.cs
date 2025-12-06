@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
 {
@@ -8,52 +9,31 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
     /// Provee mecanismos para mostrar mensajes al usuario de manera segura en hilos de UI.
     /// Permite la inyeccion de dependencias para pruebas unitarias.
     /// </summary>
-    public static class AvisoAyudante
+    public class AvisoAyudante : IAvisoServicio
     {
-        private static Action<string> _accionMostrar = EjecutarMostrarReal;
-
-        /// <summary>
-        /// Permite cambiar la logica de mostrar avisos (util para Unit Tests).
-        /// </summary>
-        /// <param name="accion">La accion delegada que reemplazara la logica de UI.</param>
-        public static void DefinirMostrarAviso(Action<string> accion)
-        {
-            _accionMostrar = accion ?? EjecutarMostrarReal;
-        }
-
         /// <summary>
         /// Muestra un mensaje al usuario asegurando que se ejecute en el hilo principal.
         /// </summary>
         /// <param name="mensaje">El contenido del aviso a mostrar.</param>
-        public static void Mostrar(string mensaje)
+        public void Mostrar(string mensaje)
         {
-            if (_accionMostrar == EjecutarMostrarReal)
-            {
-                if (Application.Current?.Dispatcher != null)
-                {
-                    if (Application.Current.Dispatcher.CheckAccess())
-                    {
-                        _accionMostrar(mensaje);
-                    }
-                    else
-                    {
-                        Application.Current.Dispatcher.Invoke(() => _accionMostrar(mensaje));
-                    }
-                }
-            }
-            else
-            {
-                _accionMostrar(mensaje);
-            }
-        }
-
-        private static void EjecutarMostrarReal(string mensaje)
-        {
-            if (Application.Current == null)
+            if (Application.Current?.Dispatcher == null)
             {
                 return;
             }
 
+            if (Application.Current.Dispatcher.CheckAccess())
+            {
+                EjecutarMostrarReal(mensaje);
+            }
+            else
+            {
+                Application.Current.Dispatcher.Invoke(() => EjecutarMostrarReal(mensaje));
+            }
+        }
+
+        private void EjecutarMostrarReal(string mensaje)
+        {
             Cursor cursorAnterior = Mouse.OverrideCursor;
             Mouse.OverrideCursor = null;
 

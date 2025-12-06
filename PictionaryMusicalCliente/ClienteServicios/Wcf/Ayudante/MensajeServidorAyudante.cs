@@ -1,3 +1,4 @@
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,7 +10,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
     /// <summary>
     /// Centraliza la traduccion de mensajes de error provenientes del servidor a recursos locales.
     /// </summary>
-    public static class MensajeServidorAyudante
+    public class MensajeServidorAyudante : ILocalizadorServicio
     {
         private static readonly Regex EsperaCodigoRegex = new Regex(
             @"^Debe esperar (\d+) segundos para solicitar un nuevo codigo\.$",
@@ -242,7 +243,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         /// <param name="mensaje">Mensaje recibido del servidor.</param>
         /// <param name="mensajePredeterminado">Mensaje alternativo si no hay traduccion.</param>
         /// <returns>Mensaje traducido o el predeterminado.</returns>
-        public static string Localizar(string mensaje, string mensajePredeterminado)
+        public string Localizar(string mensaje, string mensajePredeterminado)
         {
             if (string.IsNullOrWhiteSpace(mensaje))
             {
@@ -264,7 +265,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return ObtenerMensajeFallback(mensajePredeterminado);
         }
 
-        private static bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)
+        private bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)
         {
             if (IntentarCoincidenciaEsperaCodigo(mensaje, out traducido))
             {
@@ -280,7 +281,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return false;
         }
 
-        private static bool IntentarCoincidenciaEsperaCodigo(string mensaje, out string traducido)
+        private bool IntentarCoincidenciaEsperaCodigo(string mensaje, out string traducido)
         {
             Match espera = EsperaCodigoRegex.Match(mensaje);
             if (espera.Success)
@@ -296,7 +297,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return false;
         }
 
-        private static bool IntentarCoincidenciaRedSocial(string mensaje, out string traducido)
+        private bool IntentarCoincidenciaRedSocial(string mensaje, out string traducido)
         {
             Match identificador = IdentificadorRedSocialRegex.Match(mensaje);
             if (identificador.Success)
@@ -313,7 +314,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return false;
         }
 
-        private static bool TryLocalizarMensajeEstatico(string mensaje, out string traducido)
+        private bool TryLocalizarMensajeEstatico(string mensaje, out string traducido)
         {
             if (MapaMensajes.TryGetValue(mensaje, out Func<string> traductor))
             {
@@ -325,7 +326,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return false;
         }
 
-        private static string ObtenerMensajeFallback(string mensajePredeterminado)
+        private string ObtenerMensajeFallback(string mensajePredeterminado)
         {
             if (!string.IsNullOrWhiteSpace(mensajePredeterminado))
             {

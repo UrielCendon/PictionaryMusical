@@ -1,3 +1,4 @@
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.Reflection;
 using System.ServiceModel;
@@ -7,8 +8,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
     /// <summary>
     /// Ayudante para extraer mensajes amigables de excepciones WCF.
     /// </summary>
-    public static class ErrorServicioAyudante
+    public class ErrorServicioAyudante : IManejadorErrorServicio
     {
+        private readonly ILocalizadorServicio _localizador;
+
+        /// <summary>
+        /// Inicializa una nueva instancia del manejador de errores con el servicio de localización
+        /// necesario.
+        /// </summary>
+        /// <param name="localizador">El servicio encargado de traducir los mensajes extraídos.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Se lanza si el localizador es nulo.</exception>
+        public ErrorServicioAyudante(ILocalizadorServicio localizador)
+        {
+            _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
+        }
+
         /// <summary>
         /// Obtiene un mensaje localizado a partir de una excepcion FaultException.
         /// </summary>
@@ -16,7 +31,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         /// <param name="mensajePredeterminado">Mensaje a retornar si no se encuentra uno 
         /// especifico.</param>
         /// <returns>Mensaje localizado listo para mostrar.</returns>
-        public static string ObtenerMensaje(
+        public string ObtenerMensaje(
             FaultException excepcion,
             string mensajePredeterminado)
         {
@@ -29,25 +44,25 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 mensajePredeterminado);
         }
 
-        private static string DeterminarMensajeFinal(
+        private string DeterminarMensajeFinal(
             string detalle,
             string mensajeBase,
             string predeterminado)
         {
             if (!string.IsNullOrWhiteSpace(detalle))
             {
-                return MensajeServidorAyudante.Localizar(detalle, predeterminado);
+                return _localizador.Localizar(detalle, predeterminado);
             }
 
             if (!string.IsNullOrWhiteSpace(mensajeBase))
             {
-                return MensajeServidorAyudante.Localizar(mensajeBase, predeterminado);
+                return _localizador.Localizar(mensajeBase, predeterminado);
             }
 
-            return MensajeServidorAyudante.Localizar(null, predeterminado);
+            return _localizador.Localizar(null, predeterminado);
         }
 
-        private static string ObtenerMensajeDetalle(FaultException excepcion)
+        private string ObtenerMensajeDetalle(FaultException excepcion)
         {
             if (excepcion == null)
             {
@@ -65,19 +80,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             return ObtenerTextoMensajeDeDetalle(detalle);
         }
 
-        private static bool EsFaultExceptionGenerica(Type tipo)
+        private bool EsFaultExceptionGenerica(Type tipo)
         {
             return tipo.GetTypeInfo().IsGenericType &&
                    tipo.GetGenericTypeDefinition() == typeof(FaultException<>);
         }
 
-        private static object ObtenerObjetoDetalle(FaultException excepcion, Type tipo)
+        private object ObtenerObjetoDetalle(FaultException excepcion, Type tipo)
         {
             PropertyInfo detallePropiedad = tipo.GetRuntimeProperty("Detail");
             return detallePropiedad?.GetValue(excepcion);
         }
 
-        private static string ObtenerTextoMensajeDeDetalle(object detalle)
+        private string ObtenerTextoMensajeDeDetalle(object detalle)
         {
             if (detalle == null)
             {

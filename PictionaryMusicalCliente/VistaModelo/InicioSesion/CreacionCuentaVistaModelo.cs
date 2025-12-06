@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly ICodigoVerificacionServicio _codigoVerificacionServicio;
         private readonly ICuentaServicio _cuentaServicio;
         private readonly ISeleccionarAvatarServicio _seleccionarAvatarServicio;
-        private readonly IVerificacionCodigoServicio _verificarCodigoDialogoServicio;
+        private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
         private readonly ILocalizacionServicio _localizacionServicio;
 
         private string _usuario;
@@ -54,7 +54,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             ICodigoVerificacionServicio codigoVerificacionServicio,
             ICuentaServicio cuentaServicio,
             ISeleccionarAvatarServicio seleccionarAvatarServicio,
-            IVerificacionCodigoServicio verificarCodigoDialogoServicio,
+            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
             ILocalizacionServicio localizacionServicio = null)
         {
             _codigoVerificacionServicio = codigoVerificacionServicio ??

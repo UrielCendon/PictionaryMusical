@@ -7,7 +7,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador
     /// <summary>
     /// Maneja las operaciones relacionadas con las solicitudes de amistad.
     /// </summary>
-    public class SolicitudesAmistadAdministrador
+    public class SolicitudesAmistadAdministrador : ISolicitudesAmistadAdministrador
     {
         private readonly object _solicitudesBloqueo = new();
         private readonly List<DTOs.SolicitudAmistadDTO> _solicitudes = new();

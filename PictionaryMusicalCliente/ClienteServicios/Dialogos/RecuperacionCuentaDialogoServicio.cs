@@ -18,10 +18,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(RecuperacionCuentaDialogoServicio));
 
-        private readonly IVerificacionCodigoServicio _verificarCodigoDialogoServicio;
+        private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
 
         public RecuperacionCuentaDialogoServicio(
-            IVerificacionCodigoServicio verificarCodigoDialogoServicio)
+            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio)
         {
             _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
                 throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
@@ -119,7 +119,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private ICodigoVerificacionServicio CrearAdaptadorVerificacion(
             ICambioContrasenaServicio servicio)
         {
-            return new ServicioCodigoRecuperacionAdaptador(servicio);
+            return new CodigoRecuperacionServicioAdaptador(servicio);
         }
 
         private (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarRespuestaVerificacion(

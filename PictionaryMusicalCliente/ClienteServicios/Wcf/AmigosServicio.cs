@@ -22,7 +22,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private const string NombreEndpoint = "NetTcpBinding_IAmigosManejador";
 
         private readonly SemaphoreSlim _semaforo = new(1, 1);
-        private readonly SolicitudesAmistadAdministrador _administradorSolicitudes = new();
+        private readonly ISolicitudesAmistadAdministrador _administradorSolicitudes;
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
         private string _usuarioSuscrito;

@@ -12,7 +12,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     /// <summary>
     /// Servicio de dialogo para manejar la interfaz de verificacion de codigo.
     /// </summary>
-    public class VerificacionCodigoDialogoServicio : IVerificacionCodigoServicio
+    public class VerificacionCodigoDialogoServicio : IVerificacionCodigoDialogoServicio
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(VerificacionCodigoDialogoServicio));

@@ -31,7 +31,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                DTOs.ResultadoOperacionDTO resultado = await WcfClienteAyudante
+                DTOs.ResultadoOperacionDTO resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.ReportarJugadorAsync(reporte))
                     .ConfigureAwait(false);
 

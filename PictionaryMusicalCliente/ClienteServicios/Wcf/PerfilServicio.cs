@@ -27,7 +27,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                DTOs.UsuarioDTO perfilDto = await WcfClienteAyudante
+                DTOs.UsuarioDTO perfilDto = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.ObtenerPerfilAsync(usuarioId))
                     .ConfigureAwait(false);
 
@@ -94,7 +94,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                DTOs.ResultadoOperacionDTO resultado = await WcfClienteAyudante
+                DTOs.ResultadoOperacionDTO resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.ActualizarPerfilAsync(solicitud))
                     .ConfigureAwait(false);
 

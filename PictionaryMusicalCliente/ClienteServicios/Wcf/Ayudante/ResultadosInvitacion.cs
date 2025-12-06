@@ -8,12 +8,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
     public class InvitacionCorreoResultado
     {
         /// <summary>
-        /// Indica si la operación de invitación fue exitosa.
+        /// Indica si la operacion de invitacion fue exitosa.
         /// </summary>
         public bool Exitoso { get; private set; }
 
         /// <summary>
-        /// Obtiene el mensaje descriptivo del resultado de la operación.
+        /// Obtiene el mensaje descriptivo del resultado de la operacion.
         /// </summary>
         public string Mensaje { get; private set; }
 
@@ -26,8 +26,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <summary>
         /// Crea una instancia de resultado exitoso.
         /// </summary>
-        /// <param name="mensaje">Mensaje de éxito asociado.</param>
-        /// <returns>Una nueva instancia indicando éxito.</returns>
+        /// <param name="mensaje">Mensaje de exito asociado.</param>
+        /// <returns>Una nueva instancia indicando exito.</returns>
         public static InvitacionCorreoResultado Exito(string mensaje)
         {
             return new InvitacionCorreoResultado(true, mensaje);
@@ -50,17 +50,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
     public class InvitacionAmigosResultado
     {
         /// <summary>
-        /// Indica si la preparación de la invitación fue exitosa.
+        /// Indica si la preparacion de la invitacion fue exitosa.
         /// </summary>
         public bool Exitoso { get; private set; }
 
         /// <summary>
-        /// Obtiene el mensaje de error en caso de fallo, o vacío en caso de éxito.
+        /// Obtiene el mensaje de error en caso de fallo, o vacio en caso de exito.
         /// </summary>
         public string Mensaje { get; private set; }
 
         /// <summary>
-        /// Obtiene la vista modelo preparada para la invitación de amigos.
+        /// Obtiene la vista modelo preparada para la invitacion de amigos.
         /// </summary>
         public InvitarAmigosVistaModelo VistaModelo { get; private set; }
 
@@ -77,8 +77,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <summary>
         /// Crea una instancia de resultado exitoso con el ViewModel preparado.
         /// </summary>
-        /// <param name="vistaModelo">ViewModel de invitación de amigos inicializado.</param>
-        /// <returns>Una nueva instancia indicando éxito.</returns>
+        /// <param name="vistaModelo">ViewModel de invitacion de amigos inicializado.</param>
+        /// <returns>Una nueva instancia indicando exito.</returns>
         public static InvitacionAmigosResultado Exito(InvitarAmigosVistaModelo vistaModelo)
         {
             return new InvitacionAmigosResultado(true, string.Empty, vistaModelo);

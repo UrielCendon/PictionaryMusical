@@ -33,7 +33,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                var resultado = await WcfClienteAyudante
+                var resultado = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.RegistrarCuentaAsync(solicitud))
                     .ConfigureAwait(false);
 

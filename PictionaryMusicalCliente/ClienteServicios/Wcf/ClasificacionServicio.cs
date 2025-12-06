@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             try
             {
-                DTOs.ClasificacionUsuarioDTO[] clasificacion = await WcfClienteAyudante
+                DTOs.ClasificacionUsuarioDTO[] clasificacion = await WcfClienteEjecutor
                     .UsarAsincronoAsync(cliente, c => c.ObtenerTopJugadoresAsync())
                     .ConfigureAwait(false);
 
