@@ -106,7 +106,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
-            catch (Exception ex)
+            catch (RegexMatchTimeoutException ex)
+            {
+                _logger.Error("Timeout al validar el formato del correo de invitacion.", ex);
+                return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
+            }
+            catch (AggregateException ex)
             {
                 _logger.Error("Error inesperado al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);

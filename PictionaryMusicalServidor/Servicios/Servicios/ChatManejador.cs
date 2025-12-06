@@ -86,7 +86,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de comunicacion al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Tiempo de espera agotado al unirse al chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.Error("Error inesperado al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
@@ -134,7 +139,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al enviar mensaje.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
+            {
+                _logger.Error("Error de comunicacion al enviar mensaje de chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Tiempo de espera agotado al enviar mensaje de chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.Error("Error inesperado al enviar mensaje de chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
@@ -172,7 +187,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al salir del chat.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
+            {
+                _logger.Error("Error de comunicacion al salir del chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Tiempo de espera agotado al salir del chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.Error("Error inesperado al salir del chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);

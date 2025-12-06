@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Concurrent;
+using System.Data;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
@@ -377,7 +380,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _solicitudesRecuperacion.TryRemove(token, out _);
                 return new ResultadoOperacionDTO { OperacionExitosa = true };
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.Error("Error al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error al actualizar contrasena.", ex);
+                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+            }
+            catch (DbUpdateException ex)
             {
                 _logger.Error("Error al actualizar contrasena.", ex);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);

@@ -171,9 +171,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 _logger.Error("Argumentos invalidos para enviar correo.", ex);
                 return false;
             }
-            catch (Exception ex)
+            catch (FormatException ex)
             {
-                _logger.Error("Error inesperado al enviar codigo de verificacion.", ex);
+                _logger.Error("Formato de correo invalido al enviar codigo de verificacion.", ex);
                 return false;
             }
         }

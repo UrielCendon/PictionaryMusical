@@ -172,7 +172,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", ex);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
                 _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
             }
