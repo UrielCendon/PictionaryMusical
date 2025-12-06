@@ -51,7 +51,7 @@
                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
 
                     <StackPanel Grid.Column="2" HorizontalAlignment="Right">
-                        <Ellipse x:Name="ellipseAvatarNuevo" Width="60" Height="60" 
+                        <Ellipse x:Name="elipseAvatarNuevo" Width="60" Height="60" 
                                  Stroke="Black" StrokeThickness="1" Margin="0,5,0,0">
                             <Ellipse.Fill>
                                 <ImageBrush x:Name="imagenBrushAvatarNuevo" Stretch="UniformToFill"

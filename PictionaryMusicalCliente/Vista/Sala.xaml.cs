@@ -86,15 +86,15 @@ namespace PictionaryMusicalCliente
 
         private void RegistrarEventosLienzo()
         {
-            if (ink == null)
+            if (lienzoTintaDibujo == null)
             {
                 return;
             }
 
-            ink.StrokeCollected += Ink_StrokeCollected;
-            ink.PreviewMouseLeftButtonDown += Ink_PreviewMouseLeftButtonDown;
-            ink.PreviewMouseMove += Ink_PreviewMouseMove;
-            ink.PreviewMouseLeftButtonUp += Ink_PreviewMouseLeftButtonUp;
+            lienzoTintaDibujo.StrokeCollected += Ink_StrokeCollected;
+            lienzoTintaDibujo.PreviewMouseLeftButtonDown += Ink_PreviewMouseLeftButtonDown;
+            lienzoTintaDibujo.PreviewMouseMove += Ink_PreviewMouseMove;
+            lienzoTintaDibujo.PreviewMouseLeftButtonUp += Ink_PreviewMouseLeftButtonUp;
         }
 
         private void Ink_StrokeCollected(object sender, InkCanvasStrokeCollectedEventArgs e)
@@ -117,7 +117,7 @@ namespace PictionaryMusicalCliente
 
             _borradoEnProgreso = true;
             _puntosBorrador.Clear();
-            _puntosBorrador.Add(e.GetPosition(ink));
+            _puntosBorrador.Add(e.GetPosition(lienzoTintaDibujo));
         }
 
         private void Ink_PreviewMouseMove(object sender, MouseEventArgs e)
@@ -127,7 +127,7 @@ namespace PictionaryMusicalCliente
                 return;
             }
 
-            _puntosBorrador.Add(e.GetPosition(ink));
+            _puntosBorrador.Add(e.GetPosition(lienzoTintaDibujo));
         }
 
         private void Ink_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -192,7 +192,7 @@ namespace PictionaryMusicalCliente
 
         private void VistaModelo_TrazoRecibidoServidor(TrazoDTO trazo)
         {
-            if (trazo == null || ink == null)
+            if (trazo == null || lienzoTintaDibujo == null)
             {
                 return;
             }
@@ -228,7 +228,7 @@ namespace PictionaryMusicalCliente
                 DrawingAttributes = atributos
             };
 
-            ink.Strokes.Add(stroke);
+            lienzoTintaDibujo.Strokes.Add(stroke);
         }
 
         private void AplicarBorradoRemoto(TrazoDTO trazo)
@@ -240,7 +240,7 @@ namespace PictionaryMusicalCliente
 
             if (trazo.EsLimpiarTodo)
             {
-                ink.Strokes.Clear();
+                lienzoTintaDibujo.Strokes.Clear();
                 return;
             }
 
@@ -257,16 +257,16 @@ namespace PictionaryMusicalCliente
 
             var tamano = Math.Max(1, trazo.Grosor);
             var formaBorrador = new EllipseStylusShape(tamano, tamano);
-            var strokesActuales = ink.Strokes.ToList();
+            var strokesActuales = lienzoTintaDibujo.Strokes.ToList();
 
             foreach (var stroke in strokesActuales)
             {
                 var resultado = stroke.GetEraseResult(puntosTrayectoria, formaBorrador);
-                ink.Strokes.Remove(stroke);
+                lienzoTintaDibujo.Strokes.Remove(stroke);
 
                 if (resultado != null && resultado.Count > 0)
                 {
-                    ink.Strokes.Add(resultado);
+                    lienzoTintaDibujo.Strokes.Add(resultado);
                 }
             }
         }
@@ -382,7 +382,7 @@ namespace PictionaryMusicalCliente
 
         private void EstablecerHerramienta(bool esLapiz)
         {
-            var lienzoTinta = (InkCanvas)this.FindName("ink");
+            var lienzoTinta = (InkCanvas)this.FindName("lienzoTintaDibujo");
             if (lienzoTinta == null)
             {
                 return;
@@ -404,7 +404,7 @@ namespace PictionaryMusicalCliente
 
         private void AplicarEstiloLapiz()
         {
-            var lienzoTinta = (InkCanvas)this.FindName("ink");
+            var lienzoTinta = (InkCanvas)this.FindName("lienzoTintaDibujo");
             if (lienzoTinta == null || _vistaModelo == null)
             {
                 return;
@@ -422,7 +422,7 @@ namespace PictionaryMusicalCliente
 
         private void ActualizarFormaGoma()
         {
-            var lienzoTinta = (InkCanvas)this.FindName("ink");
+            var lienzoTinta = (InkCanvas)this.FindName("lienzoTintaDibujo");
             if (lienzoTinta == null || _vistaModelo == null)
             {
                 return;
@@ -434,7 +434,7 @@ namespace PictionaryMusicalCliente
 
         private void LimpiarLienzo()
         {
-            ink?.Strokes.Clear();
+            lienzoTintaDibujo?.Strokes.Clear();
         }
 
         private static string ColorAHex(Color color)
@@ -513,7 +513,7 @@ namespace PictionaryMusicalCliente
 
             panelApilableChat.Children.Add(textoBloque);
 
-            scrollChat?.ScrollToEnd();
+            vistaScrollChat?.ScrollToEnd();
         }
     }
 }
