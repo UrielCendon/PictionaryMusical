@@ -12,6 +12,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly ExpulsionJugadorVistaModelo _vistaModelo;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public ExpulsionJugador()
+        {
+        }
+
+        /// <summary>
         /// Inicializa el dialogo inyectando la logica de vista.
         /// </summary>
         /// <param name="vistaModelo">Modelo de vista de expulsion.</param>

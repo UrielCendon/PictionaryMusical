@@ -1,4 +1,5 @@
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
@@ -16,6 +17,15 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IAmigosServicio _amigosServicio;
         private readonly IAvisoServicio _avisoServicio;
         private readonly ILocalizadorServicio _localizador;
+        private readonly IUsuarioAutenticado _usuarioSesion;
+
+        /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public BusquedaAmigo()
+        {
+        }
 
         /// <summary>
         /// Inicializa la ventana inyectando el servicio requerido.
@@ -24,7 +34,8 @@ namespace PictionaryMusicalCliente.Vista
         public BusquedaAmigo(IAmigosServicio amigosServicio,
             ISonidoManejador sonidoManejador,
             IAvisoServicio avisoServicio,
-            ILocalizadorServicio localizadorServicio)
+            ILocalizadorServicio localizadorServicio,
+            IUsuarioAutenticado usuarioSesion)
         {
             _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
@@ -34,11 +45,13 @@ namespace PictionaryMusicalCliente.Vista
                 throw new ArgumentNullException(nameof(avisoServicio));
             _localizador = localizadorServicio ??
                 throw new ArgumentNullException(nameof(localizadorServicio));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
 
             InitializeComponent();
 
             _vistaModelo = new BusquedaAmigoVistaModelo(_amigosServicio, _sonidoManejador,
-                _avisoServicio, _localizador);
+                _avisoServicio, _localizador, _usuarioSesion);
             DataContext = _vistaModelo;
 
             ConfigurarEventos();

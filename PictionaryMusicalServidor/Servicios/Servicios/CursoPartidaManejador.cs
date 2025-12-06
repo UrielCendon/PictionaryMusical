@@ -417,10 +417,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
-            }
         }
 
         private List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)
@@ -437,13 +433,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return new List<JugadorPartida>();
             }
             catch (DataException ex)
-            {
-                _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
-                return new List<JugadorPartida>();
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
@@ -489,13 +478,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ex);
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
-                    jugadorId,
-                    ex);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",

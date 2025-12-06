@@ -16,6 +16,14 @@ namespace PictionaryMusicalCliente.Vista
         IUsuarioAutenticado _usuarioAutenticado;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public TerminacionSesion()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana.
         /// </summary>
         /// <param name="navegarAlInicio">Accion opcional para navegar al login.</param>

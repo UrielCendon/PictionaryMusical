@@ -390,11 +390,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error al actualizar contrasena.", ex);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.Error("Error al actualizar contrasena.", ex);
-                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
-            }
         }
 
         private ResultadoOperacionDTO CrearFalloOperacion(string mensaje)

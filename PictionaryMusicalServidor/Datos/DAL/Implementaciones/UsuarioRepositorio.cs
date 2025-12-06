@@ -68,12 +68,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     nombreUsuario, ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat("Error al verificar existencia del usuario '{0}'.",
-                    nombreUsuario, ex);
-                throw;
-            }
         }
 
         /// <summary>
@@ -107,13 +101,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al guardar el nuevo usuario '{0}' en la base de datos.",
-                    usuario.Nombre_Usuario, ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "Error al guardar el nuevo usuario '{0}' en la base de datos.",
@@ -171,12 +158,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     "Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario, ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al obtener el usuario '{0}' de la base de datos.", nombreUsuario, ex);
-                throw;
-            }
         }
 
         /// <summary>
@@ -217,12 +198,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     "Error al obtener usuario por correo '{0}'.", correo, ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al obtener usuario por correo '{0}'.", correo, ex);
-                throw;
-            }
         }
 
         /// <summary>
@@ -258,14 +233,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error asincrono al obtener usuario por correo '{0}'.",
-                    correo,
-                    ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "Error asincrono al obtener usuario por correo '{0}'.",
@@ -315,14 +282,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al obtener usuario con redes sociales ID: {0}",
-                    idUsuario,
-                    ex);
-                throw;
-            }
         }
 
         /// <summary>
@@ -350,12 +309,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat("Error al actualizar contrasena del usuario ID {0}.",
-                    usuarioId, ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat("Error al actualizar contrasena del usuario ID {0}.",
                     usuarioId, ex);
@@ -395,14 +348,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al obtener usuario con jugador por nombre '{0}'.",
-                    nombreUsuario,
-                    ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "Error al obtener usuario con jugador por nombre '{0}'.",

@@ -88,12 +88,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     jugador.Correo, ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
-                    jugador.Correo, ex);
-                throw;
-            }
         }
     }
 }

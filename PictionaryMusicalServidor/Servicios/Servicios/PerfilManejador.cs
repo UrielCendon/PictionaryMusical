@@ -128,11 +128,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _logger.Error("Error de concurrencia al actualizar perfil.", ex);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
-            }
         }
 
         private void ValidarIdUsuario(int idUsuario)

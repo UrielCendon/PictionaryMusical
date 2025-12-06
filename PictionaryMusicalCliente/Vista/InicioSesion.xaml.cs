@@ -27,7 +27,7 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IAvisoServicio _aviso;
 
         private readonly IInicioSesionServicio _inicioSesion;
-        private readonly ICambioContrasenaServicio _cambiosPass;
+        private readonly ICambioContrasenaServicio _cambioPass;
         private readonly IRecuperacionCuentaServicio _recuperacion;
         private readonly ILocalizacionServicio _idioma;
         private readonly INombreInvitadoGenerador _generadorNombres;
@@ -46,7 +46,6 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IReportesServicio _reportes;
         private readonly IListaAmigosServicio _listaAmigos;
         private readonly IAmigosServicio _amigos;
-        private readonly ICambioContrasenaServicio _cambioPass;
         private readonly Func<ISalasServicio> _fabricaSalas;
 
         /// <summary>
@@ -125,6 +124,10 @@ namespace PictionaryMusicalCliente.Vista
                 throw new ArgumentNullException(nameof(recuperacion));
             _generadorNombres = generadorNombres ??
                 throw new ArgumentNullException(nameof(generadorNombres));
+            _inicioSesion = inicioSesion ??
+                throw new ArgumentNullException(nameof(inicioSesion));
+            _fabricaSalas = fabricaSalas ??
+                throw new ArgumentNullException(nameof(fabricaSalas));
 
             _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
 

@@ -116,13 +116,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
-                    ex);
-                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
-            }
         }
 
         /// <summary>
@@ -168,11 +161,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);

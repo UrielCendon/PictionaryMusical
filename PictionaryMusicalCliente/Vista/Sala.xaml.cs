@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using System;
@@ -40,6 +41,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly Action _accionAlCerrar;
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
+
+        /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Sala()
+        {
+        }
 
         /// <summary>
         /// Inicializa la partida con la configuracion de la sala y el usuario.

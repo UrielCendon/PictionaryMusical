@@ -16,6 +16,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly ISonidoManejador _sonidoManejador;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Clasificacion()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana de clasificacion inyectando el servicio requerido.
         /// </summary>
         /// <param name="clasificacionServicio">Servicio para obtener los datos del ranking.

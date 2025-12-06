@@ -43,6 +43,14 @@ namespace PictionaryMusicalCliente.Vista
         private bool _abrioVentanaJuego;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public VentanaPrincipal()
+        {
+        }
+
+        /// <summary>
         /// Inicializa el Lobby con todas las dependencias requeridas.
         /// </summary>
         public VentanaPrincipal(
@@ -141,7 +149,8 @@ namespace PictionaryMusicalCliente.Vista
             _vistaModelo.AbrirClasificacion = () =>
                 MostrarDialogo(new Clasificacion(_clasificacion, _aviso, _sonidos));
             _vistaModelo.AbrirBuscarAmigo = () =>
-                MostrarDialogo(new BusquedaAmigo(_amigos, _sonidos, _aviso, _traductor));
+                MostrarDialogo(new BusquedaAmigo(_amigos, _sonidos, _aviso, _traductor, 
+                _usuarioSesion));
             _vistaModelo.AbrirSolicitudes = () =>
                 MostrarDialogo(new Solicitudes(_amigos, _sonidos, _aviso, _usuarioSesion));
             _vistaModelo.ConfirmarEliminarAmigo = MostrarConfirmacionEliminar;

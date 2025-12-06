@@ -18,6 +18,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IAvisoServicio _avisoServicio;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Solicitudes()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana inyectando el servicio de amigos.
         /// </summary>
         /// <param name="amigosServicio">Servicio de gestion de amigos ya instanciado.</param>

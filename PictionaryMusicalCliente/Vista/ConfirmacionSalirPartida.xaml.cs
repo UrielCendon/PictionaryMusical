@@ -12,6 +12,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly ISonidoManejador _sonidoManejador;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public ConfirmacionSalirPartida()
+        {
+        }
+
+        /// <summary>
         /// Inicializa el dialogo.
         /// </summary>
         public ConfirmacionSalirPartida(ISonidoManejador sonidoManejador)

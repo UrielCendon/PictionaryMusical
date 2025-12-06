@@ -20,6 +20,14 @@ namespace PictionaryMusicalCliente.Vista
         public Action SalirDePartidaConfirmado { get; set; }
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public AjustesPartida()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana de ajustes de partida.
         /// </summary>
         public AjustesPartida(

@@ -18,6 +18,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly Action _accionCerrarSesion;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Ajustes()
+        {
+        }
+
+        /// <summary>
         /// Inicializa una nueva instancia de la ventana de ajustes con las dependencias 
         /// necesarias.
         /// </summary>
