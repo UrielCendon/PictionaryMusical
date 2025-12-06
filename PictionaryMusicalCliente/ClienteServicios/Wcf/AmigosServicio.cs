@@ -58,7 +58,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
                 throw new ArgumentException(
-                    "El nombre de usuario es obligatorio.",
+                    Lang.errorTextoNombreUsuarioObligatorio,
                     nameof(nombreUsuario));
             }
 

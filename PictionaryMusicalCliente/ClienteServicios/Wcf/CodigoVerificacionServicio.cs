@@ -99,7 +99,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (string.IsNullOrWhiteSpace(tokenCodigo))
             {
-                throw new ArgumentException("Token requerido", nameof(tokenCodigo));
+                throw new ArgumentException(
+                    Lang.errorTextoTokenCodigoObligatorio, nameof(tokenCodigo));
             }
 
             var cliente = new PictionaryServidorServicioCuenta
@@ -172,12 +173,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (string.IsNullOrWhiteSpace(tokenCodigo))
             {
-                throw new ArgumentException("Token requerido", nameof(tokenCodigo));
+                throw new ArgumentException(
+                    Lang.errorTextoTokenCodigoObligatorio, nameof(tokenCodigo));
             }
 
             if (string.IsNullOrWhiteSpace(codigoIngresado))
             {
-                throw new ArgumentException("Código requerido", nameof(codigoIngresado));
+                throw new ArgumentException(
+                    Lang.errorTextoCodigoIngresadoObligatorio, nameof(codigoIngresado));
             }
 
             var cliente = new PictionaryServidorServicioCodigoVerificacion

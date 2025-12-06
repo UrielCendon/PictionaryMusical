@@ -29,13 +29,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
-                throw new ArgumentException("El código de sala es obligatorio.",
+                throw new ArgumentException(Lang.codigoSalaObligatorio,
                     nameof(codigoSala));
             }
 
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
-                throw new ArgumentException("El correo de destino es obligatorio.",
+                throw new ArgumentException(Lang.errorTextoCorreoDestinoObligatorio,
                     nameof(correoDestino));
             }
 

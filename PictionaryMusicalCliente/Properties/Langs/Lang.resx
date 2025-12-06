@@ -1098,4 +1098,22 @@
   <data name="avisoTextoReinicioSesion" xml:space="preserve">
     <value>Hubo un cambio en su cuenta, tiene que volver a iniciar sesión.</value>
   </data>
+  <data name="errorTextoCorreoDestinoObligatorio" xml:space="preserve">
+    <value>El correo de destino es obligatorio.</value>
+  </data>
+  <data name="errorTextoNombreCreadorObligatorio" xml:space="preserve">
+    <value>El nombre de creador es obligatorio.</value>
+  </data>
+  <data name="errorTextoNombreUsuarioObligatorio" xml:space="preserve">
+    <value>El nombre de usuario es obligatorio.</value>
+  </data>
+  <data name="errorTextoNombreHostObligatorio" xml:space="preserve">
+    <value>El nombre del host es obligatorio.</value>
+  </data>
+  <data name="errorTextoNombreJugadorExpulsarObligatorio" xml:space="preserve">
+    <value>El nombre del jugador a expulsar es obligatorio.</value>
+  </data>
+  <data name="errorTextoCodigoIngresadoObligatorio" xml:space="preserve">
+    <value>El código ingresado es obligatorio.</value>
+  </data>
 </root>

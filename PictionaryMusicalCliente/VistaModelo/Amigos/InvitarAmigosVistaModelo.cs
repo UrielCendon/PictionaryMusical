@@ -46,7 +46,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
-                throw new ArgumentException("El código de la sala es obligatorio.",
+                throw new ArgumentException(Lang.codigoSalaObligatorio,
                     nameof(codigoSala));
             }
 

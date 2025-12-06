@@ -84,7 +84,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(nombreCreador))
             {
                 throw new ArgumentException(
-                    "El nombre de creador es obligatorio.",
+                    Lang.errorTextoNombreCreadorObligatorio,
                     nameof(nombreCreador));
             }
 
@@ -159,14 +159,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
                 throw new ArgumentException(
-                    "El código de sala es obligatorio.",
+                    Lang.codigoSalaObligatorio,
                     nameof(codigoSala));
             }
 
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
                 throw new ArgumentException(
-                    "El nombre de usuario es obligatorio.",
+                    Lang.errorTextoNombreUsuarioObligatorio,
                     nameof(nombreUsuario));
             }
 
@@ -315,21 +315,21 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(codigoSala))
             {
                 throw new ArgumentException(
-                    "El código de sala es obligatorio.",
+                    Lang.codigoSalaObligatorio,
                     nameof(codigoSala));
             }
 
             if (string.IsNullOrWhiteSpace(nombreHost))
             {
                 throw new ArgumentException(
-                    "El nombre del host es obligatorio.",
+                    Lang.errorTextoNombreHostObligatorio,
                     nameof(nombreHost));
             }
 
             if (string.IsNullOrWhiteSpace(nombreJugadorAExpulsar))
             {
                 throw new ArgumentException(
-                    "El nombre del jugador a expulsar es obligatorio.",
+                    Lang.errorTextoNombreJugadorExpulsarObligatorio,
                     nameof(nombreJugadorAExpulsar));
             }
 
