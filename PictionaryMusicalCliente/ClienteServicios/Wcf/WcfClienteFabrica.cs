@@ -15,7 +15,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private const string EndpointCambioPass = "BasicHttpBinding_ICambioContrasenaManejador";
         private const string EndpointClasificacion = "BasicHttpBinding_IClasificacionManejador";
         private const string EndpointInicioSesion = "BasicHttpBinding_IInicioSesionManejador";
-        private const string EndpointInvitaciones = "BasicHttpBinding_IInvitacionesManejador";
+        private const string EndpointInvitaciones = "BasicHttpBinding_IInvitacionesManejador1";
         private const string EndpointPerfil = "BasicHttpBinding_IPerfilManejador";
         private const string EndpointReportes = "BasicHttpBinding_IReportesManejador";
 

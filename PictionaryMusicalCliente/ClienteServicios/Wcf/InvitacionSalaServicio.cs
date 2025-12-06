@@ -129,10 +129,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Implementacion
         {
             if (_disposed) return;
 
-            (_invitacionesServicio as IDisposable)?.Dispose();
-            (_listaAmigosServicio as IDisposable)?.Dispose();
-            (_perfilServicio as IDisposable)?.Dispose();
-
             _disposed = true;
         }
 

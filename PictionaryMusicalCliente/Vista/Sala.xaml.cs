@@ -38,7 +38,8 @@ namespace PictionaryMusicalCliente.Vista
         private readonly ISonidoManejador _sonidos;
         private readonly ICancionManejador _cancion;
         private readonly IInvitacionSalaServicio _invitacionesSalaServicio;
-        private readonly Action _accionAlCerrar;
+        private readonly Action _navegarMenuPrincipal;
+        private readonly Action _navegarInicioSesion;
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
 
@@ -70,7 +71,8 @@ namespace PictionaryMusicalCliente.Vista
             IInvitacionSalaServicio invitacionesSalaServicio,
             bool esInvitado,
             string nombreJugador,
-            Action accionAlCerrar)
+            Action navegarMenuPrincipal,
+            Action navegarInicioSesion)
         {
             InitializeComponent();
 
@@ -106,7 +108,8 @@ namespace PictionaryMusicalCliente.Vista
                 throw new ArgumentNullException(nameof(salasServicio));
             }
 
-            _accionAlCerrar = accionAlCerrar;
+            _navegarMenuPrincipal = navegarMenuPrincipal;
+            _navegarInicioSesion = navegarInicioSesion;
 
             _vistaModelo = new SalaVistaModelo(
                 sala,
@@ -148,6 +151,7 @@ namespace PictionaryMusicalCliente.Vista
             _vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;
 
             _vistaModelo.ManejarNavegacion = EjecutarNavegacion;
+            _vistaModelo.ManejarNavegacion = EjecutarNavegacionSesion;
             _vistaModelo.CerrarVentana = () => Close();
 
             _vistaModelo.ChequearCierreAplicacionGlobal = DebeCerrarAplicacionPorCierreDeVentana;
@@ -370,16 +374,19 @@ namespace PictionaryMusicalCliente.Vista
 
             await _vistaModelo.FinalizarAsync().ConfigureAwait(false);
 
-            if (_accionAlCerrar != null && _vistaModelo.DebeEjecutarAccionAlCerrar())
+            if (_vistaModelo.DebeEjecutarAccionAlCerrar())
             {
-                if (!Dispatcher.CheckAccess())
+                Dispatcher.Invoke(() =>
                 {
-                    await Dispatcher.InvokeAsync(_accionAlCerrar);
-                }
-                else
-                {
-                    _accionAlCerrar();
-                }
+                    if (_vistaModelo.EsInvitado)
+                    {
+                        _navegarInicioSesion?.Invoke();
+                    }
+                    else
+                    {
+                        _navegarMenuPrincipal?.Invoke();
+                    }
+                });
             }
         }
 
@@ -387,6 +394,20 @@ namespace PictionaryMusicalCliente.Vista
         {
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
+        }
+
+        private void EjecutarNavegacionSesion(SalaVistaModelo.DestinoNavegacion destino)
+        {
+            Close();
+
+            if (destino == SalaVistaModelo.DestinoNavegacion.InicioSesion)
+            {
+                _navegarInicioSesion?.Invoke();
+            }
+            else if (destino == SalaVistaModelo.DestinoNavegacion.VentanaPrincipal)
+            {
+                _navegarMenuPrincipal?.Invoke();
+            }
         }
 
         private bool MostrarConfirmacion(string mensaje)

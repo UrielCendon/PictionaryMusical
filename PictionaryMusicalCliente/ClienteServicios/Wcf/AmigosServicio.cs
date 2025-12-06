@@ -245,17 +245,18 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             LimpiarEstadoLocal();
 
             var cliente = CrearCliente();
+            _cliente = cliente;
+            _usuarioSuscrito = nombreUsuario;
 
             try
             {
                 await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
-                _cliente = cliente;
-                _usuarioSuscrito = nombreUsuario;
                 NotificarSolicitudesActualizadas();
             }
             catch (Exception ex)
             {
                 cliente.Abort();
+                LimpiarEstadoLocal();
                 LanzarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
             }
         }

@@ -44,7 +44,7 @@ namespace PictionaryMusicalCliente.Vista
 
         /// <summary>
         /// Constructor por defecto, solo para uso del diseñador/XAML. 
-        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// La aplicacion debe usar el constructor que recibe dependencias.
         /// </summary>
         public VentanaPrincipal()
         {
@@ -195,11 +195,10 @@ namespace PictionaryMusicalCliente.Vista
 
             await _vistaModelo.FinalizarAsync().ConfigureAwait(false);
 
-            _listaAmigos?.Dispose();
-            _amigos?.Dispose();
-
             if (!_abrioVentanaJuego)
             {
+                _listaAmigos?.Dispose();
+                _amigos?.Dispose();
                 _salas?.Dispose();
             }
 
@@ -224,27 +223,34 @@ namespace PictionaryMusicalCliente.Vista
             _musica.Detener();
             _abrioVentanaJuego = true;
 
+            Action irMenu = () =>
+            {
+                var nuevaPrincipal = new VentanaPrincipal(
+                    _musica, _listaAmigos, _amigos, _salas,
+                    _idioma, _aviso, _perfilServicio, _cambioPass,
+                    _recuperacion, _selectAvatar, _avatares,
+                    _clasificacion, _imagenesPerfil, _usuarioSesion,
+                    _invitaciones, _reportes, _sonidos,
+                    _validador, _traductor, _fabricaWcf, _invitacionSalaServicio);
+
+                nuevaPrincipal.Show();
+            };
+
+            Action irInicioSesion = () =>
+            {
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                Application.Current.Shutdown();
+            };
+
             var ventanaJuego = new Sala(
-                sala,
-                _salas,
-                _invitaciones,
-                _reportes,
-                _perfilServicio,
-                _listaAmigos,
-                _sonidos,
-                _traductor,
-                _aviso,
-                _usuarioSesion,
-                _validador,
-                _fabricaWcf,
-                new CancionManejador(),
-                _invitacionSalaServicio,
+                sala, _salas, _invitaciones, _reportes, _perfilServicio,
+                _listaAmigos, _sonidos, _traductor, _aviso, _usuarioSesion,
+                _validador, _fabricaWcf, new CancionManejador(), _invitacionSalaServicio,
                 false,
                 _usuarioSesion.NombreUsuario,
-                () => {
-                    System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                    Application.Current.Shutdown();
-                });
+                irMenu,
+                irInicioSesion
+            );
 
             ventanaJuego.Show();
             Close();

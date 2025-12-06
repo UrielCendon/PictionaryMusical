@@ -9,6 +9,7 @@ using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -47,6 +48,8 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IListaAmigosServicio _listaAmigos;
         private readonly IAmigosServicio _amigos;
         private readonly Func<ISalasServicio> _fabricaSalas;
+
+        private bool _navegandoVentanaPrincipal;
 
         /// <summary>
         /// Inicializa la ventana recibiendo todas las dependencias del sistema.
@@ -189,6 +192,9 @@ namespace PictionaryMusicalCliente.Vista
 
         private void NavegarAVentanaPrincipal()
         {
+            _navegandoVentanaPrincipal = true;
+            _musica.Detener();
+
             var invitacionSalaServicio = new InvitacionSalaServicio(
                 _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
 
@@ -219,19 +225,19 @@ namespace PictionaryMusicalCliente.Vista
             var invitacionSalaServicio = new InvitacionSalaServicio(
                 _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
 
+            Action irInicioSesion = () =>
+            {
+                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+                Application.Current.Shutdown();
+            };
+
             var ventanaJuego = new Sala(
                 sala, servicio, _invitaciones, _reportes, _perfil, _listaAmigos,
                 _sonidos, _traductor, _aviso, _usuarioSesion, _validador,
                 _fabrica,
                 cancionManejador,
                 invitacionSalaServicio,
-                esInvitado, nombre,
-                () =>
-                {
-                    System.Diagnostics.Process.Start(
-                        Application.ResourceAssembly.Location);
-                    Application.Current.Shutdown();
-                });
+                esInvitado, nombre, irInicioSesion, irInicioSesion);
 
             ventanaJuego.Show();
             Close();
@@ -263,6 +269,11 @@ namespace PictionaryMusicalCliente.Vista
 
         private void InicioSesion_Cerrado(object sender, EventArgs e)
         {
+            if (_navegandoVentanaPrincipal)
+            {
+                return;
+            }
+
             _musica.Detener();
             _musica.Dispose();
         }
