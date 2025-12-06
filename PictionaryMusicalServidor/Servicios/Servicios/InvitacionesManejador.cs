@@ -106,7 +106,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
-            catch (Exception ex)
+            catch (AggregateException ex)
             {
                 _logger.Error("Error inesperado al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
@@ -137,8 +137,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private void ValidarFormatoCorreo(string correo)
         {
-            if (!CorreoRegex.IsMatch(correo.Trim()))
+            try
             {
+                if (!CorreoRegex.IsMatch(correo.Trim()))
+                {
+                    throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
+                }
+            }
+            catch (RegexMatchTimeoutException ex)
+            {
+                _logger.Warn("Timeout en validacion de formato de correo.", ex);
                 throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
             }
         }

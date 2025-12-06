@@ -302,7 +302,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 callback.NotificarInicioRonda(rondaPersonalizada);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
@@ -388,7 +406,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
-            catch (Exception ex)
+            catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
+            catch (System.Data.DataException ex)
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
@@ -400,7 +426,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return controlador.ObtenerJugadores()?.ToList();
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
@@ -438,7 +464,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     jugador.PuntajeTotal,
                     ganoPartida);
             }
-            catch (Exception ex)
+            catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (System.Data.Entity.Core.EntityException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (System.Data.DataException ex)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
@@ -593,7 +633,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return _salasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",

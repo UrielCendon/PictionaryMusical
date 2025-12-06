@@ -117,9 +117,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al registrar reporte.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
-            catch (Exception ex)
+            catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
             {
-                _logger.Error("Error inesperado al registrar reporte.", ex);
+                _logger.Error("Error al actualizar base de datos al registrar reporte.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
         }
