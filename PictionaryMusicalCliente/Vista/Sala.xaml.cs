@@ -62,7 +62,7 @@ namespace PictionaryMusicalCliente
             _vistaModelo.AplicarEstiloLapiz = AplicarEstiloLapiz;
             _vistaModelo.ActualizarFormaGoma = ActualizarFormaGoma;
             _vistaModelo.LimpiarTrazos = LimpiarLienzo;
-            _vistaModelo.MostrarMensaje = AvisoAyudante.Mostrar;
+            _vistaModelo.MostrarMensaje = AvisoServicio.Mostrar;
             _vistaModelo.MostrarConfirmacion = MostrarConfirmacion;
             _vistaModelo.SolicitarDatosReporte = SolicitarDatosReporte;
             _vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;

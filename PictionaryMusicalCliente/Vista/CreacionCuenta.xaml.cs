@@ -36,7 +36,7 @@ namespace PictionaryMusicalCliente
 
             _vistaModelo.CerrarAccion = Close;
             _vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
-            _vistaModelo.MostrarMensaje = AvisoAyudante.Mostrar;
+            _vistaModelo.MostrarMensaje = AvisoServicio.Mostrar;
 
             DataContext = _vistaModelo;
         }

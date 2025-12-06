@@ -192,7 +192,6 @@
     <Compile Include="ClienteServicios\ServicioExcepcion.cs" />
     <Compile Include="ClienteServicios\Wcf\CambioContrasenaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ClasificacionServicio.cs" />
-    <Compile Include="ClienteServicios\Wcf\CodigoVerificacionServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\CuentaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\InvitacionesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\AmigosServicio.cs" />
@@ -205,14 +204,13 @@
     <Compile Include="Modelo\SolicitudAmistadEntrada.cs" />
     <Compile Include="Sesiones\SesionUsuarioActual.cs" />
     <Compile Include="Modelo\UsuarioAutenticado.cs" />
-    <Compile Include="ClienteServicios\Wcf\Ayudante\AvisoAyudante.cs" />
+    <Compile Include="ClienteServicios\Wcf\AvisoServicio.cs" />
     <Compile Include="Utilidades\ControlVisual.cs" />
     <Compile Include="Utilidades\Idiomas\LocalizacionContexto.cs" />
     <Compile Include="Utilidades\SonidoManejador.cs" />
     <Compile Include="Utilidades\ValidacionEntrada.cs" />
-    <Compile Include="ClienteServicios\Wcf\Ayudante\VerificacionCodigoServicioAyudante.cs" />
-    <Compile Include="ClienteServicios\Wcf\Ayudante\ErrorServicioAyudante.cs" />
-    <Compile Include="ClienteServicios\Wcf\Ayudante\MensajeServidorAyudante.cs" />
+    <Compile Include="ClienteServicios\Wcf\ManejadorErrorServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\LocalizadorServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\UsuarioMapeador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\WcfClienteEjecutor.cs" />
     <Compile Include="VistaModelo\BaseVistaModelo.cs" />

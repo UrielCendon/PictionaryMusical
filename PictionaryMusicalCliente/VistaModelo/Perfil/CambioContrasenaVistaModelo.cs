@@ -160,7 +160,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             if (camposInvalidos.Count > 0)
             {
-                AvisoAyudante.Mostrar(Lang.errorTextoConfirmacionContrasenaRequerida);
+                AvisoServicio.Mostrar(Lang.errorTextoConfirmacionContrasenaRequerida);
                 return camposInvalidos;
             }
 
@@ -169,13 +169,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             if (validacion?.OperacionExitosa != true)
             {
-                AvisoAyudante.Mostrar(validacion?.Mensaje ?? Lang.errorTextoContrasenaFormato);
+                AvisoServicio.Mostrar(validacion?.Mensaje ?? Lang.errorTextoContrasenaFormato);
                 return new List<string> { nameof(NuevaContrasena) };
             }
 
             if (!string.Equals(NuevaContrasena, ConfirmacionContrasena, StringComparison.Ordinal))
             {
-                AvisoAyudante.Mostrar(Lang.errorTextoContrasenasNoCoinciden);
+                AvisoServicio.Mostrar(Lang.errorTextoContrasenasNoCoinciden);
                 return new List<string>
                 {
                     nameof(NuevaContrasena),
@@ -197,7 +197,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 {
                     _logger.Error("Servicio de cambio de contraseña devolvió null.");
                     SonidoManejador.ReproducirError();
-                    AvisoAyudante.Mostrar(Lang.errorTextoActualizarContrasena);
+                    AvisoServicio.Mostrar(Lang.errorTextoActualizarContrasena);
                     return null;
                 }
 
@@ -216,7 +216,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                         resultado.Mensaje);
                     SonidoManejador.ReproducirError();
                 }
-                AvisoAyudante.Mostrar(mensaje);
+                AvisoServicio.Mostrar(mensaje);
                 resultado.Mensaje = mensaje;
 
                 return resultado;
@@ -225,7 +225,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             {
                 _logger.Error("Excepción de servicio al actualizar contraseña.", ex);
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoActualizarContrasena);
+                AvisoServicio.Mostrar(ex.Message ?? Lang.errorTextoActualizarContrasena);
                 return null;
             }
         }

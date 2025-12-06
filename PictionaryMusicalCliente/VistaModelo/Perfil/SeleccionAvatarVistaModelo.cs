@@ -75,7 +75,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             {
 				_logger.Warn("Intento de confirmar selección sin avatar elegido.");
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(Lang.errorTextoSeleccionAvatarValido);
+                AvisoServicio.Mostrar(Lang.errorTextoSeleccionAvatarValido);
                 return;
             }
 

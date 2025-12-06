@@ -7,7 +7,6 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using System.Windows.Markup;
 using PictionaryMusicalCliente.Properties.Langs;
 
@@ -20,6 +19,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(SeleccionAvatarDialogoServicio));
+        private readonly IAvisoServicio _avisoServicio;
+
+        public SeleccionAvatarDialogoServicio(
+            IAvisoServicio avisoServicio)
+        {
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+        }
 
         /// <summary>
         /// Abre la ventana de seleccion y retorna el avatar elegido por el usuario.
@@ -61,7 +68,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private Task<ObjetoAvatar> ManejarErrorCargaAvatares()
         {
             _logger.Warn("No se cargaron avatares locales.");
-            AvisoAyudante.Mostrar(Lang.errorTextoNoCargaronAvatares);
+            _avisoServicio.Mostrar(Lang.errorTextoNoCargaronAvatares);
             return Task.FromResult<ObjetoAvatar>(null);
         }
 

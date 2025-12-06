@@ -202,13 +202,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
 
                 SonidoManejador.ReproducirExito();
-                AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudAceptada);
+                AvisoServicio.Mostrar(Lang.amigosTextoSolicitudAceptada);
             }
             catch (ServicioExcepcion ex)
             {
                 _logger.Error("Error al aceptar solicitud de amistad.", ex);
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                AvisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {
@@ -235,13 +235,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
 
                 SonidoManejador.ReproducirExito();
-                AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudCancelada);
+                AvisoServicio.Mostrar(Lang.amigosTextoSolicitudCancelada);
             }
             catch (ServicioExcepcion ex)
             {
                 _logger.Error("Error al rechazar/cancelar solicitud de amistad.", ex);
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                AvisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {

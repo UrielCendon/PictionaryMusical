@@ -49,6 +49,62 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <returns>Cliente configurado.</returns>
         PictionaryServidorServicioCambioContrasena.ICambioContrasenaManejador
             CrearClienteCambioContrasena();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de la Clasificacion.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioClasificacion.IClasificacionManejador
+            CrearClienteClasificacion();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo del inicio de sesion.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioInicioSesion.IInicioSesionManejador
+            CrearClienteInicioSesion();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de invitaciones.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioInvitaciones.IInvitacionesManejador
+            CrearClienteInvitaciones();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo del perfil.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioPerfil.IPerfilManejador
+            CrearClientePerfil();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de los reportes.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioReportes.IReportesManejador
+            CrearClienteReportes();
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de los amigos.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioAmigos.IAmigosManejador
+            CrearClienteAmigos(InstanceContext callback);
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de la lista de amigos.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioListaAmigos.IListaAmigosManejador
+            CrearClienteListaAmigos(InstanceContext callback);
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de las salas.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioSalas.ISalasManejador
+            CrearClienteSalas(InstanceContext callback);
     }
 
     /// <summary>

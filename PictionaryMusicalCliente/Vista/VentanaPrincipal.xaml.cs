@@ -53,7 +53,7 @@ namespace PictionaryMusicalCliente
                 UnirseSala = MostrarVentanaJuego
             };
 
-            _vistaModelo.MostrarMensaje = AvisoAyudante.Mostrar;
+            _vistaModelo.MostrarMensaje = AvisoServicio.Mostrar;
 
             DataContext = _vistaModelo;
 

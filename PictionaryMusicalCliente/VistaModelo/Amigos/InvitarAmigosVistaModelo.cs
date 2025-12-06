@@ -121,7 +121,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     _logger.WarnFormat("Fallo al enviar invitación: {0}",
                         resultado?.Mensaje);
                     SonidoManejador.ReproducirError();
-                    string mensaje = MensajeServidorAyudante.Localizar(
+                    string mensaje = LocalizadorServicio.Localizar(
                         resultado?.Mensaje,
                         Lang.errorTextoEnviarCorreo);
                     _mostrarMensaje?.Invoke(mensaje);
