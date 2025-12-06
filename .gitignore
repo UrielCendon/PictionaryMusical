@@ -426,3 +426,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+# NuGet exe
+.nuget/nuget.exe
