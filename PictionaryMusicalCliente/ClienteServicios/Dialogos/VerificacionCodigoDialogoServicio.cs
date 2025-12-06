@@ -6,6 +6,7 @@ using PictionaryMusicalCliente.VistaModelo.Perfil;
 using ICodigoVerificacionCli = PictionaryMusicalCliente.ClienteServicios.
     Abstracciones.ICodigoVerificacionServicio;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalCliente.Vista;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {

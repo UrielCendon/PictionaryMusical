@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +23,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     {
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly ISonidoManejador _sonidoManejador;
 
         private readonly CancionManejador _manejadorCancion;
         private readonly DispatcherTimer _overlayTimer;
@@ -65,7 +67,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <summary>
         /// Inicializa la VistaModelo con los componentes necesarios para el juego.
         /// </summary>
-        public PartidaIniciadaVistaModelo()
+        public PartidaIniciadaVistaModelo(ISonidoManejador sonidoManejador)
         {
             _manejadorCancion = new CancionManejador();
             _catalogoAudio = InicializarCatalogoAudio();
@@ -105,6 +107,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _temporizador = new DispatcherTimer();
             _temporizador.Interval = TimeSpan.FromSeconds(1);
             _temporizador.Tick += Temporizador_Tick;
+
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
 
             InicializarComandos();
         }
@@ -752,7 +757,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 AplicarInicioVisualPartida(0);
                 TextoContador = string.Empty;
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
             });
         }
 
@@ -888,7 +893,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.Invoke(() =>
             {
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
 
                 if (string.Equals(
                     nombreJugador,

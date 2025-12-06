@@ -2,7 +2,7 @@
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Ajustes;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Lógica de interacción para la ventana de configuración general de la aplicación.

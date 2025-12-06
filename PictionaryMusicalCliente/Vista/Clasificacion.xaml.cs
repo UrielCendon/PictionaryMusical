@@ -3,7 +3,7 @@ using System.Windows;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana que muestra la tabla de puntuaciones globales y estadisticas de jugadores.

@@ -2,13 +2,12 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Sesiones;
 using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
 using System.Collections.Generic;
@@ -41,6 +40,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private readonly ISalasServicio _salasServicio;
         private readonly IInvitacionSalaServicio _invitacionSalaServicio;
         private readonly IReportesServicio _reportesServicio;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly IAvisoServicio _avisoServicio;
+        private readonly ILocalizadorServicio _localizador;
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
         private readonly bool _esInvitado;
@@ -97,6 +99,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IListaAmigosServicio listaAmigosServicio,
             IPerfilServicio perfilServicio,
             IReportesServicio reportesServicio,
+            ISonidoManejador sonidoManejador,
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizador,
             IInvitacionSalaServicio invitacionSalaServicio = null,
             string nombreJugador = null,
             bool esInvitado = false)
@@ -106,6 +111,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(salasServicio));
             _reportesServicio = reportesServicio ??
                 throw new ArgumentNullException(nameof(reportesServicio));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
             _invitacionSalaServicio = invitacionSalaServicio ??
                 new InvitacionSalaServicio(
                     invitacionesServicio ?? 
@@ -782,13 +793,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (resultado.Exitoso)
             {
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
                 MostrarMensaje?.Invoke(resultado.Mensaje);
                 CorreoInvitacion = string.Empty;
                 return;
             }
 
-            SonidoManejador.ReproducirError();
+            _sonidoManejador.ReproducirError();
             MostrarMensaje?.Invoke(resultado.Mensaje);
         }
 
@@ -804,7 +815,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (!resultado.Exitoso)
             {
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(resultado.Mensaje);
                 return;
             }
@@ -872,12 +883,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
             {
                 _logger.Error("No se pudo enviar el mensaje de juego.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
             }
             catch (Exception ex)
             {
                 _logger.Error("Error inesperado al enviar mensaje de juego.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
             }
         }
 
@@ -911,12 +922,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
             {
                 _logger.Error("No se pudo registrar el acierto en el servidor.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
             }
             catch (Exception ex)
             {
                 _logger.Error("Error inesperado al registrar acierto.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
             }
         }
 
@@ -954,8 +965,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (Jugadores.Count < 2)
             {
-                SonidoManejador.ReproducirError();
-                AvisoServicio.Mostrar(Lang.errorTextoPartidaUnJugador);
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoPartidaUnJugador);
                 return;
             }
 
@@ -976,12 +987,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
             {
                 _logger.Error("No se pudo solicitar el inicio de la partida.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
             }
             catch (Exception ex)
             {
                 _logger.Error("Error inesperado al iniciar la partida.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 BotonIniciarPartidaHabilitado = true;
             }
         }
@@ -1171,7 +1182,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (!string.IsNullOrWhiteSpace(mensaje))
             {
-                mensaje = LocalizadorServicio.Localizar(mensaje, mensaje);
+                mensaje = _localizador.Localizar(mensaje, mensaje);
             }
 
             dispatcher.Invoke(() =>
@@ -1579,14 +1590,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _nombreUsuarioSesion,
                     nombreJugador).ConfigureAwait(true);
 
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
                 MostrarMensaje?.Invoke(Lang.expulsarJugadorTextoExito);
             }
             catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
             {
                 _logger.ErrorFormat("Error al expulsar jugador {0}.",
 					nombreJugador, ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoExpulsarJugador);
             }
         }
@@ -1631,12 +1642,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 if (respuesta?.OperacionExitosa == true)
                 {
-                    SonidoManejador.ReproducirExito();
+                    _sonidoManejador.ReproducirExito();
                     MostrarMensaje?.Invoke(Lang.reportarJugadorTextoExito);
                 }
                 else
                 {
-                    SonidoManejador.ReproducirError();
+                    _sonidoManejador.ReproducirError();
                     MostrarMensaje?.Invoke(
                         respuesta?.Mensaje ?? Lang.errorTextoReportarJugador);
                 }
@@ -1644,7 +1655,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
             {
                 _logger.ErrorFormat("Error al reportar jugador {0}.", nombreJugador, ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoReportarJugador);
             }
         }

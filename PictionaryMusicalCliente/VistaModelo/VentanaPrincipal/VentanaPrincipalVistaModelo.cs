@@ -5,7 +5,6 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Sesiones;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 using log4net;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 {
@@ -43,19 +43,22 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IAmigosServicio _amigosServicio;
         private readonly ISalasServicio _salasServicio;
+        private readonly ISonidoManejador _sonidoManejador;
 
         private bool _suscripcionActiva;
 
         /// <summary>
         /// Constructor por defecto que inicializa los servicios estandar.
         /// </summary>
-        public VentanaPrincipalVistaModelo()
+        public VentanaPrincipalVistaModelo(ISonidoManejador sonidoManejador)
             : this(
                   LocalizacionServicio.Instancia,
                   new ListaAmigosServicio(),
                   new AmigosServicio(),
                   new SalasServicio())
         {
+            _sonidoManejador = sonidoManejador
+                ?? throw new ArgumentNullException(nameof(sonidoManejador));
         }
 
         /// <summary>
@@ -84,50 +87,50 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             AbrirPerfilComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 AbrirPerfil?.Invoke();
             });
             AbrirAjustesComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 AbrirAjustes?.Invoke();
             });
             AbrirComoJugarComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 AbrirComoJugar?.Invoke();
             });
             AbrirClasificacionComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 AbrirClasificacion?.Invoke();
             });
             AbrirBuscarAmigoComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 AbrirBuscarAmigo?.Invoke();
             });
             AbrirSolicitudesComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 EjecutarAbrirSolicitudes();
             });
 
             EliminarAmigoComando = new ComandoAsincrono(async param =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 await EjecutarEliminarAmigoAsync(param as DTOs.AmigoDTO);
             }, param => param is DTOs.AmigoDTO);
 
             UnirseSalaComando = new ComandoAsincrono(async _ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 await UnirseSalaInternoAsync();
             });
 
             IniciarJuegoComando = new ComandoAsincrono(async _ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 await IniciarJuegoInternoAsync();
             }, _ => PuedeIniciarJuego());
         }
@@ -539,7 +542,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
             {
                 _logger.Warn("Intento de eliminar amigo sin sesión activa.");
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
@@ -548,7 +551,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             {
                 _logger.InfoFormat("Eliminando amigo: {0}",
                     amigo.NombreUsuario);
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
                 await _amigosServicio.EliminarAmigoAsync(
                     _nombreUsuarioSesion,
                     amigo.NombreUsuario).ConfigureAwait(true);
@@ -558,7 +561,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             catch (ServicioExcepcion ex)
             {
                 _logger.Error("Error al eliminar amigo.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
         }
@@ -581,14 +584,14 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             string codigo = CodigoSala?.Trim();
             if (string.IsNullOrWhiteSpace(codigo))
             {
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.unirseSalaTextoVacio);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
             {
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
@@ -601,7 +604,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     codigo,
                     _nombreUsuarioSesion).ConfigureAwait(true);
 
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
                 UnirseSala?.Invoke(sala);
             }
             catch (ServicioExcepcion ex)
@@ -618,7 +621,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     mensaje = ex.Message;
                 }
 
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(mensaje);
             }
         }
@@ -627,14 +630,14 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             if (!PuedeIniciarJuego())
             {
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
             {
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
@@ -654,13 +657,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     _nombreUsuarioSesion,
                     configuracion).ConfigureAwait(true);
 
-                SonidoManejador.ReproducirExito();
+                _sonidoManejador.ReproducirExito();
                 IniciarJuego?.Invoke(sala);
             }
             catch (ServicioExcepcion ex)
             {
                 _logger.Error("Error al crear sala de juego.", ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
                 MostrarMensaje?.Invoke(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
         }

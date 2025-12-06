@@ -2,7 +2,7 @@ using System;
 using System.Windows;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Dialogo de confirmacion para expulsar a un jugador de la sala.

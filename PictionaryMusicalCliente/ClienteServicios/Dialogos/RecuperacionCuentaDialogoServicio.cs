@@ -4,6 +4,7 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Vista;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 

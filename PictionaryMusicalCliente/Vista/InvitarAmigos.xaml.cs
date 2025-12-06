@@ -2,7 +2,7 @@ using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
 using System.Windows;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana para enviar invitaciones a una partida a los amigos conectados.

@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana de registro para nuevos usuarios.

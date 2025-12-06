@@ -16,7 +16,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana principal de la partida que gestiona el tablero de dibujo, chat y logica del juego.

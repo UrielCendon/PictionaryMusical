@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using PictionaryMusicalCliente.VistaModelo.Sesion;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana de dialogo para confirmar y ejecutar el cierre de sesion.

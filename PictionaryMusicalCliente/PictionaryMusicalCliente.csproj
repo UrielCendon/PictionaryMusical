@@ -87,6 +87,7 @@
     <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\WcfClienteFabrica.cs" />
     <Compile Include="Connected Services\PictionaryServidorServicioAmigos\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

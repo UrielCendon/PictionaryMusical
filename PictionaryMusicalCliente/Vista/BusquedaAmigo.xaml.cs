@@ -3,7 +3,7 @@ using System.Windows;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Logica de interaccion para la ventana de busqueda y solicitud de amistad.

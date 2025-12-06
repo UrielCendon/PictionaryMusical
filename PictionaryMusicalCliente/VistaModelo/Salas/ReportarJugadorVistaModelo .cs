@@ -4,6 +4,7 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas
 {
@@ -14,6 +15,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     {
         private static readonly ILog Logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private ISonidoManejador _sonidoManejador;
 
         private string _motivo;
         private string _mensajeError;
@@ -21,13 +23,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <summary>
         /// Inicializa la instancia con el nombre del jugador a reportar.
         /// </summary>
-        public ReportarJugadorVistaModelo(string nombreJugador)
+        public ReportarJugadorVistaModelo(string nombreJugador,
+            ISonidoManejador sonidoManejador)
         {
             NombreJugador = nombreJugador;
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
 
             ReportarComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 if (string.IsNullOrWhiteSpace(Motivo))
                 {
                     MensajeError = Lang.reportarJugadorTextoMotivoRequerido;
@@ -41,7 +46,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             CancelarComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 Logger.Info("Usuario canceló el reporte de jugador.");
                 Cerrar?.Invoke(false);
             });

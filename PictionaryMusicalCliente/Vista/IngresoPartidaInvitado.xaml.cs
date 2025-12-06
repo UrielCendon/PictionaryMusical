@@ -2,7 +2,7 @@ using PictionaryMusicalCliente.VistaModelo.Salas;
 using System;
 using System.Windows;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana de dialogo para que un invitado ingrese el codigo de sala.

@@ -2,13 +2,12 @@ using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.Sesiones;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.ServiceModel;
 using log4net;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
@@ -21,6 +20,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly IAmigosServicio _amigosServicio;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly IAvisoServicio _avisoServicio;
+        private readonly ILocalizadorServicio _localizadorServicio;
         private readonly string _usuarioActual;
         private string _nombreUsuarioBusqueda;
         private bool _estaProcesando;
@@ -29,21 +31,29 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         /// Inicializa el ViewModel con el servicio de amigos.
         /// </summary>
         /// <param name="amigosServicio">Servicio para operaciones de red.</param>
-        public BusquedaAmigoVistaModelo(IAmigosServicio amigosServicio)
+        public BusquedaAmigoVistaModelo(IAmigosServicio amigosServicio,
+            ISonidoManejador sonidoManejador,
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizadorServicio)
         {
             _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
-            _usuarioActual = SesionUsuarioActual.Usuario?.NombreUsuario ?? string.Empty;
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _localizadorServicio = localizadorServicio ??
+                throw new ArgumentNullException(nameof(localizadorServicio));
 
             EnviarSolicitudComando = new ComandoAsincrono(async _ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 await EnviarSolicitudAsync();
             }, _ => PuedeEnviarSolicitud());
 
             CancelarComando = new ComandoDelegado(_ =>
             {
-                SonidoManejador.ReproducirClick();
+                _sonidoManejador.ReproducirClick();
                 Cancelado?.Invoke();
             });
         }
@@ -110,14 +120,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(nombreAmigo))
             {
-                AvisoServicio.Mostrar(Lang.buscarAmigoTextoIngreseUsuario);
+                _avisoServicio.Mostrar(Lang.buscarAmigoTextoIngreseUsuario);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(_usuarioActual))
             {
                 _logger.Warn("Intento de enviar solicitud sin usuario actual en sesión.");
-                AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
+                _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
 
@@ -131,27 +141,27 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     _usuarioActual,
                     nombreAmigo).ConfigureAwait(true);
 
-                SonidoManejador.ReproducirExito();
-                AvisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
+                _sonidoManejador.ReproducirExito();
+                _avisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
                 SolicitudEnviada?.Invoke();
             }
             catch (FaultException ex)
             {
                 _logger.ErrorFormat("Error WCF (Fault) al enviar solicitud a {0}.",
                     nombreAmigo, ex);
-                SonidoManejador.ReproducirError();
+                _sonidoManejador.ReproducirError();
 
-                string mensajeError = LocalizadorServicio.Localizar(
+                string mensajeError = _localizadorServicio.Localizar(
                     ex.Message,
                     Lang.errorTextoErrorProcesarSolicitud);
-                AvisoServicio.Mostrar(mensajeError);
+                _avisoServicio.Mostrar(mensajeError);
             }
             catch (ServicioExcepcion ex)
             {
                 _logger.ErrorFormat("Error de servicio al enviar solicitud a {0}.",
                     nombreAmigo, ex);
-                SonidoManejador.ReproducirError(); 
-                AvisoServicio.Mostrar(ex.Message);
+                _sonidoManejador.ReproducirError(); 
+                _avisoServicio.Mostrar(ex.Message);
             }
             finally
             {

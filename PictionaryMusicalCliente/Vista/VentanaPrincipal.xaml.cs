@@ -7,7 +7,7 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
-namespace PictionaryMusicalCliente
+namespace PictionaryMusicalCliente.Vista
 {
     /// <summary>
     /// Ventana principal (Lobby) que gestiona la creacion de partidas y navegacion.
@@ -47,7 +47,8 @@ namespace PictionaryMusicalCliente
             IRecuperacionCuentaServicio recuperacion,
             ISeleccionarAvatarServicio selectAvatar,
             ICatalogoAvatares avatares,
-            IClasificacionServicio clasificacion
+            IClasificacionServicio clasificacion,
+            ICatalogoImagenesPerfil imagenesPerfil
             )
         {
             InitializeComponent();
@@ -58,7 +59,8 @@ namespace PictionaryMusicalCliente
             _salas = salas ?? throw new ArgumentNullException(nameof(salas));
             _idioma = idioma ?? throw new ArgumentNullException(nameof(idioma));
             _aviso = aviso ?? throw new ArgumentNullException(nameof(aviso));
-            
+            _imagenesPerfil = imagenesPerfil ?? throw new ArgumentNullException(nameof(imagenesPerfil));
+
             _perfilServicio = perfilServicio;
             _cambioPass = cambioPass;
             _recuperacion = recuperacion;
