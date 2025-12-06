@@ -66,7 +66,8 @@ namespace PictionaryMusicalCliente
                 new VerificacionCodigoDialogoServicio();
 
             IRecuperacionCuentaServicio recupCuentaDialogo =
-                new RecuperacionCuentaDialogoServicio(verifCodigoDialogo, avisoServicio);
+                new RecuperacionCuentaDialogoServicio(verifCodigoDialogo, avisoServicio, 
+                validador, sonidoManejador);
 
             Func<ISalasServicio> fabricaSalas = () =>
                 new SalasServicio(fabricaWcf, manejadorError);
@@ -87,7 +88,8 @@ namespace PictionaryMusicalCliente
                 sonidoManejador,
                 validador,
                 _usuarioGlobal,
-                catalogoImagenes
+                catalogoImagenes,
+                verifCodigoDialogo
             );
 
             ventanaInicio.Show();

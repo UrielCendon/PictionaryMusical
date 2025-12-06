@@ -44,6 +44,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
         private readonly IReportesServicio _reportesServicio;
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IValidadorEntrada _validadorEntrada;
+        private readonly ILocalizadorServicio _localizador;
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
         private readonly bool _esInvitado;
@@ -105,6 +106,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
             ISonidoManejador sonidoManejador,
             IValidadorEntrada validadorEntrada,
             IUsuarioAutenticado usuarioSesion,
+            ILocalizadorServicio localizador,
             string nombreJugador = null,
             bool esInvitado = false)
         {
@@ -125,6 +127,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
                 throw new ArgumentNullException(nameof(validadorEntrada));
             _usuarioSesion = usuarioSesion ??
                 throw new ArgumentNullException(nameof(usuarioSesion));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
 
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
@@ -184,10 +188,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
             : this(
                 sala,
                 salasServicio,
-                new InvitacionesServicio(),
+                new InvitacionesServicio(), // Instancia concreta en vez de campo no estático
                 new ListaAmigosServicio(),
                 new PerfilServicio(),
                 new ReportesServicio(),
+                new SonidoManejador(),      // Instancia concreta requerida por el constructor principal
+                new ValidadorEntrada(),     // Instancia concreta requerida por el constructor principal
+                new UsuarioAutenticado(),   // Instancia concreta requerida por el constructor principal
                 nombreJugador,
                 esInvitado)
         {
@@ -691,6 +698,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
                 amigos,
                 _invitacionesServicio,
                 _perfilServicio,
+                _sonidoManejador,
+                _localizador,
                 _codigoSala,
                 id => _amigosInvitados.Contains(id),
                 id =>

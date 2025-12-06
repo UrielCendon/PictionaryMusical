@@ -33,6 +33,7 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly ILocalizacionServicio _idioma;
         private readonly ICatalogoImagenesPerfil _imagenesPerfil;
+        private readonly IVerificacionCodigoDialogoServicio _verificacionCodigoDialogo;
 
         /// <summary>
         /// Inicializa la ventana recibiendo todas las dependencias del sistema.
@@ -53,7 +54,8 @@ namespace PictionaryMusicalCliente.Vista
             ISonidoManejador sonidos,
             IValidadorEntrada validador,
             IUsuarioAutenticado usuarioSesion,
-            ICatalogoImagenesPerfil imagenesPerfil)
+            ICatalogoImagenesPerfil imagenesPerfil,
+            IVerificacionCodigoDialogoServicio verificacionCodigoDialogo)
         {
             InitializeComponent();
 
@@ -69,6 +71,7 @@ namespace PictionaryMusicalCliente.Vista
             _usuarioSesion = usuarioSesion;
             _idioma = idioma;
             _imagenesPerfil = imagenesPerfil;
+            _verificacionCodigoDialogo = verificacionCodigoDialogo;
 
             _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
 
@@ -137,7 +140,7 @@ namespace PictionaryMusicalCliente.Vista
             var cambioPass = new CambioContrasenaServicio(
                 _ejecutor, _fabrica, _manejadorError, _traductor);
             var recup = new RecuperacionCuentaDialogoServicio(
-                new VerificacionCodigoDialogoServicio(), _aviso);
+                _verificacionCodigoDialogo, _aviso, _validador, _sonidos);
             var selectAvatar = new SeleccionAvatarDialogoServicio(_aviso, _avatares);
             var invitaciones = new InvitacionesServicio(
                 _ejecutor, _fabrica, _manejadorError, _traductor);
@@ -146,8 +149,7 @@ namespace PictionaryMusicalCliente.Vista
 
             var principal = new VentanaPrincipal(
                 _musica, listaAmigos, amigos, salas, _idioma, _aviso, perfil, cambioPass,
-                recup, selectAvatar, _avatares, clasif, _imagenesPerfil, _usuarioSesion,
-                invitaciones, reportes, _sonidos, _validador, _traductor);
+                recup, selectAvatar, _avatares, clasif, _imagenesPerfil);
 
             principal.Show();
             Close();
@@ -168,9 +170,8 @@ namespace PictionaryMusicalCliente.Vista
             var perfil = new PerfilServicio(_ejecutor, _fabrica, _manejadorError);
             var listaAmigos = new ListaAmigosServicio(_manejadorError, _fabrica);
 
-            var ventanaJuego = new VentanaJuego(
-                sala, servicio, invitaciones, reportes, perfil, listaAmigos,
-                _sonidos, _traductor, _aviso, _usuarioSesion,
+            var ventanaJuego = new Sala(
+                sala, servicio, _aviso,
                 esInvitado, nombre,
                 () =>
                 {

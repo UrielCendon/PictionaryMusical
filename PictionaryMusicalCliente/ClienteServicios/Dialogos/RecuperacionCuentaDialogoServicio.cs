@@ -4,6 +4,8 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Vista;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -21,15 +23,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
         private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
         private readonly IAvisoServicio _avisoServicio;
+        private readonly IValidadorEntrada _validadorEntrada;
+        private readonly ISonidoManejador _sonidoManejador;
 
         public RecuperacionCuentaDialogoServicio(
             IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
-            IAvisoServicio avisoServicio)
+            IAvisoServicio avisoServicio, IValidadorEntrada validadorEntrada,
+            ISonidoManejador sonidoManejador)
         {
             _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
                 throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
+            _validadorEntrada = validadorEntrada ??
+                throw new ArgumentNullException(nameof(validadorEntrada));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
         }
 
         /// <summary>
@@ -155,7 +164,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             ICambioContrasenaServicio servicio)
         {
             var ventana = new CambioContrasena();
-            var vistaModelo = new CambioContrasenaVistaModelo(token, servicio);
+            var vistaModelo = new CambioContrasenaVistaModelo(token, servicio, _avisoServicio, 
+                _validadorEntrada, _sonidoManejador);
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoOperacionDTO>();
 
             ConfigurarEventosVistaModelo(vistaModelo, ventana, finalizacion);
