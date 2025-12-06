@@ -1,4 +1,4 @@
-﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
+namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
     /// Define las operaciones de validacion y normalizacion para nombres de usuario.

@@ -124,7 +124,7 @@ namespace PictionaryMusicalServidor.Pruebas
             sala.AgregarJugador("Usuario1", callback1, false);
             sala.AgregarJugador("Usuario2", callback2, true);
 
-            // Usuario1 debería ser notificado del nuevo jugador
+            // Usuario1 deberÃ­a ser notificado del nuevo jugador
             Assert.IsTrue(callback1.ContadorJugadorSeUnio > 0);
             Assert.IsTrue(callback1.ContadorSalaActualizada > 0);
         }
@@ -157,7 +157,7 @@ namespace PictionaryMusicalServidor.Pruebas
                 sala.AgregarJugador($"Usuario{i}", callback, false);
             }
             
-            // Intento agregar jugador adicional debería fallar
+            // Intento agregar jugador adicional deberÃ­a fallar
             sala.AgregarJugador($"Usuario{MaximoJugadores + 1}", callback, false);
         }
 
@@ -250,7 +250,7 @@ namespace PictionaryMusicalServidor.Pruebas
 
             sala.AgregarJugador("Usuario1", callback, false);
             
-            // El creador no puede expulsarse a sí mismo
+            // El creador no puede expulsarse a sÃ­ mismo
             sala.ExpulsarJugador("Usuario1", "Usuario1");
         }
 
@@ -275,7 +275,7 @@ namespace PictionaryMusicalServidor.Pruebas
             sala.AgregarJugador("USUARIO1", callback, false);
             var resultado = sala.AgregarJugador("usuario1", callback, false);
 
-            // Debería reconectar, no agregar nuevo jugador
+            // DeberÃ­a reconectar, no agregar nuevo jugador
             Assert.AreEqual(1, sala.Jugadores.Count);
         }
 

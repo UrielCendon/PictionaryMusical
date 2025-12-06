@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores

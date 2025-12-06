@@ -1,4 +1,4 @@
-﻿namespace PictionaryMusicalServidor.Datos.Modelo
+namespace PictionaryMusicalServidor.Datos.Modelo
 {
     public partial class BaseDatosPruebaEntities1
     {

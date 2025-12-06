@@ -1,4 +1,4 @@
-﻿namespace PictionaryMusicalServidor.Servicios.Contratos
+namespace PictionaryMusicalServidor.Servicios.Contratos
 {
     /// <summary>
     /// Interfaz que define las operaciones para el envio de notificaciones de codigos.

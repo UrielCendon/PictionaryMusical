@@ -1,4 +1,4 @@
-﻿using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using log4net;
 using System;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;

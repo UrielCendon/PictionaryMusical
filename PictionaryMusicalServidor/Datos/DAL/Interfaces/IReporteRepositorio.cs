@@ -1,4 +1,4 @@
-﻿using Datos.Modelo;
+using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
 {

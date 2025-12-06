@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;

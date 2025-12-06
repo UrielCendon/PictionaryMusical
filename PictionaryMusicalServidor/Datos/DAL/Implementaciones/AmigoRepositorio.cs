@@ -87,7 +87,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (Exception ex)
             {
-                _logger.Error("Error al obtener la relaci�n de amistad de la base de datos.", ex);
+                _logger.Error("Error al obtener la relaciï¿½n de amistad de la base de datos.", ex);
                 throw;
             }
         }
@@ -169,7 +169,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             if (relacion == null)
             {
                 var ex = new ArgumentNullException(nameof(relacion));
-                _logger.Error("Se intento eliminar una relaci�n nula.", ex);
+                _logger.Error("Se intento eliminar una relaciï¿½n nula.", ex);
                 throw ex;
             }
 
@@ -202,7 +202,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 var ex = new ArgumentOutOfRangeException(nameof(usuarioId), 
                     "El identificador del usuario debe ser positivo.");
-                _logger.Error("ID de usuario inv�lido al obtener lista de amigos.", ex);
+                _logger.Error("ID de usuario invï¿½lido al obtener lista de amigos.", ex);
                 throw ex;
             }
 

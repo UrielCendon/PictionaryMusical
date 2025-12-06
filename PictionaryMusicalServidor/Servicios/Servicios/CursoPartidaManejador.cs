@@ -596,7 +596,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception ex)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usar· la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usar√° la sala por defecto.",
                     idSala);
                 _logger.Warn(ex);
                 return CrearConfiguracionPorDefecto();

@@ -1,4 +1,4 @@
-﻿namespace PruebasUnitarias
+namespace PruebasUnitarias
 {
     [TestClass]
     public sealed class Test1
