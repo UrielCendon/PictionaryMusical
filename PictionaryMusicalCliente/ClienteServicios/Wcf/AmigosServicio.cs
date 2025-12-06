@@ -55,52 +55,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public async Task SuscribirAsync(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                throw new ArgumentException(
-                    "El nombre de usuario es obligatorio.",
-                    nameof(nombreUsuario));
-            }
+            ValidarNombreUsuario(nombreUsuario);
 
-            await _semaforo.WaitAsync().ConfigureAwait(false);
-
-            try
-            {
-                if (string.Equals(
-                    _usuarioSuscrito,
-                    nombreUsuario,
-                    StringComparison.OrdinalIgnoreCase) && _cliente != null)
-                {
-                    return;
-                }
-
-                await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
-
-                LimpiarSolicitudes();
-                var cliente = CrearCliente();
-                _usuarioSuscrito = nombreUsuario;
-
-                try
-                {
-                    await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
-                    _cliente = cliente;
-                    NotificarSolicitudesActualizadas();
-                    _logger.InfoFormat("Suscripción a servicio de amigos exitosa para: {0}", 
-                        nombreUsuario);
-                }
-                catch (Exception ex) when (EsExcepcionDeServicio(ex))
-                {
-                    _logger.ErrorFormat("Fallo al suscribir a servicio de amigos para: {0}",
-                        nombreUsuario, ex);
-                    _usuarioSuscrito = null;
-                    cliente.Abort();
-                    ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
-                }
-            }
-            finally
-            {
-                _semaforo.Release();
-            }
+            await EjecutarEnSeccionCriticaAsync(
+                () => SuscribirConBloqueoAsync(nombreUsuario)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -113,26 +71,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return;
             }
 
-            await _semaforo.WaitAsync().ConfigureAwait(false);
+            await EjecutarEnSeccionCriticaAsync(
+                () => CancelarSuscripcionSiCoincideAsync(nombreUsuario))
+                .ConfigureAwait(false);
 
-            try
-            {
-                if (_cliente == null || !string.Equals(
-                    _usuarioSuscrito,
-                    nombreUsuario,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    return;
-                }
-
-                await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
-                _logger.InfoFormat("Suscripción a servicio de amigos cancelada para: {0}", 
-                    nombreUsuario);
-            }
-            finally
-            {
-                _semaforo.Release();
-            }
         }
 
         /// <summary>
@@ -170,10 +112,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 return;
             }
-
-            _logger.InfoFormat("Callback recibido: Solicitud actualizada entre {0} y {1}.",
-                solicitud.UsuarioEmisor,
-                solicitud.UsuarioReceptor);
 
             string usuarioActual = _usuarioSuscrito;
 
@@ -239,14 +177,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 if (liberando)
                 {
-                    try
-                    {
-                        CerrarCliente(_cliente);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Warn("Error al cerrar cliente de amigos durante Dispose.", ex);
-                    }
+                    CerrarClienteSeguro();
 
                     _cliente = null;
                     _usuarioSuscrito = null;
@@ -286,22 +217,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 cliente = _cliente ?? CrearCliente();
                 esTemporal = (_cliente == null);
 
-                try
-                {
-                    await operacion(cliente).ConfigureAwait(false);
-                    if (esTemporal)
-                    {
-                        CerrarCliente(cliente);
-                    }
-                }
-                catch (Exception ex) when (EsExcepcionDeServicio(ex))
-                {
-                    _logger.Error("Error al ejecutar operación en servicio de amigos.", ex);
-                    await ManejarExcepcionOperacionAsync(
-                        ex,
-                        cliente,
-                        esTemporal).ConfigureAwait(false);
-                }
+                await EjecutarOperacionClienteAsync(
+                    operacion,
+                    cliente,
+                    esTemporal).ConfigureAwait(false);
             }
             finally
             {
@@ -323,9 +242,25 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 await SuscribirAsync(usuario).ConfigureAwait(false);
             }
-            catch (Exception ex)
+            catch (ServicioExcepcion ex)
             {
                 _logger.Error("Fallo al intentar reconectar suscripción de amigos.", ex);
+            }
+            catch (CommunicationException ex)
+            {
+                _logger.Error("Fallo de comunicación al reconectar suscripción de amigos.", ex);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Timeout al reconectar suscripción de amigos.", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operación inválida al reconectar suscripción de amigos.", ex);
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.Error("Operación cancelada al reconectar suscripción de amigos.", ex);
             }
         }
 
@@ -347,9 +282,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                         return true;
                     }
                 }
-                else if (string.Equals(
-                    solicitud.UsuarioReceptor,
-                    usuarioActual,
+                else if (string.Equals( solicitud.UsuarioReceptor, usuarioActual,
                     StringComparison.OrdinalIgnoreCase))
                 {
                     if (indice >= 0)
@@ -387,16 +320,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
         }
 
-        private static bool EsExcepcionDeServicio(Exception ex)
-        {
-            return ex is FaultException ||
-                   ex is EndpointNotFoundException ||
-                   ex is TimeoutException ||
-                   ex is CommunicationException ||
-                   ex is InvalidOperationException ||
-                   ex is OperationCanceledException;
-        }
-
         private PictionaryServidorServicioAmigos.AmigosManejadorClient CrearCliente()
         {
             var contexto = new InstanceContext(this);
@@ -428,9 +351,37 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 }
                 CerrarCliente(cliente);
             }
-            catch (Exception ex) when (EsExcepcionDeServicio(ex))
+            catch (FaultException ex)
             {
-                _logger.Warn("Excepción al cancelar suscripción interna de amigos.", ex);
+                _logger.Warn("Falla de servicio al cancelar suscripción interna de amigos.", ex);
+                cliente.Abort();
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                _logger.Warn(
+                    "Endpoint no disponible al cancelar suscripción interna de amigos.",
+                    ex);
+                cliente.Abort();
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Warn("Timeout al cancelar suscripción interna de amigos.", ex);
+                cliente.Abort();
+            }
+            catch (CommunicationException ex)
+            {
+                _logger.Warn("Error de comunicación al cancelar suscripción interna de amigos.",
+                    ex);
+                cliente.Abort();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Warn("Operación inválida al cancelar suscripción interna de amigos.", ex);
+                cliente.Abort();
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.Warn("Operación cancelada al cancelar suscripción interna de amigos.", ex);
                 cliente.Abort();
             }
             finally
@@ -468,6 +419,188 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 _logger.Warn("Timeout al cerrar cliente de amigos.", ex);
                 cliente.Abort();
+            }
+        }
+
+        private void CerrarClienteSeguro()
+        {
+            try
+            {
+                CerrarCliente(_cliente);
+            }
+            catch (CommunicationException ex)
+            {
+                _logger.Warn("Error de comunicación al cerrar cliente de amigos durante Dispose.",
+                    ex);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Warn("Timeout al cerrar cliente de amigos durante Dispose.", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Warn("Operación inválida al cerrar cliente de amigos durante Dispose.",
+                    ex);
+            }
+        }
+
+        private async Task EjecutarEnSeccionCriticaAsync(Func<Task> accion)
+        {
+            if (accion == null)
+            {
+                throw new ArgumentNullException(nameof(accion));
+            }
+
+            await _semaforo.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                await accion().ConfigureAwait(false);
+            }
+            finally
+            {
+                _semaforo.Release();
+            }
+        }
+
+        private void ValidarNombreUsuario(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                throw new ArgumentException(
+                    "El nombre de usuario es obligatorio.",
+                    nameof(nombreUsuario));
+            }
+        }
+
+        private Task SuscribirConBloqueoAsync(string nombreUsuario)
+        {
+            if (EsSuscripcionActual(nombreUsuario))
+            {
+                return Task.CompletedTask;
+            }
+
+            return SuscribirNuevoClienteAsync(nombreUsuario);
+        }
+
+        private bool EsSuscripcionActual(string nombreUsuario)
+        {
+            return string.Equals(
+                _usuarioSuscrito,
+                nombreUsuario,
+                StringComparison.OrdinalIgnoreCase) && _cliente != null;
+        }
+
+        private async Task SuscribirNuevoClienteAsync(string nombreUsuario)
+        {
+            await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
+            LimpiarSolicitudes();
+
+            var cliente = CrearCliente();
+            _usuarioSuscrito = nombreUsuario;
+
+            try
+            {
+                await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
+                _cliente = cliente;
+                NotificarSolicitudesActualizadas();
+                _logger.InfoFormat("Suscripción a servicio de amigos exitosa para: {0}",
+                    nombreUsuario);
+            }
+            catch (FaultException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+            catch (TimeoutException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+            catch (CommunicationException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+            catch (OperationCanceledException ex)
+            {
+                ManejarFalloSuscripcion(nombreUsuario, cliente, ex);
+            }
+        }
+
+        private void ManejarFalloSuscripcion(
+            string nombreUsuario,
+            PictionaryServidorServicioAmigos.AmigosManejadorClient cliente,
+            Exception ex)
+        {
+            _logger.ErrorFormat("Fallo al suscribir a servicio de amigos para: {0}",
+                nombreUsuario,
+                ex);
+            _usuarioSuscrito = null;
+            cliente.Abort();
+            ManejarExcepcionServicio(ex, Lang.errorTextoErrorProcesarSolicitud);
+        }
+
+        private async Task CancelarSuscripcionSiCoincideAsync(string nombreUsuario)
+        {
+            if (_cliente == null || !string.Equals(
+                _usuarioSuscrito,
+                nombreUsuario,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            await CancelarSuscripcionInternaAsync().ConfigureAwait(false);
+        }
+
+        private async Task EjecutarOperacionClienteAsync(
+            Func<PictionaryServidorServicioAmigos.AmigosManejadorClient, Task> operacion,
+            PictionaryServidorServicioAmigos.AmigosManejadorClient cliente,
+            bool esTemporal)
+        {
+            try
+            {
+                await operacion(cliente).ConfigureAwait(false);
+                if (esTemporal)
+                {
+                    CerrarCliente(cliente);
+                }
+            }
+            catch (FaultException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
+            }
+            catch (EndpointNotFoundException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
+            }
+            catch (TimeoutException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
+            }
+            catch (CommunicationException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
+            }
+            catch (InvalidOperationException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
+            }
+            catch (OperationCanceledException ex)
+            {
+                await ManejarExcepcionOperacionAsync(ex, cliente, esTemporal)
+                    .ConfigureAwait(false);
             }
         }
 
