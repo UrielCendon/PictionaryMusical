@@ -54,9 +54,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 };
                 canal.Faulted += (_, __) => 
                 {
-                    _logger.WarnFormat(
-                        "Canal fallado (Faulted) para usuario '{0}'. Desuscribiendo.", 
-                        nombreUsuario);
+                    _logger.Warn("Canal fallado (Faulted). Desuscribiendo.");
                     Desuscribir(nombreUsuario);
                 };
             }
@@ -128,15 +126,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (CommunicationException ex)
             {
-                _logger.ErrorFormat("Error de comunicacion al notificar a '{0}'. Desuscribiendo.",
-                    nombreUsuario, ex);
-                    Desuscribir(nombreUsuario);
+                _logger.Error("Error de comunicacion al notificar. Desuscribiendo.", ex);
+                Desuscribir(nombreUsuario);
             }
             catch (TimeoutException ex)
             {
-                _logger.ErrorFormat("Timeout al notificar a '{0}'. Desuscribiendo.",
-                    nombreUsuario, ex);
-                    Desuscribir(nombreUsuario);
+                _logger.Error("Timeout al notificar. Desuscribiendo.", ex);
+                Desuscribir(nombreUsuario);
             }
             catch (InvalidOperationException ex)
             {

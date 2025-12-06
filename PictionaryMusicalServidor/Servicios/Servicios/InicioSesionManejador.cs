@@ -78,6 +78,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
                 return CrearErrorGenerico();
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado durante el inicio de sesion.", ex);
+                return CrearErrorGenerico();
+            }
         }
 
         private bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)

@@ -595,10 +595,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception ex)
             {
-                _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
-                    idSala);
-                _logger.Warn(ex);
+                _logger.Warn("No se pudo obtener configuracion de sala. Usara la sala por defecto.", ex);
                 return CrearConfiguracionPorDefecto();
             }
         }
