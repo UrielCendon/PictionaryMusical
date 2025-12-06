@@ -80,16 +80,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
             if (!string.IsNullOrWhiteSpace(usuarioDestino))
             {
-                cuerpoHtml.Append($"<h2>{saludo} {usuarioDestino},</h2>");
+                cuerpoHtml.Append("<h2>" + saludo + " " + usuarioDestino + ",</h2>");
             }
             else
             {
-                cuerpoHtml.Append($"<h2>{saludo},</h2>");
+                cuerpoHtml.Append("<h2>" + saludo + ",</h2>");
             }
 
-            cuerpoHtml.Append($"<p>{mensajeCodigo}</p>");
-            cuerpoHtml.Append($"<h1 style='color:#0078D7; letter-spacing: 5px;'>{codigo}</h1>");
-            cuerpoHtml.Append($"<p style='color: gray; font-size: 0.9em;'>{mensajeIgnorar}</p>");
+            cuerpoHtml.Append("<p>" + mensajeCodigo + "</p>");
+            cuerpoHtml.Append("<h1 style='color:#0078D7; letter-spacing: 5px;'>" + codigo + "</h1>");
+            cuerpoHtml.Append("<p style='color: gray; font-size: 0.9em;'>" + mensajeIgnorar + "</p>");
             cuerpoHtml.Append("</body></html>");
 
             return cuerpoHtml.ToString();

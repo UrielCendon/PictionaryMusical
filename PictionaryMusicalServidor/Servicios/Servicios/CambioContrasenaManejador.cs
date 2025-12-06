@@ -58,9 +58,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.SolicitarCodigoRecuperacion(solicitud);
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat("Solicitud de recuperacion fallida para '{0}': {1}",
-                        solicitud.Identificador, 
-                        resultado.Mensaje);
+                    _logger.Warn("Solicitud de recuperacion fallida.");
                 }
                 return resultado;
             }
@@ -108,9 +106,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.ReenviarCodigoRecuperacion(solicitud);
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat(
-                        "Solicitud de reenvio de codigo fallida para el token. Mensaje: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Solicitud de reenvio de codigo fallida.");
                 }
                 return resultado;
             }
@@ -157,9 +153,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var resultado = _recuperacionServicio.ConfirmarCodigoRecuperacion(confirmacion); 
                 if (!resultado.OperacionExitosa)
                 {
-                    _logger.WarnFormat(
-                        "Intento fallido de confirmacion. Mensaje: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Intento fallido de confirmacion.");
                 }
                 return resultado;
             }

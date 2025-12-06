@@ -373,7 +373,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static string ObtenerClave(string usuario, string correo)
         {
-            return ($"{usuario}|{correo}").ToLowerInvariant();
+            return (usuario + "|" + correo).ToLowerInvariant();
         }
 
         private sealed class SolicitudCodigoPendiente

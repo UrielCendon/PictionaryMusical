@@ -67,9 +67,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat(
-                        "Solicitud de codigo fallida. Motivo: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Solicitud de codigo fallida.");
                 }
 
                 return resultado;
@@ -104,6 +102,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al solicitar codigo de verificacion.", ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
+                };
+            }
         }
 
         /// <summary>
@@ -121,9 +128,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat(
-                        "Fallo al reenviar codigo de registro. Motivo: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Fallo al reenviar codigo de registro.");
                 }
 
                 return resultado;
@@ -158,6 +163,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al reenviar codigo de verificacion.", ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
+                };
+            }
         }
 
         /// <summary>
@@ -176,9 +190,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!resultado.RegistroExitoso)
                 {
-                    _logger.WarnFormat(
-                        "Intento fallido de confirmacion de codigo. Motivo: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Intento fallido de confirmacion de codigo.");
                 }
 
                 return resultado;
@@ -228,6 +240,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al confirmar codigo.", ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
         }
 
         /// <summary>
@@ -245,9 +266,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat(
-                        "Solicitud de recuperacion fallida. Motivo: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Solicitud de recuperacion fallida.");
                 }
 
                 return resultado;
@@ -279,6 +298,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al solicitar codigo de recuperacion.", ex);
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
+                };
+            }
         }
 
         /// <summary>
@@ -297,9 +325,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!resultado.OperacionExitosa)
                 {
-                    _logger.WarnFormat(
-                        "Intento fallido de confirmacion de recuperacion. Motivo: {0}",
-                        resultado.Mensaje);
+                    _logger.Warn("Intento fallido de confirmacion de recuperacion.");
                 }
 
                 return resultado;
@@ -328,6 +354,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DataException ex)
             {
                 _logger.Error("Error de datos al confirmar codigo de recuperacion.", ex);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigoRecuperacion
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al confirmar codigo de recuperacion.", ex);
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,

@@ -72,8 +72,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         private string ObtenerAsunto(string idiomaNormalizado)
         {
             string asuntoConfigurado = ObtenerConfiguracion(
-                string.Format("CorreoAsuntoInvitacion.{0}", idiomaNormalizado),
-                string.Format("Correo.Invitacion.Asunto.{0}", idiomaNormalizado),
+                "CorreoAsuntoInvitacion." + idiomaNormalizado,
+                "Correo.Invitacion.Asunto." + idiomaNormalizado,
                 "CorreoAsuntoInvitacion",
                 "Correo.Invitacion.Asunto");
 
@@ -166,8 +166,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 : "Has sido invitado a una partida de Pictionary Musical.";
 
             string mensajeInvitacion = esIngles
-                ? $"{creador} has invited you to their room."
-                : $"{creador} te ha invitado a su sala.";
+                ? creador + " has invited you to their room."
+                : creador + " te ha invitado a su sala.";
 
             string mensajeInstruccion = esIngles
                 ? "Use the following code to join:"
@@ -180,13 +180,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var cuerpoHtml = new StringBuilder();
 
             cuerpoHtml.Append("<html><body style='font-family: Arial, sans-serif;'>");
-            cuerpoHtml.Append($"<h2>{saludo}</h2>");
-            cuerpoHtml.Append($"<p>{mensajeBienvenida}</p>");
-            cuerpoHtml.Append($"<p>{mensajeInvitacion}</p>");
-            cuerpoHtml.Append($"<p>{mensajeInstruccion}</p>");
-            cuerpoHtml.Append
-                ($"<h1 style='color:#4CAF50; letter-spacing: 2px;'>{codigoSala}</h1>");
-            cuerpoHtml.Append($"<p>{mensajeDespedida}</p>");
+            cuerpoHtml.Append("<h2>" + saludo + "</h2>");
+            cuerpoHtml.Append("<p>" + mensajeBienvenida + "</p>");
+            cuerpoHtml.Append("<p>" + mensajeInvitacion + "</p>");
+            cuerpoHtml.Append("<p>" + mensajeInstruccion + "</p>");
+            cuerpoHtml.Append("<h1 style='color:#4CAF50; letter-spacing: 2px;'>" + codigoSala + "</h1>");
+            cuerpoHtml.Append("<p>" + mensajeDespedida + "</p>");
             cuerpoHtml.Append("</body></html>");
 
             return cuerpoHtml.ToString();
