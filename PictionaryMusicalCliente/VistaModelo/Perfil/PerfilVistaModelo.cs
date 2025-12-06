@@ -379,13 +379,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             string primerError = null;
 
             ValidarCampo(
-                ValidacionEntrada.ValidarNombre(Nombre?.Trim()),
+                ValidadorEntrada.ValidarNombre(Nombre?.Trim()),
                 nameof(Nombre),
                 camposInvalidos,
                 ref primerError);
 
             ValidarCampo(
-                ValidacionEntrada.ValidarApellido(Apellido?.Trim()),
+                ValidadorEntrada.ValidarApellido(Apellido?.Trim()),
                 nameof(Apellido),
                 camposInvalidos,
                 ref primerError);

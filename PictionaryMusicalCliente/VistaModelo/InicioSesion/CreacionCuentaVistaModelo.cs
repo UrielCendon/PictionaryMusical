@@ -329,15 +329,15 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             var camposInvalidos = new List<string>();
             string primerMensajeError = null;
 
-            ValidarCampo(ValidacionEntrada.ValidarUsuario(Usuario), nameof(Usuario),
+            ValidarCampo(ValidadorEntrada.ValidarUsuario(Usuario), nameof(Usuario),
                 camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidacionEntrada.ValidarNombre(Nombre), nameof(Nombre),
+            ValidarCampo(ValidadorEntrada.ValidarNombre(Nombre), nameof(Nombre),
                 camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidacionEntrada.ValidarApellido(Apellido), nameof(Apellido),
+            ValidarCampo(ValidadorEntrada.ValidarApellido(Apellido), nameof(Apellido),
                 camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidacionEntrada.ValidarCorreo(Correo), nameof(Correo),
+            ValidarCampo(ValidadorEntrada.ValidarCorreo(Correo), nameof(Correo),
                 camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidacionEntrada.ValidarContrasena(Contrasena), nameof(Contrasena),
+            ValidarCampo(ValidadorEntrada.ValidarContrasena(Contrasena), nameof(Contrasena),
                 camposInvalidos, ref primerMensajeError);
 
             if (AvatarSeleccionadoId <= 0)

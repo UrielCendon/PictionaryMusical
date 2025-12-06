@@ -164,7 +164,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 return camposInvalidos;
             }
 
-            DTOs.ResultadoOperacionDTO validacion = ValidacionEntrada.ValidarContrasena(
+            DTOs.ResultadoOperacionDTO validacion = ValidadorEntrada.ValidarContrasena(
                 NuevaContrasena);
 
             if (validacion?.OperacionExitosa != true)

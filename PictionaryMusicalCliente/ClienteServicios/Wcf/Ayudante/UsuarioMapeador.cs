@@ -1,5 +1,6 @@
-using PictionaryMusicalCliente.Sesiones;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Modelo;
+using System;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
@@ -9,6 +10,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
     /// </summary>
     public class UsuarioMapeador : IUsuarioMapeador
     {
+        private readonly IUsuarioAutenticado _usuarioSesion;
+
+        /// <summary>
+        /// Inicializa el mapeador inyectando la sesion actual.
+        /// </summary>
+        public UsuarioMapeador(IUsuarioAutenticado usuarioSesion)
+        {
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
+        }
         /// <summary>
         /// Actualiza la sesion del usuario actual a partir del DTO recibido del servidor.
         /// </summary>
@@ -17,10 +28,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         {
             if (dto == null)
             {
-                SesionUsuarioActual.CerrarSesion();
+                _usuarioSesion.Limpiar();
                 return;
             }
-            SesionUsuarioActual.EstablecerUsuario(dto);
+
+            _usuarioSesion.CargarDesdeDTO(dto);
         }
     }
 }

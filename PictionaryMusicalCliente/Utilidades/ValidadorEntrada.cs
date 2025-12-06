@@ -8,7 +8,7 @@ namespace PictionaryMusicalCliente.Utilidades
     /// <summary>
     /// Provee metodos estaticos para validar la entrada de datos del usuario.
     /// </summary>
-    public static class ValidacionEntrada
+    public class ValidadorEntrada : IValidadorEntrada
     {
         private static readonly Regex CorreoRegex = new Regex(
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
@@ -23,7 +23,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Valida que el nombre de usuario no este vacio.
         /// </summary>
-        public static DTOs.ResultadoOperacionDTO ValidarUsuario(string usuario)
+        public DTOs.ResultadoOperacionDTO ValidarUsuario(string usuario)
         {
             return ValidarCampoObligatorio(usuario, Lang.errorTextoCampoObligatorio);
         }
@@ -31,7 +31,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Valida que el nombre real no este vacio.
         /// </summary>
-        public static DTOs.ResultadoOperacionDTO ValidarNombre(string nombre)
+        public DTOs.ResultadoOperacionDTO ValidarNombre(string nombre)
         {
             return ValidarCampoObligatorio(
                 nombre,
@@ -41,7 +41,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Valida que el apellido no este vacio.
         /// </summary>
-        public static DTOs.ResultadoOperacionDTO ValidarApellido(string apellido)
+        public DTOs.ResultadoOperacionDTO ValidarApellido(string apellido)
         {
             return ValidarCampoObligatorio(
                 apellido,
@@ -51,7 +51,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Valida el formato y presencia del correo electronico.
         /// </summary>
-        public static DTOs.ResultadoOperacionDTO ValidarCorreo(string correo)
+        public DTOs.ResultadoOperacionDTO ValidarCorreo(string correo)
         {
             DTOs.ResultadoOperacionDTO resultado = ValidarCampoObligatorio(
                 correo,
@@ -75,7 +75,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Valida que la contraseña cumpla con los requisitos de seguridad.
         /// </summary>
-        public static DTOs.ResultadoOperacionDTO ValidarContrasena(string contrasena)
+        public DTOs.ResultadoOperacionDTO ValidarContrasena(string contrasena)
         {
             if (string.IsNullOrWhiteSpace(contrasena))
             {

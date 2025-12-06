@@ -20,12 +20,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(SeleccionAvatarDialogoServicio));
         private readonly IAvisoServicio _avisoServicio;
+        private readonly ICatalogoAvatares _catalogoAvatares;
 
         public SeleccionAvatarDialogoServicio(
-            IAvisoServicio avisoServicio)
+            IAvisoServicio avisoServicio,
+            ICatalogoAvatares catalogoAvatares)
         {
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
+            _catalogoAvatares = catalogoAvatares ??
+                throw new ArgumentNullException(nameof(catalogoAvatares));
         }
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
         private IList<ObjetoAvatar> ObtenerAvataresLocales()
         {
-            return (IList<ObjetoAvatar>)CatalogoAvataresLocales.ObtenerAvatares();
+            return (IList<ObjetoAvatar>)_catalogoAvatares.ObtenerAvatares();
         }
 
         private Task<ObjetoAvatar> ManejarErrorCargaAvatares()
@@ -95,7 +99,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             if (idAvatar > 0)
             {
                 vistaModelo.AvatarSeleccionado =
-                    CatalogoAvataresLocales.ObtenerPorId(idAvatar);
+                    _catalogoAvatares.ObtenerPorId(idAvatar);
             }
         }
 
