@@ -1,7 +1,9 @@
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
 using System.Windows;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.VistaModelo.Amigos;
 
 namespace PictionaryMusicalCliente.Vista
 {
@@ -11,13 +13,26 @@ namespace PictionaryMusicalCliente.Vista
     public partial class Solicitudes : Window
     {
         private readonly SolicitudesVistaModelo _vistaModelo;
+        private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly IAvisoServicio _avisoServicio;
 
         /// <summary>
         /// Inicializa la ventana inyectando el servicio de amigos.
         /// </summary>
         /// <param name="amigosServicio">Servicio de gestion de amigos ya instanciado.</param>
-        public Solicitudes(IAmigosServicio amigosServicio)
+        public Solicitudes(IAmigosServicio amigosServicio,
+            ISonidoManejador sonidos,
+            IAvisoServicio aviso,
+            IUsuarioAutenticado usuario)
         {
+            _sonidoManejador = sonidos ??
+                throw new ArgumentNullException(nameof(sonidos));
+            _avisoServicio = aviso ??
+                throw new ArgumentNullException(nameof(aviso));
+            _usuarioSesion = usuario ??
+                throw new ArgumentNullException(nameof(usuario));
+
             if (amigosServicio == null)
             {
                 throw new ArgumentNullException(nameof(amigosServicio));
@@ -25,7 +40,8 @@ namespace PictionaryMusicalCliente.Vista
 
             InitializeComponent();
 
-            _vistaModelo = new SolicitudesVistaModelo(amigosServicio);
+            _vistaModelo = new SolicitudesVistaModelo(amigosServicio, _sonidoManejador,
+                _avisoServicio, _usuarioSesion);
             DataContext = _vistaModelo;
 
             ConfigurarEventos();

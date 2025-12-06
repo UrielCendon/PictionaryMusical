@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
-using ICodigoVerificacionCli = PictionaryMusicalCliente.ClienteServicios.
-    Abstracciones.ICodigoVerificacionServicio;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.Vista;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {
@@ -17,6 +16,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(VerificacionCodigoDialogoServicio));
+        private ICodigoVerificacionServicio _codigoVerificacionServicio;
+        private IAvisoServicio _avisoServicio;
+        private ILocalizadorServicio _localizadorServicio;
+        private ISonidoManejador _sonidoManejador;
 
         /// <summary>
         /// Muestra el dialogo de verificacion y retorna el resultado.
@@ -24,8 +27,20 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         public Task<DTOs.ResultadoRegistroCuentaDTO> MostrarDialogoAsync(
             string descripcion,
             string tokenCodigo,
-            ICodigoVerificacionCli codigoVerificacionServicio)
+            ICodigoVerificacionServicio codigoVerificacionServicio,
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizadorServicio,
+            ISonidoManejador sonidoManejador)
         {
+            _codigoVerificacionServicio = codigoVerificacionServicio ??
+                throw new ArgumentNullException(nameof(codigoVerificacionServicio));
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _localizadorServicio = localizadorServicio ??
+                throw new ArgumentNullException(nameof(localizadorServicio));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+
             ValidarServicio(codigoVerificacionServicio);
 
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO>();
@@ -45,7 +60,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             return finalizacion.Task;
         }
 
-        private void ValidarServicio(ICodigoVerificacionCli servicio)
+        private void ValidarServicio(ICodigoVerificacionServicio servicio)
         {
             if (servicio == null)
             {
@@ -58,9 +73,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private VerificacionCodigoVistaModelo CrearVistaModelo(
             string descripcion,
             string token,
-            ICodigoVerificacionCli servicio)
+            ICodigoVerificacionServicio servicio)
         {
-            return new VerificacionCodigoVistaModelo(descripcion, token, servicio);
+            return new VerificacionCodigoVistaModelo(descripcion, token, 
+                _codigoVerificacionServicio, _avisoServicio, 
+                _localizadorServicio, _sonidoManejador);
         }
 
         private void ConfigurarEventos(

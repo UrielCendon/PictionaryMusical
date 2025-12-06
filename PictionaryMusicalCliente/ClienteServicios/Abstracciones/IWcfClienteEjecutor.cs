@@ -105,6 +105,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <returns>Cliente configurado.</returns>
         PictionaryServidorServicioSalas.ISalasManejador
             CrearClienteSalas(InstanceContext callback);
+
+        /// <summary>
+        /// Crea una instancia del cliente para el manejo de las salas.
+        /// </summary>
+        /// <returns>Cliente configurado.</returns>
+        PictionaryServidorServicioCursoPartida.ICursoPartidaManejador
+            CrearClienteCursoPartida(InstanceContext callback);
     }
 
     /// <summary>

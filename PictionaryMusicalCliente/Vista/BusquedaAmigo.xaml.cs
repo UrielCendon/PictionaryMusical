@@ -1,7 +1,8 @@
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Amigos;
 using System;
 using System.Windows;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.VistaModelo.Amigos;
 
 namespace PictionaryMusicalCliente.Vista
 {
@@ -11,21 +12,33 @@ namespace PictionaryMusicalCliente.Vista
     public partial class BusquedaAmigo : Window
     {
         private readonly BusquedaAmigoVistaModelo _vistaModelo;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly IAmigosServicio _amigosServicio;
+        private readonly IAvisoServicio _avisoServicio;
+        private readonly ILocalizadorServicio _localizador;
 
         /// <summary>
         /// Inicializa la ventana inyectando el servicio requerido.
         /// </summary>
         /// <param name="amigosServicio">Servicio de gestion de amigos ya configurado.</param>
-        public BusquedaAmigo(IAmigosServicio amigosServicio)
+        public BusquedaAmigo(IAmigosServicio amigosServicio,
+            ISonidoManejador sonidoManejador,
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizadorServicio)
         {
-            if (amigosServicio == null)
-            {
+            _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
-            }
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _localizador = localizadorServicio ??
+                throw new ArgumentNullException(nameof(localizadorServicio));
 
             InitializeComponent();
 
-            _vistaModelo = new BusquedaAmigoVistaModelo(amigosServicio);
+            _vistaModelo = new BusquedaAmigoVistaModelo(_amigosServicio, _sonidoManejador,
+                _avisoServicio, _localizador);
             DataContext = _vistaModelo;
 
             ConfigurarEventos();

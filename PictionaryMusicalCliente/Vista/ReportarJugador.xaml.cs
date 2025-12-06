@@ -12,11 +12,6 @@ namespace PictionaryMusicalCliente.Vista
     {
         private readonly ReportarJugadorVistaModelo _vistaModelo;
 
-        public ReportarJugador(string nombreJugador)
-            : this(new ReportarJugadorVistaModelo(nombreJugador))
-        {
-        }
-
         public ReportarJugador(ReportarJugadorVistaModelo vistaModelo)
         {
             _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));

@@ -12,15 +12,6 @@ namespace PictionaryMusicalCliente.Vista
         private readonly ExpulsionJugadorVistaModelo _vistaModelo;
 
         /// <summary>
-        /// Inicializa el dialogo con un mensaje predeterminado.
-        /// </summary>
-        /// <param name="mensajeConfirmacion">El texto a mostrar en el dialogo.</param>
-        public ExpulsionJugador(string mensajeConfirmacion)
-            : this(new ExpulsionJugadorVistaModelo(mensajeConfirmacion))
-        {
-        }
-
-        /// <summary>
         /// Inicializa el dialogo inyectando la logica de vista.
         /// </summary>
         /// <param name="vistaModelo">Modelo de vista de expulsion.</param>

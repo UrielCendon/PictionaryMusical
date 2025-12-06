@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Dialogos;
 using PictionaryMusicalCliente.ClienteServicios.Idiomas;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador;
 using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
@@ -35,6 +36,7 @@ namespace PictionaryMusicalCliente
             ISonidoManejador sonidoManejador = new SonidoManejador();
             IMusicaManejador musicaManejador = new MusicaManejador();
             IValidadorEntrada validador = new ValidadorEntrada();
+            INombreInvitadoGenerador generadorNombres = new NombreInvitadoGenerador();
 
             _usuarioGlobal = new UsuarioAutenticado();
             ICatalogoAvatares catalogoAvatares = new CatalogoAvataresLocales();
@@ -67,7 +69,24 @@ namespace PictionaryMusicalCliente
 
             IRecuperacionCuentaServicio recupCuentaDialogo =
                 new RecuperacionCuentaDialogoServicio(verifCodigoDialogo, avisoServicio, 
-                validador, sonidoManejador);
+                validador, sonidoManejador, localizador);
+
+            IPerfilServicio perfilServicio = new PerfilServicio(
+                ejecutorWcf, fabricaWcf, manejadorError);
+
+            IClasificacionServicio clasificacionServicio = new ClasificacionServicio(
+                ejecutorWcf, fabricaWcf, manejadorError);
+
+            IInvitacionesServicio invitacionesServicio = new InvitacionesServicio(
+                ejecutorWcf, fabricaWcf, manejadorError, localizador);
+
+            IReportesServicio reportesServicio = new ReportesServicio(
+                ejecutorWcf, fabricaWcf, manejadorError, localizador);
+
+            IListaAmigosServicio listaAmigosServicio = new ListaAmigosServicio(manejadorError, fabricaWcf);
+
+            IAmigosServicio amigosServicio = new AmigosServicio(
+                new SolicitudesAmistadAdministrador(), manejadorError, fabricaWcf);
 
             Func<ISalasServicio> fabricaSalas = () =>
                 new SalasServicio(fabricaWcf, manejadorError);
@@ -89,7 +108,14 @@ namespace PictionaryMusicalCliente
                 validador,
                 _usuarioGlobal,
                 catalogoImagenes,
-                verifCodigoDialogo
+                verifCodigoDialogo,
+                generadorNombres,
+                perfilServicio,
+                clasificacionServicio,
+                invitacionesServicio,
+                reportesServicio,
+                listaAmigosServicio,
+                amigosServicio
             );
 
             ventanaInicio.Show();

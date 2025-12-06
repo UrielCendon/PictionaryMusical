@@ -20,34 +20,32 @@ namespace PictionaryMusicalCliente.Vista
         /// </summary>
         /// <param name="navegarAlInicio">Accion opcional para navegar al login.</param>
         public TerminacionSesion(IUsuarioAutenticado usuarioAutenticado,
-            Action navegarAlInicio = null)
+            Action navegarAlInicio)
         {
             _usuarioAutenticado = usuarioAutenticado ??
                 throw new ArgumentNullException(nameof(usuarioAutenticado));
 
             InitializeComponent();
 
-            _navegarAlInicio = navegarAlInicio ?? EjecutarNavegacionInicioSesionPorDefecto;
+            _navegarAlInicio = navegarAlInicio ?? (() => Close());
 
             _vistaModelo = new TerminacionSesionVistaModelo(_usuarioAutenticado);
             _vistaModelo.OcultarDialogo = () => Close();
-            _vistaModelo.EjecutarCierreSesionYNavegacion = _navegarAlInicio;
+            _vistaModelo.EjecutarCierreSesionYNavegacion = EjecutarNavegacionSegura;
 
             DataContext = _vistaModelo;
         }
 
-        private void EjecutarNavegacionInicioSesionPorDefecto()
+        private void EjecutarNavegacionSegura()
         {
-            var inicioSesion = new InicioSesion(); 
-            inicioSesion.Show();
-            var ventanasACerrar = Application.Current.Windows
-                .Cast<Window>()
-                .ToList();
-
-            foreach (var ventana in ventanasACerrar)
+            var ventanas = Application.Current.Windows.Cast<Window>().ToList();
+            foreach (var v in ventanas)
             {
-                ventana.Close();
+                if (v != this) v.Close();
             }
+
+            _navegarAlInicio?.Invoke();
+            Close();
         }
     }
 }

@@ -33,7 +33,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const int MaximoJugadoresSala = 4;
-        private const string CursoPartidaEndpoint = "NetTcpBinding_ICursoPartidaManejador";
         private static readonly StringComparer ComparadorJugadores =
             StringComparer.OrdinalIgnoreCase;
 
@@ -44,15 +43,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private readonly IAvisoServicio _avisoServicio;
         private readonly ILocalizadorServicio _localizador;
         private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly IWcfClienteFabrica _fabricaClientes;
+
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
         private readonly bool _esInvitado;
         private readonly HashSet<int> _amigosInvitados;
         private readonly bool _esHost;
         private readonly string _idJugador;
+
         private readonly PartidaIniciadaVistaModelo _partidaVistaModelo;
         private readonly ChatVistaModelo _chatVistaModelo;
-        private CursoPartidaManejadorClient _proxyJuego;
+
+        private ICursoPartidaManejador _proxyJuego;
 
         private string _textoBotonIniciarPartida;
         private bool _botonIniciarPartidaHabilitado;
@@ -62,12 +65,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _correoInvitacion;
         private bool _puedeInvitarPorCorreo;
         private bool _puedeInvitarAmigos;
-        private bool _salaCancelada;
         private bool _aplicacionCerrando;
         private HashSet<string> _adivinadoresQuienYaAcertaron;
         private string _nombreDibujanteActual;
         private bool _rondaTerminadaTemprano;
         private string _mensajeChat;
+        private bool _salaCancelada;
 
         private const int LimiteCaracteresChat = 150;
         private const double PorcentajePuntosDibujante = 0.2;
@@ -104,7 +107,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IAvisoServicio avisoServicio,
             ILocalizadorServicio localizador,
             IUsuarioAutenticado usuarioSesion,
-            IInvitacionSalaServicio invitacionSalaServicio = null,
+            IInvitacionSalaServicio invitacionSalaServicio,
+            IWcfClienteFabrica fabricaClientes,
             string nombreJugador = null,
             bool esInvitado = false)
         {
@@ -123,22 +127,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(invitacionSalaServicio));
             _usuarioSesion = usuarioSesion ??
                 throw new ArgumentNullException(nameof(usuarioSesion));
+            _fabricaClientes = fabricaClientes ??
+                throw new ArgumentNullException(nameof(fabricaClientes));
 
-            new InvitacionSalaServicio(
-                    invitacionesServicio ?? 
-                    throw new ArgumentNullException(nameof(invitacionesServicio)),
-                    listaAmigosServicio ?? 
-                    throw new ArgumentNullException(nameof(listaAmigosServicio)),
-                    perfilServicio ?? throw new ArgumentNullException(nameof(perfilServicio)));
+            if (invitacionSalaServicio == null)
+            {
+                throw new ArgumentNullException(nameof(invitacionSalaServicio), 
+                    "El servicio de invitacion de sala es requerido.");
+            }
+            _invitacionSalaServicio = invitacionSalaServicio;
 
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
                 ? nombreJugador
                 : _usuarioSesion.NombreUsuario ?? string.Empty;
-            _esHost = string.Equals(
-                _sala.Creador,
-                _nombreUsuarioSesion,
-                StringComparison.OrdinalIgnoreCase);
+            _esHost = string.Equals(_sala.Creador, _nombreUsuarioSesion, StringComparison.OrdinalIgnoreCase);
             _idJugador = ObtenerIdentificadorJugador();
 
             _amigosInvitados = new HashSet<int>();
@@ -146,18 +149,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _nombreDibujanteActual = string.Empty;
             _rondaTerminadaTemprano = false;
 
-            _partidaVistaModelo = new PartidaIniciadaVistaModelo();
+            _partidaVistaModelo = new PartidaIniciadaVistaModelo(_sonidoManejador);
             _chatVistaModelo = CrearChatVistaModelo();
+
             _chatVistaModelo.PropertyChanged += ChatVistaModelo_PropertyChanged;
-
             _partidaVistaModelo.PropertyChanged += PartidaIniciadaVistaModelo_PropertyChanged;
-
             ConfigurarPartidaVistaModelo();
 
             _textoBotonIniciarPartida = Lang.partidaAdminTextoIniciarPartida;
             _botonIniciarPartidaHabilitado = _esHost;
             _mostrarBotonIniciarPartida = _esHost;
-
             _codigoSala = _sala.Codigo;
             _jugadores = new ObservableCollection<JugadorElemento>();
             ActualizarJugadores(_sala.Jugadores);
@@ -176,27 +177,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _chatVistaModelo.PuedeEscribir = true;
 
             InicializarProxyPartida();
-        }
-
-        /// <summary>
-        /// Constructor de conveniencia que inicializa servicios por defecto.
-        /// </summary>
-        public SalaVistaModelo(
-            DTOs.SalaDTO sala,
-            ISalasServicio salasServicio,
-            string nombreJugador = null,
-            bool esInvitado = false)
-            : this(
-                sala,
-                salasServicio,
-                new InvitacionesServicio(),
-                new ListaAmigosServicio(),
-                new PerfilServicio(),
-                new ReportesServicio(),
-                null,
-                nombreJugador,
-                esInvitado)
-        {
         }
 
         private void ConfigurarPartidaVistaModelo()
@@ -747,7 +727,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             try
             {
                 var contexto = new InstanceContext(this);
-                _proxyJuego = new CursoPartidaManejadorClient(contexto, CursoPartidaEndpoint);
+                _proxyJuego = _fabricaClientes.CrearClienteCursoPartida(contexto);
 
                 _proxyJuego.SuscribirJugador(
                     _codigoSala,
@@ -757,9 +737,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 _logger.Info("Cliente WCF de partida inicializado y jugador suscrito.");
             }
-            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            catch (CommunicationException ex)
             {
                 _logger.Error("Error de comunicación al suscribir al jugador en la partida.", ex);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Se agotó el tiempo para inicializar el proxy de partida.", ex);
             }
             catch (Exception ex)
             {
