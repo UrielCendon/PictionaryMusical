@@ -1,46 +1,38 @@
 using System;
 using System.Windows;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 
 namespace PictionaryMusicalCliente
 {
     /// <summary>
-    /// Ventana para gestionar las solicitudes de amistad pendientes (aceptar/rechazar).
+    /// Ventana para gestionar las solicitudes de amistad pendientes.
     /// </summary>
     public partial class Solicitudes : Window
     {
         private readonly SolicitudesVistaModelo _vistaModelo;
 
         /// <summary>
-        /// Inicializa la ventana con el servicio de amigos por defecto.
+        /// Inicializa la ventana inyectando el servicio de amigos.
         /// </summary>
-        public Solicitudes()
-            : this(new SolicitudesVistaModelo(new AmigosServicio()))
-        {
-        }
-
-        /// <summary>
-        /// Inicializa la ventana inyectando una implementacion del servicio.
-        /// </summary>
-        /// <param name="amigosServicio">Servicio de gestion de amigos.</param>
+        /// <param name="amigosServicio">Servicio de gestion de amigos ya instanciado.</param>
         public Solicitudes(IAmigosServicio amigosServicio)
-            : this(new SolicitudesVistaModelo(amigosServicio))
         {
-        }
-
-        /// <summary>
-        /// Constructor principal que configura la vista modelo y eventos.
-        /// </summary>
-        public Solicitudes(SolicitudesVistaModelo vistaModelo)
-        {
-            _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
+            if (amigosServicio == null)
+            {
+                throw new ArgumentNullException(nameof(amigosServicio));
+            }
 
             InitializeComponent();
 
+            _vistaModelo = new SolicitudesVistaModelo(amigosServicio);
             DataContext = _vistaModelo;
 
+            ConfigurarEventos();
+        }
+
+        private void ConfigurarEventos()
+        {
             _vistaModelo.Cerrar += VistaModelo_Cerrar;
             Closed += Solicitudes_Closed;
         }
@@ -52,15 +44,17 @@ namespace PictionaryMusicalCliente
                 Dispatcher.Invoke(VistaModelo_Cerrar);
                 return;
             }
-
             Close();
         }
 
         private void Solicitudes_Closed(object sender, EventArgs e)
         {
             Closed -= Solicitudes_Closed;
-            _vistaModelo.Cerrar -= VistaModelo_Cerrar;
-            _vistaModelo.Dispose();
+            if (_vistaModelo != null)
+            {
+                _vistaModelo.Cerrar -= VistaModelo_Cerrar;
+                _vistaModelo.Dispose();
+            }
         }
     }
 }

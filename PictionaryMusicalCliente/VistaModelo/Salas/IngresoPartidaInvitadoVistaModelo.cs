@@ -119,7 +119,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             if (string.IsNullOrWhiteSpace(codigo))
             {
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(Lang.unirseSalaTextoVacio);
+                AvisoServicio.Mostrar(Lang.unirseSalaTextoVacio);
                 return;
             }
 
@@ -179,21 +179,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         case EstadoUnionInvitado.SalaLlena:
                             _logger.Warn("Intento de unirse a sala llena.");
                             SonidoManejador.ReproducirError();
-                            AvisoAyudante.Mostrar(Lang.errorTextoSalaLlena);
+                            AvisoServicio.Mostrar(Lang.errorTextoSalaLlena);
                             return;
 
                         case EstadoUnionInvitado.SalaNoEncontrada:
                             _logger.WarnFormat("Sala no encontrada: {0}",
                                 codigo);
                             SonidoManejador.ReproducirError();
-                            AvisoAyudante.Mostrar(Lang.errorTextoNoEncuentraPartida);
+                            AvisoServicio.Mostrar(Lang.errorTextoNoEncuentraPartida);
                             return;
 
                         case EstadoUnionInvitado.Error:
                             _logger.ErrorFormat("Error al unirse: {0}",
                                 resultado.Mensaje);
                             SonidoManejador.ReproducirError();
-                            AvisoAyudante.Mostrar(
+                            AvisoServicio.Mostrar(
                                 resultado.Mensaje ?? Lang.errorTextoNoEncuentraPartida);
                             return;
                     }
@@ -201,7 +201,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 _logger.Error("Se agotaron los intentos de generar nombre único.");
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(Lang.errorTextoNombresInvitadoAgotados);
+                AvisoServicio.Mostrar(Lang.errorTextoNombresInvitadoAgotados);
             }
             finally
             {

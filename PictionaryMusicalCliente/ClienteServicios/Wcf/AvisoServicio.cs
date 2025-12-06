@@ -3,13 +3,13 @@ using System.Windows;
 using System.Windows.Input;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 
-namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
     /// <summary>
     /// Provee mecanismos para mostrar mensajes al usuario de manera segura en hilos de UI.
     /// Permite la inyeccion de dependencias para pruebas unitarias.
     /// </summary>
-    public class AvisoAyudante : IAvisoServicio
+    public class AvisoServicio : IAvisoServicio
     {
         /// <summary>
         /// Muestra un mensaje al usuario asegurando que se ejecute en el hilo principal.

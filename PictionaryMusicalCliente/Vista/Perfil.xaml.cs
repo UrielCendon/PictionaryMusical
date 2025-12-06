@@ -1,11 +1,7 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Dialogos;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -18,44 +14,31 @@ namespace PictionaryMusicalCliente
     /// </summary>
     public partial class Perfil : Window
     {
+        private readonly PerfilVistaModelo _vistaModelo;
+
         /// <summary>
-        /// Inicializa la ventana y carga los datos del perfil.
+        /// Inicializa la ventana inyectando el ViewModel configurado.
         /// </summary>
-        public Perfil()
+        /// <param name="vistaModelo">Logica de negocio del perfil.</param>
+        public Perfil(PerfilVistaModelo vistaModelo)
         {
+            _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));
+
             InitializeComponent();
 
-            IPerfilServicio perfilServicio = new PerfilServicio();
-            ISeleccionarAvatarServicio seleccionarAvatarServicio =
-                new SeleccionAvatarDialogoServicio();
-            ICambioContrasenaServicio cambioContrasenaServicio =
-                new CambioContrasenaServicio();
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio =
-                new VerificacionCodigoDialogoServicio();
-            IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio =
-                new RecuperacionCuentaDialogoServicio(verificarCodigoDialogoServicio);
+            ConfigurarInteraccion();
+            DataContext = _vistaModelo;
+        }
 
-            var vistaModelo = new PerfilVistaModelo(
-                perfilServicio,
-                seleccionarAvatarServicio,
-                cambioContrasenaServicio,
-                recuperacionCuentaDialogoServicio)
-            {
-                CerrarAccion = Close
-            };
-
-            vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
-            vistaModelo.SolicitarReinicioSesion = NavegarAlInicioSesion;
-
-            DataContext = vistaModelo;
+        private void ConfigurarInteraccion()
+        {
+            _vistaModelo.CerrarAccion = Close;
+            _vistaModelo.MostrarCamposInvalidos = MarcarCamposInvalidos;
         }
 
         private async void Perfil_LoadedAsync(object sender, RoutedEventArgs e)
         {
-            if (DataContext is PerfilVistaModelo vistaModelo)
-            {
-                await vistaModelo.CargarPerfilAsync().ConfigureAwait(true);
-            }
+            await _vistaModelo.CargarPerfilAsync().ConfigureAwait(true);
         }
 
         private void PopupRedSocial_Opened(object sender, EventArgs e)
@@ -85,10 +68,7 @@ namespace PictionaryMusicalCliente
             ControlVisual.RestablecerEstadoCampo(campoTextoNombre);
             ControlVisual.RestablecerEstadoCampo(campoTextoApellido);
 
-            if (camposInvalidos == null)
-            {
-                return;
-            }
+            if (camposInvalidos == null) return;
 
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Nombre)))
             {
@@ -98,24 +78,6 @@ namespace PictionaryMusicalCliente
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Apellido)))
             {
                 ControlVisual.MarcarCampoInvalido(campoTextoApellido);
-            }
-        }
-
-        private void NavegarAlInicioSesion()
-        {
-            var inicioSesion = new InicioSesion();
-
-            var ventanasACerrar = Application.Current.Windows
-                .Cast<Window>()
-                .Where(v => v != inicioSesion)
-                .ToList();
-
-            inicioSesion.Show();
-            Application.Current.MainWindow = inicioSesion;
-
-            foreach (var ventana in ventanasACerrar)
-            {
-                ventana.Close();
             }
         }
     }

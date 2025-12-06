@@ -134,7 +134,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             catch (ServicioExcepcion ex)
             {
                 _logger.Error("Error al obtener clasificación.", ex);
-                AvisoAyudante.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                AvisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
             finally
             {

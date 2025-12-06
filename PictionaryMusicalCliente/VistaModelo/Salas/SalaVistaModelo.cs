@@ -955,7 +955,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             if (Jugadores.Count < 2)
             {
                 SonidoManejador.ReproducirError();
-                AvisoAyudante.Mostrar(Lang.errorTextoPartidaUnJugador);
+                AvisoServicio.Mostrar(Lang.errorTextoPartidaUnJugador);
                 return;
             }
 
@@ -1171,7 +1171,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (!string.IsNullOrWhiteSpace(mensaje))
             {
-                mensaje = MensajeServidorAyudante.Localizar(mensaje, mensaje);
+                mensaje = LocalizadorServicio.Localizar(mensaje, mensaje);
             }
 
             dispatcher.Invoke(() =>

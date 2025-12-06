@@ -76,7 +76,8 @@ namespace PictionaryMusicalCliente.Modelo
             set => EstablecerPropiedad(ref _puntos, value);
         }
 
-        private bool EstablecerPropiedad<T>(ref T campo, T valor, [CallerMemberName] string nombrePropiedad = null)
+        private bool EstablecerPropiedad<T>(ref T campo, T valor, 
+            [CallerMemberName] string nombrePropiedad = null)
         {
             if (EqualityComparer<T>.Default.Equals(campo, valor))
             {

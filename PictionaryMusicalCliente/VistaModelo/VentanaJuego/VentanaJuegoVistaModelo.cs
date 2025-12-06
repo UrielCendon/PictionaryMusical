@@ -582,7 +582,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
                 return;
             }
 
-            var resultadoValidacion = ValidacionEntrada.ValidarCorreo(correo);
+            var resultadoValidacion = ValidadorEntrada.ValidarCorreo(correo);
             if (!resultadoValidacion.OperacionExitosa)
             {
                 SonidoManejador.ReproducirError();

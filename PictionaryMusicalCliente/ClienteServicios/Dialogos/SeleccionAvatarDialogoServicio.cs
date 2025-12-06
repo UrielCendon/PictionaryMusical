@@ -7,7 +7,6 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using System.Windows.Markup;
 using PictionaryMusicalCliente.Properties.Langs;
 
@@ -20,6 +19,18 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(SeleccionAvatarDialogoServicio));
+        private readonly IAvisoServicio _avisoServicio;
+        private readonly ICatalogoAvatares _catalogoAvatares;
+
+        public SeleccionAvatarDialogoServicio(
+            IAvisoServicio avisoServicio,
+            ICatalogoAvatares catalogoAvatares)
+        {
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _catalogoAvatares = catalogoAvatares ??
+                throw new ArgumentNullException(nameof(catalogoAvatares));
+        }
 
         /// <summary>
         /// Abre la ventana de seleccion y retorna el avatar elegido por el usuario.
@@ -55,13 +66,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
         private IList<ObjetoAvatar> ObtenerAvataresLocales()
         {
-            return (IList<ObjetoAvatar>)CatalogoAvataresLocales.ObtenerAvatares();
+            return (IList<ObjetoAvatar>)_catalogoAvatares.ObtenerAvatares();
         }
 
         private Task<ObjetoAvatar> ManejarErrorCargaAvatares()
         {
             _logger.Warn("No se cargaron avatares locales.");
-            AvisoAyudante.Mostrar(Lang.errorTextoNoCargaronAvatares);
+            _avisoServicio.Mostrar(Lang.errorTextoNoCargaronAvatares);
             return Task.FromResult<ObjetoAvatar>(null);
         }
 
@@ -88,7 +99,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             if (idAvatar > 0)
             {
                 vistaModelo.AvatarSeleccionado =
-                    CatalogoAvataresLocales.ObtenerPorId(idAvatar);
+                    _catalogoAvatares.ObtenerPorId(idAvatar);
             }
         }
 

@@ -110,14 +110,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(nombreAmigo))
             {
-                AvisoAyudante.Mostrar(Lang.buscarAmigoTextoIngreseUsuario);
+                AvisoServicio.Mostrar(Lang.buscarAmigoTextoIngreseUsuario);
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(_usuarioActual))
             {
                 _logger.Warn("Intento de enviar solicitud sin usuario actual en sesión.");
-                AvisoAyudante.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
+                AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     nombreAmigo).ConfigureAwait(true);
 
                 SonidoManejador.ReproducirExito();
-                AvisoAyudante.Mostrar(Lang.amigosTextoSolicitudEnviada);
+                AvisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
                 SolicitudEnviada?.Invoke();
             }
             catch (FaultException ex)
@@ -141,17 +141,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     nombreAmigo, ex);
                 SonidoManejador.ReproducirError();
 
-                string mensajeError = MensajeServidorAyudante.Localizar(
+                string mensajeError = LocalizadorServicio.Localizar(
                     ex.Message,
                     Lang.errorTextoErrorProcesarSolicitud);
-                AvisoAyudante.Mostrar(mensajeError);
+                AvisoServicio.Mostrar(mensajeError);
             }
             catch (ServicioExcepcion ex)
             {
                 _logger.ErrorFormat("Error de servicio al enviar solicitud a {0}.",
                     nombreAmigo, ex);
                 SonidoManejador.ReproducirError(); 
-                AvisoAyudante.Mostrar(ex.Message);
+                AvisoServicio.Mostrar(ex.Message);
             }
             finally
             {

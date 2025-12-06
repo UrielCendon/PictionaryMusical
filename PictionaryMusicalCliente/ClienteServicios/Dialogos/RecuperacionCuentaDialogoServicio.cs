@@ -19,12 +19,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             LogManager.GetLogger(typeof(RecuperacionCuentaDialogoServicio));
 
         private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
+        private readonly IAvisoServicio _avisoServicio;
 
         public RecuperacionCuentaDialogoServicio(
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio)
+            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
+            IAvisoServicio avisoServicio)
         {
             _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
                 throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
                 return (false, null, validacion.Error);
             }
 
-            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoEnviado);
+            _avisoServicio.Mostrar(Lang.avisoTextoCodigoEnviado);
             return (true, respuestaServidor.TokenCodigo, null);
         }
 
@@ -112,7 +116,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
                 return (false, validacion.Error);
             }
 
-            AvisoAyudante.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
+            _avisoServicio.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
             return (true, null);
         }
 

@@ -3,12 +3,12 @@ using System;
 using System.Reflection;
 using System.ServiceModel;
 
-namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
+namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 {
     /// <summary>
     /// Ayudante para extraer mensajes amigables de excepciones WCF.
     /// </summary>
-    public class ErrorServicioAyudante : IManejadorErrorServicio
+    public class ManejadorErrorServicio : IManejadorErrorServicio
     {
         private readonly ILocalizadorServicio _localizador;
 
@@ -19,7 +19,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         /// <param name="localizador">El servicio encargado de traducir los mensajes extraídos.
         /// </param>
         /// <exception cref="ArgumentNullException">Se lanza si el localizador es nulo.</exception>
-        public ErrorServicioAyudante(ILocalizadorServicio localizador)
+        public ManejadorErrorServicio(ILocalizadorServicio localizador)
         {
             _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
         }
