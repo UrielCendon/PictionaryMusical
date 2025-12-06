@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
@@ -47,9 +50,19 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return clasificacion;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                _logger.Error("Error de actualizacion al crear la clasificacion inicial.", ex);
+                throw;
+            }
+            catch (EntityException ex)
+            {
+                _logger.Error("Error de entidad al crear la clasificacion inicial.", ex);
+                throw;
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error de datos al crear la clasificacion inicial.", ex);
                 throw;
             }
         }
@@ -88,10 +101,26 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
                 return true;
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.",
+                    "Error de actualizacion al actualizar la clasificacion del jugador con ID {0}.",
+                    jugadorId,
+                    ex);
+                throw;
+            }
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de entidad al actualizar la clasificacion del jugador con ID {0}.",
+                    jugadorId,
+                    ex);
+                throw;
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de datos al actualizar la clasificacion del jugador con ID {0}.",
                     jugadorId,
                     ex);
                 throw;
@@ -114,9 +143,14 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Take(cantidad)
                     .ToList();
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                _logger.Error("Error de entidad al consultar los mejores jugadores.", ex);
+                throw;
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error de datos al consultar los mejores jugadores.", ex);
                 throw;
             }
         }

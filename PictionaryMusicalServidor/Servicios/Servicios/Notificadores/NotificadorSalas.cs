@@ -84,10 +84,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 _logger.Warn("Timeout al notificar la lista de salas a los suscriptores.", ex);
             }
-            catch (Exception ex)
+            catch (ObjectDisposedException ex)
             {
-                _logger.Error(
-                    "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                _logger.Warn(
+                    "Canal desechado al notificar la lista de salas a los suscriptores.", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Warn(
+                    "Operacion invalida al notificar la lista de salas a los suscriptores.", ex);
             }
         }
 
@@ -118,10 +123,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                         ex);
                         _suscripciones.TryRemove(kvp.Key, out _);
                 }
-                catch (Exception ex)
+                catch (ObjectDisposedException ex)
                 {
-                    _logger.Error(
-                        "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                    _logger.Warn(
+                        "Canal desechado al notificar masivamente. Eliminando suscripcion defectuosa.", ex);
+                    _suscripciones.TryRemove(kvp.Key, out _);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    _logger.Warn(
+                        "Operacion invalida al notificar masivamente. Eliminando suscripcion defectuosa.", ex);
+                    _suscripciones.TryRemove(kvp.Key, out _);
                 }
             }
         }
