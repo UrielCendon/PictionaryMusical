@@ -86,9 +86,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de comunicacion al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
-                _logger.Error("Error inesperado al unirse al chat.", ex);
+                _logger.Error("Timeout al unirse al chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }
@@ -134,9 +139,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al enviar mensaje.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
             {
-                _logger.Error("Error inesperado al enviar mensaje de chat.", ex);
+                _logger.Error("Error de comunicacion al enviar mensaje de chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.Error("Timeout al enviar mensaje de chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }
@@ -172,9 +182,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al salir del chat.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
             {
-                _logger.Error("Error inesperado al salir del chat.", ex);
+                _logger.Error("Error de comunicacion al salir del chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al salir del chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }

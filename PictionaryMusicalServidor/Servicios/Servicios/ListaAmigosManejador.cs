@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Core;
 using System.ServiceModel;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using Datos.Modelo;
@@ -99,10 +101,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.Error(
+                    "Error de entidad al suscribirse. Fallo recuperar lista de amigos.",
+                    ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
+            }
+            catch (DataException ex)
             {
                 _logger.Error(
                     "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
+            }
+            catch (CommunicationException ex)
+            {
+                _logger.Error(
+                    "Error de comunicacion al suscribirse. Fallo recuperar lista de amigos.",
                     ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
@@ -145,10 +161,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al obtener la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
             {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
+                _logger.Error("Error de entidad al obtener la lista de amigos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error de datos al obtener la lista de amigos.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.Warn("Usuario no encontrado al obtener la lista de amigos.", ex);
+                throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
             }
         }
 
