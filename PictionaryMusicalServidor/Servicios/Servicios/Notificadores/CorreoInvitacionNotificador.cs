@@ -127,9 +127,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 _logger.Error("Argumentos invalidos para enviar correo.", ex);
                 return false;
             }
-            catch (Exception ex)
+            catch (FormatException ex)
             {
-                _logger.Error("Error inesperado al enviar invitacion.", ex);
+                _logger.Error("Formato de correo invalido al enviar invitacion.", ex);
                 return false;
             }
         }

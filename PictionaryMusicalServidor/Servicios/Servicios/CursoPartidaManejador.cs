@@ -7,6 +7,9 @@ using PictionaryMusicalServidor.Servicios.LogicaNegocio;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Core;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -302,7 +305,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 callback.NotificarInicioRonda(rondaPersonalizada);
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
@@ -388,7 +409,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
+            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
@@ -400,7 +429,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return controlador.ObtenerJugadores()?.ToList();
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.Error(
+                    "Error al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return new List<JugadorPartida>();
+            }
+            catch (DataException ex)
+            {
+                _logger.Error(
+                    "Error al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return new List<JugadorPartida>();
+            }
+            catch (DbUpdateException ex)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
@@ -438,7 +481,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     jugador.PuntajeTotal,
                     ganoPartida);
             }
-            catch (Exception ex)
+            catch (EntityException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
@@ -593,7 +650,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return _salasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
             }
-            catch (Exception ex)
+            catch (CommunicationException ex)
+            {
+                _logger.WarnFormat(
+                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    idSala);
+                _logger.Warn(ex);
+                return CrearConfiguracionPorDefecto();
+            }
+            catch (TimeoutException ex)
+            {
+                _logger.WarnFormat(
+                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    idSala);
+                _logger.Warn(ex);
+                return CrearConfiguracionPorDefecto();
+            }
+            catch (ObjectDisposedException ex)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
