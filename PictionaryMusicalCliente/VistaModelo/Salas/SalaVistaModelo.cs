@@ -43,6 +43,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
         private readonly ILocalizadorServicio _localizador;
+        private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
         private readonly bool _esInvitado;
@@ -102,6 +103,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ISonidoManejador sonidoManejador,
             IAvisoServicio avisoServicio,
             ILocalizadorServicio localizador,
+            IUsuarioAutenticado usuarioSesion,
             IInvitacionSalaServicio invitacionSalaServicio = null,
             string nombreJugador = null,
             bool esInvitado = false)
@@ -118,7 +120,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _localizador = localizador ??
                 throw new ArgumentNullException(nameof(localizador));
             _invitacionSalaServicio = invitacionSalaServicio ??
-                new InvitacionSalaServicio(
+                throw new ArgumentNullException(nameof(invitacionSalaServicio));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
+
+            new InvitacionSalaServicio(
                     invitacionesServicio ?? 
                     throw new ArgumentNullException(nameof(invitacionesServicio)),
                     listaAmigosServicio ?? 
@@ -128,7 +134,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
                 ? nombreJugador
-                : SesionUsuarioActual.Usuario?.NombreUsuario ?? string.Empty;
+                : _usuarioSesion.NombreUsuario ?? string.Empty;
             _esHost = string.Equals(
                 _sala.Creador,
                 _nombreUsuarioSesion,
@@ -763,9 +769,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private string ObtenerIdentificadorJugador()
         {
-            if (SesionUsuarioActual.Usuario?.JugadorId > 0)
+            if (_usuarioSesion.JugadorId > 0)
             {
-                return SesionUsuarioActual.Usuario.JugadorId.ToString();
+                return _usuarioSesion.JugadorId.ToString();
             }
 
             if (!string.IsNullOrWhiteSpace(_nombreUsuarioSesion))

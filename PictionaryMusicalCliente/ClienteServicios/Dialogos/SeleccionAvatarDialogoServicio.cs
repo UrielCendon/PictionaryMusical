@@ -9,6 +9,7 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using System.Windows.Markup;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Vista;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {

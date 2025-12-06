@@ -44,21 +44,23 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private readonly IAmigosServicio _amigosServicio;
         private readonly ISalasServicio _salasServicio;
         private readonly ISonidoManejador _sonidoManejador;
+        private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly ILocalizacionServicio _localizacion;
 
         private bool _suscripcionActiva;
 
         /// <summary>
         /// Constructor por defecto que inicializa los servicios estandar.
         /// </summary>
-        public VentanaPrincipalVistaModelo(ISonidoManejador sonidoManejador)
-            : this(
-                  LocalizacionServicio.Instancia,
-                  new ListaAmigosServicio(),
-                  new AmigosServicio(),
-                  new SalasServicio())
+        public VentanaPrincipalVistaModelo(ISonidoManejador sonidoManejador,
+            IUsuarioAutenticado usuarioSesion, ILocalizacionServicio localizacion)
         {
             _sonidoManejador = sonidoManejador
                 ?? throw new ArgumentNullException(nameof(sonidoManejador));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            _localizacion = localizacion ??
+                throw new ArgumentNullException(nameof(localizacion));
         }
 
         /// <summary>
@@ -80,7 +82,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _listaAmigosServicio.ListaActualizada += ListaActualizada;
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
 
-            _nombreUsuarioSesion = SesionUsuarioActual.Usuario?.NombreUsuario ?? string.Empty;
+            _nombreUsuarioSesion = _usuarioSesion.NombreUsuario ?? string.Empty;
 
             CargarDatosUsuario();
             CargarOpcionesPartida();

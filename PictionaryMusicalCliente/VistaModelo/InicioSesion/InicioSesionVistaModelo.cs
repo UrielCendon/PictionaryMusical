@@ -370,7 +370,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             {
                 _logger.InfoFormat("Sesión establecida exitosamente para ID: {0}", 
                     resultado.Usuario.UsuarioId);
-                _usuarioSesion.EstablecerUsuario(resultado.Usuario);
+                _usuarioSesion.CargarDesdeDTO(resultado.Usuario);
             }
 
             _sonidoManejador.ReproducirExito();

@@ -1,7 +1,5 @@
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Modelo;
-using PictionaryMusicalCliente.Vista;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -24,6 +22,7 @@ namespace PictionaryMusicalCliente.Vista
     public partial class Sala : Window
     {
         private readonly SalaVistaModelo _vistaModelo;
+        private readonly IAvisoServicio _avisoServicio;
         private readonly Action _accionAlCerrar;
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
@@ -34,11 +33,15 @@ namespace PictionaryMusicalCliente.Vista
         public Sala(
             SalaDTO sala,
             ISalasServicio salasServicio,
+            IAvisoServicio avisoServicio,
             bool esInvitado = false,
             string nombreJugador = null,
             Action accionAlCerrar = null)
         {
             InitializeComponent();
+
+            _avisoServicio = avisoServicio ?? 
+                throw new ArgumentNullException(nameof(avisoServicio));
 
             if (salasServicio == null)
             {
@@ -62,7 +65,7 @@ namespace PictionaryMusicalCliente.Vista
             _vistaModelo.AplicarEstiloLapiz = AplicarEstiloLapiz;
             _vistaModelo.ActualizarFormaGoma = ActualizarFormaGoma;
             _vistaModelo.LimpiarTrazos = LimpiarLienzo;
-            _vistaModelo.MostrarMensaje = AvisoServicio.Mostrar;
+            _vistaModelo.MostrarMensaje = _avisoServicio.Mostrar;
             _vistaModelo.MostrarConfirmacion = MostrarConfirmacion;
             _vistaModelo.SolicitarDatosReporte = SolicitarDatosReporte;
             _vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;

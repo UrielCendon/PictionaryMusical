@@ -21,7 +21,7 @@ namespace PictionaryMusicalCliente.Vista
             bool debeAbrirVentanaPrincipal = true;
             Window ventanaDestino = null;
 
-            if (Owner?.Owner is VentanaJuego ventanaJuego
+            if (Owner?.Owner is Sala ventanaJuego
                 && ventanaJuego.DataContext is SalaVistaModelo vistaModelo
                 && vistaModelo.EsInvitado)
             {

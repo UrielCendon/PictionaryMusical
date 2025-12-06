@@ -136,7 +136,7 @@ namespace PictionaryMusicalCliente.Vista
         {
             _servicioMusica.Detener();
 
-            var ventanaJuego = new VentanaJuego(
+            var ventanaJuego = new Sala(
                 sala,
                 servicio,
                 esInvitado: true,

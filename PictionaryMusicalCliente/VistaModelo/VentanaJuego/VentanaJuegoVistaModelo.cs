@@ -37,6 +37,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
         private readonly DispatcherTimer _overlayTimer;
         private readonly DispatcherTimer _temporizador;
         private readonly ISalasServicio _salasServicio;
+        private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly IInvitacionesServicio _invitacionesServicio;
         private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IPerfilServicio _perfilServicio;
@@ -103,6 +104,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
             IReportesServicio reportesServicio,
             ISonidoManejador sonidoManejador,
             IValidadorEntrada validadorEntrada,
+            IUsuarioAutenticado usuarioSesion,
             string nombreJugador = null,
             bool esInvitado = false)
         {
@@ -121,11 +123,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaJuego
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _validadorEntrada = validadorEntrada ??
                 throw new ArgumentNullException(nameof(validadorEntrada));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
 
             _esInvitado = esInvitado;
             _nombreUsuarioSesion = !string.IsNullOrWhiteSpace(nombreJugador)
                 ? nombreJugador
-                : SesionUsuarioActual.Usuario?.NombreUsuario ?? string.Empty;
+                : _usuarioSesion.NombreUsuario ?? string.Empty;
 
             _manejadorCancion = new CancionManejador();
             _amigosInvitados = new HashSet<int>();

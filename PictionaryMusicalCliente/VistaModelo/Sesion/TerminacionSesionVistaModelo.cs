@@ -2,6 +2,7 @@
 using System;
 using System.Windows.Input;
 using log4net;
+using PictionaryMusicalCliente.Modelo;
 
 namespace PictionaryMusicalCliente.VistaModelo.Sesion
 {
@@ -12,6 +13,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
     {
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private readonly IUsuarioAutenticado _usuarioSesion;
 
         /// <summary>
         /// Accion delegada para cerrar el cuadro de dialogo.
@@ -26,8 +28,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         /// <summary>
         /// Inicializa una nueva instancia del ViewModel.
         /// </summary>
-        public TerminacionSesionVistaModelo()
+        public TerminacionSesionVistaModelo(IUsuarioAutenticado usuarioSesion)
         {
+            _usuarioSesion = usuarioSesion 
+                ?? throw new ArgumentNullException(nameof(usuarioSesion));
+
             AceptarComando = new ComandoDelegado(_ => EjecutarAceptar());
             CancelarComando = new ComandoDelegado(_ => EjecutarCancelar());
         }
@@ -45,7 +50,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         private void EjecutarAceptar()
         {
             _logger.Info("Usuario confirmó el cierre de sesión.");
-            SesionUsuarioActual.CerrarSesion();
+            _usuarioSesion.Limpiar();
             EjecutarCierreSesionYNavegacion?.Invoke();
 
             OcultarDialogo?.Invoke();

@@ -9,6 +9,7 @@ using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Utilidades.Idiomas;
+using PictionaryMusicalCliente.Vista;
 using System;
 using System.Globalization;
 using System.Windows;

@@ -257,9 +257,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         /// </summary>
         public async Task CargarPerfilAsync()
         {
-            UsuarioAutenticado sesion = SesionUsuarioActual.Usuario;
-
-            if (sesion == null || sesion.IdUsuario <= 0)
+            if (_usuarioSesion == null || _usuarioSesion.IdUsuario <= 0)
             {
 				_logger.Warn("Intento de cargar perfil sin sesión válida.");
                 _sonidoManejador.ReproducirError();
@@ -273,12 +271,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             try
             {
                 DTOs.UsuarioDTO perfil = await _perfilServicio
-                    .ObtenerPerfilAsync(sesion.IdUsuario).ConfigureAwait(true);
+                    .ObtenerPerfilAsync(_usuarioSesion.IdUsuario).ConfigureAwait(true);
 
                 if (perfil == null)
                 {
                     _logger.ErrorFormat("Perfil obtenido es nulo para ID: {0}",
-                        sesion.IdUsuario);
+                        _usuarioSesion.IdUsuario);
                     _sonidoManejador.ReproducirError();
                     _avisoServicio.Mostrar(Lang.errorTextoServidorObtenerPerfil);
                     return;
@@ -524,7 +522,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private void FinalizarSesionPorCambioContrasena()
         {
             _avisoServicio.Mostrar(Lang.avisoTextoReinicioSesion);
-            SesionUsuarioActual.CerrarSesion();
+            _usuarioSesion.Limpiar();
             SolicitarReinicioSesion?.Invoke();
         }
 
@@ -618,8 +616,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private void ActualizarSesion()
         {
-            UsuarioAutenticado sesion = SesionUsuarioActual.Usuario;
-            if (sesion == null || sesion.IdUsuario <= 0)
+            if (_usuarioSesion == null || _usuarioSesion.IdUsuario <= 0)
             {
                 return;
             }
@@ -627,7 +624,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             var dto = new DTOs.UsuarioDTO
             {
                 UsuarioId = _usuarioId,
-                JugadorId = sesion.JugadorId,
+                JugadorId = _usuarioSesion.JugadorId,
                 NombreUsuario = Usuario,
                 Nombre = Nombre?.Trim(),
                 Apellido = Apellido?.Trim(),
@@ -638,16 +635,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 X = ObtenerIdentificador(RedSocialX),
                 Discord = ObtenerIdentificador(RedSocialDiscord)
             };
-            SesionUsuarioActual.EstablecerUsuario(dto);
+            _usuarioSesion.CargarDesdeDTO(dto);
         }
-        private static void ActualizarSesion(DTOs.UsuarioDTO perfil)
+        private void ActualizarSesion(DTOs.UsuarioDTO perfil)
         {
             if (perfil == null)
             {
                 return;
             }
 
-            SesionUsuarioActual.EstablecerUsuario(perfil);
+            _usuarioSesion.CargarDesdeDTO(perfil);
         }
 
         /// <summary>
