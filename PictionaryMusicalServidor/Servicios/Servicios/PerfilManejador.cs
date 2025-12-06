@@ -72,11 +72,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.Error("Error de actualizacion al obtener perfil.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
-            }
         }
 
         /// <summary>

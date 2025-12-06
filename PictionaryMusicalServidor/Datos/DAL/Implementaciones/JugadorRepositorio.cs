@@ -41,17 +41,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (EntityException ex)
             {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",\
+                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
                     correo, ex);
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",\
-                    correo, ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
                     correo, ex);
