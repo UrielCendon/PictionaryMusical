@@ -27,6 +27,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     = () => Recursos.Lang.errorTextoPartidaYaIniciada,
                 ["Partida cancelada por falta de jugadores."]
                     = () => Recursos.Lang.partidaTextoJugadoresInsuficientes,
+                ["El anfitrion de la sala abandono la partida."]
+                    = () => Recursos.Lang.partidaTextoHostCanceloSala,
                 ["Reporte enviado correctamente."]
                     = () => Recursos.Lang.reportarJugadorTextoExito,
                 ["No fue posible registrar el reporte."]

@@ -133,6 +133,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string DificultadObligatoria = "La dificultad es obligatoria.";
 
             public const string PartidaCanceladaFaltaJugadores = "Partida cancelada por falta de jugadores.";
+            public const string PartidaCanceladaHostSalio = "El anfitrion de la sala abandono la partida.";
             public const string PartidaYaIniciada = "Partida ya iniciada.";
             public const string PartidaComenzo = "La partida ya comenzo";
             public const string FaltanJugadores = "Faltan jugadores.";
