@@ -18,7 +18,7 @@ namespace PictionaryMusicalCliente.Vista
 
         /// <summary>
         /// Constructor por defecto, solo para uso del diseñador/XAML. 
-        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// La aplicacion debe usar el constructor que recibe dependencias.
         /// </summary>
         public Perfil()
         {

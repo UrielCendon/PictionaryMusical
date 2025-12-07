@@ -700,6 +700,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// </summary>
         public Func<bool> ChequearCierreAplicacionGlobal { get; set; }
 
+        private DestinoNavegacion ObtenerDestinoSegunSesion()
+        {
+            bool sesionActiva = _usuarioSesion?.EstaAutenticado == true && !_esInvitado;
+            return sesionActiva
+                ? DestinoNavegacion.VentanaPrincipal
+                : DestinoNavegacion.InicioSesion;
+        }
+
         private static void NotificarComando(ICommand comando)
         {
             if (comando is IComandoNotificable notificable)
@@ -1197,9 +1205,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         MostrarMensaje?.Invoke(mensaje);
                     }
 
-                    DestinoNavegacion destino = _esInvitado
-                        ? DestinoNavegacion.InicioSesion
-                        : DestinoNavegacion.VentanaPrincipal;
+                    var destino = ObtenerDestinoSegunSesion();
 
                     if (destino == DestinoNavegacion.InicioSesion)
                     {
@@ -1223,9 +1229,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             string mensajeFinal = $"{titulo}\n{mensajeResultado}";
             MostrarMensaje?.Invoke(mensajeFinal);
 
-            DestinoNavegacion destino = _esInvitado
-                ? DestinoNavegacion.InicioSesion
-                : DestinoNavegacion.VentanaPrincipal;
+            var destino = ObtenerDestinoSegunSesion();
 
             if (destino == DestinoNavegacion.InicioSesion)
             {
@@ -1372,9 +1376,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     StringComparison.OrdinalIgnoreCase))
                 {
                     _logger.Info("Este usuario ha sido expulsado de la sala.");
-                    DestinoNavegacion destino = _esInvitado
-                        ? DestinoNavegacion.InicioSesion
-                        : DestinoNavegacion.VentanaPrincipal;
+                    var destino = ObtenerDestinoSegunSesion();
 
                     if (destino == DestinoNavegacion.InicioSesion)
                     {
@@ -1664,9 +1666,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             BotonIniciarPartidaHabilitado = false;
             Jugadores.Clear();
 
-            DestinoNavegacion destino = _esInvitado
-                ? DestinoNavegacion.InicioSesion
-                : DestinoNavegacion.VentanaPrincipal;
+            var destino = ObtenerDestinoSegunSesion();
 
             if (destino == DestinoNavegacion.InicioSesion)
             {

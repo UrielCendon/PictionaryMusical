@@ -39,11 +39,13 @@ namespace PictionaryMusicalCliente.Vista
         private readonly IWcfClienteFabrica _fabricaWcf;
         private readonly IInvitacionSalaServicio _invitacionSalaServicio;
 
+        private readonly Action _navegarInicioSesion;
+
         private readonly VentanaPrincipalVistaModelo _vistaModelo;
         private bool _abrioVentanaJuego;
 
         /// <summary>
-        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// Constructor por defecto, solo para uso del disenador/XAML. 
         /// La aplicacion debe usar el constructor que recibe dependencias.
         /// </summary>
         public VentanaPrincipal()
@@ -74,7 +76,8 @@ namespace PictionaryMusicalCliente.Vista
             IValidadorEntrada validador,
             ILocalizadorServicio traductor,
             IWcfClienteFabrica fabricaWcf,
-            IInvitacionSalaServicio invitacionSalaServicio)
+            IInvitacionSalaServicio invitacionSalaServicio,
+            Action navegarInicioSesion)
         {
             InitializeComponent();
 
@@ -120,6 +123,8 @@ namespace PictionaryMusicalCliente.Vista
                 throw new ArgumentNullException(nameof(fabricaWcf));
             _invitacionSalaServicio = invitacionSalaServicio ??
                 throw new ArgumentNullException(nameof(invitacionSalaServicio));
+            _navegarInicioSesion = navegarInicioSesion ??
+                throw new ArgumentNullException(nameof(navegarInicioSesion));
 
             _musica.ReproducirEnBucle("ventana_principal_musica.mp3");
 
@@ -231,15 +236,15 @@ namespace PictionaryMusicalCliente.Vista
                     _recuperacion, _selectAvatar, _avatares,
                     _clasificacion, _imagenesPerfil, _usuarioSesion,
                     _invitaciones, _reportes, _sonidos,
-                    _validador, _traductor, _fabricaWcf, _invitacionSalaServicio);
+                    _validador, _traductor, _fabricaWcf, _invitacionSalaServicio,
+                    _navegarInicioSesion);
 
                 nuevaPrincipal.Show();
             };
 
             Action irInicioSesion = () =>
             {
-                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                Application.Current.Shutdown();
+                NavegarAInicioSesion();
             };
 
             var ventanaJuego = new Sala(
@@ -258,13 +263,27 @@ namespace PictionaryMusicalCliente.Vista
 
         private void ReiniciarAplicacion()
         {
+            CerrarVentanasSecundarias();
+            NavegarAInicioSesion();
+            Close();
+        }
+
+        private void NavegarAInicioSesion()
+        {
+            _usuarioSesion.Limpiar();
+            _musica.Detener();
+            _navegarInicioSesion?.Invoke();
+        }
+
+        private void CerrarVentanasSecundarias()
+        {
             foreach (Window ventana in Application.Current.Windows)
             {
-                if (ventana != this) ventana.Close();
+                if (!ReferenceEquals(ventana, this))
+                {
+                    ventana.Close();
+                }
             }
-
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.Shutdown();
         }
     }
 }

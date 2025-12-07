@@ -206,11 +206,45 @@ namespace PictionaryMusicalCliente.Vista
                 _avatares, _clasif, _imagenesPerfil, _usuarioSesion,
                 _invitaciones, _reportes, _sonidos, _validador, _traductor,
                 _fabrica,
-                invitacionSalaServicio
+                invitacionSalaServicio,
+                CrearVentanaInicioSesion
             );
 
             principal.Show();
             Close();
+        }
+
+        private void CrearVentanaInicioSesion()
+        {
+            _usuarioSesion.Limpiar();
+
+            var ventanaInicio = new InicioSesion(
+                _musica,
+                _inicioSesion,
+                _cambioPass,
+                _recuperacion,
+                _idioma,
+                _fabricaSalas,
+                _fabrica,
+                _ejecutor,
+                _manejadorError,
+                _traductor,
+                _aviso,
+                _avatares,
+                _sonidos,
+                _validador,
+                _usuarioSesion,
+                _imagenesPerfil,
+                _verifCodigo,
+                _generadorNombres,
+                _perfil,
+                _clasif,
+                _invitaciones,
+                _reportes,
+                _listaAmigos,
+                _amigos);
+
+            ventanaInicio.Show();
         }
 
         private void NavegarAVentanaJuego(
@@ -227,8 +261,8 @@ namespace PictionaryMusicalCliente.Vista
 
             Action irInicioSesion = () =>
             {
-                System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-                Application.Current.Shutdown();
+                _usuarioSesion.Limpiar();
+                CrearVentanaInicioSesion();
             };
 
             var ventanaJuego = new Sala(

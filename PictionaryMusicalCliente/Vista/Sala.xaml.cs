@@ -151,7 +151,6 @@ namespace PictionaryMusicalCliente.Vista
             _vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;
 
             _vistaModelo.ManejarNavegacion = EjecutarNavegacion;
-            _vistaModelo.ManejarNavegacion = EjecutarNavegacionSesion;
             _vistaModelo.CerrarVentana = () => Close();
 
             _vistaModelo.ChequearCierreAplicacionGlobal = DebeCerrarAplicacionPorCierreDeVentana;
@@ -378,36 +377,31 @@ namespace PictionaryMusicalCliente.Vista
             {
                 Dispatcher.Invoke(() =>
                 {
-                    if (_vistaModelo.EsInvitado)
-                    {
-                        _navegarInicioSesion?.Invoke();
-                    }
-                    else
-                    {
-                        _navegarMenuPrincipal?.Invoke();
-                    }
+                    var destino = _usuarioSesion.EstaAutenticado
+                        ? SalaVistaModelo.DestinoNavegacion.VentanaPrincipal
+                        : SalaVistaModelo.DestinoNavegacion.InicioSesion;
+
+                    EjecutarNavegacion(destino);
                 });
             }
         }
 
         private void EjecutarNavegacion(SalaVistaModelo.DestinoNavegacion destino)
         {
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
-            Application.Current.Shutdown();
-        }
-
-        private void EjecutarNavegacionSesion(SalaVistaModelo.DestinoNavegacion destino)
-        {
             Close();
 
-            if (destino == SalaVistaModelo.DestinoNavegacion.InicioSesion)
+            bool requiereInicioSesion =
+                destino == SalaVistaModelo.DestinoNavegacion.InicioSesion ||
+                !_usuarioSesion.EstaAutenticado;
+
+            if (requiereInicioSesion)
             {
+                _usuarioSesion.Limpiar();
                 _navegarInicioSesion?.Invoke();
+                return;
             }
-            else if (destino == SalaVistaModelo.DestinoNavegacion.VentanaPrincipal)
-            {
-                _navegarMenuPrincipal?.Invoke();
-            }
+
+            _navegarMenuPrincipal?.Invoke();
         }
 
         private bool MostrarConfirmacion(string mensaje)
