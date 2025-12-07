@@ -173,9 +173,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             bool eraDibujante;
             bool debeCancelar = false;
             bool debeAvanzar = false;
+            bool eraHost;
+            string mensajeCancelacion = null;
 
             lock (_sincronizacion)
             {
+                eraHost = _gestorJugadores.EsHost(id);
                 if (!_gestorJugadores.Remover(id, out eraDibujante))
                 {
                     return;
@@ -185,6 +188,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     if (!_gestorJugadores.HaySuficientesJugadores)
                     {
                         debeCancelar = true;
+                        mensajeCancelacion = eraHost
+                            ? MensajesError.Cliente.PartidaCanceladaHostSalio
+                            : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
                     }
                     else if (eraDibujante)
                     {
@@ -195,7 +201,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (debeCancelar)
             {
-                CancelarPartida();
+                CancelarPartida(mensajeCancelacion);
             }
             else if (debeAvanzar)
             {
@@ -485,7 +491,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private void CancelarPartida()
+        private void CancelarPartida(string mensajeCancelacion)
         {
             bool debeNotificar = false;
 
@@ -506,7 +512,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 FinPartida?.Invoke(new ResultadoPartidaDTO
                 {
                     Clasificacion = _gestorJugadores.GenerarClasificacion(),
-                    Mensaje = MensajesError.Cliente.PartidaCanceladaFaltaJugadores
+                    Mensaje = mensajeCancelacion
+                        ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores
                 });
             }
         }

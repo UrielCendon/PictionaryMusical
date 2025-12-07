@@ -1183,6 +1183,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 "Partida cancelada por falta de jugadores.",
                 StringComparison.OrdinalIgnoreCase);
 
+            bool esCancelacionPorHost = string.Equals(
+                mensajeOriginal,
+                "El anfitrion de la sala abandono la partida.",
+                StringComparison.OrdinalIgnoreCase);
+
             if (!string.IsNullOrWhiteSpace(mensaje))
             {
                 mensaje = _localizador.Localizar(mensaje, mensaje);
@@ -1203,7 +1208,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _partidaVistaModelo.NotificarFinPartida();
                 BotonIniciarPartidaHabilitado = false;
 
-                if (esCancelacionPorFaltaDeJugadores)
+                if (esCancelacionPorHost && _esHost)
+                {
+                    return;
+                }
+
+                if (esCancelacionPorFaltaDeJugadores || esCancelacionPorHost)
                 {
                     if (!string.IsNullOrWhiteSpace(mensaje))
                     {
