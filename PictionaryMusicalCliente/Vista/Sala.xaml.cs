@@ -125,13 +125,14 @@ namespace PictionaryMusicalCliente.Vista
                 _usuarioSesion,
                 _invitacionesSalaServicio,
                 _fabricaWcf,
+                _cancion,
                 nombreJugador,
                 esInvitado
                 );
 
             _vistaModelo.AbrirAjustesPartida = manejadorCancion =>
             {
-                var ajustes = new AjustesPartida(_sonidos, _cancion);
+                var ajustes = new AjustesPartida(_sonidos, manejadorCancion ?? _cancion);
                 ajustes.SalirDePartidaConfirmado = () =>
                 {
                     _vistaModelo.ManejarNavegacion?.Invoke(

@@ -44,6 +44,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private readonly ILocalizadorServicio _localizador;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly IWcfClienteFabrica _fabricaClientes;
+        private readonly ICancionManejador _cancionManejador;
 
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
@@ -109,6 +110,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IUsuarioAutenticado usuarioSesion,
             IInvitacionSalaServicio invitacionSalaServicio,
             IWcfClienteFabrica fabricaClientes,
+            ICancionManejador cancionManejador,
             string nombreJugador = null,
             bool esInvitado = false)
         {
@@ -129,6 +131,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(usuarioSesion));
             _fabricaClientes = fabricaClientes ??
                 throw new ArgumentNullException(nameof(fabricaClientes));
+            _cancionManejador = cancionManejador ??
+                throw new ArgumentNullException(nameof(cancionManejador));
 
             if (invitacionSalaServicio == null)
             {
@@ -149,7 +153,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _nombreDibujanteActual = string.Empty;
             _rondaTerminadaTemprano = false;
 
-            _partidaVistaModelo = new PartidaIniciadaVistaModelo(_sonidoManejador);
+            _partidaVistaModelo = new PartidaIniciadaVistaModelo(_sonidoManejador,
+                _cancionManejador);
             _chatVistaModelo = CrearChatVistaModelo();
 
             _chatVistaModelo.PropertyChanged += ChatVistaModelo_PropertyChanged;
@@ -600,7 +605,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <summary>
         /// Accion para abrir la ventana de ajustes.
         /// </summary>
-        public Action<CancionManejador> AbrirAjustesPartida { get; set; }
+        public Action<ICancionManejador> AbrirAjustesPartida { get; set; }
 
         /// <summary>
         /// Accion notificar cambio de herramienta a la vista.
@@ -826,7 +831,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void EjecutarAbrirAjustes()
         {
-            AbrirAjustesPartida?.Invoke(_partidaVistaModelo.ManejadorCancion);
+            AbrirAjustesPartida?.Invoke(_partidaVistaModelo.CancionManejador);
         }
 
         private static string LimitarMensajePorCaracteres(string mensaje)
@@ -1759,10 +1764,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 						ex.Message);
                 }
             }
-
-            (_salasServicio as IDisposable)?.Dispose();
-            (_invitacionSalaServicio as IDisposable)?.Dispose();
-            (_reportesServicio as IDisposable)?.Dispose();
         }
 
         /// <summary>
