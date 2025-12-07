@@ -82,8 +82,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 return await EjecutarEnvioCorreo(correo, sala, invitacion.Idioma);
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Regla de negocio reportada al enviar invitacion.", ex);
                 throw;
             }
             catch (ArgumentException ex)

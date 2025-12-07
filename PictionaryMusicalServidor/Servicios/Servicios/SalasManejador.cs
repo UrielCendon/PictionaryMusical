@@ -160,8 +160,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 return resultado;
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al unirse a sala.", ex);
                 throw;
             }
             catch (ArgumentException ex)
@@ -228,8 +229,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 sala.RemoverJugador(nombreUsuario.Trim());
                 _notificador.NotificarListaSalasATodos();
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al abandonar sala.", ex);
                 throw;
             }
             catch (ArgumentException ex)
@@ -344,8 +346,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 _notificador.NotificarListaSalasATodos();
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al expulsar jugador de sala.", ex);
                 throw;
             }
             catch (ArgumentException ex)

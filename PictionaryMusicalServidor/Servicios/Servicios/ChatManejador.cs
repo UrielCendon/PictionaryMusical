@@ -72,8 +72,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 ConfigurarEventosCanal(idSalaNormalizado, nombreNormalizado);
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al unir chat de sala.", ex);
                 throw;
             }
             catch (ArgumentException ex)
@@ -130,8 +131,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     nombreNormalizado,
                     mensajeNormalizado);
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al enviar mensaje de chat.", ex);
                 throw;
             }
             catch (ArgumentException ex)
@@ -178,8 +180,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 RemoverCliente(idSalaNormalizado, nombreNormalizado);
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Se produjo una FaultException al salir del chat.", ex);
                 throw;
             }
             catch (ArgumentException ex)

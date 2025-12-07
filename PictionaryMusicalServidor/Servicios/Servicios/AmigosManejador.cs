@@ -150,8 +150,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Intento de enviar solicitud a usuario inexistente.", ex);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
-            catch (FaultException)
+            catch (FaultException ex)
             {
+                _logger.Warn("Regla de negocio reportada al enviar solicitud de amistad.", ex);
                 throw;
             }
             catch (InvalidOperationException ex)

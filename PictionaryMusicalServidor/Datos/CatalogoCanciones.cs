@@ -84,10 +84,10 @@ namespace PictionaryMusicalServidor.Datos
         {
             if (string.IsNullOrWhiteSpace(idioma))
             {
-                var ex = new ArgumentException("El idioma no puede ser nulo o vacio.", 
+                var ex = new ArgumentException("El idioma no puede ser nulo o vacio.",
                     nameof(idioma));
                 _logger.Error("Se recibio un idioma invalido al solicitar cancion.", ex);
-                throw ex;
+                throw new ArgumentException(ex.Message, ex.ParamName, ex);
             }
 
             try
@@ -106,9 +106,14 @@ namespace PictionaryMusicalServidor.Datos
 
                 return SeleccionarAleatorio(candidatos);
             }
-            catch (CancionNoDisponibleExcepcion)
+            catch (CancionNoDisponibleExcepcion ex)
             {
-                throw;
+                var detalle =
+                    $"No hay canciones disponibles para el idioma '{idiomaInterno}' " +
+                    $"excluyendo {idsRechazados.Count} canciones.";
+
+                _logger.Warn(detalle, ex);
+                throw new CancionNoDisponibleExcepcion(detalle, ex);
             }
             catch (ArgumentException ex)
             {
