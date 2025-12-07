@@ -62,6 +62,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Operacion invalida al obtener perfil.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error de actualizacion al obtener perfil.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error de base de datos al obtener perfil.", ex);
@@ -70,11 +75,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DataException ex)
             {
                 _logger.Error("Error de datos al obtener perfil.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.Error("Error de actualizacion al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
@@ -118,6 +118,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Validacion de entidad fallida al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.Error("Error de concurrencia al actualizar perfil.", ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
             catch (DbUpdateException ex)
             {
                 _logger.Error("Error de actualizacion de BD al actualizar perfil.", ex);
@@ -131,11 +136,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DataException ex)
             {
                 _logger.Error("Error de datos al actualizar perfil.", ex);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                _logger.Error("Error de concurrencia al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }

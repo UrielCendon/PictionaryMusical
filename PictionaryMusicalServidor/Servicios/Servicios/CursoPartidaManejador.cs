@@ -409,15 +409,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
@@ -429,6 +429,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return controlador.ObtenerJugadores()?.ToList();
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error(
+                    "Error al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return new List<JugadorPartida>();
+            }
             catch (EntityException ex)
             {
                 _logger.Error(
@@ -437,13 +444,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return new List<JugadorPartida>();
             }
             catch (DataException ex)
-            {
-                _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
-                return new List<JugadorPartida>();
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
@@ -481,6 +481,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     jugador.PuntajeTotal,
                     ganoPartida);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
             catch (EntityException ex)
             {
                 _logger.ErrorFormat(
@@ -489,13 +496,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ex);
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
-                    jugadorId,
-                    ex);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",

@@ -37,6 +37,15 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 return _contexto.Reporte.Any(r => r.idReportante == idReportante
                     && r.idReportado == idReportado);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                    idReportante,
+                    idReportado,
+                    ex);
+                throw;
+            }
             catch (EntityException ex)
             {
                 _logger.ErrorFormat(
@@ -47,15 +56,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat(
-                    "Error al verificar existencia del reporte entre {0} y {1}.",
-                    idReportante,
-                    idReportado,
-                    ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat(
                     "Error al verificar existencia del reporte entre {0} y {1}.",
@@ -86,17 +86,17 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
                 return entidad;
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error al guardar el reporte en la base de datos.", ex);
+                throw;
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error al guardar el reporte en la base de datos.", ex);
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error al guardar el reporte en la base de datos.", ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error al guardar el reporte en la base de datos.", ex);
                 throw;
@@ -120,17 +120,17 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Reporte.Count(r => r.idReportado == idReportado);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
+                throw;
+            }
             catch (EntityException ex)
             {
                 _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
                 throw;
             }
             catch (DataException ex)
-            {
-                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
                 throw;

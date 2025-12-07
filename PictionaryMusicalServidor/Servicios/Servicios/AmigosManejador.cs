@@ -164,17 +164,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al enviar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error inesperado al enviar solicitud de amistad.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error inesperado al enviar solicitud de amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error inesperado al enviar solicitud de amistad.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al enviar solicitud de amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
@@ -211,17 +211,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al aceptar solicitud de amistad.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error al responder solicitud de amistad.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error al responder solicitud de amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error al responder solicitud de amistad.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error al responder solicitud de amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
@@ -251,17 +251,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Regla de negocio violada al eliminar amistad.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error inesperado al eliminar amistad.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error inesperado al eliminar amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error inesperado al eliminar amistad.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al eliminar amistad.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);

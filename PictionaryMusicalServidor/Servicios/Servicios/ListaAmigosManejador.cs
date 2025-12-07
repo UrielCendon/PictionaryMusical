@@ -102,6 +102,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al suscribirse a la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error(
+                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
+            }
             catch (EntityException ex)
             {
                 _logger.Error(
@@ -110,13 +117,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
             catch (DataException ex)
-            {
-                _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
-                    ex);
-                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error(
                     "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
@@ -162,17 +162,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Datos invalidos al obtener la lista de amigos.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (DbUpdateException ex)
+            {
+                _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
+            }
             catch (EntityException ex)
             {
                 _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (DataException ex)
-            {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
