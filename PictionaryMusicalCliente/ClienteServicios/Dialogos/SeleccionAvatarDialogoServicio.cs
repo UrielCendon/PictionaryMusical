@@ -10,6 +10,7 @@ using PictionaryMusicalCliente.VistaModelo.Perfil;
 using System.Windows.Markup;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Vista;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {
@@ -22,15 +23,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             LogManager.GetLogger(typeof(SeleccionAvatarDialogoServicio));
         private readonly IAvisoServicio _avisoServicio;
         private readonly ICatalogoAvatares _catalogoAvatares;
+        private readonly ISonidoManejador _sonidoManejador;
 
         public SeleccionAvatarDialogoServicio(
             IAvisoServicio avisoServicio,
-            ICatalogoAvatares catalogoAvatares)
+            ICatalogoAvatares catalogoAvatares,
+            ISonidoManejador sonidoManejador)
         {
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
             _catalogoAvatares = catalogoAvatares ??
                 throw new ArgumentNullException(nameof(catalogoAvatares));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
         }
 
         /// <summary>
@@ -83,7 +88,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             TaskCompletionSource<ObjetoAvatar> finalizacion)
         {
             var ventana = new SeleccionAvatar();
-            var vistaModelo = new SeleccionAvatarVistaModelo(avatares);
+            var vistaModelo = new SeleccionAvatarVistaModelo(avatares, _avisoServicio,
+                _sonidoManejador);
 
             ConfigurarPreseleccion(vistaModelo, idAvatarPreseleccionado);
             ConfigurarEventosViewModel(vistaModelo, ventana, finalizacion);

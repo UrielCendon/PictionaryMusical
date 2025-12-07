@@ -45,12 +45,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     correo, ex);
                 throw;
             }
-            catch (DbUpdateException ex)
-            {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
-                    correo, ex);
-                throw;
-            }
             catch (DataException ex)
             {
                 _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
@@ -83,12 +77,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 return entidad;
             }
             catch (EntityException ex)
-            {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
-                    jugador.Correo, ex);
-                throw;
-            }
-            catch (DbUpdateException ex)
             {
                 _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
                     jugador.Correo, ex);

@@ -12,11 +12,19 @@ namespace PictionaryMusicalCliente.Vista
     {
         private readonly ReportarJugadorVistaModelo _vistaModelo;
 
-        public ReportarJugador(string nombreJugador)
-            : this(new ReportarJugadorVistaModelo(nombreJugador))
+        /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public ReportarJugador()
         {
         }
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la ventana de diálogo <see cref="ReportarJugador"/>
+        /// inyectando el <see cref="ReportarJugadorVistaModelo"/> con la lógica de negocio.
+        /// </summary>
+        /// <param name="vistaModelo">El ViewModel que gestiona la lógica de reportes.</param>
         public ReportarJugador(ReportarJugadorVistaModelo vistaModelo)
         {
             _vistaModelo = vistaModelo ?? throw new ArgumentNullException(nameof(vistaModelo));

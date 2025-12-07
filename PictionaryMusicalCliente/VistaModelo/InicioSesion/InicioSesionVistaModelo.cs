@@ -33,6 +33,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
         private readonly ILocalizadorServicio _localizador;
+        private readonly INombreInvitadoGenerador _generadorNombres;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly Func<ISalasServicio> _salasServicioFactory;
 
@@ -58,6 +59,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             ILocalizadorServicio localizador,
             IAvisoServicio avisoServicio,
             ISonidoManejador sonidoManejador,
+            INombreInvitadoGenerador generadorNombres,
             IUsuarioAutenticado usuarioSesion,
             Func<ISalasServicio> salasServicioFactory)
         {
@@ -79,6 +81,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _usuarioSesion = usuarioSesion ??
                 throw new ArgumentNullException(nameof(usuarioSesion));
+            _generadorNombres = generadorNombres ??
+                throw new ArgumentNullException(nameof(generadorNombres));
 
             IniciarSesionComando = new ComandoAsincrono(async _ =>
             {
@@ -241,7 +245,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 }
 
                 var vistaModelo = new IngresoPartidaInvitadoVistaModelo(_localizacionServicio,
-                    salasServicio);
+                    salasServicio, _avisoServicio, _sonidoManejador, _generadorNombres);
 
                 vistaModelo.SalaUnida = (sala, nombreInvitado) =>
                 {

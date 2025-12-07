@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
+using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.VistaModelo.Sesion;
 
 namespace PictionaryMusicalCliente.Vista
@@ -12,39 +12,41 @@ namespace PictionaryMusicalCliente.Vista
     {
         private readonly TerminacionSesionVistaModelo _vistaModelo;
         private readonly Action _navegarAlInicio;
+        IUsuarioAutenticado _usuarioAutenticado;
+
+        /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public TerminacionSesion()
+        {
+        }
 
         /// <summary>
         /// Inicializa la ventana.
         /// </summary>
         /// <param name="navegarAlInicio">Accion opcional para navegar al login.</param>
-        public TerminacionSesion(Action navegarAlInicio = null)
+        public TerminacionSesion(IUsuarioAutenticado usuarioAutenticado,
+            Action navegarAlInicio)
         {
+            _usuarioAutenticado = usuarioAutenticado ??
+                throw new ArgumentNullException(nameof(usuarioAutenticado));
+
             InitializeComponent();
 
-            _navegarAlInicio = navegarAlInicio ?? EjecutarNavegacionInicioSesionPorDefecto;
+            _navegarAlInicio = navegarAlInicio ?? (() => Close());
 
-            _vistaModelo = new TerminacionSesionVistaModelo();
+            _vistaModelo = new TerminacionSesionVistaModelo(_usuarioAutenticado);
             _vistaModelo.OcultarDialogo = () => Close();
-            _vistaModelo.EjecutarCierreSesionYNavegacion = _navegarAlInicio;
+            _vistaModelo.EjecutarCierreSesionYNavegacion = EjecutarNavegacionSegura;
 
             DataContext = _vistaModelo;
         }
 
-        private void EjecutarNavegacionInicioSesionPorDefecto()
+        private void EjecutarNavegacionSegura()
         {
-            // Nota: Esto fallara si InicioSesion no tiene constructor vacio.
-            // Por arquitectura, se recomienda pasar la accion desde quien abre esta ventana.
-            // Para mantener compatibilidad con tu codigo actual, lo dejo comentado como advertencia.
-            // var inicioSesion = new InicioSesion(...); 
-            // inicioSesion.Show();
-            var ventanasACerrar = Application.Current.Windows
-                .Cast<Window>()
-                .ToList();
-
-            foreach (var ventana in ventanasACerrar)
-            {
-                ventana.Close();
-            }
+            _navegarAlInicio?.Invoke();
+            Close();
         }
     }
 }

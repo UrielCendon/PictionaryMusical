@@ -15,13 +15,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private const string EndpointCambioPass = "BasicHttpBinding_ICambioContrasenaManejador";
         private const string EndpointClasificacion = "BasicHttpBinding_IClasificacionManejador";
         private const string EndpointInicioSesion = "BasicHttpBinding_IInicioSesionManejador";
-        private const string EndpointInvitaciones = "BasicHttpBinding_IInvitacionesManejador";
+        private const string EndpointInvitaciones = "BasicHttpBinding_IInvitacionesManejador1";
         private const string EndpointPerfil = "BasicHttpBinding_IPerfilManejador";
         private const string EndpointReportes = "BasicHttpBinding_IReportesManejador";
 
         private const string EndpointAmigos = "NetTcpBinding_IAmigosManejador";
         private const string EndpointListaAmigos = "NetTcpBinding_IListaAmigosManejador";
         private const string EndpointSalas = "NetTcpBinding_ISalasManejador";
+        private const string EndpointCursoPartida = "NetTcpBinding_ICursoPartidaManejador";
 
         public PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador
             CrearClienteVerificacion()
@@ -79,7 +80,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public PictionaryServidorServicioAmigos.IAmigosManejador
             CrearClienteAmigos(InstanceContext callback)
         {
-            if (callback == null) throw new ArgumentNullException(nameof(callback));
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
             return new PictionaryServidorServicioAmigos
                 .AmigosManejadorClient(callback, EndpointAmigos);
         }
@@ -87,7 +91,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public PictionaryServidorServicioListaAmigos.IListaAmigosManejador
             CrearClienteListaAmigos(InstanceContext callback)
         {
-            if (callback == null) throw new ArgumentNullException(nameof(callback));
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
             return new PictionaryServidorServicioListaAmigos
                 .ListaAmigosManejadorClient(callback, EndpointListaAmigos);
         }
@@ -95,9 +102,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public PictionaryServidorServicioSalas.ISalasManejador
             CrearClienteSalas(InstanceContext callback)
         {
-            if (callback == null) throw new ArgumentNullException(nameof(callback));
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
             return new PictionaryServidorServicioSalas
                 .SalasManejadorClient(callback, EndpointSalas);
+        }
+
+        public PictionaryServidorServicioCursoPartida.ICursoPartidaManejador
+        CrearClienteCursoPartida(InstanceContext callback)
+        {
+            if (callback == null)
+            {
+                throw new ArgumentNullException(nameof(callback));
+            }
+
+            return new PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida
+                .CursoPartidaManejadorClient(callback, EndpointCursoPartida);
         }
     }
 }

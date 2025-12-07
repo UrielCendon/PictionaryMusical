@@ -1,13 +1,14 @@
+using log4net;
 using PictionaryMusicalCliente.ClienteServicios;
-using PictionaryMusicalCliente.Comandos;
-using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Comandos;
+using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using System;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System.ServiceModel;
-using log4net;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
 
 namespace PictionaryMusicalCliente.VistaModelo.Amigos
 {
@@ -23,7 +24,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
         private readonly ILocalizadorServicio _localizadorServicio;
-        private readonly string _usuarioActual;
+        private readonly IUsuarioAutenticado _usuarioSesion;
         private string _nombreUsuarioBusqueda;
         private bool _estaProcesando;
 
@@ -34,7 +35,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         public BusquedaAmigoVistaModelo(IAmigosServicio amigosServicio,
             ISonidoManejador sonidoManejador,
             IAvisoServicio avisoServicio,
-            ILocalizadorServicio localizadorServicio)
+            ILocalizadorServicio localizadorServicio,
+            IUsuarioAutenticado usuarioSesion)
         {
             _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
@@ -44,6 +46,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 throw new ArgumentNullException(nameof(avisoServicio));
             _localizadorServicio = localizadorServicio ??
                 throw new ArgumentNullException(nameof(localizadorServicio));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
 
             EnviarSolicitudComando = new ComandoAsincrono(async _ =>
             {
@@ -117,6 +121,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private async Task EnviarSolicitudAsync()
         {
             string nombreAmigo = NombreUsuarioBusqueda?.Trim();
+            string usuarioActual = _usuarioSesion.NombreUsuario;
 
             if (string.IsNullOrWhiteSpace(nombreAmigo))
             {
@@ -124,7 +129,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(_usuarioActual))
+            if (string.IsNullOrWhiteSpace(usuarioActual))
             {
                 _logger.Warn("Intento de enviar solicitud sin usuario actual en sesión.");
                 _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
@@ -136,9 +141,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             try
             {
                 _logger.InfoFormat("Enviando solicitud de amistad de {0} a {1}",
-                    _usuarioActual, nombreAmigo);
+                    usuarioActual, nombreAmigo);
                 await _amigosServicio.EnviarSolicitudAsync(
-                    _usuarioActual,
+                    usuarioActual,
                     nombreAmigo).ConfigureAwait(true);
 
                 _sonidoManejador.ReproducirExito();

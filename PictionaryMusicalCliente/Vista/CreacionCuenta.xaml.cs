@@ -15,6 +15,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly CreacionCuentaVistaModelo _vistaModelo;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public CreacionCuenta()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana inyectando el ViewModel con sus dependencias resueltas.
         /// </summary>
         /// <param name="vistaModelo">Logica de negocio para el registro.</param>

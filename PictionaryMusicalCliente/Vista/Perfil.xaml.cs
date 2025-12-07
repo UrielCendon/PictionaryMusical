@@ -17,6 +17,14 @@ namespace PictionaryMusicalCliente.Vista
         private readonly PerfilVistaModelo _vistaModelo;
 
         /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicacion debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Perfil()
+        {
+        }
+
+        /// <summary>
         /// Inicializa la ventana inyectando el ViewModel configurado.
         /// </summary>
         /// <param name="vistaModelo">Logica de negocio del perfil.</param>

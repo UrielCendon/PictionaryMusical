@@ -1,7 +1,7 @@
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Dialogos;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
-using PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Implementacion;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Utilidades;
@@ -9,6 +9,7 @@ using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using System;
 using System.Collections.Generic;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -21,18 +22,34 @@ namespace PictionaryMusicalCliente.Vista
     public partial class InicioSesion : Window
     {
         private readonly IMusicaManejador _musica;
+        private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly ISonidoManejador _sonidos;
+        private readonly ILocalizadorServicio _traductor;
+        private readonly IAvisoServicio _aviso;
+
+        private readonly IInicioSesionServicio _inicioSesion;
+        private readonly ICambioContrasenaServicio _cambioPass;
+        private readonly IRecuperacionCuentaServicio _recuperacion;
+        private readonly ILocalizacionServicio _idioma;
+        private readonly INombreInvitadoGenerador _generadorNombres;
 
         private readonly IWcfClienteEjecutor _ejecutor;
         private readonly IWcfClienteFabrica _fabrica;
         private readonly IManejadorErrorServicio _manejadorError;
-        private readonly ILocalizadorServicio _traductor;
-        private readonly IAvisoServicio _aviso;
         private readonly ICatalogoAvatares _avatares;
-        private readonly ISonidoManejador _sonidos;
         private readonly IValidadorEntrada _validador;
-        private readonly IUsuarioAutenticado _usuarioSesion;
-        private readonly ILocalizacionServicio _idioma;
         private readonly ICatalogoImagenesPerfil _imagenesPerfil;
+        private readonly IVerificacionCodigoDialogoServicio _verifCodigo;
+
+        private readonly IPerfilServicio _perfil;
+        private readonly IClasificacionServicio _clasif;
+        private readonly IInvitacionesServicio _invitaciones;
+        private readonly IReportesServicio _reportes;
+        private readonly IListaAmigosServicio _listaAmigos;
+        private readonly IAmigosServicio _amigos;
+        private readonly Func<ISalasServicio> _fabricaSalas;
+
+        private bool _navegandoVentanaPrincipal;
 
         /// <summary>
         /// Inicializa la ventana recibiendo todas las dependencias del sistema.
@@ -53,35 +70,81 @@ namespace PictionaryMusicalCliente.Vista
             ISonidoManejador sonidos,
             IValidadorEntrada validador,
             IUsuarioAutenticado usuarioSesion,
-            ICatalogoImagenesPerfil imagenesPerfil)
+            ICatalogoImagenesPerfil imagenesPerfil,
+            IVerificacionCodigoDialogoServicio verifCodigo,
+            INombreInvitadoGenerador generadorNombres,
+            IPerfilServicio perfil,
+            IClasificacionServicio clasif,
+            IInvitacionesServicio invitaciones,
+            IReportesServicio reportes,
+            IListaAmigosServicio listaAmigos,
+            IAmigosServicio amigos)
         {
             InitializeComponent();
 
-            _musica = musica ?? throw new ArgumentNullException(nameof(musica));
-            _ejecutor = ejecutorWcf;
-            _fabrica = fabricaWcf;
-            _manejadorError = errorWcf;
-            _traductor = traductor;
-            _aviso = aviso;
-            _avatares = avatares;
-            _sonidos = sonidos;
-            _validador = validador;
-            _usuarioSesion = usuarioSesion;
-            _idioma = idioma;
-            _imagenesPerfil = imagenesPerfil;
+            _musica = musica ??
+                throw new ArgumentNullException(nameof(musica));
+            _ejecutor = ejecutorWcf ??
+                throw new ArgumentNullException(nameof(ejecutorWcf));
+            _fabrica = fabricaWcf ??
+                throw new ArgumentNullException(nameof(fabricaWcf));
+            _manejadorError = errorWcf ??
+                throw new ArgumentNullException(nameof(errorWcf));
+            _traductor = traductor ??
+                throw new ArgumentNullException(nameof(traductor));
+            _aviso = aviso ??
+                throw new ArgumentNullException(nameof(aviso));
+            _avatares = avatares ??
+                throw new ArgumentNullException(nameof(avatares));
+            _sonidos = sonidos ??
+                throw new ArgumentNullException(nameof(sonidos));
+            _validador = validador ??
+                throw new ArgumentNullException(nameof(validador));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            _idioma = idioma ??
+                throw new ArgumentNullException(nameof(idioma));
+            _imagenesPerfil = imagenesPerfil ??
+                throw new ArgumentNullException(nameof(imagenesPerfil));
+            _verifCodigo = verifCodigo ??
+                throw new ArgumentNullException(nameof(verifCodigo));
+
+            _perfil = perfil ??
+                throw new ArgumentNullException(nameof(perfil));
+            _clasif = clasif ??
+                throw new ArgumentNullException(nameof(clasif));
+            _invitaciones = invitaciones ??
+                throw new ArgumentNullException(nameof(invitaciones));
+            _reportes = reportes ??
+                throw new ArgumentNullException(nameof(reportes));
+            _listaAmigos = listaAmigos ??
+                throw new ArgumentNullException(nameof(listaAmigos));
+            _amigos = amigos ??
+                throw new ArgumentNullException(nameof(amigos));
+            _cambioPass = cambioPass ??
+                throw new ArgumentNullException(nameof(cambioPass));
+            _recuperacion = recuperacion ??
+                throw new ArgumentNullException(nameof(recuperacion));
+            _generadorNombres = generadorNombres ??
+                throw new ArgumentNullException(nameof(generadorNombres));
+            _inicioSesion = inicioSesion ??
+                throw new ArgumentNullException(nameof(inicioSesion));
+            _fabricaSalas = fabricaSalas ??
+                throw new ArgumentNullException(nameof(fabricaSalas));
 
             _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
 
             var vm = new InicioSesionVistaModelo(
-                inicioSesion,
-                cambioPass,
-                recuperacion,
-                idioma,
-                traductor,
-                aviso,
-                sonidos,
-                usuarioSesion,
-                fabricaSalas);
+                _inicioSesion,
+                _cambioPass,
+                _recuperacion,
+                _idioma,
+                _traductor,
+                _aviso,
+                _sonidos,
+                _generadorNombres,
+                _usuarioSesion,
+                _fabricaSalas);
 
             ConfigurarNavegacion(vm);
             vm.MostrarCamposInvalidos = MarcarCamposInvalidos;
@@ -99,12 +162,13 @@ namespace PictionaryMusicalCliente.Vista
                     _ejecutor, _fabrica, _traductor, _manejadorError);
                 var cuentaServ = new CuentaServicio(_ejecutor, _fabrica, _manejadorError);
                 var selectAvatar = new SeleccionAvatarDialogoServicio(
-                    _aviso, _avatares); 
+                    _aviso, _avatares, _sonidos); 
                 var verifCodigo = new VerificacionCodigoDialogoServicio();
 
                 var vmCrear = new CreacionCuentaVistaModelo(
                     codigoServ, cuentaServ, selectAvatar, verifCodigo,
-                    _sonidos, _validador, _avatares, _idioma);
+                    _sonidos, _validador, _avatares, _aviso, _traductor,
+                    _idioma);
 
                 var ventana = new CreacionCuenta(vmCrear) { Owner = this };
                 ventana.ShowDialog();
@@ -128,29 +192,59 @@ namespace PictionaryMusicalCliente.Vista
 
         private void NavegarAVentanaPrincipal()
         {
-            var listaAmigos = new ListaAmigosServicio(_manejadorError, _fabrica);
-            var amigos = new AmigosServicio(
-                new SolicitudesAmistadAdministrador(), _manejadorError, _fabrica);
-            var salas = new SalasServicio(_fabrica, _manejadorError);
-            var perfil = new PerfilServicio(_ejecutor, _fabrica, _manejadorError);
-            var clasif = new ClasificacionServicio(_ejecutor, _fabrica, _manejadorError);
-            var cambioPass = new CambioContrasenaServicio(
-                _ejecutor, _fabrica, _manejadorError, _traductor);
-            var recup = new RecuperacionCuentaDialogoServicio(
-                new VerificacionCodigoDialogoServicio(), _aviso);
-            var selectAvatar = new SeleccionAvatarDialogoServicio(_aviso, _avatares);
-            var invitaciones = new InvitacionesServicio(
-                _ejecutor, _fabrica, _manejadorError, _traductor);
-            var reportes = new ReportesServicio(
-                _ejecutor, _fabrica, _manejadorError, _traductor);
+            _navegandoVentanaPrincipal = true;
+            _musica.Detener();
+
+            var invitacionSalaServicio = new InvitacionSalaServicio(
+                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
 
             var principal = new VentanaPrincipal(
-                _musica, listaAmigos, amigos, salas, _idioma, _aviso, perfil, cambioPass,
-                recup, selectAvatar, _avatares, clasif, _imagenesPerfil, _usuarioSesion,
-                invitaciones, reportes, _sonidos, _validador, _traductor);
+                _musica, _listaAmigos, _amigos,
+                new SalasServicio(_fabrica, _manejadorError),
+                _idioma, _aviso, _perfil, _cambioPass, _recuperacion,
+                new SeleccionAvatarDialogoServicio(_aviso, _avatares, _sonidos),
+                _avatares, _clasif, _imagenesPerfil, _usuarioSesion,
+                _invitaciones, _reportes, _sonidos, _validador, _traductor,
+                _fabrica,
+                invitacionSalaServicio,
+                CrearVentanaInicioSesion
+            );
 
             principal.Show();
             Close();
+        }
+
+        private void CrearVentanaInicioSesion()
+        {
+            _usuarioSesion.Limpiar();
+
+            var ventanaInicio = new InicioSesion(
+                _musica,
+                _inicioSesion,
+                _cambioPass,
+                _recuperacion,
+                _idioma,
+                _fabricaSalas,
+                _fabrica,
+                _ejecutor,
+                _manejadorError,
+                _traductor,
+                _aviso,
+                _avatares,
+                _sonidos,
+                _validador,
+                _usuarioSesion,
+                _imagenesPerfil,
+                _verifCodigo,
+                _generadorNombres,
+                _perfil,
+                _clasif,
+                _invitaciones,
+                _reportes,
+                _listaAmigos,
+                _amigos);
+
+            ventanaInicio.Show();
         }
 
         private void NavegarAVentanaJuego(
@@ -161,23 +255,23 @@ namespace PictionaryMusicalCliente.Vista
         {
             _musica.Detener();
 
-            var invitaciones = new InvitacionesServicio(
-                _ejecutor, _fabrica, _manejadorError, _traductor);
-            var reportes = new ReportesServicio(
-                _ejecutor, _fabrica, _manejadorError, _traductor);
-            var perfil = new PerfilServicio(_ejecutor, _fabrica, _manejadorError);
-            var listaAmigos = new ListaAmigosServicio(_manejadorError, _fabrica);
+            var cancionManejador = new CancionManejador();
+            var invitacionSalaServicio = new InvitacionSalaServicio(
+                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
 
-            var ventanaJuego = new VentanaJuego(
-                sala, servicio, invitaciones, reportes, perfil, listaAmigos,
-                _sonidos, _traductor, _aviso, _usuarioSesion,
-                esInvitado, nombre,
-                () =>
-                {
-                    System.Diagnostics.Process.Start(
-                        Application.ResourceAssembly.Location);
-                    Application.Current.Shutdown();
-                });
+            Action irInicioSesion = () =>
+            {
+                _usuarioSesion.Limpiar();
+                CrearVentanaInicioSesion();
+            };
+
+            var ventanaJuego = new Sala(
+                sala, servicio, _invitaciones, _reportes, _perfil, _listaAmigos,
+                _sonidos, _traductor, _aviso, _usuarioSesion, _validador,
+                _fabrica,
+                cancionManejador,
+                invitacionSalaServicio,
+                esInvitado, nombre, irInicioSesion, irInicioSesion);
 
             ventanaJuego.Show();
             Close();
@@ -209,6 +303,11 @@ namespace PictionaryMusicalCliente.Vista
 
         private void InicioSesion_Cerrado(object sender, EventArgs e)
         {
+            if (_navegandoVentanaPrincipal)
+            {
+                return;
+            }
+
             _musica.Detener();
             _musica.Dispose();
         }

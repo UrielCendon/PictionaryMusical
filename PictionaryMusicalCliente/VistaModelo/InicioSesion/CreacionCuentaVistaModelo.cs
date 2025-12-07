@@ -34,6 +34,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IValidadorEntrada _validadorEntrada;
         private readonly ICatalogoAvatares _catalogoAvatares;
+        private readonly IAvisoServicio _avisoServicio;
+        private readonly ILocalizadorServicio _localizador;
 
         private string _usuario;
         private string _nombre;
@@ -61,6 +63,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             ISonidoManejador sonidoManejador,
             IValidadorEntrada validadorEntrada,
             ICatalogoAvatares catalogoAvatares,
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizador,
             ILocalizacionServicio localizacionServicio = null
             )
         {
@@ -79,6 +83,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             _validadorEntrada = validadorEntrada ??
                 throw new ArgumentNullException(nameof(validadorEntrada));
             _localizacionServicio = localizacionServicio ?? _localizacionServicio;
+            _avisoServicio = avisoServicio ??
+                throw new ArgumentNullException(nameof(avisoServicio));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
 
             CrearCuentaComando = new ComandoAsincrono(async _ =>
             {
@@ -433,7 +441,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
                     Lang.cambiarContrasenaTextoCodigoVerificacion,
                     resultadoSolicitud.TokenCodigo,
-                    _codigoVerificacionServicio).ConfigureAwait(true);
+                    _codigoVerificacionServicio, _avisoServicio,
+                    _localizador, _sonidoManejador).ConfigureAwait(true);
 
             if (resultadoVerificacion == null || !resultadoVerificacion.RegistroExitoso)
             {

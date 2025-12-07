@@ -196,11 +196,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return _salas.Values.Select(s => s.ToDto()).ToList();
             }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error("Error inesperado al obtener lista de salas.", ex);
-                return new List<SalaDTO>();
-            }
             catch (InvalidOperationException ex)
             {
                 _logger.Error("Operacion invalida al obtener lista de salas.", ex);
@@ -237,11 +232,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 throw;
             }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error("Error inesperado al abandonar sala.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperadoAbandonar);
-            }
             catch (ArgumentException ex)
             {
                 _logger.Warn("Operacion invalida al abandonar sala.", ex);
@@ -274,11 +264,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 _notificador.NotificarListaSalas(callback);
             }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error("Error inesperado al suscribirse a lista de salas.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
-            }
             catch (InvalidOperationException ex)
             {
                 _logger.Error("Operacion invalida al suscribirse a lista de salas.", ex);
@@ -306,10 +291,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var callback = OperationContext.Current.GetCallbackChannel
                     <ISalasManejadorCallback>();
                 _notificador.DesuscribirPorCallback(callback);
-            }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error("Error inesperado al cancelar la suscripcion.", ex);
             }
             catch (InvalidOperationException ex)
             {
@@ -366,11 +347,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (FaultException)
             {
                 throw;
-            }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error("Error inesperado al expulsar jugador de la sala.", ex);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
             catch (ArgumentException ex)
             {

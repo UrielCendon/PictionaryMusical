@@ -4,6 +4,8 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Vista;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -21,15 +23,25 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
         private readonly IVerificacionCodigoDialogoServicio _verificarCodigoDialogoServicio;
         private readonly IAvisoServicio _avisoServicio;
+        private readonly IValidadorEntrada _validadorEntrada;
+        private readonly ISonidoManejador _sonidoManejador;
+        private readonly ILocalizadorServicio _localizador;
 
         public RecuperacionCuentaDialogoServicio(
             IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
-            IAvisoServicio avisoServicio)
+            IAvisoServicio avisoServicio, IValidadorEntrada validadorEntrada,
+            ISonidoManejador sonidoManejador, ILocalizadorServicio localizador)
         {
             _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
                 throw new ArgumentNullException(nameof(verificarCodigoDialogoServicio));
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
+            _validadorEntrada = validadorEntrada ??
+                throw new ArgumentNullException(nameof(validadorEntrada));
+            _sonidoManejador = sonidoManejador ??
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -108,7 +120,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             var respuestaDialogo = await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
                 Lang.cambiarContrasenaTextoCodigoVerificacion,
                 token,
-                adaptador).ConfigureAwait(true);
+                adaptador,
+                _avisoServicio,
+                _localizador,
+                _sonidoManejador).ConfigureAwait(true);
 
             var validacion = ValidarRespuestaVerificacion(respuestaDialogo);
             if (!validacion.Exito)
@@ -155,7 +170,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             ICambioContrasenaServicio servicio)
         {
             var ventana = new CambioContrasena();
-            var vistaModelo = new CambioContrasenaVistaModelo(token, servicio);
+            var vistaModelo = new CambioContrasenaVistaModelo(token, servicio, _avisoServicio, 
+                _validadorEntrada, _sonidoManejador);
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoOperacionDTO>();
 
             ConfigurarEventosVistaModelo(vistaModelo, ventana, finalizacion);

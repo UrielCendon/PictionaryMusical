@@ -1,7 +1,5 @@
 using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.ClienteServicios.Idiomas;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -40,12 +38,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private DTOs.AmigoDTO _amigoSeleccionado;
 
         private readonly string _nombreUsuarioSesion;
+        private readonly ILocalizacionServicio _localizacion;
         private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IAmigosServicio _amigosServicio;
         private readonly ISalasServicio _salasServicio;
         private readonly ISonidoManejador _sonidoManejador;
         private readonly IUsuarioAutenticado _usuarioSesion;
-        private readonly ILocalizacionServicio _localizacion;
+        private readonly ILocalizadorServicio _localizador;
 
         private bool _suscripcionActiva;
 
@@ -70,14 +69,26 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             ILocalizacionServicio localizacionServicio,
             IListaAmigosServicio listaAmigosServicio,
             IAmigosServicio amigosServicio,
-            ISalasServicio salasServicio)
+            ISalasServicio salasServicio,
+            ISonidoManejador sonidoManejador,
+            IUsuarioAutenticado usuarioSesion,
+            ILocalizadorServicio localizador)
         {
-            _listaAmigosServicio = listaAmigosServicio ??
+            
+            _localizacion = localizacionServicio ?? 
+                throw new ArgumentNullException(nameof(localizacionServicio));
+            _listaAmigosServicio = listaAmigosServicio ?? 
                 throw new ArgumentNullException(nameof(listaAmigosServicio));
-            _amigosServicio = amigosServicio ??
+            _amigosServicio = amigosServicio ?? 
                 throw new ArgumentNullException(nameof(amigosServicio));
-            _salasServicio = salasServicio ??
+            _salasServicio = salasServicio ?? 
                 throw new ArgumentNullException(nameof(salasServicio));
+            _sonidoManejador = sonidoManejador ?? 
+                throw new ArgumentNullException(nameof(sonidoManejador));
+            _usuarioSesion = usuarioSesion ?? 
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            _localizador = localizador ?? 
+                throw new ArgumentNullException(nameof(localizador));
 
             _listaAmigosServicio.ListaActualizada += ListaActualizada;
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;

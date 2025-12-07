@@ -1,6 +1,9 @@
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using System;
@@ -23,9 +26,31 @@ namespace PictionaryMusicalCliente.Vista
     {
         private readonly SalaVistaModelo _vistaModelo;
         private readonly IAvisoServicio _avisoServicio;
-        private readonly Action _accionAlCerrar;
+        private readonly ISalasServicio _salaServicio;
+        private readonly IInvitacionesServicio _invitacionesServicio;
+        private readonly IReportesServicio _reportesServicio;
+        private readonly IPerfilServicio _perfilServicio;
+        private readonly IListaAmigosServicio _listaAmigosServicio;
+        private readonly ILocalizadorServicio _traductor;
+        private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly IValidadorEntrada _validadorEntrada;
+        private readonly IWcfClienteFabrica _fabricaWcf;
+        private readonly ISonidoManejador _sonidos;
+        private readonly ICancionManejador _cancion;
+        private readonly IInvitacionSalaServicio _invitacionesSalaServicio;
+        private readonly Action _navegarMenuPrincipal;
+        private readonly Action _navegarInicioSesion;
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
+        private bool _navegacionEjecutada;
+
+        /// <summary>
+        /// Constructor por defecto, solo para uso del diseñador/XAML. 
+        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// </summary>
+        public Sala()
+        {
+        }
 
         /// <summary>
         /// Inicializa la partida con la configuracion de la sala y el usuario.
@@ -33,32 +58,88 @@ namespace PictionaryMusicalCliente.Vista
         public Sala(
             SalaDTO sala,
             ISalasServicio salasServicio,
+            IInvitacionesServicio invitacionesServicio,
+            IReportesServicio reportesServicio,
+            IPerfilServicio perfilServicio,
+            IListaAmigosServicio listaAmigosServicio,
+            ISonidoManejador sonidos,
+            ILocalizadorServicio traductor,
             IAvisoServicio avisoServicio,
-            bool esInvitado = false,
-            string nombreJugador = null,
-            Action accionAlCerrar = null)
+            IUsuarioAutenticado usuarioSesion,
+            IValidadorEntrada validadorEntrada,
+            IWcfClienteFabrica fabricaWcf,
+            ICancionManejador cancion,
+            IInvitacionSalaServicio invitacionesSalaServicio,
+            bool esInvitado,
+            string nombreJugador,
+            Action navegarMenuPrincipal,
+            Action navegarInicioSesion)
         {
             InitializeComponent();
 
             _avisoServicio = avisoServicio ?? 
                 throw new ArgumentNullException(nameof(avisoServicio));
+            _sonidos = sonidos ??
+                throw new ArgumentNullException(nameof(sonidos));
+            _cancion = cancion ??
+                throw new ArgumentNullException(nameof(cancion));
+            _salaServicio = salasServicio ??
+                throw new ArgumentNullException(nameof(salasServicio));
+            _invitacionesServicio = invitacionesServicio ??
+                throw new ArgumentNullException(nameof(invitacionesServicio));
+            _reportesServicio = reportesServicio ??
+                throw new ArgumentNullException(nameof(reportesServicio));
+            _perfilServicio = perfilServicio ??
+                throw new ArgumentNullException(nameof(perfilServicio));
+            _listaAmigosServicio = listaAmigosServicio ??
+                throw new ArgumentNullException(nameof(listaAmigosServicio));
+            _traductor = traductor ??
+                throw new ArgumentNullException(nameof(traductor));
+            _usuarioSesion = usuarioSesion ??
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            _validadorEntrada = validadorEntrada ??
+                throw new ArgumentNullException(nameof(validadorEntrada));
+            _fabricaWcf = fabricaWcf ??
+                throw new ArgumentNullException(nameof(fabricaWcf));
+            _invitacionesSalaServicio = invitacionesSalaServicio ??
+                throw new ArgumentNullException(nameof(invitacionesSalaServicio));
 
             if (salasServicio == null)
             {
                 throw new ArgumentNullException(nameof(salasServicio));
             }
 
-            _accionAlCerrar = accionAlCerrar;
+            _navegarMenuPrincipal = navegarMenuPrincipal;
+            _navegarInicioSesion = navegarInicioSesion;
 
             _vistaModelo = new SalaVistaModelo(
                 sala,
-                salasServicio,
+                _salaServicio,
+                _invitacionesServicio,
+                _listaAmigosServicio,
+                _perfilServicio,
+                _reportesServicio,
+                _sonidos,
+                _avisoServicio,
+                _traductor,
+                _usuarioSesion,
+                _invitacionesSalaServicio,
+                _fabricaWcf,
                 nombreJugador,
-                esInvitado);
+                esInvitado
+                );
 
             _vistaModelo.AbrirAjustesPartida = manejadorCancion =>
             {
-                var ajustes = new AjustesPartida(manejadorCancion);
+                var ajustes = new AjustesPartida(_sonidos, _cancion);
+                ajustes.SalirDePartidaConfirmado = () =>
+                {
+                    _vistaModelo.ManejarNavegacion?.Invoke(
+                        _vistaModelo.EsInvitado
+                            ? SalaVistaModelo.DestinoNavegacion.InicioSesion
+                            : SalaVistaModelo.DestinoNavegacion.VentanaPrincipal);
+                };
+
                 AbrirDialogo(ajustes);
             };
             _vistaModelo.NotificarCambioHerramienta = EstablecerHerramienta;
@@ -293,45 +374,56 @@ namespace PictionaryMusicalCliente.Vista
 
             await _vistaModelo.FinalizarAsync().ConfigureAwait(false);
 
-            if (_accionAlCerrar != null && _vistaModelo.DebeEjecutarAccionAlCerrar())
+            if (_vistaModelo.DebeEjecutarAccionAlCerrar())
             {
-                if (!Dispatcher.CheckAccess())
+                Dispatcher.Invoke(() =>
                 {
-                    await Dispatcher.InvokeAsync(_accionAlCerrar);
-                }
-                else
-                {
-                    _accionAlCerrar();
-                }
+                    var destino = _usuarioSesion.EstaAutenticado
+                        ? SalaVistaModelo.DestinoNavegacion.VentanaPrincipal
+                        : SalaVistaModelo.DestinoNavegacion.InicioSesion;
+
+                    EjecutarNavegacion(destino);
+                });
             }
         }
 
         private void EjecutarNavegacion(SalaVistaModelo.DestinoNavegacion destino)
         {
-            Window ventanaDestino = destino == SalaVistaModelo.DestinoNavegacion.
-                InicioSesion
-                ? new InicioSesion()
-                : new VentanaPrincipal();
+            if (_navegacionEjecutada)
+            {
+                return;
+            }
 
-            ventanaDestino.Show();
+            _navegacionEjecutada = true;
+
+            bool requiereInicioSesion =
+                destino == SalaVistaModelo.DestinoNavegacion.InicioSesion ||
+                !_usuarioSesion.EstaAutenticado;
+
+            if (requiereInicioSesion)
+            {
+                _usuarioSesion.Limpiar();
+                _navegarInicioSesion?.Invoke();
+            }
+
+            if (!requiereInicioSesion)
+            {
+                _navegarMenuPrincipal?.Invoke();
+            }
+
             Close();
         }
 
         private bool MostrarConfirmacion(string mensaje)
         {
-            var ventana = new ExpulsionJugador(mensaje)
-            {
-                Owner = this
-            };
-
-            bool? resultado = ventana.ShowDialog();
-
-            return resultado == true;
+            var vm = new ExpulsionJugadorVistaModelo(mensaje, _sonidos);
+            var ventana = new ExpulsionJugador(vm) { Owner = this };
+            return ventana.ShowDialog() == true;
         }
 
         private ResultadoReporteJugador SolicitarDatosReporte(string nombreJugador)
         {
-            var vistaModelo = new ReportarJugadorVistaModelo(nombreJugador);
+            var vistaModelo = new ReportarJugadorVistaModelo(nombreJugador, _sonidos);
             var ventana = new ReportarJugador(vistaModelo)
             {
                 Owner = this
