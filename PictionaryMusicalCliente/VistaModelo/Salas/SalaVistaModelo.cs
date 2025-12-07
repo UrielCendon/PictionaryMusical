@@ -1418,6 +1418,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             EjecutarEnDispatcher(() =>
             {
                 ActualizarJugadores(sala.Jugadores);
+                bool anfitrionSiguePresente = sala.Jugadores?.Any(jugador =>
+                    string.Equals(
+                        jugador,
+                        _sala.Creador,
+                        StringComparison.OrdinalIgnoreCase)) == true;
+
+                if (!anfitrionSiguePresente)
+                {
+                    CancelarSalaPorAnfitrion();
+                }
             });
         }
 

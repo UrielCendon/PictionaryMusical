@@ -223,6 +223,7 @@ namespace PictionaryMusicalCliente.Vista
 
             Action irMenu = () =>
             {
+                _musica.ReproducirEnBucle("ventana_principal_musica.mp3");
                 var nuevaPrincipal = new VentanaPrincipal(
                     _musica, _listaAmigos, _amigos, _salas,
                     _idioma, _aviso, _perfilServicio, _cambioPass,
@@ -237,6 +238,7 @@ namespace PictionaryMusicalCliente.Vista
 
             Action irInicioSesion = () =>
             {
+                _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
                 NavegarAInicioSesion();
             };
 
@@ -264,7 +266,6 @@ namespace PictionaryMusicalCliente.Vista
         private void NavegarAInicioSesion()
         {
             _usuarioSesion.Limpiar();
-            _musica.Detener();
             _navegarInicioSesion?.Invoke();
         }
 

@@ -262,6 +262,7 @@ namespace PictionaryMusicalCliente.Vista
             Action irInicioSesion = () =>
             {
                 _usuarioSesion.Limpiar();
+                _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
                 CrearVentanaInicioSesion();
             };
 
