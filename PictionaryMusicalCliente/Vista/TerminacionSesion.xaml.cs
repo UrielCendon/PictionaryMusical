@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.VistaModelo.Sesion;
@@ -46,12 +45,6 @@ namespace PictionaryMusicalCliente.Vista
 
         private void EjecutarNavegacionSegura()
         {
-            var ventanas = Application.Current.Windows.Cast<Window>().ToList();
-            foreach (var v in ventanas)
-            {
-                if (v != this) v.Close();
-            }
-
             _navegarAlInicio?.Invoke();
             Close();
         }

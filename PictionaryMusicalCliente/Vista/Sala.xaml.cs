@@ -42,6 +42,7 @@ namespace PictionaryMusicalCliente.Vista
         private readonly Action _navegarInicioSesion;
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
+        private bool _navegacionEjecutada;
 
         /// <summary>
         /// Constructor por defecto, solo para uso del diseñador/XAML. 
@@ -388,7 +389,12 @@ namespace PictionaryMusicalCliente.Vista
 
         private void EjecutarNavegacion(SalaVistaModelo.DestinoNavegacion destino)
         {
-            Close();
+            if (_navegacionEjecutada)
+            {
+                return;
+            }
+
+            _navegacionEjecutada = true;
 
             bool requiereInicioSesion =
                 destino == SalaVistaModelo.DestinoNavegacion.InicioSesion ||
@@ -398,10 +404,14 @@ namespace PictionaryMusicalCliente.Vista
             {
                 _usuarioSesion.Limpiar();
                 _navegarInicioSesion?.Invoke();
-                return;
             }
 
-            _navegarMenuPrincipal?.Invoke();
+            if (!requiereInicioSesion)
+            {
+                _navegarMenuPrincipal?.Invoke();
+            }
+
+            Close();
         }
 
         private bool MostrarConfirmacion(string mensaje)

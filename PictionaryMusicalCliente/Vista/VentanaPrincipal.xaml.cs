@@ -200,13 +200,6 @@ namespace PictionaryMusicalCliente.Vista
 
             await _vistaModelo.FinalizarAsync().ConfigureAwait(false);
 
-            if (!_abrioVentanaJuego)
-            {
-                _listaAmigos?.Dispose();
-                _amigos?.Dispose();
-                _salas?.Dispose();
-            }
-
             _musica.Detener();
         }
 
