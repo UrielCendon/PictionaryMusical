@@ -52,6 +52,7 @@ namespace PictionaryMusicalCliente.Vista
         private readonly Func<ISalasServicio> _fabricaSalas;
 
         private bool _navegandoVentanaPrincipal;
+        private bool _navegandoVentanaJuego; // Nuevo flag para evitar Dispose de musica al ir al juego
 
         /// <summary>
         /// Inicializa la ventana recibiendo todas las dependencias del sistema.
@@ -263,6 +264,7 @@ namespace PictionaryMusicalCliente.Vista
         {
             _logger.InfoFormat("NavegarAVentanaJuego - Deteniendo musica, _musica es null: {0}", _musica == null);
             _musica.Detener();
+            _navegandoVentanaJuego = true; // Se marca navegación a juego para no disponer la música al cerrar esta ventana
 
             var cancionManejador = new CancionManejador();
             var invitacionSalaServicio = new InvitacionSalaServicio(
@@ -317,11 +319,14 @@ namespace PictionaryMusicalCliente.Vista
 
         private void InicioSesion_Cerrado(object sender, EventArgs e)
         {
-            if (_navegandoVentanaPrincipal)
+            _logger.InfoFormat("InicioSesion_Cerrado - navegandoPrincipal: {0}, navegandoJuego: {0}", _navegandoVentanaPrincipal, _navegandoVentanaJuego);
+            if (_navegandoVentanaPrincipal || _navegandoVentanaJuego)
             {
+                _logger.Info("InicioSesion_Cerrado - Navegación activa, no se dispone la música.");
                 return;
             }
 
+            _logger.Info("InicioSesion_Cerrado - Deteniendo y disponiendo música.");
             _musica.Detener();
             _musica.Dispose();
         }
