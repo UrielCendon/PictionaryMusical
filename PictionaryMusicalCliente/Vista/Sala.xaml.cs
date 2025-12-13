@@ -47,8 +47,8 @@ namespace PictionaryMusicalCliente.Vista
         private bool _navegacionEjecutada;
 
         /// <summary>
-        /// Constructor por defecto, solo para uso del diseñador/XAML. 
-        /// La aplicación debe usar el constructor que recibe dependencias.
+        /// Constructor por defecto, solo para uso del diseï¿½ador/XAML. 
+        /// La aplicaciï¿½n debe usar el constructor que recibe dependencias.
         /// </summary>
         public Sala()
         {
@@ -115,6 +115,8 @@ namespace PictionaryMusicalCliente.Vista
             _navegarInicioSesion = navegarInicioSesion;
 
             _vistaModelo = new SalaVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
                 sala,
                 _salaServicio,
                 _invitacionesServicio,
@@ -123,7 +125,6 @@ namespace PictionaryMusicalCliente.Vista
                 _reportesServicio,
                 _sonidos,
                 _avisoServicio,
-                _traductor,
                 _usuarioSesion,
                 _invitacionesSalaServicio,
                 _fabricaWcf,
@@ -134,8 +135,12 @@ namespace PictionaryMusicalCliente.Vista
 
             _vistaModelo.AbrirAjustesPartida = manejadorCancion =>
             {
-                var ajustes = new AjustesPartida(_sonidos, manejadorCancion ?? _cancion);
-                ajustes.SalirDePartidaConfirmado = () =>
+                var ajustesVM = new VistaModelo.Ajustes.AjustesPartidaVistaModelo(
+                    App.VentanaServicio,
+                    App.Localizador,
+                    manejadorCancion ?? _cancion,
+                    _sonidos);
+                ajustesVM.SalirPartidaConfirmado = () =>
                 {
                     _vistaModelo.ManejarNavegacion?.Invoke(
                         _vistaModelo.EsInvitado
@@ -143,7 +148,7 @@ namespace PictionaryMusicalCliente.Vista
                             : SalaVistaModelo.DestinoNavegacion.VentanaPrincipal);
                 };
 
-                AbrirDialogo(ajustes);
+                App.VentanaServicio.MostrarVentanaDialogo(ajustesVM);
             };
             _vistaModelo.NotificarCambioHerramienta = EstablecerHerramienta;
             _vistaModelo.AplicarEstiloLapiz = AplicarEstiloLapiz;
@@ -423,20 +428,22 @@ namespace PictionaryMusicalCliente.Vista
 
         private bool MostrarConfirmacion(string mensaje)
         {
-            var vm = new ExpulsionJugadorVistaModelo(mensaje, _sonidos);
-            var ventana = new ExpulsionJugador(vm) { Owner = this };
-            return ventana.ShowDialog() == true;
+            var vm = new ExpulsionJugadorVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _sonidos,
+                mensaje);
+            return App.VentanaServicio.MostrarVentanaDialogo(vm) == true;
         }
 
         private ResultadoReporteJugador SolicitarDatosReporte(string nombreJugador)
         {
-            var vistaModelo = new ReportarJugadorVistaModelo(nombreJugador, _sonidos);
-            var ventana = new ReportarJugador(vistaModelo)
-            {
-                Owner = this
-            };
-
-            bool? resultado = ventana.ShowDialog();
+            var vistaModelo = new ReportarJugadorVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _sonidos,
+                nombreJugador);
+            bool? resultado = App.VentanaServicio.MostrarVentanaDialogo(vistaModelo);
 
             return new ResultadoReporteJugador
             {
@@ -465,11 +472,7 @@ namespace PictionaryMusicalCliente.Vista
 
             void MostrarVentana()
             {
-                var ventana = new InvitarAmigos(vistaModelo)
-                {
-                    Owner = this
-                };
-                ventana.ShowDialog();
+                App.VentanaServicio.MostrarVentanaDialogo(vistaModelo);
             }
 
             if (!Dispatcher.CheckAccess())

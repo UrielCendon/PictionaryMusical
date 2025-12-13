@@ -143,13 +143,14 @@ namespace PictionaryMusicalCliente.Vista
             _musica.ReproducirEnBucle("inicio_sesion_musica.mp3");
 
             var vm = new InicioSesionVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
                 _inicioSesion,
                 _cambioPass,
                 _recuperacion,
                 _idioma,
-                _traductor,
-                _aviso,
                 _sonidos,
+                _aviso,
                 _generadorNombres,
                 _usuarioSesion,
                 _fabricaSalas);
@@ -174,12 +175,19 @@ namespace PictionaryMusicalCliente.Vista
                 var verifCodigo = new VerificacionCodigoDialogoServicio();
 
                 var vmCrear = new CreacionCuentaVistaModelo(
-                    codigoServ, cuentaServ, selectAvatar, verifCodigo,
-                    _sonidos, _validador, _avatares, _aviso, _traductor,
+                     App.VentanaServicio,
+                    App.Localizador,
+                    codigoServ,
+                    cuentaServ,
+                    selectAvatar,
+                    verifCodigo,
+                    _sonidos,
+                    _validador,
+                    _avatares,
+                    _aviso,
                     _idioma);
 
-                var ventana = new CreacionCuenta(vmCrear) { Owner = this };
-                ventana.ShowDialog();
+                App.VentanaServicio.MostrarVentanaDialogo(vmCrear);
             };
 
             vm.InicioSesionCompletado = _ => NavegarAVentanaPrincipal();
@@ -187,8 +195,7 @@ namespace PictionaryMusicalCliente.Vista
             vm.MostrarIngresoInvitado = vmInvitado =>
             {
                 if (vmInvitado == null) return;
-                var ventana = new IngresoPartidaInvitado(vmInvitado) { Owner = this };
-                ventana.ShowDialog();
+                App.VentanaServicio.MostrarVentanaDialogo(vmInvitado);
             };
 
             vm.AbrirVentanaJuegoInvitado = (sala, servicio, nombre) =>
@@ -204,7 +211,7 @@ namespace PictionaryMusicalCliente.Vista
             _musica.Detener();
 
             var invitacionSalaServicio = new InvitacionSalaServicio(
-                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
+                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _aviso);
 
             var principal = new VentanaPrincipal(
                 _musica, _listaAmigos, _amigos,
@@ -266,7 +273,7 @@ namespace PictionaryMusicalCliente.Vista
 
             var cancionManejador = new CancionManejador();
             var invitacionSalaServicio = new InvitacionSalaServicio(
-                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _traductor);
+                _invitaciones, _listaAmigos, _perfil, _validador, _sonidos, _aviso);
 
             Action irInicioSesion = () =>
             {

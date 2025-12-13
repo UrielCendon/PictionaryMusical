@@ -45,7 +45,6 @@ namespace PictionaryMusicalCliente.Vista
         private readonly Action _navegarInicioSesion;
 
         private readonly VentanaPrincipalVistaModelo _vistaModelo;
-        private bool _abrioVentanaJuego;
 
         /// <summary>
         /// Constructor por defecto, solo para uso del disenador/XAML. 
@@ -137,13 +136,14 @@ namespace PictionaryMusicalCliente.Vista
             _musica.ReproducirEnBucle("ventana_principal_musica.mp3");
 
             _vistaModelo = new VentanaPrincipalVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
                 _idioma,
                 _listaAmigos,
                 _amigos,
                 _salas,
                 _sonidos,
-                _usuarioSesion,
-                _traductor);
+                _usuarioSesion);
 
             ConfigurarNavegacion();
             _vistaModelo.MostrarMensaje = _aviso.Mostrar;
@@ -159,13 +159,9 @@ namespace PictionaryMusicalCliente.Vista
             _vistaModelo.AbrirPerfil = AbrirPerfil;
             _vistaModelo.AbrirAjustes = AbrirAjustes;
             _vistaModelo.AbrirComoJugar = () => MostrarDialogo(new ComoJugar());
-            _vistaModelo.AbrirClasificacion = () =>
-                MostrarDialogo(new Clasificacion(_clasificacion, _aviso, _sonidos));
-            _vistaModelo.AbrirBuscarAmigo = () =>
-                MostrarDialogo(new BusquedaAmigo(_amigos, _sonidos, _aviso, _traductor, 
-                _usuarioSesion));
-            _vistaModelo.AbrirSolicitudes = () =>
-                MostrarDialogo(new Solicitudes(_amigos, _sonidos, _aviso, _usuarioSesion));
+            _vistaModelo.AbrirClasificacion = AbrirClasificacion;
+            _vistaModelo.AbrirBuscarAmigo = AbrirBuscarAmigo;
+            _vistaModelo.AbrirSolicitudes = AbrirSolicitudes;
             _vistaModelo.ConfirmarEliminarAmigo = MostrarConfirmacionEliminar;
             _vistaModelo.IniciarJuego = sala => MostrarVentanaJuego(sala);
             _vistaModelo.UnirseSala = sala => MostrarVentanaJuego(sala);
@@ -174,12 +170,13 @@ namespace PictionaryMusicalCliente.Vista
         private void AbrirPerfil()
         {
             var vmPerfil = new PerfilVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
                 _perfilServicio,
                 _selectAvatar,
                 _cambioPass,
                 _recuperacion,
                 _aviso,
-                _traductor,
                 _sonidos,
                 _usuarioSesion,
                 _avatares,
@@ -187,13 +184,40 @@ namespace PictionaryMusicalCliente.Vista
                 _imagenesPerfil);
 
             vmPerfil.SolicitarReinicioSesion = ReiniciarAplicacion;
-            MostrarDialogo(new Perfil(vmPerfil));
+            App.VentanaServicio.MostrarVentanaDialogo(vmPerfil);
         }
 
         private void AbrirAjustes()
         {
-            MostrarDialogo(new Ajustes(_musica, _sonidos, _usuarioSesion, 
-                ReiniciarAplicacion));
+            var ajustesVM = new VistaModelo.Ajustes.AjustesVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _musica,
+                _sonidos);
+            App.VentanaServicio.MostrarVentanaDialogo(ajustesVM);
+        }
+
+        private void AbrirClasificacion()
+        {
+            var clasificacionVM = new ClasificacionVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _clasificacion,
+                _aviso,
+                _sonidos);
+            App.VentanaServicio.MostrarVentanaDialogo(clasificacionVM);
+        }
+
+        private void AbrirBuscarAmigo()
+        {
+            var busquedaAmigoVM = new VistaModelo.Amigos.BusquedaAmigoVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _amigos,
+                _sonidos,
+                _aviso,
+                _usuarioSesion);
+            App.VentanaServicio.MostrarVentanaDialogo(busquedaAmigoVM);
         }
 
         private async void VentanaPrincipal_LoadedAsync(object sender, RoutedEventArgs e)
@@ -213,8 +237,25 @@ namespace PictionaryMusicalCliente.Vista
 
         private bool? MostrarConfirmacionEliminar(string amigo)
         {
-            var ventana = new EliminacionAmigo(amigo) { Owner = this };
-            return ventana.ShowDialog();
+            var eliminacionVM = new VistaModelo.Amigos.EliminacionAmigoVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _sonidos,
+                amigo);
+            App.VentanaServicio.MostrarVentanaDialogo(eliminacionVM);
+            return eliminacionVM.DialogResult;
+        }
+
+        private void AbrirSolicitudes()
+        {
+            var solicitudesVM = new VistaModelo.Amigos.SolicitudesVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                _amigos,
+                _sonidos,
+                _aviso,
+                _usuarioSesion);
+            App.VentanaServicio.MostrarVentanaDialogo(solicitudesVM);
         }
 
         private void MostrarDialogo(Window ventana)
@@ -228,7 +269,6 @@ namespace PictionaryMusicalCliente.Vista
         {
             _logger.InfoFormat("MostrarVentanaJuego - Deteniendo musica, _musica es null: {0}", _musica == null);
             _musica.Detener();
-            _abrioVentanaJuego = true;
 
             Action irMenu = () =>
             {
