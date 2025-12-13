@@ -83,8 +83,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 var jugador = _contexto.Jugador
-                    .Include(j => j.Clasificacion)
-                    .FirstOrDefault(j => j.idJugador == jugadorId);
+                    .Include(jugadorEntidad => jugadorEntidad.Clasificacion)
+                    .FirstOrDefault(jugadorEntidad => jugadorEntidad.idJugador == jugadorId);
 
                 if (jugador?.Clasificacion == null)
                 {
@@ -148,11 +148,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return _contexto.Usuario
-                    .Include(u => u.Jugador.Clasificacion)
-                    .Where(u => u.Jugador != null && u.Jugador.Clasificacion != null)
-                    .OrderByDescending(u => u.Jugador.Clasificacion.Puntos_Ganados)
-                    .ThenByDescending(u => u.Jugador.Clasificacion.Rondas_Ganadas)
-                    .ThenBy(u => u.Nombre_Usuario)
+                    .Include(usuario => usuario.Jugador.Clasificacion)
+                    .Where(usuario => usuario.Jugador != null && usuario.Jugador.Clasificacion != null)
+                    .OrderByDescending(usuario => usuario.Jugador.Clasificacion.Puntos_Ganados)
+                    .ThenByDescending(usuario => usuario.Jugador.Clasificacion.Rondas_Ganadas)
+                    .ThenBy(usuario => usuario.Nombre_Usuario)
                     .Take(cantidad)
                     .ToList();
             }

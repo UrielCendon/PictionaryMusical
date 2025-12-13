@@ -191,10 +191,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             using (var contexto = _contextoFactory.CrearContexto())
             {
                 bool usuarioRegistrado = contexto.Usuario.Any(
-                    u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+                    usuario => usuario.Nombre_Usuario == nuevaCuenta.Usuario);
 
                 bool correoRegistrado = contexto.Jugador.Any(
-                    j => j.Correo == nuevaCuenta.Correo);
+                    jugador => jugador.Correo == nuevaCuenta.Correo);
 
                 if (usuarioRegistrado || correoRegistrado)
                 {

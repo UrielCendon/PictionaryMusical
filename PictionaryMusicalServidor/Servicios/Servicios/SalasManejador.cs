@@ -204,7 +204,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                return _salas.Values.Select(s => s.ToDto()).ToList();
+                return _salas.Values.Select(sala => sala.ToDto()).ToList();
             }
             catch (InvalidOperationException ex)
             {

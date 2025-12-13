@@ -236,7 +236,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             ControladorPartida controlador)
         {
             var jugadoresEstado = controlador.ObtenerJugadores();
-            var dibujante = jugadoresEstado.FirstOrDefault(j => j.EsDibujante);
+            var dibujante = jugadoresEstado.FirstOrDefault(jugador => jugador.EsDibujante);
             string nombreDibujante = dibujante?.NombreUsuario ?? string.Empty;
 
             List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
@@ -252,12 +252,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             var cancionActual = _catalogoCanciones.ObtenerCancionPorId(rondaBase.IdCancion);
 
-            foreach (var par in callbacks)
+            foreach (var suscripcionJugador in callbacks)
             {
                 NotificarInicioRondaIndividual(
                     idSala,
-                    par.Key,
-                    par.Value,
+                    suscripcionJugador.Key,
+                    suscripcionJugador.Value,
                     rondaBase,
                     jugadoresEstado,
                     nombreDibujante,
@@ -474,11 +474,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
         {
-            int puntajeMaximo = jugadores.Max(j => j.PuntajeTotal);
+            int puntajeMaximo = jugadores.Max(jugador => jugador.PuntajeTotal);
 
             return jugadores
-                .Where(j => j.PuntajeTotal == puntajeMaximo)
-                .Select(j => j.IdConexion)
+                .Where(jugador => jugador.PuntajeTotal == puntajeMaximo)
+                .Select(jugador => jugador.IdConexion)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 

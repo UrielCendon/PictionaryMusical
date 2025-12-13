@@ -152,10 +152,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return _contexto.Amigo
-                    .Where(a => !a.Estado && (a.UsuarioEmisor == usuarioId 
-                    || a.UsuarioReceptor == usuarioId))
-                    .Include(a => a.Usuario)
-                    .Include(a => a.Usuario1)
+                    .Where(relacion => !relacion.Estado && (relacion.UsuarioEmisor == usuarioId
+                    || relacion.UsuarioReceptor == usuarioId))
+                    .Include(relacion => relacion.Usuario)
+                    .Include(relacion => relacion.Usuario1)
                     .ToList();
             }
             catch (DbUpdateException ex)
@@ -308,10 +308,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 var amigosIds = _contexto.Amigo
-                    .Where(a => a.Estado && (a.UsuarioEmisor == usuarioId 
-                    || a.UsuarioReceptor == usuarioId))
-                    .Select(a => a.UsuarioEmisor == usuarioId ? a.UsuarioReceptor 
-                    : a.UsuarioEmisor)
+                    .Where(relacion => relacion.Estado && (relacion.UsuarioEmisor == usuarioId
+                        || relacion.UsuarioReceptor == usuarioId))
+                    .Select(relacion => relacion.UsuarioEmisor == usuarioId ? relacion.UsuarioReceptor
+                        : relacion.UsuarioEmisor)
                     .Distinct()
                     .ToList();
 

@@ -37,7 +37,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                return _contexto.Jugador.Any(j => j.Correo == correo);
+                return _contexto.Jugador.Any(jugador => jugador.Correo == correo);
             }
             catch (EntityException ex)
             {

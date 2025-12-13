@@ -34,8 +34,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                return _contexto.Reporte.Any(r => r.idReportante == idReportante
-                    && r.idReportado == idReportado);
+                return _contexto.Reporte.Any(reporte => reporte.idReportante == idReportante
+                    && reporte.idReportado == idReportado);
             }
             catch (DbUpdateException ex)
             {
@@ -132,7 +132,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                return _contexto.Reporte.Count(r => r.idReportado == idReportado);
+                return _contexto.Reporte.Count(reporte => reporte.idReportado == idReportado);
             }
             catch (DbUpdateException ex)
             {

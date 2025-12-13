@@ -56,11 +56,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     IList<Usuario> usuarios = repositorio.ObtenerMejoresJugadores(
                         LimiteTopJugadores);
 
-                    return usuarios.Select(u => new ClasificacionUsuarioDTO
+                    return usuarios.Select(usuario => new ClasificacionUsuarioDTO
                     {
-                        Usuario = u.Nombre_Usuario,
-                        Puntos = u.Jugador.Clasificacion.Puntos_Ganados ?? 0,
-                        RondasGanadas = u.Jugador.Clasificacion.Rondas_Ganadas ?? 0
+                        Usuario = usuario.Nombre_Usuario,
+                        Puntos = usuario.Jugador.Clasificacion.Puntos_Ganados ?? 0,
+                        RondasGanadas = usuario.Jugador.Clasificacion.Rondas_Ganadas ?? 0
                     }).ToList();
                 }
             }

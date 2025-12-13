@@ -134,9 +134,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             lock (_sync)
             {
                 return _callbacks
-                    .Where(x => !string.Equals(x.Key, usuarioExcluido, 
+                    .Where(callbackRegistrado => !string.Equals(callbackRegistrado.Key, usuarioExcluido,
                         StringComparison.OrdinalIgnoreCase))
-                    .Select(x => x.Value)
+                    .Select(callbackRegistrado => callbackRegistrado.Value)
                     .ToList();
             }
         }

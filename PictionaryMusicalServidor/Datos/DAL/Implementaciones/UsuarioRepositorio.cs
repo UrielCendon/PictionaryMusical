@@ -49,8 +49,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario ==
-                nombreNormalizado);
+                var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
+                    usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
                 return usuario != null
                     && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
@@ -156,8 +156,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.Nombre_Usuario ==
-                nombreNormalizado);
+                var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
+                    usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
                 if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
                     StringComparison.Ordinal))
@@ -218,7 +218,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 var usuariosCandidatos = _contexto.Usuario
                     .Include("Jugador")
-                    .Where(u => u.Jugador.Correo == correo)
+                    .Where(usuarioEntidad => usuarioEntidad.Jugador.Correo == correo)
                     .ToList();
 
                 return usuariosCandidatos.FirstOrDefault(u =>
@@ -271,8 +271,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return await _contexto.Usuario
-                    .Include(u => u.Jugador)
-                    .FirstOrDefaultAsync(u => u.Jugador.Correo == correo);
+                    .Include(usuarioEntidad => usuarioEntidad.Jugador)
+                    .FirstOrDefaultAsync(usuarioEntidad => usuarioEntidad.Jugador.Correo == correo);
             }
             catch (DbUpdateException ex)
             {
@@ -329,8 +329,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return _contexto.Usuario
-                    .Include(u => u.Jugador.RedSocial)
-                    .FirstOrDefault(u => u.idUsuario == idUsuario);
+                    .Include(usuarioEntidad => usuarioEntidad.Jugador.RedSocial)
+                    .FirstOrDefault(usuarioEntidad => usuarioEntidad.idUsuario == idUsuario);
             }
             catch (DbUpdateException ex)
             {
@@ -377,7 +377,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                var usuario = _contexto.Usuario.FirstOrDefault(u => u.idUsuario == usuarioId);
+                var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
+                    usuarioEntidad.idUsuario == usuarioId);
                 if (usuario != null)
                 {
                     usuario.Contrasena = nuevaContrasenaHash;
@@ -430,8 +431,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 string nombreNormalizado = nombreUsuario.Trim();
 
                 return _contexto.Usuario
-                    .Include(u => u.Jugador)
-                    .FirstOrDefault(u => u.Nombre_Usuario == nombreNormalizado);
+                    .Include(usuarioEntidad => usuarioEntidad.Jugador)
+                    .FirstOrDefault(usuarioEntidad => usuarioEntidad.Nombre_Usuario == nombreNormalizado);
             }
             catch (DbUpdateException ex)
             {
