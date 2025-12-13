@@ -65,6 +65,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.Error(
+                    "Error al verificar existencia de relacion de amistad en la base de datos.",
+                    ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -113,6 +120,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error al obtener la relación de amistad de la base de datos.", ex);
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error al obtener la relación de amistad de la base de datos.", ex);
                 throw;
@@ -167,6 +179,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     usuarioId, ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al obtener solicitudes pendientes para el usuario ID: {0}.",
+                    usuarioId, ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -211,6 +230,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     relacion.UsuarioEmisor, relacion.UsuarioReceptor, ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al actualizar el estado de la relacion entre {0} y {1}.",
+                    relacion.UsuarioEmisor, relacion.UsuarioReceptor, ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -249,6 +275,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
+                    emisorId, receptorId, ex);
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
                     emisorId, receptorId, ex);
@@ -307,6 +339,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "Error de base de datos al obtener amigos para el usuario ID: {0}.",
+                    usuarioId, ex);
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.ErrorFormat(
                     "Error de base de datos al obtener amigos para el usuario ID: {0}.",

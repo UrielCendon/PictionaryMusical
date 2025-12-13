@@ -176,6 +176,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 _logger.Error("Formato de correo invalido al enviar codigo de verificacion.", ex);
                 return false;
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Formato de correo invalido al enviar codigo de verificacion.", ex);
+                return false;
+            }
         }
 
         private static string ObtenerConfiguracion(params string[] claves)

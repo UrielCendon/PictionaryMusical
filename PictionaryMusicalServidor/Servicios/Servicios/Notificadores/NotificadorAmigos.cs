@@ -80,6 +80,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 _logger.Error(
                     "Error de datos al recuperar las solicitudes pendientes de amistad.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(
+                    "Error de datos al recuperar las solicitudes pendientes de amistad.", ex);
+            }
         }
     }
 }

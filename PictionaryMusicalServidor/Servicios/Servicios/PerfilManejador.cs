@@ -77,6 +77,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al obtener perfil.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error de datos al obtener perfil.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
+            }
         }
 
         /// <summary>
@@ -134,6 +139,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al actualizar perfil.", ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al actualizar perfil.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);

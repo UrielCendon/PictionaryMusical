@@ -123,6 +123,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ex);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(
+                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    ex);
+                throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
+            }
         }
 
         /// <summary>
@@ -138,6 +145,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _manejadorCallback.Desuscribir(nombreUsuario);
             }
             catch (ArgumentException ex)
+            {
+                _logger.Warn("Datos invalidos al cancelar suscripcion.", ex);
+                throw new FaultException(ex.Message);
+            }
+            catch (Exception ex)
             {
                 _logger.Warn("Datos invalidos al cancelar suscripcion.", ex);
                 throw new FaultException(ex.Message);
@@ -173,6 +185,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error inesperado al obtener la lista de amigos.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);

@@ -132,6 +132,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 _logger.Error("Formato de correo invalido al enviar invitacion.", ex);
                 return false;
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Formato de correo invalido al enviar invitacion.", ex);
+                return false;
+            }
         }
 
         private class ConfiguracionSmtp

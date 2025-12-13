@@ -142,6 +142,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 _logger.Warn("Operacion invalida en comunicacion WCF.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Warn("Operacion invalida en comunicacion WCF.", ex);
+            }
         }
     }
 }

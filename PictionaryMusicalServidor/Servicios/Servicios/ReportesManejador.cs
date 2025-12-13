@@ -117,6 +117,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de datos al registrar reporte.", ex);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error de datos al registrar reporte.", ex);
+                return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
+            }
         }
 
         private void ValidarSolicitud(ReporteJugadorDTO reporte)
@@ -166,6 +171,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return (reportante.idUsuario, reportado.idUsuario);
             }
             catch (KeyNotFoundException ex)
+            {
+                _logger.Warn("Intento de reporte con usuarios no registrados.", ex);
+                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+            }
+            catch (Exception ex)
             {
                 _logger.Warn("Intento de reporte con usuarios no registrados.", ex);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);

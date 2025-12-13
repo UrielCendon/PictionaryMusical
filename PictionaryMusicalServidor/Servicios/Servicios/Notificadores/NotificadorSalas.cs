@@ -89,6 +89,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 _logger.Error(
                     "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Error(
+                    "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+            }
         }
 
         /// <summary>
@@ -119,6 +124,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                         _suscripciones.TryRemove(kvp.Key, out _);
                 }
                 catch (ObjectDisposedException ex)
+                {
+                    _logger.Error(
+                        "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                }
+                catch (Exception ex)
                 {
                     _logger.Error(
                         "Error inesperado al notificar la lista de salas a los suscriptores.", ex);

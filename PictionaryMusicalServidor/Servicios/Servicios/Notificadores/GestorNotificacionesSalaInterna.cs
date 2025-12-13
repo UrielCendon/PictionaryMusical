@@ -176,6 +176,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
+            }
         }
 
         /// <summary>

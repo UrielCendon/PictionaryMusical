@@ -65,6 +65,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _logger.Error("Error al crear la clasificacion inicial.", ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -125,6 +130,14 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al actualizar la clasificacion del jugador con ID {0}.",
+                    jugadorId,
+                    ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -154,6 +167,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error al consultar los mejores jugadores.", ex);
                 throw;

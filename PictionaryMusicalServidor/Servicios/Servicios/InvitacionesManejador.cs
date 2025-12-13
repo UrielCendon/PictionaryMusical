@@ -116,6 +116,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error inesperado al enviar invitacion.", ex);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al enviar invitacion.", ex);
+                return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
+            }
         }
 
         private void ValidarDatosEntrada(InvitacionSalaDTO invitacion)

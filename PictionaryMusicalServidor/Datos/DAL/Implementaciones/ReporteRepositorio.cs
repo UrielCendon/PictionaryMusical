@@ -64,6 +64,15 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                    idReportante,
+                    idReportado,
+                    ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -101,6 +110,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _logger.Error("Error al guardar el reporte en la base de datos.", ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error al guardar el reporte en la base de datos.", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -131,6 +145,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 throw;
             }
             catch (DataException ex)
+            {
+                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
+                throw;
+            }
+            catch (Exception ex)
             {
                 _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, ex);
                 throw;

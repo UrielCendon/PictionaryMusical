@@ -73,6 +73,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 _logger.Warn("Error inesperado al obtener la lista de amigos del usuario.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Warn("Error inesperado al obtener la lista de amigos del usuario.", ex);
+            }
         }
 
         /// <summary>

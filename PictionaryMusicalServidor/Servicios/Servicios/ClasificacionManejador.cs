@@ -79,6 +79,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Operacion invalida al obtener la clasificacion.", ex);
                 return new List<ClasificacionUsuarioDTO>();
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Operacion invalida al obtener la clasificacion.", ex);
+                return new List<ClasificacionUsuarioDTO>();
+            }
         }
     }
 }

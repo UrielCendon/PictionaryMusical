@@ -96,6 +96,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error inesperado al unirse al chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al unirse al chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
         }
 
         /// <summary>
@@ -154,6 +159,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error inesperado al enviar mensaje de chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al enviar mensaje de chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
         }
 
         /// <summary>
@@ -198,6 +208,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (ObjectDisposedException ex)
+            {
+                _logger.Error("Error inesperado al salir del chat.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error inesperado al salir del chat.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
@@ -393,6 +408,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException ex)
+            {
+                _logger.Warn(
+                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    ex);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (Exception ex)
             {
                 _logger.Warn(
                     "Operacion invalida en canal WCF. Removiendo callback.",

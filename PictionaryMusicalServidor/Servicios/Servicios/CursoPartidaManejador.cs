@@ -332,6 +332,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 RemoverCallback(idSala, idJugador);
             }
+            catch (Exception ex)
+            {
+                _logger.WarnFormat(
+                    "Error notificando inicio de ronda a {0}",
+                    idJugador,
+                    ex);
+
+                RemoverCallback(idSala, idJugador);
+            }
         }
 
         private void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
@@ -421,6 +430,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+            }
         }
 
         private List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)
@@ -444,6 +457,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return new List<JugadorPartida>();
             }
             catch (DataException ex)
+            {
+                _logger.Error(
+                    "Error al obtener jugadores para actualizar clasificacion.",
+                    ex);
+                return new List<JugadorPartida>();
+            }
+            catch (Exception ex)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
@@ -496,6 +516,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ex);
             }
             catch (DataException ex)
+            {
+                _logger.ErrorFormat(
+                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    jugadorId,
+                    ex);
+            }
+            catch (Exception ex)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
@@ -563,6 +590,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     RemoverCallback(idSala, par.Key);
                 }
                 catch (TimeoutException ex)
+                {
+                    _logger.WarnFormat(
+                        "Timeout con jugador {0} en sala {1}. Removiendo.",
+                        par.Key,
+                        idSala);
+                    _logger.Warn(ex);
+                    RemoverCallback(idSala, par.Key);
+                }
+                catch (Exception ex)
                 {
                     _logger.WarnFormat(
                         "Timeout con jugador {0} en sala {1}. Removiendo.",
@@ -667,6 +703,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearConfiguracionPorDefecto();
             }
             catch (ObjectDisposedException ex)
+            {
+                _logger.WarnFormat(
+                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    idSala);
+                _logger.Warn(ex);
+                return CrearConfiguracionPorDefecto();
+            }
+            catch (Exception ex)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",

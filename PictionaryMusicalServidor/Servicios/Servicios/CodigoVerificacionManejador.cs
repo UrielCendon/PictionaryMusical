@@ -104,6 +104,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error de datos al solicitar codigo de verificacion.", ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorSolicitudVerificacion
+                };
+            }
         }
 
         /// <summary>
@@ -150,6 +159,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al reenviar codigo de verificacion.", ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigoVerificacion
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al reenviar codigo de verificacion.", ex);
                 return new ResultadoSolicitudCodigoDTO
@@ -228,6 +246,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error de datos al confirmar codigo.", ex);
+                return new ResultadoRegistroCuentaDTO
+                {
+                    RegistroExitoso = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
         }
 
         /// <summary>
@@ -271,6 +298,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al solicitar codigo de recuperacion.", ex);
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al solicitar codigo de recuperacion.", ex);
                 return new ResultadoSolicitudRecuperacionDTO
@@ -326,6 +362,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al confirmar codigo de recuperacion.", ex);
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigoRecuperacion
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al confirmar codigo de recuperacion.", ex);
                 return new ResultadoOperacionDTO

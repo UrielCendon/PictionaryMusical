@@ -122,6 +122,11 @@ namespace PictionaryMusicalServidor.Datos
                 _logger.Error("Error inesperado al obtener una cancion aleatoria.", ex);
                 throw;
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al obtener una cancion aleatoria.", ex);
+                throw;
+            }
         }
 
         /// <summary>

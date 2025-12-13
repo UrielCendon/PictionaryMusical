@@ -114,6 +114,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error inesperado al crear sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al crear sala.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
+            }
         }
 
         /// <summary>
@@ -184,6 +189,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error inesperado al unirse a la sala.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error inesperado al unirse a la sala.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
+            }
         }
 
         /// <summary>
@@ -197,6 +207,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return _salas.Values.Select(s => s.ToDto()).ToList();
             }
             catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al obtener lista de salas.", ex);
+                return new List<SalaDTO>();
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Operacion invalida al obtener lista de salas.", ex);
                 return new List<SalaDTO>();
@@ -242,6 +257,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn("Operacion invalida al abandonar sala.", ex);
                 throw new FaultException(ex.Message);
             }
+            catch (Exception ex)
+            {
+                _logger.Warn("Operacion invalida al abandonar sala.", ex);
+                throw new FaultException(ex.Message);
+            }
         }
 
         /// <summary>
@@ -279,6 +299,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Timeout al suscribirse a la lista de salas.", ex);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Timeout al suscribirse a la lista de salas.", ex);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
+            }
         }
 
         /// <summary>
@@ -301,6 +326,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Error de comunicacion WCF al cancelar suscripcion.", ex);
             }
             catch (TimeoutException ex)
+            {
+                _logger.Error("Timeout al cancelar la suscripcion.", ex);
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Timeout al cancelar la suscripcion.", ex);
             }
@@ -354,6 +383,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(ex.Message);
             }
             catch (InvalidOperationException ex)
+            {
+                _logger.Warn("Operacion invalida al expulsar jugador.", ex);
+                throw new FaultException(ex.Message);
+            }
+            catch (Exception ex)
             {
                 _logger.Warn("Operacion invalida al expulsar jugador.", ex);
                 throw new FaultException(ex.Message);

@@ -78,6 +78,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
                 return CrearErrorGenerico();
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
+                return CrearErrorGenerico();
+            }
         }
 
         private bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)
@@ -204,6 +209,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return BuscarPorNombreUsuario(contexto, identificador);
             }
             catch (KeyNotFoundException)
+            {
+                return BuscarPorCorreoElectronico(contexto, identificador);
+            }
+            catch (Exception ex)
             {
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }

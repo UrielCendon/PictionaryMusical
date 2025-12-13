@@ -93,6 +93,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
                 };
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Error de datos al solicitar codigo de recuperacion.", ex);
+                return new ResultadoSolicitudRecuperacionDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorRecuperarCuenta
+                };
+            }
         }
 
         /// <summary>
@@ -133,6 +142,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al reenviar codigo de recuperacion.", ex);
+                return new ResultadoSolicitudCodigoDTO
+                {
+                    CodigoEnviado = false,
+                    Mensaje = MensajesError.Cliente.ErrorReenviarCodigo
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al reenviar codigo de recuperacion.", ex);
                 return new ResultadoSolicitudCodigoDTO
@@ -184,6 +202,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al confirmar codigo de recuperacion.", ex);
+
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorConfirmarCodigo
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al confirmar codigo de recuperacion.", ex);
 
@@ -254,6 +282,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 };
             }
             catch (DataException ex)
+            {
+                _logger.Error("Error de datos al actualizar contrasena.", ex);
+
+                return new ResultadoOperacionDTO
+                {
+                    OperacionExitosa = false,
+                    Mensaje = MensajesError.Cliente.ErrorActualizarContrasena
+                };
+            }
+            catch (Exception ex)
             {
                 _logger.Error("Error de datos al actualizar contrasena.", ex);
 

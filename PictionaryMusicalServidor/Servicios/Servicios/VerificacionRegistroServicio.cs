@@ -98,6 +98,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
+            catch (Exception ex)
+            {
+                return CrearFalloReenvio(
+                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+            }
         }
 
         /// <summary>
@@ -132,6 +137,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
             }
             catch (KeyNotFoundException)
+            {
+                return CrearFalloConfirmacion(
+                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+            }
+            catch (Exception ex)
             {
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);

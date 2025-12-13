@@ -106,6 +106,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Error("Operacion invalida durante el registro.", ex);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
+            catch (Exception ex)
+            {
+                _logger.Error("Operacion invalida durante el registro.", ex);
+                return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
+            }
         }
 
         /// <summary>
