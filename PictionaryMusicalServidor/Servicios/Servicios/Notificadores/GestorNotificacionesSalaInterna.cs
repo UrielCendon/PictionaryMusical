@@ -111,9 +111,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         public void NotificarExpulsion(string codigoSala, string nombreExpulsado, 
             ISalasManejadorCallback callbackExpulsado, SalaDTO salaActualizada)
         {
-            EjecutarSeguro(() => callbackExpulsado.NotificarJugadorExpulsado
-            (codigoSala, nombreExpulsado));
-            NotificarSalida(codigoSala, nombreExpulsado, salaActualizada);
+            _logger.InfoFormat(
+                "Notificando expulsión de '{0}' en sala '{1}' a todos los clientes.",
+                nombreExpulsado, codigoSala);
+
+            var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
+            foreach (var callback in todosLosDestinatarios)
+            {
+                EjecutarSeguro(() => callback.NotificarJugadorExpulsado(codigoSala, nombreExpulsado));
+            }
+
+            if (callbackExpulsado != null)
+            {
+                EjecutarSeguro(() => callbackExpulsado.NotificarJugadorExpulsado(codigoSala,
+                    nombreExpulsado));
+            }
+
+            var destinatarios = ObtenerDestinatariosExcluyendo(nombreExpulsado);
+            foreach (var callback in destinatarios)
+            {
+                EjecutarSeguro(() => callback.NotificarSalaActualizada(salaActualizada));
+            }
+
+            _logger.InfoFormat(
+                "Expulsión de '{0}' notificada a todos los clientes en sala '{1}'.",
+                nombreExpulsado, codigoSala);
         }
 
         /// <summary>
