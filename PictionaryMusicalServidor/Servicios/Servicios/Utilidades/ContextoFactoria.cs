@@ -2,6 +2,7 @@ using log4net;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Datos.Utilidades;
 using System.Data;
+using System;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
