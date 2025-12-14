@@ -33,17 +33,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
                 return new BaseDatosPruebaEntities(conexion);
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error al construir el contexto de base de datos.", ex);
+                _logger.Error("Error al construir el contexto de base de datos.", excepcion);
                 throw new DataException(
-                    "No se pudo establecer la conexion con la base de datos.", ex);
+                    "No se pudo establecer la conexion con la base de datos.", excepcion);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al crear el contexto de base de datos.", ex);
+                _logger.Error("Error inesperado al crear el contexto de base de datos.", excepcion);
                 throw new DataException(
-                    "No se pudo establecer la conexion con la base de datos.", ex);
+                    "No se pudo establecer la conexion con la base de datos.", excepcion);
             }
         }
     }

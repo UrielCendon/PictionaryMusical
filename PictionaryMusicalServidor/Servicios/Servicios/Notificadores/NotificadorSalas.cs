@@ -74,25 +74,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 var salas = _obtenerSalas().Select(sala => sala.ToDto()).ToArray();
                 callback.NotificarListaSalasActualizada(salas);
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
                 _logger.Warn(
                     "Error de comunicacion al notificar la lista de salas a los suscriptores.", 
-                    ex);
+                    excepcion);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al notificar la lista de salas a los suscriptores.", ex);
+                _logger.Warn("Timeout al notificar la lista de salas a los suscriptores.", excepcion);
             }
-            catch (ObjectDisposedException ex)
-            {
-                _logger.Error(
-                    "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
-            }
-            catch (Exception ex)
+            catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                    "Error inesperado al notificar la lista de salas a los suscriptores.", excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error(
+                    "Error inesperado al notificar la lista de salas a los suscriptores.", excepcion);
             }
         }
 
@@ -109,29 +109,29 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 {
                     suscripcion.Value.NotificarListaSalasActualizada(salas);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException excepcion)
                 {
                     _logger.Warn(
                         "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.",
-                        ex);
+                        excepcion);
                     _suscripciones.TryRemove(suscripcion.Key, out _);
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException excepcion)
                 {
                     _logger.Warn(
                         "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.",
-                        ex);
+                        excepcion);
                         _suscripciones.TryRemove(suscripcion.Key, out _);
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException excepcion)
                 {
                     _logger.Error(
-                        "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                        "Error inesperado al notificar la lista de salas a los suscriptores.", excepcion);
                 }
-                catch (Exception ex)
+                catch (Exception excepcion)
                 {
                     _logger.Error(
-                        "Error inesperado al notificar la lista de salas a los suscriptores.", ex);
+                        "Error inesperado al notificar la lista de salas a los suscriptores.", excepcion);
                 }
             }
         }

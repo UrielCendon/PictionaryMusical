@@ -64,24 +64,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }).ToList();
                 }
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al obtener la clasificacion.", ex);
+                _logger.Error("Error de base de datos al obtener la clasificacion.", excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al obtener la clasificacion.", ex);
+                _logger.Error("Error de datos al obtener la clasificacion.", excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al obtener la clasificacion.", ex);
+                _logger.Error("Operacion invalida al obtener la clasificacion.", excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida al obtener la clasificacion.", ex);
+                _logger.Error("Operacion invalida al obtener la clasificacion.", excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
         }

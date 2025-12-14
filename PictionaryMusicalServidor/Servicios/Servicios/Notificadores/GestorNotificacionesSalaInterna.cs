@@ -164,21 +164,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 accion();
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Warn("Error de comunicacion al notificar cliente en sala.", ex);
+                _logger.Warn("Error de comunicacion al notificar cliente en sala.", excepcion);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", ex);
+                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", excepcion);
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", ex);
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
             }
         }
 

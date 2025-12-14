@@ -93,13 +93,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 var pendiente = ObtenerSolicitudPendiente(solicitud.TokenCodigo);
                 return ProcesarReenvioCodigo(solicitud.TokenCodigo, pendiente);
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
+                _logger.Warn(
+                    "No se encontro la solicitud de verificacion para reenviar el codigo.",
+                    excepcion);
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
+                _logger.Error(
+                    "Error inesperado al reenviar codigo de verificacion.",
+                    excepcion);
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
@@ -136,13 +142,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
+                _logger.Warn(
+                    "No se encontro la solicitud de verificacion al confirmar codigo.",
+                    excepcion);
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
+                _logger.Error(
+                    "Error inesperado al confirmar codigo de verificacion.",
+                    excepcion);
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
             }

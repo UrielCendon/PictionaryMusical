@@ -81,34 +81,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     };
                 }
             }
-            catch (DbEntityValidationException ex)
+            catch (DbEntityValidationException excepcion)
             {
-                _logger.Error("Validacion de entidad fallida durante el registro.", ex);
+                _logger.Error("Validacion de entidad fallida durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error de actualizacion de BD durante el registro.", ex);
+                _logger.Error("Error de actualizacion de BD durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos durante el registro.", ex);
+                _logger.Error("Error de base de datos durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error de datos durante el registro.", ex);
+                _logger.Error("Error de datos durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida durante el registro.", ex);
+                _logger.Error("Operacion invalida durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida durante el registro.", ex);
+                _logger.Error("Operacion invalida durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
         }

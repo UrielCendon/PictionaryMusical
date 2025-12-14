@@ -50,24 +50,24 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return clasificacion;
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
                 throw;
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
                 throw;
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", ex);
+                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
                 throw;
             }
         }
@@ -106,36 +106,36 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
                 return true;
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
                 _logger.ErrorFormat(
                     "Error al actualizar la clasificacion del jugador con ID {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
                 throw;
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
                 _logger.ErrorFormat(
                     "Error al actualizar la clasificacion del jugador con ID {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
                 throw;
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
                 _logger.ErrorFormat(
                     "Error al actualizar la clasificacion del jugador con ID {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
                     "Error al actualizar la clasificacion del jugador con ID {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
                 throw;
             }
         }
@@ -156,24 +156,24 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Take(cantidad)
                     .ToList();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
                 throw;
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
                 throw;
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", ex);
+                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
                 throw;
             }
         }

@@ -76,15 +76,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                     NotificarSolicitudActualizada(nombreNormalizado, dto);
                 }
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al recuperar las solicitudes pendientes de amistad.", ex);
+                    "Error de datos al recuperar las solicitudes pendientes de amistad.", excepcion);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error de datos al recuperar las solicitudes pendientes de amistad.", ex);
+                    "Error de datos al recuperar las solicitudes pendientes de amistad.", excepcion);
             }
         }
     }

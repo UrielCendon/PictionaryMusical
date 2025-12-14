@@ -305,39 +305,39 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 callback.NotificarInicioRonda(rondaPersonalizada);
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
                     idJugador,
-                    ex);
+                    excepcion);
 
                 RemoverCallback(idSala, idJugador);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
                     idJugador,
-                    ex);
+                    excepcion);
 
                 RemoverCallback(idSala, idJugador);
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException excepcion)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
                     idJugador,
-                    ex);
+                    excepcion);
 
                 RemoverCallback(idSala, idJugador);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.WarnFormat(
                     "Error notificando inicio de ronda a {0}",
                     idJugador,
-                    ex);
+                    excepcion);
 
                 RemoverCallback(idSala, idJugador);
             }
@@ -418,21 +418,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", ex);
+                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
             }
         }
 
@@ -442,32 +442,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return controlador.ObtenerJugadores()?.ToList();
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
+                    excepcion);
                 return new List<JugadorPartida>();
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
+                    excepcion);
                 return new List<JugadorPartida>();
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
+                    excepcion);
                 return new List<JugadorPartida>();
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.Error(
                     "Error al obtener jugadores para actualizar clasificacion.",
-                    ex);
+                    excepcion);
                 return new List<JugadorPartida>();
             }
         }
@@ -501,33 +501,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     jugador.PuntajeTotal,
                     ganoPartida);
             }
-            catch (DbUpdateException ex)
+            catch (DbUpdateException excepcion)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
                     "No se pudo actualizar clasificacion del jugador {0}.",
                     jugadorId,
-                    ex);
+                    excepcion);
             }
         }
 
@@ -562,49 +562,49 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                     accion(par.Value);
                 }
-                catch (ObjectDisposedException ex)
+                catch (ObjectDisposedException excepcion)
                 {
                     _logger.WarnFormat(
                         "Canal desechado para jugador {0} en sala {1}. Removiendo.",
                         par.Key,
                         idSala);
-                    _logger.Warn(ex);
+                    _logger.Warn(excepcion);
                     RemoverCallback(idSala, par.Key);
                 }
-                catch (CommunicationObjectFaultedException ex)
+                catch (CommunicationObjectFaultedException excepcion)
                 {
                     _logger.WarnFormat(
                         "Canal en falta para jugador {0} en sala {1}. Removiendo.",
                         par.Key,
                         idSala);
-                    _logger.Warn(ex);
+                    _logger.Warn(excepcion);
                     RemoverCallback(idSala, par.Key);
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException excepcion)
                 {
                     _logger.WarnFormat(
                         "Error comunicacion con jugador {0} en sala {1}. Removiendo.",
                         par.Key,
                         idSala);
-                    _logger.Warn(ex);
+                    _logger.Warn(excepcion);
                     RemoverCallback(idSala, par.Key);
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException excepcion)
                 {
                     _logger.WarnFormat(
                         "Timeout con jugador {0} en sala {1}. Removiendo.",
                         par.Key,
                         idSala);
-                    _logger.Warn(ex);
+                    _logger.Warn(excepcion);
                     RemoverCallback(idSala, par.Key);
                 }
-                catch (Exception ex)
+                catch (Exception excepcion)
                 {
                     _logger.WarnFormat(
                         "Timeout con jugador {0} en sala {1}. Removiendo.",
                         par.Key,
                         idSala);
-                    _logger.Warn(ex);
+                    _logger.Warn(excepcion);
                     RemoverCallback(idSala, par.Key);
                 }
             }
@@ -686,36 +686,36 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return _salasManejador.ObtenerSalaPorCodigo(idSala)?.Configuracion;
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
                     idSala);
-                _logger.Warn(ex);
+                _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
                     idSala);
-                _logger.Warn(ex);
+                _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException excepcion)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
                     idSala);
-                _logger.Warn(ex);
+                _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 _logger.WarnFormat(
                     "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
                     idSala);
-                _logger.Warn(ex);
+                _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
             }
         }

@@ -63,24 +63,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return ProcesarAutenticacion(contexto, credenciales);
                 }
             }
-            catch (EntityException ex)
+            catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos durante el inicio de sesion.", ex);
+                _logger.Error("Error de base de datos durante el inicio de sesion.", excepcion);
                 return CrearErrorGenerico();
             }
-            catch (DataException ex)
+            catch (DataException excepcion)
             {
-                _logger.Error("Error de datos durante el inicio de sesion.", ex);
+                _logger.Error("Error de datos durante el inicio de sesion.", excepcion);
                 return CrearErrorGenerico();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
+                _logger.Error("Operacion invalida durante el inicio de sesion.", excepcion);
                 return CrearErrorGenerico();
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida durante el inicio de sesion.", ex);
+                _logger.Error("Operacion invalida durante el inicio de sesion.", excepcion);
                 return CrearErrorGenerico();
             }
         }
@@ -208,12 +208,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 return BuscarPorNombreUsuario(contexto, identificador);
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
+                _logger.Warn(
+                    "Usuario no encontrado por nombre, se intentara buscar por correo.",
+                    excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
+                _logger.Error(
+                    "Error inesperado al buscar usuario por nombre, intentando por correo.",
+                    excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
         }
