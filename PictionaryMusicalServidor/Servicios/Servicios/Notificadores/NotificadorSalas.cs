@@ -71,7 +71,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             try
             {
-                var salas = _obtenerSalas().Select(sala => sala.ToDto()).ToArray();
+                var salas = _obtenerSalas().Select(sala => sala.ConvertirADto()).ToArray();
                 callback.NotificarListaSalasActualizada(salas);
             }
             catch (CommunicationException excepcion)
