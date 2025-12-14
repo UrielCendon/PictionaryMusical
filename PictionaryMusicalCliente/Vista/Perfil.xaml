@@ -6,7 +6,7 @@
         Title="{x:Static language:Lang.perfilTextoMiPerfil}" Height="500" Width="700"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent"
-        Loaded="Perfil_LoadedAsync">
+        Loaded="AlCargarPerfilAsync">
     <Window.Resources>
         <Style x:Key="RedSocialToggleButtonStyle" TargetType="ToggleButton">
             <Setter Property="Background" Value="Transparent" />
@@ -136,7 +136,7 @@
                                                Placement="Top" AllowsTransparency="True"
                                                PopupAnimation="Fade" StaysOpen="False"
                                                IsOpen="{Binding IsChecked, ElementName=toggleRedSocial, Mode=TwoWay}"
-                                               Opened="PopupRedSocial_Opened">
+                                               Opened="AlAbrirPopupRedSocial">
                                             <Border Background="White" CornerRadius="6" 
                                                     Padding="8" MinWidth="160">
                                                 <Border.Style>
@@ -155,7 +155,7 @@
                                                          Text="{Binding Identificador, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          MaxLength="50"
                                                          Tag="{Binding ElementName=toggleRedSocial}"
-                                                         KeyDown="RedSocialTextBox_KeyDown" />
+                                                         KeyDown="AlPresionarTeclaEnCajaTextoRedSocial" />
                                             </Border>
                                         </Popup>
                                     </Grid>
