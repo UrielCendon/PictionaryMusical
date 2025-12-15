@@ -69,7 +69,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             return config;
         }
 
-        private string ObtenerAsunto(string idiomaNormalizado)
+        private static string ObtenerAsunto(string idiomaNormalizado)
         {
             string asuntoConfigurado = ObtenerConfiguracion(
                 string.Format("CorreoAsuntoInvitacion.{0}", idiomaNormalizado),
@@ -82,7 +82,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 : asuntoConfigurado;
         }
 
-        private async Task<bool> EjecutarEnvioSmtpAsync(string destinatario, string asunto, 
+        private static async Task<bool> EjecutarEnvioSmtpAsync(string destinatario, string asunto, 
             string cuerpo, ConfiguracionSmtp config)
         {
             try
@@ -139,7 +139,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
         }
 
-        private class ConfiguracionSmtp
+        private sealed class ConfiguracionSmtp
         {
             public string Remitente { get; set; }
             public string Contrasena { get; set; }

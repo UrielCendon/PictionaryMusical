@@ -111,7 +111,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al crear sala.", excepcion);
+                _logger.Error("Canal WCF cerrado al crear sala.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (Exception excepcion)
@@ -187,7 +187,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al unirse a la sala.", excepcion);
+                _logger.Error("Canal WCF cerrado al unirse a la sala.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (Exception excepcion)
@@ -214,7 +214,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida al obtener lista de salas.", excepcion);
+                _logger.Error("Error inesperado al obtener lista de salas.", excepcion);
                 return new List<SalaDTO>();
             }
         }
@@ -261,7 +261,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Operacion invalida al abandonar sala.", excepcion);
+                _logger.Warn("Error inesperado al abandonar sala.", excepcion);
                 throw new FaultException(excepcion.Message);
             }
         }
@@ -303,7 +303,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Timeout al suscribirse a la lista de salas.", excepcion);
+                _logger.Error("Error inesperado al suscribirse a la lista de salas.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
         }
@@ -333,7 +333,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Timeout al cancelar la suscripcion.", excepcion);
+                _logger.Error("Error inesperado al cancelar la suscripcion.", excepcion);
             }
         }
 
@@ -400,7 +400,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Operacion invalida al expulsar jugador.", excepcion);
+                _logger.Warn("Error inesperado al expulsar jugador.", excepcion);
                 throw new FaultException(excepcion.Message);
             }
         }
@@ -445,7 +445,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         }
 
 
-        private string GenerarCodigoSala()
+        private static string GenerarCodigoSala()
         {
             var random = new Random();
             const int maxIntentos = 1000;

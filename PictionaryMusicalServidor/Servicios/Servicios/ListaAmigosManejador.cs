@@ -134,7 +134,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    "Error inesperado al suscribirse a lista de amigos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
@@ -159,7 +159,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Datos invalidos al cancelar suscripcion.", excepcion);
+                _logger.Warn("Error inesperado al cancelar suscripcion.", excepcion);
                 throw new FaultException(excepcion.Message);
             }
         }
@@ -184,22 +184,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", excepcion);
+                _logger.Error("Error de actualizacion de BD al obtener lista de amigos.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", excepcion);
+                _logger.Error("Error de base de datos al obtener lista de amigos.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", excepcion);
+                _logger.Error("Error de datos al obtener lista de amigos.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al obtener la lista de amigos.", excepcion);
+                _logger.Error("Error inesperado al obtener lista de amigos.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
         }

@@ -84,7 +84,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error de datos al recuperar las solicitudes pendientes de amistad.", excepcion);
+                    "Error inesperado al recuperar las solicitudes pendientes de amistad.", excepcion);
             }
         }
     }

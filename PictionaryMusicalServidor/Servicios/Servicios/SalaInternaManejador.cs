@@ -142,19 +142,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 ValidarPermisosExpulsion(nombreAnfitrion, nombreJugadorAExpulsar);
 
-                _logger.InfoFormat(
-                    "Sala '{0}': Removiendo jugador '{1}' de la lista de jugadores.",
-                    Codigo, nombreJugadorAExpulsar);
-
                 var callbackExpulsado = _gestorNotificaciones.ObtenerCallback(
                     nombreJugadorAExpulsar);
 
                 _jugadores.Remove(nombreJugadorAExpulsar);
                 _gestorNotificaciones.Remover(nombreJugadorAExpulsar);
-
-                _logger.InfoFormat(
-                    "Sala '{0}': Notificando expulsion de '{1}' a todos los clientes.",
-                    Codigo, nombreJugadorAExpulsar);
 
                 _gestorNotificaciones.NotificarExpulsion(
                     Codigo,
@@ -163,7 +155,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     ConvertirADto());
 
                 _logger.InfoFormat(
-                    "Sala '{0}': Expulsion de '{1}' completada.",
+                    "Sala '{0}': Jugador '{1}' expulsado y notificado exitosamente.",
                     Codigo, nombreJugadorAExpulsar);
             }
         }

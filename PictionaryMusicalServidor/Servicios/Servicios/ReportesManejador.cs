@@ -136,7 +136,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al registrar reporte.", excepcion);
+                _logger.Error("Error inesperado al registrar reporte.", excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
         }
@@ -195,7 +195,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Intento de reporte con usuarios no registrados.", excepcion);
+                _logger.Warn("Error inesperado al obtener identificadores de usuarios para reporte.", excepcion);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
         }

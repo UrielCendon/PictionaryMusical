@@ -182,7 +182,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 solicitud.TokenCodigo);
         }
 
-        private bool ValidarSolicitudEntrada(SolicitudRecuperarCuentaDTO solicitud)
+        private static bool ValidarSolicitudEntrada(SolicitudRecuperarCuentaDTO solicitud)
         {
             if (solicitud == null) return false;
             string identificador = EntradaComunValidador.NormalizarTexto(solicitud.Identificador);
@@ -239,7 +239,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return (true, token, pendiente);
         }
 
-        private void AlmacenarSolicitud(string token, SolicitudRecuperacionPendiente pendiente)
+        private static void AlmacenarSolicitud(string token, SolicitudRecuperacionPendiente pendiente)
         {
             _solicitudesRecuperacion[token] = pendiente;
         }
@@ -266,7 +266,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private bool ValidarReenvioEntrada(ReenvioCodigoDTO solicitud)
+        private static bool ValidarReenvioEntrada(ReenvioCodigoDTO solicitud)
         {
             if (solicitud == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
@@ -318,7 +318,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        private bool ValidarConfirmacionEntrada(ConfirmacionCodigoDTO confirmacion)
+        private static bool ValidarConfirmacionEntrada(ConfirmacionCodigoDTO confirmacion)
         {
             if (confirmacion == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
@@ -328,7 +328,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                    EntradaComunValidador.EsCodigoVerificacionValido(codigo);
         }
 
-        private ResultadoOperacionDTO VerificarCodigo(
+        private static ResultadoOperacionDTO VerificarCodigo(
             SolicitudRecuperacionPendiente pendiente,
             string token,
             string codigoIngresado)
@@ -354,7 +354,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return new ResultadoOperacionDTO { OperacionExitosa = true };
         }
 
-        private bool ValidarActualizacionEntrada(ActualizacionContrasenaDTO solicitud)
+        private static bool ValidarActualizacionEntrada(ActualizacionContrasenaDTO solicitud)
         {
             if (solicitud == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
@@ -364,7 +364,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                    EntradaComunValidador.EsContrasenaValida(pass);
         }
 
-        private (bool Exito, SolicitudRecuperacionPendiente Pendiente, string MensajeError)
+        private static (bool Exito, SolicitudRecuperacionPendiente Pendiente, string MensajeError)
             VerificarTokenYExpiracion(string token)
         {
             if (!_solicitudesRecuperacion.TryGetValue(
@@ -409,17 +409,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al actualizar contrasena.", excepcion);
+                _logger.Error("Error de datos al actualizar contrasena.", excepcion);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al actualizar contrasena.", excepcion);
+                _logger.Error("Error inesperado al actualizar contrasena.", excepcion);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
         }
 
-        private ResultadoOperacionDTO CrearFalloOperacion(string mensaje)
+        private static ResultadoOperacionDTO CrearFalloOperacion(string mensaje)
         {
             return new ResultadoOperacionDTO
             {

@@ -92,12 +92,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida durante el inicio de sesion.", excepcion);
+                _logger.Error("Error inesperado durante el inicio de sesion.", excepcion);
                 return CrearErrorGenerico();
             }
         }
 
-        private bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)
+        private static bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)
         {
             string identificador = EntradaComunValidador.NormalizarTexto(
                 credenciales.Identificador);
@@ -138,9 +138,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
             }
-            catch
+            catch (Exception excepcion)
             {
-                _logger.Warn("Inicio de sesion fallido. Usuario no encontrado.");
+                _logger.Warn("Inicio de sesion fallido. Usuario no encontrado.", excepcion);
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = false,
@@ -184,15 +184,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        private bool VerificarContrasena(string contrasenaEntrada, string hashAlmacenado)
+        private static bool VerificarContrasena(string contrasenaIngresada, string hashAlmacenado)
         {
-            if (string.IsNullOrWhiteSpace(contrasenaEntrada) ||
+            if (string.IsNullOrWhiteSpace(contrasenaIngresada) ||
                 string.IsNullOrWhiteSpace(hashAlmacenado))
             {
                 return false;
             }
 
-            return BCryptNet.Verify(contrasenaEntrada.Trim(), hashAlmacenado);
+            return BCryptNet.Verify(contrasenaIngresada.Trim(), hashAlmacenado);
         }
 
         private bool UsuarioAlcanzoLimiteReportes(BaseDatosPruebaEntities contexto, int usuarioId)

@@ -204,7 +204,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return resultadoDTOs;
         }
 
-        private void ValidarSolicitudParaAceptar(Amigo relacion, int usuarioReceptorId)
+        private static void ValidarSolicitudParaAceptar(Amigo relacion, int usuarioReceptorId)
         {
             if (relacion == null)
             {

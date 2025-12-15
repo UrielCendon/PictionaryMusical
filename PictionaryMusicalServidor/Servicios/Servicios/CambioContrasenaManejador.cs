@@ -95,7 +95,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al solicitar codigo de recuperacion.", excepcion);
+                _logger.Error("Error inesperado al solicitar codigo de recuperacion.", excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -152,7 +152,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al reenviar codigo de recuperacion.", excepcion);
+                _logger.Error("Error inesperado al reenviar codigo de recuperacion.", excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -213,7 +213,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al confirmar codigo de recuperacion.", excepcion);
+                _logger.Error("Error inesperado al confirmar codigo de recuperacion.", excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -293,7 +293,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al actualizar contrasena.", excepcion);
+                _logger.Error("Error inesperado al actualizar contrasena.", excepcion);
 
                 return new ResultadoOperacionDTO
                 {

@@ -118,7 +118,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al suscribir a notificaciones de amistad.", excepcion);
+                _logger.Error("Error inesperado al suscribir a notificaciones de amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
         }
@@ -195,7 +195,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error inesperado al enviar solicitud de amistad.", excepcion);
+                _logger.Error("Error de datos al enviar solicitud de amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (Exception excepcion)
@@ -247,12 +247,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al responder solicitud de amistad.", excepcion);
+                _logger.Error("Error de datos al responder solicitud de amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al responder solicitud de amistad.", excepcion);
+                _logger.Error("Error inesperado al responder solicitud de amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
         }
@@ -292,7 +292,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error inesperado al eliminar amistad.", excepcion);
+                _logger.Error("Error de datos al eliminar amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (Exception excepcion)
@@ -302,7 +302,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ValidarEntradaSuscripcion(string nombreUsuario)
+        private static void ValidarEntradaSuscripcion(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
             {
@@ -452,7 +452,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return (usuarioEmisor, usuarioReceptor);
         }
 
-        private void ValidarUsuariosExistentes(Usuario emisor, Usuario receptor)
+        private static void ValidarUsuariosExistentes(Usuario emisor, Usuario receptor)
         {
             if (emisor == null)
             {
@@ -544,7 +544,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <summary>
         /// Clase auxiliar interna para transportar datos de eliminacion.
         /// </summary>
-        private class ResultadoEliminacionAmistad
+        private sealed class ResultadoEliminacionAmistad
         {
             public Amigo Relacion { get; set; }
             public string NombreANormalizado { get; set; }

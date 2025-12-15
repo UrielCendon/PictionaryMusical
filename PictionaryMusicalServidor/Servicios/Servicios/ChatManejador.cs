@@ -94,7 +94,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al unirse al chat.", excepcion);
+                _logger.Error("Canal WCF cerrado al unirse al chat.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
@@ -158,7 +158,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al enviar mensaje de chat.", excepcion);
+                _logger.Error("Canal WCF cerrado al enviar mensaje de chat.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
@@ -212,7 +212,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al salir del chat.", excepcion);
+                _logger.Error("Canal WCF cerrado al salir del chat.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
@@ -232,7 +232,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private List<ClienteChat> GestionarIngresoSala(
+        private static List<ClienteChat> GestionarIngresoSala(
             string idSala,
             string nombreJugador,
             IChatManejadorCallback callback)
@@ -269,7 +269,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void NotificarIngresoMasivo(
+        private static void NotificarIngresoMasivo(
             string idSala,
             string nombreJugador,
             List<ClienteChat> destinatarios)
@@ -283,7 +283,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void RemoverCliente(string idSala, string nombreJugador)
+        private static void RemoverCliente(string idSala, string nombreJugador)
         {
             var clientesANotificar = ProcesarSalidaSala(idSala, nombreJugador);
 
@@ -293,7 +293,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private List<ClienteChat> ProcesarSalidaSala(string idSala, string nombreJugador)
+        private static List<ClienteChat> ProcesarSalidaSala(string idSala, string nombreJugador)
         {
             lock (_sincronizacion)
             {
@@ -324,7 +324,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void NotificarSalidaMasiva(
+        private static void NotificarSalidaMasiva(
             string idSala,
             string nombreJugador,
             List<ClienteChat> destinatarios)
@@ -355,7 +355,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return callback;
         }
 
-        private void ConfigurarEventosCanal(string idSala, string nombreJugador)
+        private static void ConfigurarEventosCanal(string idSala, string nombreJugador)
         {
             var canal = OperationContext.Current?.Channel;
             if (canal != null)
@@ -365,7 +365,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void NotificarMensajeATodos(
+        private static void NotificarMensajeATodos(
             string idSala,
             string nombreJugador,
             string mensaje)
@@ -391,7 +391,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void EjecutarNotificacionSegura(
+        private static void EjecutarNotificacionSegura(
             string idSala,
             ClienteChat cliente,
             Action<IChatManejadorCallback> accion)
@@ -420,13 +420,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    "Error inesperado al notificar cliente. Removiendo callback.",
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
         }
 
-        private void RemoverClienteSinNotificar(string idSala, string nombreJugador)
+        private static void RemoverClienteSinNotificar(string idSala, string nombreJugador)
         {
             lock (_sincronizacion)
             {

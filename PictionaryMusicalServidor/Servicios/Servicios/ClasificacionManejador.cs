@@ -92,7 +92,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida al obtener la clasificacion.", excepcion);
+                _logger.Error("Error inesperado al obtener la clasificacion.", excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
         }

@@ -122,7 +122,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Operacion invalida durante el registro.", excepcion);
+                _logger.Error("Error inesperado durante el registro.", excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
         }
@@ -153,7 +153,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return _verificacionServicio.ConfirmarCodigo(confirmacion);
         }
 
-        private ResultadoOperacionDTO ValidarDatosEntrada(NuevaCuentaDTO nuevaCuenta)
+        private static ResultadoOperacionDTO ValidarDatosEntrada(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
@@ -209,7 +209,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return true;
         }
 
-        private bool VerificarDuplicados(
+        private static bool VerificarDuplicados(
             BaseDatosPruebaEntities contexto,
             NuevaCuentaDTO nuevaCuenta)
         {

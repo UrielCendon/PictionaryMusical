@@ -66,7 +66,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al obtener perfil.", excepcion);
+                _logger.Warn("Argumento invalido al obtener perfil.", excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
@@ -91,7 +91,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al obtener perfil.", excepcion);
+                _logger.Error("Error inesperado al obtener perfil.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
@@ -122,7 +122,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al actualizar perfil.", excepcion);
+                _logger.Warn("Argumento invalido al actualizar perfil.", excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
@@ -157,12 +157,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al actualizar perfil.", excepcion);
+                _logger.Error("Error inesperado al actualizar perfil.", excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }
 
-        private void ValidarIdUsuario(int idUsuario)
+        private static void ValidarIdUsuario(int idUsuario)
         {
             if (idUsuario <= 0)
             {
@@ -228,7 +228,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ActualizarDatosPersonales(
+        private static void ActualizarDatosPersonales(
             Jugador jugador,
             ActualizacionPerfilDTO solicitud)
         {
@@ -268,7 +268,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        private void AsignarValoresRedSocial(
+        private static void AsignarValoresRedSocial(
             RedSocial redSocial,
             ActualizacionPerfilDTO solicitud)
         {

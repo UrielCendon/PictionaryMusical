@@ -97,7 +97,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Error inesperado al obtener la lista de amigos del usuario.", excepcion);
+                _logger.Warn("Operacion invalida al obtener la lista de amigos del usuario.", excepcion);
             }
             catch (Exception excepcion)
             {
