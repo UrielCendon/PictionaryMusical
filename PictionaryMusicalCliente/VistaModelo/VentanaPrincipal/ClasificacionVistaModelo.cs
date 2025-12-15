@@ -141,10 +141,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                     <DTOs.ClasificacionUsuarioDTO>();
                 ActualizarClasificacion(_clasificacionOriginal);
             },
-            ex =>
+            clasificacion =>
             {
-                _logger.Error("Error al obtener clasificacion.", ex);
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                _logger.Error("Error al obtener clasificacion.", clasificacion);
+                _avisoServicio.Mostrar(clasificacion.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             });
 
             EstaCargando = false;
@@ -154,7 +154,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             IEnumerable<DTOs.ClasificacionUsuarioDTO> clasificacion)
         {
             Clasificacion = new ObservableCollection<DTOs.ClasificacionUsuarioDTO>(
-                clasificacion?.Where(c => c != null)
+                clasificacion?.Where(clasificacion => clasificacion != null)
                 ?? Enumerable.Empty<DTOs.ClasificacionUsuarioDTO>());
         }
 
@@ -166,10 +166,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
 
             IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = _clasificacionOriginal
-                .Where(c => c != null)
-                .OrderByDescending(c => c.RondasGanadas)
-                .ThenByDescending(c => c.Puntos)
-                .ThenBy(c => c.Usuario);
+                .Where(clasificacion => clasificacion != null)
+                .OrderByDescending(clasificacion => clasificacion.RondasGanadas)
+                .ThenByDescending(clasificacion => clasificacion.Puntos)
+                .ThenBy(clasificacion => clasificacion.Usuario);
 
             ActualizarClasificacion(ordenados);
         }
@@ -182,10 +182,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
 
             IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = _clasificacionOriginal
-                .Where(c => c != null)
-                .OrderByDescending(c => c.Puntos)
-                .ThenByDescending(c => c.RondasGanadas)
-                .ThenBy(c => c.Usuario);
+                .Where(clasificacion => clasificacion != null)
+                .OrderByDescending(clasificacion => clasificacion.Puntos)
+                .ThenByDescending(clasificacion => clasificacion.RondasGanadas)
+                .ThenBy(clasificacion => clasificacion.Usuario);
 
             ActualizarClasificacion(ordenados);
         }

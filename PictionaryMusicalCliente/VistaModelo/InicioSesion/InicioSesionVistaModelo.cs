@@ -20,6 +20,9 @@ using PictionaryMusicalCliente.ClienteServicios.Dialogos;
 
 namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 {
+    /// <summary>
+    /// Gestiona la logica de autenticacion y navegacion desde la pantalla de inicio.
+    /// </summary>
     public class InicioSesionVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(

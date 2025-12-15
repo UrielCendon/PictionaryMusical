@@ -76,22 +76,41 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
 
         private void EjecutarCerrarSesion()
         {
-            var terminacionSesionVistaModelo = new TerminacionSesionVistaModelo(
+            var vistaModelo = CrearTerminacionSesionVistaModelo();
+            ConfigurarCallbackCierreSesion(vistaModelo);
+            _ventana.MostrarVentanaDialogo(vistaModelo);
+        }
+
+        private static TerminacionSesionVistaModelo CrearTerminacionSesionVistaModelo()
+        {
+            return new TerminacionSesionVistaModelo(
                 App.VentanaServicio,
                 App.Localizador,
                 App.UsuarioGlobal);
-            terminacionSesionVistaModelo.EjecutarCierreSesionYNavegacion = () =>
-            {
-                NavegarAInicioSesion();
-            };
-            _ventana.MostrarVentanaDialogo(terminacionSesionVistaModelo);
+        }
+
+        private void ConfigurarCallbackCierreSesion(
+            TerminacionSesionVistaModelo vistaModelo)
+        {
+            vistaModelo.EjecutarCierreSesionYNavegacion = NavegarAInicioSesion;
         }
 
         private void NavegarAInicioSesion()
         {
-            App.MusicaManejador.Detener();
+            DetenerMusica();
+            var vistaModelo = CrearInicioSesionVistaModelo();
+            MostrarVentanaInicioSesion(vistaModelo);
+            CerrarVentanasActuales();
+        }
 
-            var inicioSesionVistaModelo = new InicioSesion.InicioSesionVistaModelo(
+        private static void DetenerMusica()
+        {
+            App.MusicaManejador.Detener();
+        }
+
+        private InicioSesion.InicioSesionVistaModelo CrearInicioSesionVistaModelo()
+        {
+            return new InicioSesion.InicioSesionVistaModelo(
                 _ventana,
                 _localizador,
                 App.InicioSesionServicio,
@@ -103,18 +122,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
                 App.GeneradorNombres,
                 App.UsuarioGlobal,
                 App.FabricaSalas);
+        }
 
-            _ventana.MostrarVentana(inicioSesionVistaModelo);
-            
+        private void MostrarVentanaInicioSesion(
+            InicioSesion.InicioSesionVistaModelo vistaModelo)
+        {
+            _ventana.MostrarVentana(vistaModelo);
+        }
+
+        private void CerrarVentanasActuales()
+        {
             CerrarVentanaPrincipal();
             _ventana.CerrarVentana(this);
         }
 
-        private void CerrarVentanaPrincipal()
+        private static void CerrarVentanaPrincipal()
         {
             var ventanaPrincipal = System.Windows.Application.Current.Windows
                 .OfType<System.Windows.Window>()
-                .FirstOrDefault(v => v.DataContext is VentanaPrincipal.VentanaPrincipalVistaModelo);
+                .FirstOrDefault(ventana => ventana.DataContext is 
+                    VentanaPrincipal.VentanaPrincipalVistaModelo);
             
             ventanaPrincipal?.Close();
         }

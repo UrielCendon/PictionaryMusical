@@ -171,11 +171,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                     _avisoServicio.Mostrar(mensaje);
                 }
             },
-            ex =>
+            excepcion =>
             {
-                _logger.Error("Excepcion de servicio al actualizar contrasena.", ex);
+                _logger.Error("Excepcion de servicio al actualizar contrasena.", excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoActualizarContrasena);
+                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoActualizarContrasena);
             });
 
             EstaProcesando = false;

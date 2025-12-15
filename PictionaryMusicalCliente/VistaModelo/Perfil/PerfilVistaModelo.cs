@@ -19,6 +19,9 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Perfil
 {
+    /// <summary>
+    /// Gestiona la logica para visualizar y editar el perfil del usuario.
+    /// </summary>
     public class PerfilVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(

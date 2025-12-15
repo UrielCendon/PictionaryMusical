@@ -73,12 +73,24 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             ActualizarSolicitudes(_amigosServicio.SolicitudesPendientes);
         }
 
+        /// <summary>
+        /// Coleccion de solicitudes de amistad pendientes.
+        /// </summary>
         public ObservableCollection<SolicitudAmistadEntrada> Solicitudes { get; }
 
+        /// <summary>
+        /// Comando para aceptar una solicitud de amistad.
+        /// </summary>
         public IComandoAsincrono AceptarSolicitudComando { get; }
 
+        /// <summary>
+        /// Comando para rechazar una solicitud de amistad.
+        /// </summary>
         public IComandoAsincrono RechazarSolicitudComando { get; }
 
+        /// <summary>
+        /// Comando para cerrar la ventana.
+        /// </summary>
         public ICommand CerrarComando { get; }
 
         /// <inheritdoc />
@@ -128,53 +140,90 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 return;
             }
 
-            Solicitudes.Clear();
+            LimpiarSolicitudesActuales();
 
             if (solicitudes == null)
             {
                 return;
             }
 
+            AgregarSolicitudesValidas(solicitudes);
+        }
+
+        private void LimpiarSolicitudesActuales()
+        {
+            Solicitudes.Clear();
+        }
+
+        private void AgregarSolicitudesValidas(
+            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
+        {
             foreach (var solicitud in solicitudes)
             {
-                if (solicitud == null || solicitud.SolicitudAceptada)
+                if (!EsSolicitudValida(solicitud))
                 {
                     continue;
                 }
 
-                bool esEmisorActual = string.Equals(
-                    solicitud.UsuarioEmisor,
-                    _usuarioActual,
-                    StringComparison.OrdinalIgnoreCase);
-
-                bool esReceptorActual = string.Equals(
-                    solicitud.UsuarioReceptor,
-                    _usuarioActual,
-                    StringComparison.OrdinalIgnoreCase);
-
-                if (!esEmisorActual && !esReceptorActual)
+                SolicitudAmistadEntrada entrada = CrearEntradaSolicitud(solicitud);
+                
+                if (entrada != null)
                 {
-                    continue;
+                    Solicitudes.Add(entrada);
                 }
-
-                string nombreMostrado = esEmisorActual
-                    ? solicitud.UsuarioReceptor
-                    : solicitud.UsuarioEmisor;
-
-                nombreMostrado = nombreMostrado?.Trim();
-
-                if (string.IsNullOrWhiteSpace(nombreMostrado))
-                {
-                    continue;
-                }
-
-                bool puedeAceptar = esReceptorActual;
-
-                Solicitudes.Add(new SolicitudAmistadEntrada(
-                    solicitud,
-                    nombreMostrado,
-                    puedeAceptar));
             }
+        }
+
+        private static bool EsSolicitudValida(DTOs.SolicitudAmistadDTO solicitud)
+        {
+            return solicitud != null && !solicitud.SolicitudAceptada;
+        }
+
+        private SolicitudAmistadEntrada CrearEntradaSolicitud(
+            DTOs.SolicitudAmistadDTO solicitud)
+        {
+            bool esEmisorActual = EsUsuarioActual(solicitud.UsuarioEmisor);
+            bool esReceptorActual = EsUsuarioActual(solicitud.UsuarioReceptor);
+
+            if (!esEmisorActual && !esReceptorActual)
+            {
+                return null;
+            }
+
+            string nombreMostrado = ObtenerNombreMostrado(
+                solicitud, 
+                esEmisorActual);
+
+            if (string.IsNullOrWhiteSpace(nombreMostrado))
+            {
+                return null;
+            }
+
+            bool puedeAceptar = esReceptorActual;
+
+            return new SolicitudAmistadEntrada(
+                solicitud,
+                nombreMostrado,
+                puedeAceptar);
+        }
+
+        private bool EsUsuarioActual(string nombreUsuario)
+        {
+            return string.Equals(
+                nombreUsuario,
+                _usuarioActual,
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string ObtenerNombreMostrado(
+            DTOs.SolicitudAmistadDTO solicitud,
+            bool esEmisorActual)
+        {
+            string nombre = esEmisorActual
+                ? solicitud.UsuarioReceptor
+                : solicitud.UsuarioEmisor;
+
+            return nombre?.Trim();
         }
 
         private async Task ResponderSolicitudAsync(SolicitudAmistadEntrada entrada)

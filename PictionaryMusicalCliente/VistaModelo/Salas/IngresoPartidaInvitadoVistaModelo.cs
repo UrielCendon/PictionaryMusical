@@ -223,7 +223,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _ventana.CerrarVentana(this);
         }
 
-        private void AgregarNombresReservados(
+        private static void AgregarNombresReservados(
             string nombreInvitado,
             IReadOnlyCollection<string> jugadoresActuales,
             HashSet<string> nombresReservados)
@@ -412,7 +412,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return new ResultadoUnionInvitado(EstadoUnionInvitado.NombreDuplicado)
                 {
                     JugadoresActuales = jugadores?.Where(j => !string.IsNullOrWhiteSpace(j))
-                        .Select(j => j.Trim())
+                        .Select(jugadores => jugadores.Trim())
                         .Distinct(StringComparer.OrdinalIgnoreCase)
                         .ToArray()
                 };

@@ -48,16 +48,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             });
         }
 
+        /// <summary>
+        /// Coleccion de avatares disponibles para seleccionar.
+        /// </summary>
         public ObservableCollection<ObjetoAvatar> Avatares { get; }
 
+        /// <summary>
+        /// Avatar actualmente seleccionado por el usuario.
+        /// </summary>
         public ObjetoAvatar AvatarSeleccionado
         {
             get => _avatarSeleccionado;
             set => EstablecerPropiedad(ref _avatarSeleccionado, value);
         }
 
+        /// <summary>
+        /// Comando para confirmar la seleccion del avatar.
+        /// </summary>
         public ICommand ConfirmarSeleccionComando { get; }
 
+        /// <summary>
+        /// Delegado invocado cuando el usuario confirma su seleccion de avatar.
+        /// </summary>
         public Action<ObjetoAvatar> SeleccionConfirmada { get; set; }
 
         private void ConfirmarSeleccion()

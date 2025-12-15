@@ -44,26 +44,26 @@ namespace PictionaryMusicalCliente.VistaModelo
             {
                 await operacion();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                ManejarError(ex, "El servidor tardó demasiado en responder.", accionError);
+                ManejarError(excepcion, "El servidor tardo demasiado en responder.", accionError);
             }
-            catch (EndpointNotFoundException ex)
+            catch (EndpointNotFoundException excepcion)
             {
-                ManejarError(ex, "No se pudo conectar con el servidor. Verifique su conexión.",
+                ManejarError(excepcion, "No se pudo conectar con el servidor. Verifique su conexion.",
                     accionError);
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                ManejarError(ex, "Error de comunicación con el servicio.", accionError);
+                ManejarError(excepcion, "Error de comunicacion con el servicio.", accionError);
             }
-            catch (ServicioExcepcion ex)
+            catch (ServicioExcepcion excepcion)
             {
-                ManejarError(ex, ex.Message, accionError);
+                ManejarError(excepcion, excepcion.Message, accionError);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                ManejarError(ex, "Ocurrió un error inesperado.", accionError);
+                ManejarError(excepcion, "Ocurrio un error inesperado.", accionError);
             }
         }
 
