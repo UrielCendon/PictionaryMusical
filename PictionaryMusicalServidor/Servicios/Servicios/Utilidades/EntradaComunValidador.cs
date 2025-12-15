@@ -115,12 +115,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         public static bool EsCodigoVerificacionValido(string codigo)
         {
             string normalizado = NormalizarTexto(codigo);
-            if (normalizado == null || normalizado.Length != LongitudCodigoVerificacion)
-            {
-                return false;
-            }
-
-            return normalizado.All(char.IsDigit);
+            return normalizado != null && 
+                   normalizado.Length == LongitudCodigoVerificacion &&
+                   normalizado.All(char.IsDigit);
         }
 
         /// <summary>

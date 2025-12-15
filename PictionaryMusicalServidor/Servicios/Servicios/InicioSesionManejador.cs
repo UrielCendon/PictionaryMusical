@@ -104,17 +104,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             string contrasena = credenciales.Contrasena?.Trim();
 
-            if (!EntradaComunValidador.EsLongitudValida(identificador))
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(contrasena))
-            {
-                return false;
-            }
-
-            return true;
+            return EntradaComunValidador.EsLongitudValida(identificador) &&
+                   !string.IsNullOrWhiteSpace(contrasena);
         }
 
         private ResultadoInicioSesionDTO CrearRespuestaDatosInvalidos()
@@ -252,7 +243,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             IUsuarioRepositorio repositorio = 
                 _repositorioFactoria.CrearUsuarioRepositorio(contexto);
-            var usuario = repositorio.ObtenerPorCorreo(correo);
+            Usuario usuario = repositorio.ObtenerPorCorreo(correo);
 
             if (usuario == null)
             {

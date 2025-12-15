@@ -92,7 +92,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                         idReportante = idsUsuarios.IdReportante,
                         idReportado = idsUsuarios.IdReportado,
                         Motivo = motivoNormalizado,
-                        Fecha_Reporte = DateTime.Now
+                        Fecha_Reporte = DateTime.UtcNow
                     };
 
                     reporteRepositorio.CrearReporte(nuevoReporte);

@@ -14,8 +14,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private readonly Timer _timerRonda;
         private readonly Timer _timerTransicion;
         private DateTime _inicioRonda;
-        private int _duracionRondaSegundos;
-
+        private readonly int _duracionRondaSegundos;
+        private bool _disposed = false;
         /// <summary>
         /// Evento que se dispara cuando el tiempo de la ronda de juego ha finalizado.
         /// </summary>
@@ -111,8 +111,22 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// </summary>
         public void Dispose()
         {
-            _timerRonda?.Dispose();
-            _timerTransicion?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                _timerRonda?.Dispose();
+                _timerTransicion?.Dispose();
+            }
+
+            _disposed = true;
         }
 
         private void DetenerRonda()

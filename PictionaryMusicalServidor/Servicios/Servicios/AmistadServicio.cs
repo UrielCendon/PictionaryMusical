@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -161,19 +162,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return new List<AmigoDTO>();
                 }
 
-                var resultado = new List<AmigoDTO>();
-                foreach (var amigo in amigos)
-                {
-                    if (amigo != null)
+                return amigos
+                    .Where(amigo => amigo != null)
+                    .Select(amigo => new AmigoDTO
                     {
-                        resultado.Add(new AmigoDTO
-                        {
-                            UsuarioId = amigo.idUsuario,
-                            NombreUsuario = amigo.Nombre_Usuario
-                        });
-                    }
-                }
-                return resultado;
+                        UsuarioId = amigo.idUsuario,
+                        NombreUsuario = amigo.Nombre_Usuario
+                    })
+                    .ToList();
             }
         }
 

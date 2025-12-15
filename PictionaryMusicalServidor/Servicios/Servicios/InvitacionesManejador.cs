@@ -139,13 +139,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ValidarDatosEntrada(InvitacionSalaDTO invitacion)
+        private static void ValidarDatosEntrada(InvitacionSalaDTO invitacion)
         {
             ValidarNulosVacios(invitacion);
             ValidarFormatoCorreo(invitacion.Correo);
         }
 
-        private void ValidarNulosVacios(InvitacionSalaDTO invitacion)
+        private static void ValidarNulosVacios(InvitacionSalaDTO invitacion)
         {
             if (invitacion == null)
             {
@@ -161,7 +161,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ValidarFormatoCorreo(string correo)
+        private static void ValidarFormatoCorreo(string correo)
         {
             if (!CorreoRegex.IsMatch(correo.Trim()))
             {

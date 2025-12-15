@@ -82,7 +82,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
                 if (!_salas.TryAdd(codigo, sala))
                 {
-                    _logger.Warn("Error de concurrencia al intentar agregar la sala.");
+                    _logger.WarnFormat(
+                        "Error de concurrencia al intentar agregar la sala con código {0}.",
+                        codigo);
                     throw new FaultException(MensajesError.Cliente.ErrorCrearSala);
                 }
 

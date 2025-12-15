@@ -188,7 +188,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _verificacionesConfirmadas.TryRemove(clave, out _);
         }
 
-        private ResultadoOperacionDTO ValidarDatosSolicitud(NuevaCuentaDTO nuevaCuenta)
+        private static ResultadoOperacionDTO ValidarDatosSolicitud(NuevaCuentaDTO nuevaCuenta)
         {
             if (nuevaCuenta == null)
             {
@@ -254,7 +254,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return (true, token, solicitud);
         }
 
-        private void AlmacenarSolicitud(string token, SolicitudCodigoPendiente solicitud)
+        private static void AlmacenarSolicitud(string token, SolicitudCodigoPendiente solicitud)
         {
             _solicitudes[token] = solicitud;
         }
@@ -268,14 +268,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        private bool ValidarTokenReenvio(ReenvioCodigoVerificacionDTO solicitud)
+        private static bool ValidarTokenReenvio(ReenvioCodigoVerificacionDTO solicitud)
         {
             if (solicitud == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
             return EntradaComunValidador.EsTokenValido(token);
         }
 
-        private SolicitudCodigoPendiente ObtenerSolicitudPendiente(string token)
+        private static SolicitudCodigoPendiente ObtenerSolicitudPendiente(string token)
         {
             if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente existente))
             {
@@ -329,7 +329,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             };
         }
 
-        private bool ValidarDatosConfirmacion(ConfirmacionCodigoDTO confirmacion)
+        private static bool ValidarDatosConfirmacion(ConfirmacionCodigoDTO confirmacion)
         {
             if (confirmacion == null) return false;
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
@@ -339,7 +339,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                    EntradaComunValidador.EsCodigoVerificacionValido(codigo);
         }
 
-        private (bool Exito, string MensajeError) VerificarCodigoIngresado(
+        private static(bool Exito, string MensajeError) VerificarCodigoIngresado(
             SolicitudCodigoPendiente pendiente,
             string token,
             string codigoIngresado)
@@ -361,7 +361,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return (true, null);
         }
 
-        private void RegistrarConfirmacion(SolicitudCodigoPendiente pendiente)
+        private static void RegistrarConfirmacion(SolicitudCodigoPendiente pendiente)
         {
             string clave = ObtenerClave(
                 pendiente.DatosCuenta.Usuario,
