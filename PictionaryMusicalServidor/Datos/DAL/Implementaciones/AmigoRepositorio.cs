@@ -6,7 +6,9 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
@@ -46,31 +48,31 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(
-                    "Error al verificar existencia de relacion de amistad en la base de datos.",
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
                     excepcion);
-                throw;
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(
-                    "Error al verificar existencia de relacion de amistad en la base de datos.",
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
                     excepcion);
-                throw;
             }
             catch (DataException excepcion)
             {
-                _logger.Error(
-                    "Error al verificar existencia de relacion de amistad en la base de datos.",
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
                     excepcion);
-                throw;
             }
             catch (Exception excepcion)
             {
-                _logger.Error(
-                    "Error al verificar existencia de relacion de amistad en la base de datos.",
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
                     excepcion);
-                throw;
             }
         }
 
@@ -111,23 +113,31 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al obtener la relación de amistad de la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al obtener la relación de amistad de la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al obtener la relación de amistad de la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al obtener la relación de amistad de la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
+                    excepcion);
             }
         }
 
@@ -143,9 +153,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (usuarioId <= 0)
             {
-                var excepcion = new ArgumentOutOfRangeException(nameof(usuarioId), 
-                    "El identificador del usuario debe ser positivo.");
-                _logger.Error("Intento de obtener solicitudes con ID invalido.", excepcion);
+                var excepcion = new ArgumentOutOfRangeException(
+                    nameof(usuarioId), 
+                    MensajesErrorDatos.Amigo.IdUsuarioInvalido);
+                _logger.Error(
+                    MensajesErrorDatos.Amigo.IntentarObtenerSolicitudesIdInvalido, 
+                    excepcion);
                 throw excepcion;
             }
 
@@ -160,31 +173,35 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al obtener solicitudes pendientes para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al obtener solicitudes pendientes para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al obtener solicitudes pendientes para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al obtener solicitudes pendientes para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -200,7 +217,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             if (relacion == null)
             {
                 var excepcion = new ArgumentNullException(nameof(relacion));
-                _logger.Error("Se intento actualizar una relacion nula.", excepcion);
+                _logger.Error(MensajesErrorDatos.Amigo.IntentarActualizarRelacionNula, excepcion);
                 throw excepcion;
             }
 
@@ -211,31 +228,39 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar el estado de la relacion entre {0} y {1}.",
-                    relacion.UsuarioEmisor, relacion.UsuarioReceptor, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
+                    relacion.UsuarioEmisor, 
+                    relacion.UsuarioReceptor);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar el estado de la relacion entre {0} y {1}.",
-                    relacion.UsuarioEmisor, relacion.UsuarioReceptor, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
+                    relacion.UsuarioEmisor, 
+                    relacion.UsuarioReceptor);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar el estado de la relacion entre {0} y {1}.",
-                    relacion.UsuarioEmisor, relacion.UsuarioReceptor, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
+                    relacion.UsuarioEmisor, 
+                    relacion.UsuarioReceptor);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar el estado de la relacion entre {0} y {1}.",
-                    relacion.UsuarioEmisor, relacion.UsuarioReceptor, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
+                    relacion.UsuarioEmisor, 
+                    relacion.UsuarioReceptor);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -250,7 +275,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             if (relacion == null)
             {
                 var excepcion = new ArgumentNullException(nameof(relacion));
-                _logger.Error("Se intento eliminar una relaciï¿½n nula.", excepcion);
+                _logger.Error(MensajesErrorDatos.Amigo.IntentarEliminarRelacionNula, excepcion);
                 throw excepcion;
             }
 
@@ -264,27 +289,39 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
-                    emisorId, receptorId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
+                    emisorId, 
+                    receptorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
-                    emisorId, receptorId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
+                    emisorId, 
+                    receptorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
-                    emisorId, receptorId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
+                    emisorId, 
+                    receptorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat("Error al eliminar la relacion de amistad entre {0} y {1}.",
-                    emisorId, receptorId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
+                    emisorId, 
+                    receptorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -299,9 +336,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (usuarioId <= 0)
             {
-                var excepcion = new ArgumentOutOfRangeException(nameof(usuarioId), 
-                    "El identificador del usuario debe ser positivo.");
-                _logger.Error("ID de usuario invï¿½lido al obtener lista de amigos.", excepcion);
+                var excepcion = new ArgumentOutOfRangeException(
+                    nameof(usuarioId), 
+                    MensajesErrorDatos.Amigo.IdUsuarioInvalido);
+                _logger.Error(
+                    MensajesErrorDatos.Amigo.IdUsuarioInvalidoObtenerAmigos, 
+                    excepcion);
                 throw excepcion;
             }
 
@@ -310,7 +350,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 var amigosIds = _contexto.Amigo
                     .Where(relacion => relacion.Estado && (relacion.UsuarioEmisor == usuarioId
                         || relacion.UsuarioReceptor == usuarioId))
-                    .Select(relacion => relacion.UsuarioEmisor == usuarioId ? relacion.UsuarioReceptor
+                    .Select(relacion => relacion.UsuarioEmisor == usuarioId 
+                        ? relacion.UsuarioReceptor
                         : relacion.UsuarioEmisor)
                     .Distinct()
                     .ToList();
@@ -326,31 +367,35 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error de base de datos al obtener amigos para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error de base de datos al obtener amigos para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error de base de datos al obtener amigos para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error de base de datos al obtener amigos para el usuario ID: {0}.",
-                    usuarioId, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
+                    usuarioId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
     }

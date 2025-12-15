@@ -171,7 +171,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (FaultException excepcion)
             {
                 _logger.Warn("Error de validacion al enviar solicitud de amistad.", excepcion);
-                throw;
+                throw new FaultException(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {

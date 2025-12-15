@@ -6,7 +6,9 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
@@ -52,23 +54,31 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al crear la clasificacion inicial.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
+                    excepcion);
             }
         }
 
@@ -89,7 +99,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 if (jugador?.Clasificacion == null)
                 {
                     _logger.WarnFormat(
-                        "No se encontro clasificacion para el jugador con ID {0}.",
+                        MensajesErrorDatos.Clasificacion.ClasificacionNoEncontrada,
                         jugadorId);
                     return false;
                 }
@@ -108,35 +118,35 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.",
-                    jugadorId,
-                    excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
+                    jugadorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.",
-                    jugadorId,
-                    excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
+                    jugadorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.",
-                    jugadorId,
-                    excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
+                    jugadorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al actualizar la clasificacion del jugador con ID {0}.",
-                    jugadorId,
-                    excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
+                    jugadorId);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -149,7 +159,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Usuario
                     .Include(usuario => usuario.Jugador.Clasificacion)
-                    .Where(usuario => usuario.Jugador != null && usuario.Jugador.Clasificacion != null)
+                    .Where(usuario => usuario.Jugador != null 
+                        && usuario.Jugador.Clasificacion != null)
                     .OrderByDescending(usuario => usuario.Jugador.Clasificacion.Puntos_Ganados)
                     .ThenByDescending(usuario => usuario.Jugador.Clasificacion.Rondas_Ganadas)
                     .ThenBy(usuario => usuario.Nombre_Usuario)
@@ -158,23 +169,31 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al consultar los mejores jugadores.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
+                    excepcion);
             }
         }
     }

@@ -168,7 +168,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (FaultException excepcion)
             {
                 _logger.Warn("Error de validacion al unirse a sala.", excepcion);
-                throw;
+                throw new FaultException(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {
@@ -247,7 +247,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (FaultException excepcion)
             {
                 _logger.Warn("Error de validacion al abandonar sala.", excepcion);
-                throw;
+                throw new FaultException(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {
@@ -386,7 +386,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (FaultException excepcion)
             {
                 _logger.Warn("Error de validacion al expulsar jugador de sala.", excepcion);
-                throw;
+                throw new FaultException(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {

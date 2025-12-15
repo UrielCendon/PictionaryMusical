@@ -4,7 +4,9 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
@@ -39,39 +41,39 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
-                    idReportado,
-                    excepcion);
-                throw;
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
-                    idReportado,
-                    excepcion);
-                throw;
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
-                    idReportado,
-                    excepcion);
-                throw;
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al verificar existencia del reporte entre {0} y {1}.",
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
-                    idReportado,
-                    excepcion);
-                throw;
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -85,7 +87,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             if (reporte == null)
             {
                 var excepcion = new ArgumentNullException(nameof(reporte));
-                _logger.Error("Se intento crear un reporte nulo.", excepcion);
+                _logger.Error(MensajesErrorDatos.Reporte.IntentarCrearReporteNulo, excepcion);
                 throw excepcion;
             }
 
@@ -97,23 +99,31 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al guardar el reporte en la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Reporte.ErrorGuardarReporte, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Reporte.ErrorGuardarReporte, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al guardar el reporte en la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Reporte.ErrorGuardarReporte, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Reporte.ErrorGuardarReporte, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al guardar el reporte en la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Reporte.ErrorGuardarReporte, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Reporte.ErrorGuardarReporte, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error al guardar el reporte en la base de datos.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Reporte.ErrorGuardarReporte, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Reporte.ErrorGuardarReporte, 
+                    excepcion);
             }
         }
 
@@ -126,8 +136,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             if (idReportado <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(idReportado),
-                    "El identificador del usuario reportado debe ser mayor a cero.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(idReportado),
+                    MensajesErrorDatos.Reporte.IdReportadoMayorCero);
             }
 
             try
@@ -136,23 +147,35 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat("Error al contar reportes del usuario {0}.", idReportado, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
     }

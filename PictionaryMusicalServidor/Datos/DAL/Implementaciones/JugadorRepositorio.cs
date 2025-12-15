@@ -4,7 +4,9 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
@@ -39,23 +41,37 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Jugador.Any(jugador => jugador.Correo == correo);
             }
+            catch (DbUpdateException excepcion)
+            {
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo,
+                    correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
+            }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
-                    correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo,
+                    correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
-                    correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo,
+                    correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat("Error al verificar existencia del correo '{0}'.",
-                    correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo,
+                    correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
 
@@ -71,7 +87,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             if (jugador == null)
             {
                 var excepcion = new ArgumentNullException(nameof(jugador));
-                _logger.Error("Intento de crear un jugador nulo.", excepcion);
+                _logger.Error(MensajesErrorDatos.Jugador.IntentarCrearJugadorNulo, excepcion);
                 throw excepcion;
             }
 
@@ -82,23 +98,37 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return entidad;
             }
+            catch (DbUpdateException excepcion)
+            {
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorGuardarJugador,
+                    jugador.Correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
+            }
             catch (EntityException excepcion)
             {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
-                    jugador.Correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorGuardarJugador,
+                    jugador.Correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
-                    jugador.Correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorGuardarJugador,
+                    jugador.Correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat("Error al guardar el jugador con correo '{0}'.",
-                    jugador.Correo, excepcion);
-                throw;
+                string mensaje = string.Format(
+                    MensajesErrorDatos.Jugador.ErrorGuardarJugador,
+                    jugador.Correo);
+                _logger.Error(mensaje, excepcion);
+                throw new BaseDatosExcepcion(mensaje, excepcion);
             }
         }
     }

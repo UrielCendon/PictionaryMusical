@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Datos.Excepciones;
 
@@ -15,8 +16,6 @@ namespace PictionaryMusicalServidor.Datos
     /// </summary>
     public class CatalogoCanciones : ICatalogoCanciones
     {
-        private const string MensajeCancionesNoDisponibles = 
-            "No hay canciones disponibles para los criterios solicitados.";
         private const string IdiomaEspanol = "Espanol";
         private const string IdiomaIngles = "Ingles";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCanciones));
@@ -86,9 +85,10 @@ namespace PictionaryMusicalServidor.Datos
         {
             if (string.IsNullOrWhiteSpace(idioma))
             {
-                var excepcion = new ArgumentException("El idioma no puede ser nulo o vacio.", 
+                var excepcion = new ArgumentException(
+                    MensajesErrorDatos.Cancion.IdiomaNoNuloVacio, 
                     nameof(idioma));
-                _logger.Error("Se recibio un idioma invalido al solicitar cancion.", excepcion);
+                _logger.Error(MensajesErrorDatos.Cancion.IdiomaInvalidoSolicitar, excepcion);
                 throw excepcion;
             }
 
@@ -103,7 +103,8 @@ namespace PictionaryMusicalServidor.Datos
                 if (!candidatos.Any())
                 {
                     RegistrarErrorFaltaCanciones(idioma, idiomaInterno, idiomaBusqueda);
-                    throw new CancionNoDisponibleExcepcion(MensajeCancionesNoDisponibles);
+                    throw new CancionNoDisponibleExcepcion(
+                        MensajesErrorDatos.Cancion.CancionesNoDisponibles);
                 }
 
                 return SeleccionarAleatorio(candidatos);
@@ -111,24 +112,32 @@ namespace PictionaryMusicalServidor.Datos
             catch (CancionNoDisponibleExcepcion excepcion)
             {
                 _logger.Warn(
-                    "No hay canciones disponibles que cumplan con los criterios solicitados.",
+                    MensajesErrorDatos.Cancion.CancionesNoCumplenCriterios,
                     excepcion);
-                throw;
+                throw new CancionNoDisponibleExcepcion(
+                    MensajesErrorDatos.Cancion.CancionesNoCumplenCriterios,
+                    excepcion);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Error("Error inesperado al obtener una cancion aleatoria.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Cancion.ErrorInesperadoObtener, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Cancion.ErrorInesperadoObtener, 
+                    excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado al obtener una cancion aleatoria.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Cancion.ErrorInesperadoObtener, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Cancion.ErrorInesperadoObtener, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al obtener una cancion aleatoria.", excepcion);
-                throw;
+                _logger.Error(MensajesErrorDatos.Cancion.ErrorInesperadoObtener, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Cancion.ErrorInesperadoObtener, 
+                    excepcion);
             }
         }
 
@@ -147,11 +156,11 @@ namespace PictionaryMusicalServidor.Datos
             }
 
             _logger.WarnFormat(
-                "No se encontro la cancion con id {0} en el catalogo.", 
+                MensajesErrorDatos.Cancion.CancionNoEncontradaCatalogo, 
                 idCancion);
             
             throw new KeyNotFoundException(
-                "La cancion solicitada no se encuentra en el catalogo interno.");
+                MensajesErrorDatos.Cancion.CancionNoEnCatalogo);
         }
 
         /// <summary>
@@ -165,7 +174,8 @@ namespace PictionaryMusicalServidor.Datos
         {
             if (!_canciones.ContainsKey(idCancion))
             {
-                _logger.ErrorFormat("No se encontro la cancion con id {0} en el catalogo.", 
+                _logger.ErrorFormat(
+                    MensajesErrorDatos.Cancion.CancionNoEncontradaCatalogo, 
                     idCancion);
                 return false;
             }

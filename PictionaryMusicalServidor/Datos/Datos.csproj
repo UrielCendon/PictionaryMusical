@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constantes\MensajesErrorDatos.cs" />
     <Compile Include="DAL\Implementaciones\AmigoRepositorio.cs" />
     <Compile Include="DAL\Implementaciones\ClasificacionRepositorio.cs" />
     <Compile Include="DAL\Implementaciones\JugadorRepositorio.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="DAL\Interfaces\IReporteRepositorio.cs" />
     <Compile Include="DAL\Interfaces\IUsuarioRepositorio.cs" />
     <Compile Include="Entidades\Cancion.cs" />
+    <Compile Include="Excepciones\BaseDatosExcepcion.cs" />
     <Compile Include="Excepciones\CancionNoDisponibleExcepcion.cs" />
     <Compile Include="ICatalogoCanciones.cs" />
     <Compile Include="Modelo\Amigo.cs">
