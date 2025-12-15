@@ -1,4 +1,5 @@
-﻿C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Implementaciones\AmigoRepositorio.cs
+﻿C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Constantes\MensajesErrorDatos.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Implementaciones\AmigoRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Implementaciones\ClasificacionRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Implementaciones\JugadorRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Implementaciones\ReporteRepositorio.cs
@@ -9,6 +10,7 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Interfaces\IReporteRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Interfaces\IUsuarioRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Entidades\Cancion.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Excepciones\BaseDatosExcepcion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Excepciones\CancionNoDisponibleExcepcion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\ICatalogoCanciones.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\Amigo.cs
