@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Properties.Langs;
 
 namespace PictionaryMusicalCliente.Utilidades.Idiomas
 {
@@ -12,9 +12,17 @@ namespace PictionaryMusicalCliente.Utilidades.Idiomas
     /// </summary>
     public class LocalizacionContexto : INotifyPropertyChanged
     {
+        private const string PropiedadIndexador = "Item[]";
+
         /// <summary>
         /// Inicializa una nueva instancia con un servicio de localizacion especifico.
         /// </summary>
+        /// <param name="localizacionServicio">
+        /// Servicio que notifica cuando cambia el idioma de la aplicacion.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si <paramref name="localizacionServicio"/> es nulo.
+        /// </exception>
         public LocalizacionContexto(ILocalizacionServicio localizacionServicio)
         {
             if (localizacionServicio == null)
@@ -22,10 +30,7 @@ namespace PictionaryMusicalCliente.Utilidades.Idiomas
                 throw new ArgumentNullException(nameof(localizacionServicio));
             }
 
-            WeakEventManager<ILocalizacionServicio, EventArgs>.AddHandler(
-                localizacionServicio,
-                nameof(ILocalizacionServicio.IdiomaActualizado),
-                LocalizacionServicioEnIdiomaActualizado);
+            SuscribirseACambiosDeIdioma(localizacionServicio);
         }
 
         /// <summary>
@@ -42,24 +47,43 @@ namespace PictionaryMusicalCliente.Utilidades.Idiomas
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(clave))
+                if (EsClaveInvalida(clave))
                 {
                     return string.Empty;
                 }
 
-                string valor = Lang.ResourceManager.GetString(clave, Lang.Culture);
-                if (valor == null)
-                {
-                    return string.Empty;
-                }
-                return valor;
+                return ObtenerValorLocalizado(clave);
             }
         }
 
-        private void LocalizacionServicioEnIdiomaActualizado(object remitente, 
-            EventArgs argumentosEvento)
+        private void SuscribirseACambiosDeIdioma(ILocalizacionServicio localizacionServicio)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Item[]"));
+            WeakEventManager<ILocalizacionServicio, EventArgs>.AddHandler(
+                localizacionServicio,
+                nameof(ILocalizacionServicio.IdiomaActualizado),
+                AlActualizarseIdioma);
+        }
+
+        private static bool EsClaveInvalida(string clave)
+        {
+            return string.IsNullOrWhiteSpace(clave);
+        }
+
+        private static string ObtenerValorLocalizado(string clave)
+        {
+            string valor = Lang.ResourceManager.GetString(clave, Lang.Culture);
+
+            return valor ?? string.Empty;
+        }
+
+        private void AlActualizarseIdioma(object remitente, EventArgs argumentosEvento)
+        {
+            NotificarCambioEnIndexador();
+        }
+
+        private void NotificarCambioEnIndexador()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropiedadIndexador));
         }
     }
 }

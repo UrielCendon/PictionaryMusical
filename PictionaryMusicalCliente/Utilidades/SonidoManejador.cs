@@ -123,6 +123,12 @@ namespace PictionaryMusicalCliente.Utilidades
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Libera los recursos utilizados por la instancia.
+        /// </summary>
+        /// <param name="disposing">
+        /// True si se invoca desde Dispose(), false si es desde el finalizador.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (_desechado)

@@ -71,11 +71,24 @@ namespace PictionaryMusicalCliente.Vista
 
         private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
+            RestablecerEstadoCampos();
+
+            if (camposInvalidos == null)
+            {
+                return;
+            }
+
+            MarcarCamposSegunLista(camposInvalidos);
+        }
+
+        private void RestablecerEstadoCampos()
+        {
             ControlVisual.RestablecerEstadoCampo(campoTextoNombre);
             ControlVisual.RestablecerEstadoCampo(campoTextoApellido);
+        }
 
-            if (camposInvalidos == null) return;
-
+        private void MarcarCamposSegunLista(IList<string> camposInvalidos)
+        {
             if (camposInvalidos.Contains(nameof(PerfilVistaModelo.Nombre)))
             {
                 ControlVisual.MarcarCampoInvalido(campoTextoNombre);

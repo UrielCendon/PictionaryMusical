@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Markup;
 using log4net;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.VistaModelo.Perfil;
-using System.Windows.Markup;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Vista;
 using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.Vista;
+using PictionaryMusicalCliente.VistaModelo.Perfil;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 {
@@ -21,10 +21,20 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(SeleccionAvatarDialogoServicio));
+
         private readonly IAvisoServicio _avisoServicio;
         private readonly ICatalogoAvatares _catalogoAvatares;
         private readonly SonidoManejador _sonidoManejador;
 
+        /// <summary>
+        /// Inicializa una nueva instancia del servicio de seleccion de avatar.
+        /// </summary>
+        /// <param name="avisoServicio">Servicio para mostrar avisos al usuario.</param>
+        /// <param name="catalogoAvatares">Catalogo que provee los avatares disponibles.</param>
+        /// <param name="sonidoManejador">Manejador de efectos de sonido.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si alguno de los parametros es nulo.
+        /// </exception>
         public SeleccionAvatarDialogoServicio(
             IAvisoServicio avisoServicio,
             ICatalogoAvatares catalogoAvatares,
@@ -41,33 +51,26 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         /// <summary>
         /// Abre la ventana de seleccion y retorna el avatar elegido por el usuario.
         /// </summary>
+        /// <param name="idAvatar">
+        /// Identificador del avatar actualmente seleccionado para preseleccion.
+        /// Use 0 o negativo si no hay preseleccion.
+        /// </param>
+        /// <returns>
+        /// El avatar seleccionado por el usuario, o null si cancelo la seleccion
+        /// o no se pudieron cargar los avatares.
+        /// </returns>
         public Task<ObjetoAvatar> SeleccionarAvatarAsync(int idAvatar)
         {
             var avatares = ObtenerAvataresLocales();
-            if (avatares == null || avatares.Count == 0)
+
+            if (!HayAvataresDisponibles(avatares))
             {
-                return ManejarErrorCargaAvatares();
+                RegistrarErrorCargaAvatares();
+                NotificarErrorCargaAvatares();
+                return Task.FromResult<ObjetoAvatar>(null);
             }
 
-            var finalizacion = new TaskCompletionSource<ObjetoAvatar>();
-
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                try
-                {
-                    MostrarVentanaAvatar(avatares, idAvatar, finalizacion);
-                }
-                catch (XamlParseException excepcion)
-                {
-                    ManejarErrorXaml(excepcion, finalizacion);
-                }
-                catch (InvalidOperationException excepcion)
-                {
-                    ManejarErrorInvalido(excepcion, finalizacion);
-                }
-            });
-
-            return finalizacion.Task;
+            return EjecutarSeleccionEnDispatcher(avatares, idAvatar);
         }
 
         private IList<ObjetoAvatar> ObtenerAvataresLocales()
@@ -75,11 +78,54 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             return (IList<ObjetoAvatar>)_catalogoAvatares.ObtenerAvatares();
         }
 
-        private Task<ObjetoAvatar> ManejarErrorCargaAvatares()
+        private static bool HayAvataresDisponibles(IList<ObjetoAvatar> avatares)
+        {
+            return avatares != null && avatares.Count > 0;
+        }
+
+        private static void RegistrarErrorCargaAvatares()
         {
             _logger.Warn("No se cargaron avatares locales.");
+        }
+
+        private void NotificarErrorCargaAvatares()
+        {
             _avisoServicio.Mostrar(Lang.errorTextoNoCargaronAvatares);
-            return Task.FromResult<ObjetoAvatar>(null);
+        }
+
+        private Task<ObjetoAvatar> EjecutarSeleccionEnDispatcher(
+            IList<ObjetoAvatar> avatares,
+            int idAvatar)
+        {
+            var finalizacion = new TaskCompletionSource<ObjetoAvatar>();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                EjecutarMostrarVentanaConManejo(avatares, idAvatar, finalizacion);
+            });
+
+            return finalizacion.Task;
+        }
+
+        private void EjecutarMostrarVentanaConManejo(
+            IList<ObjetoAvatar> avatares,
+            int idAvatar,
+            TaskCompletionSource<ObjetoAvatar> finalizacion)
+        {
+            try
+            {
+                MostrarVentanaAvatar(avatares, idAvatar, finalizacion);
+            }
+            catch (XamlParseException excepcion)
+            {
+                RegistrarErrorXaml(excepcion);
+                EstablecerExcepcionInterfaz(finalizacion, excepcion);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                RegistrarErrorOperacionInvalida(excepcion);
+                EstablecerExcepcion(finalizacion, excepcion);
+            }
         }
 
         private void MostrarVentanaAvatar(
@@ -87,20 +133,28 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             int idAvatarPreseleccionado,
             TaskCompletionSource<ObjetoAvatar> finalizacion)
         {
-            var ventana = new SeleccionAvatar();
-            var vistaModelo = new SeleccionAvatarVistaModelo(
+            var ventana = CrearVentanaSeleccionAvatar();
+            var vistaModelo = CrearVistaModelo(avatares);
+
+            ConfigurarPreseleccion(vistaModelo, idAvatarPreseleccionado);
+            ConfigurarEventosViewModel(vistaModelo, ventana, finalizacion);
+            ConfigurarEventosVentana(ventana, finalizacion);
+            MostrarVentana(ventana, vistaModelo);
+        }
+
+        private static SeleccionAvatar CrearVentanaSeleccionAvatar()
+        {
+            return new SeleccionAvatar();
+        }
+
+        private SeleccionAvatarVistaModelo CrearVistaModelo(IList<ObjetoAvatar> avatares)
+        {
+            return new SeleccionAvatarVistaModelo(
                 App.VentanaServicio,
                 App.Localizador,
                 avatares,
                 _avisoServicio,
                 _sonidoManejador);
-
-            ConfigurarPreseleccion(vistaModelo, idAvatarPreseleccionado);
-            ConfigurarEventosViewModel(vistaModelo, ventana, finalizacion);
-            ConfigurarEventosVentana(ventana, finalizacion);
-
-            ventana.DataContext = vistaModelo;
-            ventana.ShowDialog();
         }
 
         private void ConfigurarPreseleccion(
@@ -109,8 +163,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         {
             if (idAvatar > 0)
             {
-                vistaModelo.AvatarSeleccionado =
-                    _catalogoAvatares.ObtenerPorId(idAvatar);
+                vistaModelo.AvatarSeleccionado = _catalogoAvatares.ObtenerPorId(idAvatar);
             }
         }
 
@@ -139,22 +192,41 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             };
         }
 
-        private static void ManejarErrorXaml(
-            Exception excepcion,
-            TaskCompletionSource<ObjetoAvatar> finalizacion)
+        private static void MostrarVentana(
+            SeleccionAvatar ventana,
+            SeleccionAvatarVistaModelo vistaModelo)
         {
-            _logger.Error("Error XAML al cargar la interfaz de seleccion de avatar.", excepcion);
-            finalizacion.TrySetException(
-                new InvalidOperationException(
-                    "Error al cargar la interfaz de seleccion de avatar.",
-                    excepcion));
+            ventana.DataContext = vistaModelo;
+            ventana.ShowDialog();
         }
 
-        private static void ManejarErrorInvalido(
-            Exception excepcion,
-            TaskCompletionSource<ObjetoAvatar> finalizacion)
+        private static void RegistrarErrorXaml(XamlParseException excepcion)
+        {
+            _logger.Error(
+                "Error XAML al cargar la interfaz de seleccion de avatar.",
+                excepcion);
+        }
+
+        private static void EstablecerExcepcionInterfaz(
+            TaskCompletionSource<ObjetoAvatar> finalizacion,
+            XamlParseException excepcion)
+        {
+            var excepcionEnvuelta = new InvalidOperationException(
+                "Error al cargar la interfaz de seleccion de avatar.",
+                excepcion);
+
+            finalizacion.TrySetException(excepcionEnvuelta);
+        }
+
+        private static void RegistrarErrorOperacionInvalida(InvalidOperationException excepcion)
         {
             _logger.Error("Operacion invalida al mostrar dialogo de avatar.", excepcion);
+        }
+
+        private static void EstablecerExcepcion(
+            TaskCompletionSource<ObjetoAvatar> finalizacion,
+            InvalidOperationException excepcion)
+        {
             finalizacion.TrySetException(excepcion);
         }
     }

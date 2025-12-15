@@ -23,8 +23,13 @@ namespace PictionaryMusicalCliente.Utilidades
         public CancionManejador()
         {
             _reproductor = new MediaPlayer();
-            _reproductor.MediaEnded += (remitente, argumentosEvento) => EstaReproduciendo = false;
+            SuscribirEventoFinalizacion();
             _reproductor.Volume = ObtenerVolumenGuardado();
+        }
+
+        private void SuscribirEventoFinalizacion()
+        {
+            _reproductor.MediaEnded += (remitente, argumentosEvento) => EstaReproduciendo = false;
         }
 
         /// <summary>
@@ -57,29 +62,73 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <param name="nombreArchivo">Nombre del archivo con extension.</param>
         public void Reproducir(string nombreArchivo)
         {
-            if (string.IsNullOrWhiteSpace(nombreArchivo))
+            if (!EsNombreArchivoValido(nombreArchivo))
             {
-                _logger.Warn("Intento de reproducir archivo con nombre vacio.");
                 return;
             }
 
+            EjecutarReproduccion(nombreArchivo);
+        }
+
+        private static bool EsNombreArchivoValido(string nombreArchivo)
+        {
+            if (string.IsNullOrWhiteSpace(nombreArchivo))
+            {
+                _logger.Warn("Intento de reproducir archivo con nombre vacio.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void EjecutarReproduccion(string nombreArchivo)
+        {
             try
             {
-                string ruta = ConstruirRutaArchivo(nombreArchivo);
-
-                if (File.Exists(ruta))
-                {
-                    IniciarReproduccion(ruta, nombreArchivo);
-                }
-                else
-                {
-                    _logger.ErrorFormat("Archivo de audio no encontrado: {0}", ruta);
-                }
+                ReproducirSiExiste(nombreArchivo);
             }
-            catch (Exception excepcion)
+            catch (UriFormatException excepcion)
             {
-                ManejarExcepcionReproduccion(excepcion, nombreArchivo);
+                RegistrarErrorUri(nombreArchivo, excepcion);
             }
+            catch (InvalidOperationException excepcion)
+            {
+                RegistrarErrorOperacion(nombreArchivo, excepcion);
+            }
+        }
+
+        private void ReproducirSiExiste(string nombreArchivo)
+        {
+            string ruta = ConstruirRutaArchivo(nombreArchivo);
+
+            if (File.Exists(ruta))
+            {
+                IniciarReproduccion(ruta);
+            }
+            else
+            {
+                RegistrarArchivoNoEncontrado(ruta);
+            }
+        }
+
+        private static void RegistrarArchivoNoEncontrado(string ruta)
+        {
+            _logger.ErrorFormat("Archivo de audio no encontrado: {0}", ruta);
+        }
+
+        private static void RegistrarErrorUri(string nombre, UriFormatException excepcion)
+        {
+            _logger.ErrorFormat("URI invalido para cancion: {0}. Detalle: {1}", nombre, excepcion);
+        }
+
+        private static void RegistrarErrorOperacion(
+            string nombre,
+            InvalidOperationException excepcion)
+        {
+            _logger.ErrorFormat(
+                "Error de operacion en reproductor para: {0}. Detalle: {1}",
+                nombre,
+                excepcion);
         }
 
         /// <summary>
@@ -108,6 +157,9 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Libera los recursos del reproductor.
         /// </summary>
+        /// <param name="disposing">
+        /// True si se invoca desde Dispose(), false si es desde el finalizador.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
             if (_desechado)
@@ -117,19 +169,25 @@ namespace PictionaryMusicalCliente.Utilidades
 
             if (disposing)
             {
-                try
-                {
-                    _reproductor.Stop();
-                    _reproductor.Close();
-                }
-                catch (Exception excepcion)
-                {
-                    // Se usa Exception aqui para evitar fugas en el Dispose, 
-                    // pero se loguea como advertencia.
-                    _logger.Warn("Excepcion durante Dispose de CancionManejador.", excepcion);
-                }
+                LiberarReproductor();
             }
+
             _desechado = true;
+        }
+
+        private void LiberarReproductor()
+        {
+            try
+            {
+                _reproductor.Stop();
+                _reproductor.Close();
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Warn(
+                    "El reproductor no estaba en estado valido para cerrarse.",
+                    excepcion);
+            }
         }
 
         private static string ConstruirRutaArchivo(string nombreArchivo)
@@ -141,28 +199,11 @@ namespace PictionaryMusicalCliente.Utilidades
                 nombreArchivo);
         }
 
-        private void IniciarReproduccion(string ruta, string nombre)
+        private void IniciarReproduccion(string ruta)
         {
             _reproductor.Open(new Uri(ruta, UriKind.Absolute));
             _reproductor.Play();
             EstaReproduciendo = true;
-            _logger.InfoFormat("Reproduciendo: {0}", nombre);
-        }
-
-        private static void ManejarExcepcionReproduccion(Exception excepcion, string nombre)
-        {
-            if (excepcion is UriFormatException)
-            {
-                _logger.ErrorFormat("URI invalido para cancion: {0}", nombre);
-            }
-            else if (excepcion is InvalidOperationException)
-            {
-                _logger.ErrorFormat("Error de operacion en reproductor para: {0}", nombre);
-            }
-            else
-            {
-                _logger.ErrorFormat("Error inesperado reproduciendo {0}: {1}", nombre, excepcion);
-            }
         }
 
         private static double ObtenerVolumenGuardado()
