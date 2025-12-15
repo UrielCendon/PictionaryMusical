@@ -17,6 +17,10 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf;
 
 namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 {
+    /// <summary>
+    /// ViewModel principal que gestiona la pantalla de inicio del usuario autenticado.
+    /// Coordina la creacion de salas, union a partidas y gestion de amigos.
+    /// </summary>
     public class VentanaPrincipalVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -127,24 +131,36 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }, _ => PuedeIniciarJuego());
         }
 
+        /// <summary>
+        /// Obtiene el nombre del usuario autenticado.
+        /// </summary>
         public string NombreUsuario
         {
             get => _nombreUsuario;
             private set => EstablecerPropiedad(ref _nombreUsuario, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el codigo de sala para unirse.
+        /// </summary>
         public string CodigoSala
         {
             get => _codigoSala;
             set => EstablecerPropiedad(ref _codigoSala, value);
         }
 
+        /// <summary>
+        /// Obtiene la coleccion de opciones disponibles para el numero de rondas.
+        /// </summary>
         public ObservableCollection<OpcionEntero> NumeroRondasOpciones
         {
             get => _numeroRondasOpciones;
             private set => EstablecerPropiedad(ref _numeroRondasOpciones, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el numero de rondas seleccionado para la partida.
+        /// </summary>
         public OpcionEntero NumeroRondasSeleccionada
         {
             get => _numeroRondasSeleccionada;
@@ -157,12 +173,18 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
         }
 
+        /// <summary>
+        /// Obtiene la coleccion de opciones disponibles para el tiempo de ronda.
+        /// </summary>
         public ObservableCollection<OpcionEntero> TiempoRondaOpciones
         {
             get => _tiempoRondaOpciones;
             private set => EstablecerPropiedad(ref _tiempoRondaOpciones, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el tiempo de ronda seleccionado en segundos.
+        /// </summary>
         public OpcionEntero TiempoRondaSeleccionada
         {
             get => _tiempoRondaSeleccionada;
@@ -175,12 +197,18 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
         }
 
+        /// <summary>
+        /// Obtiene la coleccion de idiomas disponibles para las canciones.
+        /// </summary>
         public ObservableCollection<IdiomaOpcion> IdiomasDisponibles
         {
             get => _idiomasDisponibles;
             private set => EstablecerPropiedad(ref _idiomasDisponibles, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el idioma seleccionado para las canciones de la partida.
+        /// </summary>
         public IdiomaOpcion IdiomaSeleccionado
         {
             get => _idiomaSeleccionado;
@@ -193,12 +221,18 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
         }
 
+        /// <summary>
+        /// Obtiene la coleccion de niveles de dificultad disponibles.
+        /// </summary>
         public ObservableCollection<OpcionTexto> DificultadesDisponibles
         {
             get => _dificultadesDisponibles;
             private set => EstablecerPropiedad(ref _dificultadesDisponibles, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el nivel de dificultad seleccionado para la partida.
+        /// </summary>
         public OpcionTexto DificultadSeleccionada
         {
             get => _dificultadSeleccionada;
@@ -211,12 +245,18 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
         }
 
+        /// <summary>
+        /// Obtiene la coleccion de amigos del usuario autenticado.
+        /// </summary>
         public ObservableCollection<DTOs.AmigoDTO> Amigos
         {
             get => _amigos;
             private set => EstablecerPropiedad(ref _amigos, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el amigo seleccionado en la lista.
+        /// </summary>
         public DTOs.AmigoDTO AmigoSeleccionado
         {
             get => _amigoSeleccionado;
@@ -226,18 +266,55 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
         }
 
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana del perfil del usuario.
+        /// </summary>
         public ICommand AbrirPerfilComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana de ajustes.
+        /// </summary>
         public ICommand AbrirAjustesComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana de instrucciones del juego.
+        /// </summary>
         public ICommand AbrirComoJugarComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana de clasificacion.
+        /// </summary>
         public ICommand AbrirClasificacionComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana de busqueda de amigos.
+        /// </summary>
         public ICommand AbrirBuscarAmigoComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando para abrir la ventana de solicitudes de amistad.
+        /// </summary>
         public ICommand AbrirSolicitudesComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando asincrono para eliminar un amigo de la lista.
+        /// </summary>
         public IComandoAsincrono EliminarAmigoComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando asincrono para unirse a una sala existente.
+        /// </summary>
         public IComandoAsincrono UnirseSalaComando { get; }
+
+        /// <summary>
+        /// Obtiene el comando asincrono para iniciar una nueva partida.
+        /// </summary>
         public IComandoAsincrono IniciarJuegoComando { get; }
 
-
-
+        /// <summary>
+        /// Inicializa las suscripciones a servicios y carga la lista de amigos.
+        /// </summary>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task InicializarAsync()
         {
             if (!ValidarCondicionesInicializacion())
@@ -279,6 +356,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Finaliza las suscripciones a servicios y libera recursos.
+        /// </summary>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task FinalizarAsync()
         {
             DesuscribirEventos();
@@ -484,7 +565,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             });
         }
 
-        private bool ValidarAmigoParaEliminar(DTOs.AmigoDTO amigo)
+        private static bool ValidarAmigoParaEliminar(DTOs.AmigoDTO amigo)
         {
             return amigo != null;
         }
@@ -578,7 +659,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarVentanaDialogo(ajustesVistaModelo);
         }
 
-        private void EjecutarAbrirComoJugar()
+        private static void EjecutarAbrirComoJugar()
         {
             var comoJugar = new Vista.ComoJugar();
             comoJugar.ShowDialog();
@@ -638,14 +719,14 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             if (!ValidarSesionActivaParaUnirse())
             {
-                ManejarErrorSesionInactivaUnirse();
+                ManejarError();
                 return;
             }
 
             await EjecutarOperacionAsync(async () =>
             {
                 var sala = await UnirseSalaEnServidorAsync(codigo);
-                NavegarASalaUnida(sala);
+                NavegarASala(sala);
             });
         }
 
@@ -666,12 +747,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             return !string.IsNullOrWhiteSpace(_nombreUsuarioSesion);
         }
 
-        private void ManejarErrorSesionInactivaUnirse()
-        {
-            _sonidoManejador.ReproducirError();
-            App.AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
-        }
-
         private async Task<DTOs.SalaDTO> UnirseSalaEnServidorAsync(string codigo)
         {
             _logger.InfoFormat("Intentando unirse a sala: {0}", codigo);
@@ -686,13 +761,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             if (!ValidarConfiguracionJuego())
             {
-                ManejarErrorConfiguracionInvalida();
+                ManejarError();
                 return;
             }
 
             if (!ValidarSesionActivaParaIniciar())
             {
-                ManejarErrorSesionInactivaIniciar();
+                ManejarError();
                 return;
             }
 
@@ -700,7 +775,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             {
                 var configuracion = CrearConfiguracionPartida();
                 var sala = await CrearSalaEnServidorAsync(configuracion);
-                NavegarASalaCreada(sala);
+                NavegarASala(sala);
             });
         }
 
@@ -709,7 +784,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             return PuedeIniciarJuego();
         }
 
-        private void ManejarErrorConfiguracionInvalida()
+        private void ManejarError()
         {
             _sonidoManejador.ReproducirError();
             App.AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
@@ -718,12 +793,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private bool ValidarSesionActivaParaIniciar()
         {
             return !string.IsNullOrWhiteSpace(_nombreUsuarioSesion);
-        }
-
-        private void ManejarErrorSesionInactivaIniciar()
-        {
-            _sonidoManejador.ReproducirError();
-            App.AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
         }
 
         private DTOs.ConfiguracionPartidaDTO CrearConfiguracionPartida()
@@ -746,13 +815,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 configuracion).ConfigureAwait(true);
         }
 
-        private void NavegarASalaCreada(DTOs.SalaDTO sala)
-        {
-            _sonidoManejador.ReproducirNotificacion();
-            NavegarASala(sala, esInvitado: false);
-        }
-
-        private void NavegarASalaUnida(DTOs.SalaDTO sala)
+        private void NavegarASala(DTOs.SalaDTO sala)
         {
             _sonidoManejador.ReproducirNotificacion();
             NavegarASala(sala, esInvitado: false);
@@ -784,6 +847,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 invitacionSalaServicio,
                 App.WcfFabrica,
                 new CancionManejador(),
+                App.CatalogoCanciones,
                 _usuarioSesion.NombreUsuario,
                 esInvitado);
 

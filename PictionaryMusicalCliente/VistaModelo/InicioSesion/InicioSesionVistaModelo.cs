@@ -271,7 +271,11 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             _ventana.CerrarVentana(this);
         }
 
-        private void NavegarAVentanaSala(DTOs.SalaDTO sala, ISalasServicio servicio, string nombre, bool esInvitado)
+        private void NavegarAVentanaSala(
+            DTOs.SalaDTO sala,
+            ISalasServicio servicio,
+            string nombre,
+            bool esInvitado)
         {
             App.MusicaManejador.Detener();
 
@@ -295,6 +299,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                     _avisoServicio),
                 App.WcfFabrica,
                 new CancionManejador(),
+                App.CatalogoCanciones,
                 nombre,
                 esInvitado);
 

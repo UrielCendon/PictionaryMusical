@@ -4,6 +4,7 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
@@ -24,6 +25,10 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas
 {
+    /// <summary>
+    /// ViewModel que gestiona la logica de una sala de juego.
+    /// Coordina la comunicacion entre jugadores, el chat y el estado de la partida.
+    /// </summary>
     public class SalaVistaModelo : BaseVistaModelo, ICursoPartidaManejadorCallback
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -41,6 +46,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private IUsuarioAutenticado _usuarioSesion;
         private IWcfClienteFabrica _fabricaClientes;
         private CancionManejador _cancionManejador;
+        private ICatalogoCanciones _catalogoCanciones;
 
         private readonly DTOs.SalaDTO _sala;
         private readonly string _nombreUsuarioSesion;
@@ -75,6 +81,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private const double PorcentajePuntosDibujante = 0.2;
 
         /// <summary>
+        /// Contiene datos del contexto para procesar el fin de partida.
+        /// </summary>
+        private sealed class ContextoFinPartida
+        {
+            public bool EsCancelacionPorFaltaDeJugadores { get; set; }
+            public bool EsCancelacionPorHost { get; set; }
+            public string MensajeLocalizado { get; set; }
+        }
+
+        /// <summary>
         /// Define los destinos posibles al salir de la partida.
         /// </summary>
         public enum DestinoNavegacion
@@ -105,16 +121,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IInvitacionSalaServicio invitacionSalaServicio,
             IWcfClienteFabrica fabricaClientes,
             CancionManejador cancionManejador,
+            ICatalogoCanciones catalogoCanciones,
             string nombreJugador = null,
             bool esInvitado = false)
             : base(ventana, localizador)
         {
             ValidarDependencias(sala, salasServicio, reportesServicio, sonidoManejador,
                 avisoServicio, invitacionSalaServicio, usuarioSesion, fabricaClientes,
-                cancionManejador);
+                cancionManejador, catalogoCanciones);
 
             AsignarServicios(salasServicio, reportesServicio, sonidoManejador, avisoServicio,
-                invitacionSalaServicio, usuarioSesion, fabricaClientes, cancionManejador);
+                invitacionSalaServicio, usuarioSesion, fabricaClientes, cancionManejador,
+                catalogoCanciones);
 
             _sala = sala;
             _esInvitado = esInvitado;
@@ -135,19 +153,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             InicializarProxyPartida();
         }
 
-        private void ValidarDependencias(DTOs.SalaDTO sala, ISalasServicio salasServicio,
-            IReportesServicio reportesServicio, SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio, IInvitacionSalaServicio invitacionSalaServicio,
-            IUsuarioAutenticado usuarioSesion, IWcfClienteFabrica fabricaClientes,
-            CancionManejador cancionManejador)
+        private static void ValidarDependencias(
+            DTOs.SalaDTO sala,
+            ISalasServicio salasServicio,
+            IReportesServicio reportesServicio,
+            SonidoManejador sonidoManejador,
+            IAvisoServicio avisoServicio,
+            IInvitacionSalaServicio invitacionSalaServicio,
+            IUsuarioAutenticado usuarioSesion,
+            IWcfClienteFabrica fabricaClientes,
+            CancionManejador cancionManejador,
+            ICatalogoCanciones catalogoCanciones)
         {
-            if (sala == null) throw new ArgumentNullException(nameof(sala));
-            if (salasServicio == null) throw new ArgumentNullException(nameof(salasServicio));
+            if (sala == null)
+                throw new ArgumentNullException(nameof(sala));
+            if (salasServicio == null)
+                throw new ArgumentNullException(nameof(salasServicio));
             if (reportesServicio == null)
                 throw new ArgumentNullException(nameof(reportesServicio));
             if (sonidoManejador == null)
                 throw new ArgumentNullException(nameof(sonidoManejador));
-            if (avisoServicio == null) throw new ArgumentNullException(nameof(avisoServicio));
+            if (avisoServicio == null)
+                throw new ArgumentNullException(nameof(avisoServicio));
             if (invitacionSalaServicio == null)
                 throw new ArgumentNullException(nameof(invitacionSalaServicio));
             if (usuarioSesion == null)
@@ -156,13 +183,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(fabricaClientes));
             if (cancionManejador == null)
                 throw new ArgumentNullException(nameof(cancionManejador));
+            if (catalogoCanciones == null)
+                throw new ArgumentNullException(nameof(catalogoCanciones));
         }
 
         private void AsignarServicios(ISalasServicio salasServicio,
             IReportesServicio reportesServicio, SonidoManejador sonidoManejador,
             IAvisoServicio avisoServicio, IInvitacionSalaServicio invitacionSalaServicio,
             IUsuarioAutenticado usuarioSesion, IWcfClienteFabrica fabricaClientes,
-            CancionManejador cancionManejador)
+            CancionManejador cancionManejador, ICatalogoCanciones catalogoCanciones)
         {
             _salasServicio = salasServicio;
             _reportesServicio = reportesServicio;
@@ -172,6 +201,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _usuarioSesion = usuarioSesion;
             _fabricaClientes = fabricaClientes;
             _cancionManejador = cancionManejador;
+            _catalogoCanciones = catalogoCanciones;
         }
 
         private void InicializarColecciones()
@@ -189,7 +219,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _ventana,
                 _localizador,
                 _sonidoManejador,
-                _cancionManejador);
+                _cancionManejador,
+                _catalogoCanciones);
             _chatVistaModelo = CrearChatVistaModelo();
         }
 
@@ -279,56 +310,92 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _chatVistaModelo.EsPartidaIniciada = juegoIniciado;
         }
 
+        /// <summary>
+        /// Obtiene el ViewModel de la partida.
+        /// </summary>
         public PartidaVistaModelo PartidaVistaModelo => _partidaVistaModelo;
 
+        /// <summary>
+        /// Obtiene el ViewModel del chat.
+        /// </summary>
         public ChatVistaModelo ChatVistaModelo => _chatVistaModelo;
 
+        /// <summary>
+        /// Indica si el juego ha iniciado.
+        /// </summary>
         public bool JuegoIniciado => _partidaVistaModelo.JuegoIniciado;
 
+        /// <summary>
+        /// Indica si el usuario actual es el anfitrion de la sala.
+        /// </summary>
         public bool EsHost => _esHost;
 
+        /// <summary>
+        /// Obtiene o establece el texto del boton para iniciar partida.
+        /// </summary>
         public string TextoBotonIniciarPartida
         {
             get => _textoBotonIniciarPartida;
             set => EstablecerPropiedad(ref _textoBotonIniciarPartida, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece si el boton de iniciar partida esta habilitado.
+        /// </summary>
         public bool BotonIniciarPartidaHabilitado
         {
             get => _botonIniciarPartidaHabilitado;
             set => EstablecerPropiedad(ref _botonIniciarPartidaHabilitado, value);
         }
 
+        /// <summary>
+        /// Indica si se debe mostrar el boton de iniciar partida.
+        /// </summary>
         public bool MostrarBotonIniciarPartida
         {
             get => _mostrarBotonIniciarPartida;
             private set => EstablecerPropiedad(ref _mostrarBotonIniciarPartida, value);
         }
 
+        /// <summary>
+        /// Indica si se debe mostrar el logo de la sala.
+        /// </summary>
         public bool MostrarLogo
         {
             get => _mostrarLogo;
             private set => EstablecerPropiedad(ref _mostrarLogo, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el codigo de la sala.
+        /// </summary>
         public string CodigoSala
         {
             get => _codigoSala;
             set => EstablecerPropiedad(ref _codigoSala, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece la coleccion de jugadores en la sala.
+        /// </summary>
         public ObservableCollection<JugadorElemento> Jugadores
         {
             get => _jugadores;
             set => EstablecerPropiedad(ref _jugadores, value);
         }
 
+        /// <summary>
+        /// Obtiene o establece el correo para invitacion.
+        /// </summary>
         public string CorreoInvitacion
         {
             get => _correoInvitacion;
             set => EstablecerPropiedad(ref _correoInvitacion, value);
         }
 
+        /// <summary>
+        /// Indica si puede invitar jugadores por correo.
+        /// </summary>
         public bool PuedeInvitarPorCorreo
         {
             get => _puedeInvitarPorCorreo;
@@ -342,6 +409,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Indica si puede invitar amigos a la sala.
+        /// </summary>
         public bool PuedeInvitarAmigos
         {
             get => _puedeInvitarAmigos;
@@ -354,42 +424,87 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Indica si el usuario actual es un invitado.
+        /// </summary>
         public bool EsInvitado => _esInvitado;
 
+        /// <summary>
+        /// Indica si el usuario puede escribir en el chat.
+        /// </summary>
         public bool PuedeEscribir
         {
             get => _chatVistaModelo.PuedeEscribir;
             private set => _chatVistaModelo.PuedeEscribir = value;
         }
 
+        /// <summary>
+        /// Indica si el usuario actual es el dibujante.
+        /// </summary>
         public bool EsDibujante => _partidaVistaModelo.EsDibujante;
 
+        /// <summary>
+        /// Obtiene o establece el mensaje actual del chat.
+        /// </summary>
         public string MensajeChat
         {
             get => _mensajeChat;
             set => EstablecerPropiedad(ref _mensajeChat, LimitarMensajePorCaracteres(value));
         }
 
+        /// <summary>
+        /// Comando para invitar por correo electronico.
+        /// </summary>
         public ICommand InvitarCorreoComando { get; private set; }
 
+        /// <summary>
+        /// Comando asincrono para invitar amigos.
+        /// </summary>
         public IComandoAsincrono InvitarAmigosComando { get; private set; }
 
+        /// <summary>
+        /// Comando para abrir la ventana de ajustes.
+        /// </summary>
         public ICommand AbrirAjustesComando { get; private set; }
 
+        /// <summary>
+        /// Comando para iniciar la partida.
+        /// </summary>
         public ICommand IniciarPartidaComando { get; private set; }
 
+        /// <summary>
+        /// Comando para cerrar la ventana.
+        /// </summary>
         public ICommand CerrarVentanaComando { get; private set; }
 
+        /// <summary>
+        /// Comando para enviar un mensaje en el chat.
+        /// </summary>
         public ICommand EnviarMensajeChatComando { get; private set; }
 
+        /// <summary>
+        /// Delegado para mostrar dialogos de confirmacion.
+        /// </summary>
         public Func<string, bool> MostrarConfirmacion { get; set; }
 
+        /// <summary>
+        /// Delegado para solicitar datos de un reporte de jugador.
+        /// </summary>
         public Func<string, ResultadoReporteJugador> SolicitarDatosReporte { get; set; }
 
+        /// <summary>
+        /// Accion para cerrar la ventana actual.
+        /// </summary>
         public Action CerrarVentana { get; set; }
 
+        /// <summary>
+        /// Delegado para mostrar el dialogo de invitar amigos.
+        /// </summary>
         public Func<InvitarAmigosVistaModelo, Task> MostrarInvitarAmigos { get; set; }
 
+        /// <summary>
+        /// Delegado para verificar si la aplicacion esta cerrando globalmente.
+        /// </summary>
         public Func<bool> ChequearCierreAplicacionGlobal { get; set; }
 
         private DestinoNavegacion ObtenerDestinoSegunSesion()
@@ -439,15 +554,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
             catch (CommunicationException ex)
             {
-                _logger.Error("Error de comunicacion al suscribir al jugador en la partida.", ex);
+                _logger.Error(
+                    "Error de comunicacion al suscribir al jugador en la partida.",
+                    ex);
             }
             catch (TimeoutException ex)
             {
-                _logger.Error("Se agoto el tiempo para inicializar el proxy de partida.", ex);
+                _logger.Error(
+                    "Se agoto el tiempo para inicializar el proxy de partida.",
+                    ex);
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                _logger.Error("Error inesperado al inicializar el proxy de partida.", ex);
+                _logger.Error(
+                    "Operacion invalida al inicializar el proxy de partida.",
+                    ex);
             }
         }
 
@@ -570,14 +691,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 await _proxyJuego.EnviarMensajeJuegoAsync(mensaje, _codigoSala, _idJugador)
                     .ConfigureAwait(false);
             }
-            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            catch (CommunicationException ex)
             {
                 _logger.Error("No se pudo enviar el mensaje de juego.", ex);
                 _sonidoManejador.ReproducirError();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
-                _logger.Error("Error inesperado al enviar mensaje de juego.", ex);
+                _logger.Error("Tiempo agotado al enviar mensaje de juego.", ex);
+                _sonidoManejador.ReproducirError();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al enviar mensaje de juego.", ex);
                 _sonidoManejador.ReproducirError();
             }
         }
@@ -609,18 +735,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         .ConfigureAwait(false);
                 }
             }
-            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            catch (CommunicationException ex)
             {
                 _logger.Error("No se pudo registrar el acierto en el servidor.", ex);
                 _sonidoManejador.ReproducirError();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
-                _logger.Error("Error inesperado al registrar acierto.", ex);
+                _logger.Error("Tiempo agotado al registrar acierto.", ex);
+                _sonidoManejador.ReproducirError();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al registrar acierto.", ex);
                 _sonidoManejador.ReproducirError();
             }
         }
 
+        /// <summary>
+        /// Envia un trazo de dibujo al servidor para su distribucion a otros jugadores.
+        /// </summary>
         /// <param name="trazo">Datos del trazo a enviar.</param>
         public void EnviarTrazoAlServidor(DTOs.TrazoDTO trazo)
         {
@@ -633,13 +767,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 _proxyJuego?.EnviarTrazo(trazo, _codigoSala, _idJugador);
             }
-            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            catch (CommunicationException ex)
             {
                 _logger.Error("No se pudo enviar el trazo al servidor.", ex);
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
-                _logger.Error("Error inesperado al enviar trazo al servidor.", ex);
+                _logger.Error("Tiempo agotado al enviar trazo al servidor.", ex);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al enviar trazo al servidor.", ex);
             }
         }
 
@@ -671,14 +809,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     AplicarInicioVisualPartida();
                 }
             }
-            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            catch (CommunicationException ex)
             {
                 _logger.Error("No se pudo solicitar el inicio de la partida.", ex);
                 _sonidoManejador.ReproducirError();
             }
-            catch (Exception ex)
+            catch (TimeoutException ex)
             {
-                _logger.Error("Error inesperado al iniciar la partida.", ex);
+                _logger.Error("Tiempo agotado al iniciar la partida.", ex);
+                _sonidoManejador.ReproducirError();
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.Error("Operacion invalida al iniciar la partida.", ex);
                 _sonidoManejador.ReproducirError();
                 BotonIniciarPartidaHabilitado = true;
             }
@@ -694,6 +837,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Notifica que la partida ha iniciado. Callback del servicio WCF.
+        /// </summary>
         public void NotificarPartidaIniciada()
         {
             var dispatcher = Application.Current?.Dispatcher;
@@ -713,6 +859,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }));
         }
 
+        /// <summary>
+        /// Notifica el inicio de una nueva ronda. Callback del servicio WCF.
+        /// </summary>
         /// <param name="ronda">Datos de la ronda.</param>
         public void NotificarInicioRonda(DTOs.RondaDTO ronda)
         {
@@ -724,6 +873,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _partidaVistaModelo.NotificarInicioRonda(ronda, Jugadores?.Count ?? 0);
         }
 
+        /// <summary>
+        /// Notifica que un jugador ha adivinado correctamente. Callback del servicio WCF.
+        /// </summary>
         /// <param name="nombreJugador">Nombre del jugador que adivino.</param>
         /// <param name="puntos">Puntos obtenidos.</param>
         public void NotificarJugadorAdivino(string nombreJugador, int puntos)
@@ -800,9 +952,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool TodosLosAdivinadoresAcertaron()
         {
             int totalAdivinadores = ObtenerTotalAdivinadores();
-            return totalAdivinadores > 0 && _adivinadoresQuienYaAcertaron.Count >= totalAdivinadores;
+            return totalAdivinadores > 0
+                && _adivinadoresQuienYaAcertaron.Count >= totalAdivinadores;
         }
 
+        /// <summary>
+        /// Notifica la recepcion de un mensaje de chat. Callback del servicio WCF.
+        /// </summary>
         /// <param name="nombreJugador">Nombre del jugador que envio el mensaje.</param>
         /// <param name="mensaje">Contenido del mensaje.</param>
         public void NotificarMensajeChat(string nombreJugador, string mensaje)
@@ -814,22 +970,40 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _chatVistaModelo.NotificarMensajeChat(nombreJugador, mensaje);
         }
 
+        /// <summary>
+        /// Notifica la recepcion de un trazo de dibujo. Callback del servicio WCF.
+        /// </summary>
         /// <param name="trazo">Datos del trazo.</param>
         public void NotificarTrazoRecibido(DTOs.TrazoDTO trazo)
         {
             _partidaVistaModelo.NotificarTrazoRecibido(trazo);
         }
 
+        /// <summary>
+        /// Notifica la finalizacion de la ronda actual. Callback del servicio WCF.
+        /// </summary>
         public void NotificarFinRonda()
         {
-            if (_rondaTerminadaTemprano)
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
             {
                 return;
             }
 
-            _partidaVistaModelo.NotificarFinRonda();
+            dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (_rondaTerminadaTemprano)
+                {
+                    return;
+                }
+
+                _partidaVistaModelo.NotificarFinRonda();
+            }));
         }
 
+        /// <summary>
+        /// Notifica la finalizacion de la partida y gestiona la navegacion posterior.
+        /// </summary>
         /// <param name="resultado">Resultado de la partida.</param>
         public void NotificarFinPartida(DTOs.ResultadoPartidaDTO resultado)
         {
@@ -839,8 +1013,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
+            var contextoFinPartida = CrearContextoFinPartida(resultado);
+
+            dispatcher.BeginInvoke(new Action(() =>
+            {
+                ProcesarFinPartidaEnDispatcher(resultado, contextoFinPartida);
+            }));
+        }
+
+        private ContextoFinPartida CrearContextoFinPartida(DTOs.ResultadoPartidaDTO resultado)
+        {
             string mensajeOriginal = resultado?.Mensaje;
-            string mensaje = mensajeOriginal;
+
             bool esCancelacionPorFaltaDeJugadores = string.Equals(
                 mensajeOriginal,
                 "Partida cancelada por falta de jugadores.",
@@ -851,57 +1035,58 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 "El anfitrion de la sala abandono la partida.",
                 StringComparison.OrdinalIgnoreCase);
 
-            if (!string.IsNullOrWhiteSpace(mensaje))
+            string mensajeLocalizado = !string.IsNullOrWhiteSpace(mensajeOriginal)
+                ? _localizador.Localizar(mensajeOriginal, mensajeOriginal)
+                : mensajeOriginal;
+
+            return new ContextoFinPartida
             {
-                mensaje = _localizador.Localizar(mensaje, mensaje);
-            }
-
-            dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (_salaCancelada)
-                {
-                    return;
-                }
-
-                _partidaVistaModelo.NotificarFinPartida();
-                BotonIniciarPartidaHabilitado = false;
-
-                if (esCancelacionPorHost && _esHost)
-                {
-                    return;
-                }
-
-                if (esCancelacionPorFaltaDeJugadores || esCancelacionPorHost)
-                {
-                    if (!string.IsNullOrWhiteSpace(mensaje))
-                    {
-                        _avisoServicio.Mostrar(mensaje);
-                    }
-
-                    var destino = ObtenerDestinoSegunSesion();
-
-                    if (destino == DestinoNavegacion.InicioSesion)
-                    {
-                        _aplicacionCerrando = true;
-                    }
-
-                    Navegar(destino);
-                    return;
-                }
-
-                MostrarResultadoFinalPartida(resultado);
-            }));
+                EsCancelacionPorFaltaDeJugadores = esCancelacionPorFaltaDeJugadores,
+                EsCancelacionPorHost = esCancelacionPorHost,
+                MensajeLocalizado = mensajeLocalizado
+            };
         }
 
-        private void MostrarResultadoFinalPartida(DTOs.ResultadoPartidaDTO resultado)
+        private void ProcesarFinPartidaEnDispatcher(
+            DTOs.ResultadoPartidaDTO resultado,
+            ContextoFinPartida contexto)
         {
-            bool esGanador = DeterminarSiEsGanador(resultado);
-            string titulo = esGanador ? Lang.partidaTextoGanasteTitulo : Lang.partidaTextoPerdisteTitulo;
-            string mensajeResultado = esGanador ? Lang.partidaTextoGanasteMensaje : Lang.partidaTextoPerdisteMensaje;
+            if (_salaCancelada)
+            {
+                return;
+            }
 
-            string mensajeFinal = $"{titulo}\n{mensajeResultado}";
-            _avisoServicio.Mostrar(mensajeFinal);
+            _partidaVistaModelo.NotificarFinPartida();
+            _rondaTerminadaTemprano = false;
+            _adivinadoresQuienYaAcertaron.Clear();
+            BotonIniciarPartidaHabilitado = false;
 
+            if (contexto.EsCancelacionPorHost && _esHost)
+            {
+                return;
+            }
+
+            if (contexto.EsCancelacionPorFaltaDeJugadores || contexto.EsCancelacionPorHost)
+            {
+                ProcesarCancelacionPartida(contexto.MensajeLocalizado);
+                return;
+            }
+
+            MostrarResultadoFinalPartida(resultado);
+        }
+
+        private void ProcesarCancelacionPartida(string mensaje)
+        {
+            if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                _avisoServicio.Mostrar(mensaje);
+            }
+
+            NavegarSegunSesion();
+        }
+
+        private void NavegarSegunSesion()
+        {
             var destino = ObtenerDestinoSegunSesion();
 
             if (destino == DestinoNavegacion.InicioSesion)
@@ -910,6 +1095,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
 
             Navegar(destino);
+        }
+
+        private void MostrarResultadoFinalPartida(DTOs.ResultadoPartidaDTO resultado)
+        {
+            bool esGanador = DeterminarSiEsGanador(resultado);
+            string titulo = esGanador
+                ? Lang.partidaTextoGanasteTitulo
+                : Lang.partidaTextoPerdisteTitulo;
+            string mensajeResultado = esGanador
+                ? Lang.partidaTextoGanasteMensaje
+                : Lang.partidaTextoPerdisteMensaje;
+
+            string mensajeFinal = $"{titulo}\n{mensajeResultado}";
+            _avisoServicio.Mostrar(mensajeFinal);
+
+            NavegarSegunSesion();
         }
 
         private bool DeterminarSiEsGanador(DTOs.ResultadoPartidaDTO resultado)
@@ -1397,6 +1598,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Finaliza la sala, desuscribe eventos y cierra conexiones.
+        /// </summary>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task FinalizarAsync()
         {
             _partidaVistaModelo.PropertyChanged -= PartidaVistaModelo_PropertyChanged;
@@ -1462,11 +1667,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Notifica que la aplicacion esta cerrando completamente.
+        /// </summary>
         public void NotificarCierreAplicacionCompleta()
         {
             _aplicacionCerrando = true;
         }
 
+        /// <summary>
+        /// Determina si se debe ejecutar la accion al cerrar.
+        /// </summary>
         /// <returns>True si se debe ejecutar la accion, false en caso contrario.</returns>
         public bool DebeEjecutarAccionAlCerrar()
         {

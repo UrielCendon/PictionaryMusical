@@ -17,8 +17,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IUsuarioAutenticado _usuarioSesion;
 
+        /// <summary>
+        /// Obtiene o establece la accion a ejecutar para cerrar sesion y navegar.
+        /// </summary>
         public Action EjecutarCierreSesionYNavegacion { get; set; }
 
+        /// <summary>
+        /// Inicializa una nueva instancia de 
+        /// <see cref="TerminacionSesionVistaModelo"/>.
+        /// </summary>
+        /// <param name="ventana">Servicio de ventanas.</param>
+        /// <param name="localizador">Servicio de localizacion.</param>
+        /// <param name="usuarioSesion">Usuario autenticado actual.</param>
         public TerminacionSesionVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -44,16 +54,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
 
         private void EjecutarAceptar()
         {
-            _logger.Info("Usuario confirmo el cierre de sesion.");
+            RegistrarConfirmacionCierreSesion();
             _usuarioSesion.Limpiar();
             EjecutarCierreSesionYNavegacion?.Invoke();
             _ventana.CerrarVentana(this);
         }
 
+        private static void RegistrarConfirmacionCierreSesion()
+        {
+            _logger.Info("Usuario confirmo el cierre de sesion.");
+        }
+
         private void EjecutarCancelar()
         {
-            _logger.Info("Usuario cancelo el cierre de sesion.");
+            RegistrarCancelacionCierreSesion();
             _ventana.CerrarVentana(this);
+        }
+
+        private static void RegistrarCancelacionCierreSesion()
+        {
+            _logger.Info("Usuario cancelo el cierre de sesion.");
         }
     }
 }

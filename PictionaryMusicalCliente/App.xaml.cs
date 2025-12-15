@@ -40,6 +40,7 @@ namespace PictionaryMusicalCliente
         public static IUsuarioAutenticado UsuarioGlobal { get; private set; }
         public static ICatalogoAvatares CatalogoAvatares { get; private set; }
         public static ICatalogoImagenesPerfil CatalogoImagenes { get; private set; }
+        public static ICatalogoCanciones CatalogoCanciones { get; private set; }
 
         public static IInicioSesionServicio InicioSesionServicio { get; private set; }
         public static ICambioContrasenaServicio CambioContrasenaServicio { get; private set; }
@@ -93,7 +94,7 @@ namespace PictionaryMusicalCliente
             base.OnExit(e);
         }
 
-        private void InicializarServicios()
+        private static void InicializarServicios()
         {
             WcfFabrica = new WcfClienteFabrica();
             WcfEjecutor = new WcfClienteEjecutor();
@@ -110,6 +111,7 @@ namespace PictionaryMusicalCliente
             UsuarioGlobal = new UsuarioAutenticado();
             CatalogoAvatares = new CatalogoAvataresLocales();
             CatalogoImagenes = new CatalogoImagenesPerfilLocales();
+            CatalogoCanciones = new CatalogoCancionesLocales();
             UsuarioMapeador = new UsuarioMapeador(UsuarioGlobal);
 
             InicioSesionServicio = new InicioSesionServicio(

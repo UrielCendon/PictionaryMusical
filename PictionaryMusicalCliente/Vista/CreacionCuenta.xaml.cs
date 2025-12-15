@@ -33,8 +33,7 @@ namespace PictionaryMusicalCliente.Vista
                 {
                     if (!string.IsNullOrWhiteSpace(mensaje))
                     {
-                        MessageBox.Show(mensaje, Title, MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+                        App.AvisoServicio.Mostrar(mensaje);
                     }
                 };
             }

@@ -127,35 +127,66 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Recupera la informacion de clasificacion desde el servicio.
         /// </summary>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task CargarClasificacionAsync()
         {
             EstaCargando = true;
 
             await EjecutarOperacionAsync(async () =>
             {
-				_logger.Info("Solicitando tabla de clasificacion al servidor.");
+                RegistrarSolicitudClasificacion();
                 IReadOnlyList<DTOs.ClasificacionUsuarioDTO> clasificacion =
-                    await _clasificacionServicio.ObtenerTopJugadoresAsync().ConfigureAwait(true);
+                    await ObtenerClasificacionAsync().ConfigureAwait(true);
 
-                _clasificacionOriginal = clasificacion ?? Array.Empty
-                    <DTOs.ClasificacionUsuarioDTO>();
+                _clasificacionOriginal = clasificacion 
+                    ?? Array.Empty<DTOs.ClasificacionUsuarioDTO>();
                 ActualizarClasificacion(_clasificacionOriginal);
             },
-            clasificacion =>
+            excepcion =>
             {
-                _logger.Error("Error al obtener clasificacion.", clasificacion);
-                _avisoServicio.Mostrar(clasificacion.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                ManejarErrorClasificacion(excepcion);
             });
 
             EstaCargando = false;
         }
 
+        private static void RegistrarSolicitudClasificacion()
+        {
+            _logger.Info("Solicitando tabla de clasificacion al servidor.");
+        }
+
+        private async Task<IReadOnlyList<DTOs.ClasificacionUsuarioDTO>> 
+            ObtenerClasificacionAsync()
+        {
+            return await _clasificacionServicio
+                .ObtenerTopJugadoresAsync()
+                .ConfigureAwait(true);
+        }
+
+        private void ManejarErrorClasificacion(Exception excepcion)
+        {
+            RegistrarErrorClasificacion(excepcion);
+            NotificarErrorClasificacion(excepcion.Message);
+        }
+
+        private static void RegistrarErrorClasificacion(Exception excepcion)
+        {
+            _logger.Error("Error al obtener clasificacion.", excepcion);
+        }
+
+        private void NotificarErrorClasificacion(string mensaje)
+        {
+            _avisoServicio.Mostrar(mensaje ?? Lang.errorTextoErrorProcesarSolicitud);
+        }
+
         private void ActualizarClasificacion(
             IEnumerable<DTOs.ClasificacionUsuarioDTO> clasificacion)
         {
+            var elementosValidos = clasificacion?.Where(c => c != null)
+                ?? Enumerable.Empty<DTOs.ClasificacionUsuarioDTO>();
+
             Clasificacion = new ObservableCollection<DTOs.ClasificacionUsuarioDTO>(
-                clasificacion?.Where(clasificacion => clasificacion != null)
-                ?? Enumerable.Empty<DTOs.ClasificacionUsuarioDTO>());
+                elementosValidos);
         }
 
         private void OrdenarPorRondas()
@@ -165,11 +196,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = _clasificacionOriginal
-                .Where(clasificacion => clasificacion != null)
-                .OrderByDescending(clasificacion => clasificacion.RondasGanadas)
-                .ThenByDescending(clasificacion => clasificacion.Puntos)
-                .ThenBy(clasificacion => clasificacion.Usuario);
+            IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = 
+                _clasificacionOriginal
+                    .Where(c => c != null)
+                    .OrderByDescending(c => c.RondasGanadas)
+                    .ThenByDescending(c => c.Puntos)
+                    .ThenBy(c => c.Usuario);
 
             ActualizarClasificacion(ordenados);
         }
@@ -181,11 +213,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = _clasificacionOriginal
-                .Where(clasificacion => clasificacion != null)
-                .OrderByDescending(clasificacion => clasificacion.Puntos)
-                .ThenByDescending(clasificacion => clasificacion.RondasGanadas)
-                .ThenBy(clasificacion => clasificacion.Usuario);
+            IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = 
+                _clasificacionOriginal
+                    .Where(c => c != null)
+                    .OrderByDescending(c => c.Puntos)
+                    .ThenByDescending(c => c.RondasGanadas)
+                    .ThenBy(c => c.Usuario);
 
             ActualizarClasificacion(ordenados);
         }

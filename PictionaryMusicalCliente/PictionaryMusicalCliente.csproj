@@ -153,6 +153,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Modelo\Cancion.cs" />
+    <Compile Include="Modelo\Catalogos\CatalogoCancionesLocales.cs" />
     <Compile Include="Modelo\Catalogos\ICatalogos.cs" />
     <Compile Include="Modelo\IUsuarioAutenticado.cs" />
     <Compile Include="Modelo\JugadorElemento.cs" />
@@ -227,6 +229,7 @@
     <Compile Include="VistaModelo\Amigos\InvitarAmigosVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\SolicitudesVistaModelo.cs" />
     <Compile Include="VistaModelo\Perfil\CambioContrasenaVistaModelo.cs" />
+    <Compile Include="VistaModelo\Perfil\RedSocialItemVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />
     <Compile Include="VistaModelo\VentanaPrincipal\ClasificacionVistaModelo.cs" />
     <Compile Include="VistaModelo\Ajustes\AjustesVistaModelo.cs" />

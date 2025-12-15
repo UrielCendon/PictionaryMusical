@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Media;
-using PictionaryMusicalCliente.Modelo;
 
 namespace PictionaryMusicalCliente.Modelo.Catalogos
 {
@@ -34,5 +33,24 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         /// <param name="nombre">Nombre clave de la red social.</param>
         /// <returns>El recurso grafico correspondiente o null si no existe.</returns>
         ImageSource ObtenerIconoRedSocial(string nombre);
+    }
+
+    /// <summary>
+    /// Define el contrato para acceder al catalogo de canciones de la partida.
+    /// </summary>
+    public interface ICatalogoCanciones
+    {
+        /// <summary>
+        /// Obtiene una cancion por su identificador.
+        /// </summary>
+        /// <param name="id">Identificador de la cancion.</param>
+        /// <returns>La cancion si existe, o null si no se encuentra.</returns>
+        Cancion ObtenerPorId(int id);
+
+        /// <summary>
+        /// Obtiene todas las canciones del catalogo.
+        /// </summary>
+        /// <returns>Coleccion de todas las canciones disponibles.</returns>
+        IReadOnlyList<Cancion> ObtenerTodas();
     }
 }
