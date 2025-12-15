@@ -5,9 +5,9 @@ using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
-    /// Implementación concreta de la factoría de repositorios.
+    /// Implementacion concreta de la factoria de repositorios.
     /// Crea instancias de repositorios utilizando un contexto de base de datos proporcionado.
-    /// Esta clase facilita las pruebas unitarias al permitir mockear la creación de repositorios.
+    /// Esta clase facilita las pruebas unitarias al permitir mockear la creacion de repositorios.
     /// </summary>
     public class RepositorioFactoria : IRepositorioFactoria
     {

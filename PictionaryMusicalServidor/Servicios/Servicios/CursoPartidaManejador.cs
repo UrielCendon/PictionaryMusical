@@ -706,7 +706,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -714,7 +714,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (TimeoutException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -722,7 +722,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (ObjectDisposedException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -730,7 +730,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usará la sala por defecto.",
+                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();

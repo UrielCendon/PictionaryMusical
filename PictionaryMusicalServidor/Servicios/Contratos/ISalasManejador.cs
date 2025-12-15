@@ -85,7 +85,7 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         
         /// <summary>
         /// Marca una partida como finalizada para prevenir mandar mensajes de salida
-        /// posteriores a la finalización.
+        /// posteriores a la finalizacion.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         [OperationContract]

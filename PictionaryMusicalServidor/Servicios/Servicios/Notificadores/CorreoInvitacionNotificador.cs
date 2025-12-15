@@ -16,7 +16,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CorreoInvitacionNotificador));
 
-        private const string AsuntoPredeterminadoEs = "Invitación a partida de Pictionary Musical";
+        private const string AsuntoPredeterminadoEs = "Invitacion a partida de Pictionary Musical";
         private const string AsuntoPredeterminadoEn = "Pictionary Musical Game Invitation";
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
             string mensajeInstruccion = esIngles
                 ? "Use the following code to join:"
-                : "Utiliza el siguiente código para unirte:";
+                : "Utiliza el siguiente codigo para unirte:";
 
             string mensajeDespedida = esIngles
                 ? "See you in the game!"

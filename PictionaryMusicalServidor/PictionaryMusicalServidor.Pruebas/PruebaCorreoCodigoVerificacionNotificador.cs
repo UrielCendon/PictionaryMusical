@@ -22,8 +22,8 @@ namespace PictionaryMusicalServidor.Pruebas
             string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje("Lucia", "654321", null);
 
             StringAssert.Contains(cuerpo, "Hola Lucia,");
-            StringAssert.Contains(cuerpo, "Tu código de verificación es:");
-            StringAssert.Contains(cuerpo, "Si no solicitaste este código");
+            StringAssert.Contains(cuerpo, "Tu codigo de verificacion es:");
+            StringAssert.Contains(cuerpo, "Si no solicitaste este codigo");
         }
     }
 
@@ -47,7 +47,7 @@ namespace PictionaryMusicalServidor.Pruebas
 
             StringAssert.Contains(cuerpo, "Has sido invitado a una partida de Pictionary Musical.");
             StringAssert.Contains(cuerpo, "Carlos te ha invitado a su sala.");
-            StringAssert.Contains(cuerpo, "Utiliza el siguiente código para unirte:");
+            StringAssert.Contains(cuerpo, "Utiliza el siguiente codigo para unirte:");
         }
     }
 }

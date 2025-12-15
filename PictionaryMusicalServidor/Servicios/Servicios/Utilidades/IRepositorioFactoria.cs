@@ -4,9 +4,9 @@ using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
-    /// Interfaz para la factoría de creación de repositorios.
-    /// Permite abstraer la creación de repositorios para facilitar pruebas unitarias
-    /// y mantener una única responsabilidad en la gestión del contexto.
+    /// Interfaz para la factoria de creacion de repositorios.
+    /// Permite abstraer la creacion de repositorios para facilitar pruebas unitarias
+    /// y mantener una unica responsabilidad en la gestion del contexto.
     /// </summary>
     public interface IRepositorioFactoria
     {

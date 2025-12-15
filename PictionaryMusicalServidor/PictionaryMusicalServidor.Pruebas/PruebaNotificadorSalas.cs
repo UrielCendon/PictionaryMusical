@@ -77,7 +77,7 @@ namespace PictionaryMusicalServidor.Pruebas
             Guid sesionId = notificador.Suscribir(callback);
             notificador.Desuscribir(sesionId);
 
-            // No hay forma directa de verificar, pero no debería fallar
+            // No hay forma directa de verificar, pero no deberia fallar
         }
 
         [TestMethod]
@@ -99,7 +99,7 @@ namespace PictionaryMusicalServidor.Pruebas
             notificador.Suscribir(callback);
             notificador.DesuscribirPorCallback(callback);
 
-            // No hay forma directa de verificar, pero no debería fallar
+            // No hay forma directa de verificar, pero no deberia fallar
         }
 
         [TestMethod]
