@@ -43,17 +43,34 @@ namespace PictionaryMusicalCliente.Vista
 
         private void MarcarCamposInvalidos(IList<string> campos)
         {
+            RestablecerEstadoCampos();
+
+            if (campos == null)
+            {
+                return;
+            }
+
+            MarcarCamposSegunLista(campos);
+        }
+
+        private void RestablecerEstadoCampos()
+        {
             ControlVisual.RestablecerEstadoCampo(campoTextoUsuario);
             ControlVisual.RestablecerEstadoCampo(campoContrasenaContrasena);
+        }
 
-            if (campos == null) return;
-
+        private void MarcarCamposSegunLista(IList<string> campos)
+        {
             foreach (var campo in campos)
             {
                 if (campo == nameof(InicioSesionVistaModelo.Identificador))
+                {
                     ControlVisual.MarcarCampoInvalido(campoTextoUsuario);
+                }
                 else if (campo == InicioSesionVistaModelo.CampoContrasena)
+                {
                     ControlVisual.MarcarCampoInvalido(campoContrasenaContrasena);
+                }
             }
         }
 
@@ -66,9 +83,14 @@ namespace PictionaryMusicalCliente.Vista
         private void AlHacerClicEnBotonAudio(object sender, RoutedEventArgs e)
         {
             bool estaSilenciado = App.MusicaManejador.AlternarSilencio();
-            string rutaImagen = estaSilenciado ? "Audio_Apagado.png" : "Audio_Encendido.png";
-            imagenBotonAudio.Source = new BitmapImage(
-                new Uri($"/Recursos/{rutaImagen}", UriKind.Relative));
+            ActualizarImagenBotonAudio(estaSilenciado);
+        }
+
+        private void ActualizarImagenBotonAudio(bool estaSilenciado)
+        {
+            string nombreImagen = estaSilenciado ? "Audio_Apagado.png" : "Audio_Encendido.png";
+            string rutaImagen = $"/Recursos/{nombreImagen}";
+            imagenBotonAudio.Source = new BitmapImage(new Uri(rutaImagen, UriKind.Relative));
         }
     }
 }

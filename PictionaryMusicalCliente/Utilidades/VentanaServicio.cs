@@ -3,9 +3,9 @@ using System.Linq;
 using System.Windows;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Vista;
-using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.Ajustes;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalCliente.VistaModelo.Sesion;
@@ -22,8 +22,15 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Muestra una ventana no modal asociada a un ViewModel especifico.
         /// </summary>
-        /// <param name="vistaModelo">El ViewModel que define el contenido y logica de la ventana.
+        /// <param name="vistaModelo">
+        /// El ViewModel que define el contenido y logica de la ventana.
         /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si <paramref name="vistaModelo"/> es nulo.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Se lanza si no existe una vista registrada para el tipo de ViewModel.
+        /// </exception>
         public void MostrarVentana(object vistaModelo)
         {
             var ventana = CrearVentana(vistaModelo);
@@ -35,6 +42,12 @@ namespace PictionaryMusicalCliente.Utilidades
         /// </summary>
         /// <param name="vistaModelo">El ViewModel que define el contenido de la ventana.</param>
         /// <returns>El resultado del dialogo (true, false o null) al cerrarse.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si <paramref name="vistaModelo"/> es nulo.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Se lanza si no existe una vista registrada para el tipo de ViewModel.
+        /// </exception>
         public bool? MostrarVentanaDialogo(object vistaModelo)
         {
             var ventana = CrearVentana(vistaModelo);
@@ -89,79 +102,64 @@ namespace PictionaryMusicalCliente.Utilidades
 
         private static Window CrearVentana(object vistaModelo)
         {
-            if (vistaModelo == null) throw new ArgumentNullException(nameof(vistaModelo));
+            if (vistaModelo == null)
+            {
+                throw new ArgumentNullException(nameof(vistaModelo));
+            }
 
-            Window ventana = null;
+            Window ventana = ResolverVentanaPorVistaModelo(vistaModelo);
+            ventana.DataContext = vistaModelo;
+            return ventana;
+        }
 
+        private static Window ResolverVentanaPorVistaModelo(object vistaModelo)
+        {
             switch (vistaModelo)
             {
                 case InicioSesionVistaModelo:
-                    ventana = new InicioSesion();
-                    break;
+                    return new InicioSesion();
                 case VentanaPrincipalVistaModelo:
-                    ventana = new VentanaPrincipal();
-                    break;
+                    return new VentanaPrincipal();
                 case SalaVistaModelo:
-                    ventana = new Sala();
-                    break;
+                    return new Sala();
                 case CreacionCuentaVistaModelo:
-                    ventana = new CreacionCuenta();
-                    break;
+                    return new CreacionCuenta();
                 case AjustesPartidaVistaModelo:
-                    ventana = new AjustesPartida();
-                    break;
+                    return new AjustesPartida();
                 case AjustesVistaModelo:
-                    ventana = new Ajustes();
-                    break;
+                    return new Ajustes();
                 case ConfirmacionSalirPartidaVistaModelo:
-                    ventana = new ConfirmacionSalirPartida();
-                    break;
+                    return new ConfirmacionSalirPartida();
                 case BusquedaAmigoVistaModelo:
-                    ventana = new BusquedaAmigo();
-                    break;
+                    return new BusquedaAmigo();
                 case EliminacionAmigoVistaModelo:
-                    ventana = new EliminacionAmigo();
-                    break;
+                    return new EliminacionAmigo();
                 case InvitarAmigosVistaModelo:
-                    ventana = new InvitarAmigos();
-                    break;
+                    return new InvitarAmigos();
                 case SolicitudesVistaModelo:
-                    ventana = new Solicitudes();
-                    break;
+                    return new Solicitudes();
                 case CambioContrasenaVistaModelo:
-                    ventana = new CambioContrasena();
-                    break;
+                    return new CambioContrasena();
                 case PerfilVistaModelo:
-                    ventana = new Perfil();
-                    break;
+                    return new Perfil();
                 case SeleccionAvatarVistaModelo:
-                    ventana = new SeleccionAvatar();
-                    break;
+                    return new SeleccionAvatar();
                 case VerificacionCodigoVistaModelo:
-                    ventana = new VerificacionCodigo();
-                    break;
+                    return new VerificacionCodigo();
                 case ExpulsionJugadorVistaModelo:
-                    ventana = new ExpulsionJugador();
-                    break;
+                    return new ExpulsionJugador();
                 case IngresoPartidaInvitadoVistaModelo:
-                    ventana = new IngresoPartidaInvitado();
-                    break;
+                    return new IngresoPartidaInvitado();
                 case ReportarJugadorVistaModelo:
-                    ventana = new ReportarJugador();
-                    break;
+                    return new ReportarJugador();
                 case TerminacionSesionVistaModelo:
-                    ventana = new TerminacionSesion();
-                    break;
+                    return new TerminacionSesion();
                 case ClasificacionVistaModelo:
-                    ventana = new Clasificacion();
-                    break;
+                    return new Clasificacion();
                 default:
-                    throw new InvalidOperationException($"No existe vista registrada para {
-                        vistaModelo.GetType().Name}");
+                    throw new InvalidOperationException(
+                        $"No existe vista registrada para {vistaModelo.GetType().Name}");
             }
-
-            ventana.DataContext = vistaModelo;
-            return ventana;
         }
     }
 }

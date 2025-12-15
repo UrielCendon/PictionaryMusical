@@ -25,16 +25,37 @@ namespace PictionaryMusicalCliente.Utilidades
         public MusicaManejador()
         {
             _reproductor = new MediaPlayer();
+            SuscribirEventos();
+            InicializarVolumen();
+        }
+
+        private void SuscribirEventos()
+        {
             _reproductor.MediaEnded += EnMedioTerminado;
             _reproductor.MediaFailed += EnMedioFallido;
+        }
 
-            double volumenGuardado = Properties.Settings.Default.volumenMusica;
-            if (double.IsNaN(volumenGuardado) || double.IsInfinity(volumenGuardado))
+        private void InicializarVolumen()
+        {
+            double volumenGuardado = ObtenerVolumenGuardado();
+            _reproductor.Volume = NormalizarVolumen(volumenGuardado);
+        }
+
+        private static double ObtenerVolumenGuardado()
+        {
+            double valor = Properties.Settings.Default.volumenMusica;
+
+            if (double.IsNaN(valor) || double.IsInfinity(valor))
             {
-                 volumenGuardado = VolumenPredeterminado;
+                return VolumenPredeterminado;
             }
-            
-            _reproductor.Volume = Math.Max(0, Math.Min(1, volumenGuardado));
+
+            return valor;
+        }
+
+        private static double NormalizarVolumen(double volumen)
+        {
+            return Math.Max(0, Math.Min(1, volumen));
         }
 
         /// <summary>
@@ -45,43 +66,92 @@ namespace PictionaryMusicalCliente.Utilidades
             get => _reproductor.Volume;
             set
             {
-                if (_desechado) return;
-                
-                double valorSeguro = Math.Max(0, Math.Min(1, value));
+                if (_desechado)
+                {
+                    return;
+                }
+
+                double valorSeguro = NormalizarVolumen(value);
                 _reproductor.Volume = valorSeguro;
-                
-                Properties.Settings.Default.volumenMusica = valorSeguro;
-                Properties.Settings.Default.Save();
+                GuardarPreferenciaVolumen(valorSeguro);
             }
+        }
+
+        private static void GuardarPreferenciaVolumen(double volumen)
+        {
+            Properties.Settings.Default.volumenMusica = volumen;
+            Properties.Settings.Default.Save();
         }
 
         /// <summary>
         /// Inicia la reproduccion en bucle del archivo especificado.
         /// </summary>
+        /// <param name="nombreArchivo">Nombre del archivo de audio a reproducir.</param>
         public void ReproducirEnBucle(string nombreArchivo)
         {
-            if (_desechado || string.IsNullOrWhiteSpace(nombreArchivo)) return;
+            if (!PuedeReproducir(nombreArchivo))
+            {
+                return;
+            }
 
+            EjecutarReproduccionEnBucle(nombreArchivo);
+        }
+
+        private bool PuedeReproducir(string nombreArchivo)
+        {
+            return !_desechado && !string.IsNullOrWhiteSpace(nombreArchivo);
+        }
+
+        private void EjecutarReproduccionEnBucle(string nombreArchivo)
+        {
             try
             {
-                string ruta = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory,
-                    "Recursos",
-                    nombreArchivo);
-
-                _reproductor.Open(new Uri(ruta, UriKind.Absolute));
-                _reproductor.Play();
-                _estaReproduciendo = true;
+                IniciarReproduccion(nombreArchivo);
             }
             catch (UriFormatException excepcion)
             {
-                _logger.ErrorFormat("URI de musica invalida ({0}): {1}", nombreArchivo, excepcion);
+                RegistrarErrorUri(nombreArchivo, excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.WarnFormat("No se pudo iniciar la musica ({0}) por estado invalido: {1}", 
-                    nombreArchivo, excepcion);
+                RegistrarErrorEstadoInvalido(nombreArchivo, excepcion);
             }
+        }
+
+        private void IniciarReproduccion(string nombreArchivo)
+        {
+            string ruta = ConstruirRutaArchivo(nombreArchivo);
+            _reproductor.Open(new Uri(ruta, UriKind.Absolute));
+            _reproductor.Play();
+            _estaReproduciendo = true;
+        }
+
+        private static string ConstruirRutaArchivo(string nombreArchivo)
+        {
+            return Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Recursos",
+                nombreArchivo);
+        }
+
+        private static void RegistrarErrorUri(
+            string nombreArchivo,
+            UriFormatException excepcion)
+        {
+            _logger.ErrorFormat(
+                "URI de musica invalida ({0}): {1}",
+                nombreArchivo,
+                excepcion);
+        }
+
+        private static void RegistrarErrorEstadoInvalido(
+            string nombreArchivo,
+            InvalidOperationException excepcion)
+        {
+            _logger.WarnFormat(
+                "No se pudo iniciar la musica ({0}) por estado invalido: {1}",
+                nombreArchivo,
+                excepcion);
         }
 
         /// <summary>
@@ -89,8 +159,21 @@ namespace PictionaryMusicalCliente.Utilidades
         /// </summary>
         public void Detener()
         {
-            if (_desechado || !_estaReproduciendo) return;
+            if (!PuedeDetener())
+            {
+                return;
+            }
 
+            EjecutarDetencion();
+        }
+
+        private bool PuedeDetener()
+        {
+            return !_desechado && _estaReproduciendo;
+        }
+
+        private void EjecutarDetencion()
+        {
             try
             {
                 _reproductor.Stop();
@@ -131,8 +214,13 @@ namespace PictionaryMusicalCliente.Utilidades
 
         private void EnMedioFallido(object remitente, ExceptionEventArgs argumentosEvento)
         {
-            _logger.ErrorFormat("Fallo critico en MediaPlayer de musica: {0}", argumentosEvento.ErrorException);
+            RegistrarFalloCritico(argumentosEvento.ErrorException);
             _estaReproduciendo = false;
+        }
+
+        private static void RegistrarFalloCritico(Exception excepcion)
+        {
+            _logger.ErrorFormat("Fallo critico en MediaPlayer de musica: {0}", excepcion);
         }
 
         /// <summary>
@@ -144,29 +232,47 @@ namespace PictionaryMusicalCliente.Utilidades
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Libera los recursos del reproductor.
+        /// </summary>
+        /// <param name="disposing">
+        /// True si se invoca desde Dispose(), false si es desde el finalizador.
+        /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_desechado) return;
+            if (_desechado)
+            {
+                return;
+            }
 
             if (disposing)
             {
-                _reproductor.MediaEnded -= EnMedioTerminado;
-                _reproductor.MediaFailed -= EnMedioFallido;
-                
-                try 
-                {
-                    _reproductor.Stop();
-                    _reproductor.Close();
-                }
-                catch (InvalidOperationException excepcion) 
-                {
-                    _logger.Warn(
-                        "El reproductor de musica no estaba en un estado valido para cerrarse.",
-                        excepcion);
-                }
+                DesuscribirEventos();
+                LiberarReproductor();
             }
 
             _desechado = true;
+        }
+
+        private void DesuscribirEventos()
+        {
+            _reproductor.MediaEnded -= EnMedioTerminado;
+            _reproductor.MediaFailed -= EnMedioFallido;
+        }
+
+        private void LiberarReproductor()
+        {
+            try
+            {
+                _reproductor.Stop();
+                _reproductor.Close();
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Warn(
+                    "El reproductor de musica no estaba en un estado valido para cerrarse.",
+                    excepcion);
+            }
         }
     }
 }

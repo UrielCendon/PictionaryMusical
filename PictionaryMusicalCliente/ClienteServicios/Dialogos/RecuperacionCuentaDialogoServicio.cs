@@ -24,6 +24,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         private readonly IAvisoServicio _avisoServicio;
         private readonly SonidoManejador _sonidoManejador;
 
+        /// <summary>
+        /// Inicializa una nueva instancia del servicio de recuperacion de cuenta.
+        /// </summary>
+        /// <param name="verificarCodigoDialogoServicio">
+        /// Servicio para mostrar el dialogo de verificacion de codigo.
+        /// </param>
+        /// <param name="avisoServicio">Servicio para mostrar avisos al usuario.</param>
+        /// <param name="sonidoManejador">Manejador de efectos de sonido.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si alguno de los parametros es nulo.
+        /// </exception>
         public RecuperacionCuentaDialogoServicio(
             IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
             IAvisoServicio avisoServicio,
@@ -39,49 +50,77 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
         /// <summary>
         /// Ejecuta el proceso de recuperacion de cuenta paso a paso.
+        /// Incluye solicitud de codigo, verificacion y cambio de contrasena.
         /// </summary>
+        /// <param name="identificador">
+        /// Correo electronico o nombre de usuario de la cuenta a recuperar.
+        /// </param>
+        /// <param name="cambioContrasenaServicio">
+        /// Servicio que ejecuta las operaciones de cambio de contrasena.
+        /// </param>
+        /// <returns>
+        /// Resultado de la operacion indicando exito o fallo con mensaje descriptivo.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Se lanza si <paramref name="cambioContrasenaServicio"/> es nulo.
+        /// </exception>
         public async Task<DTOs.ResultadoOperacionDTO> RecuperarCuentaAsync(
             string identificador,
             ICambioContrasenaServicio cambioContrasenaServicio)
         {
-            if (cambioContrasenaServicio == null) throw new ArgumentNullException(
-                nameof(cambioContrasenaServicio));
+            if (cambioContrasenaServicio == null)
+            {
+                throw new ArgumentNullException(nameof(cambioContrasenaServicio));
+            }
 
-            var resultadoSolicitud = await ProcesarSolicitudCodigo(identificador,
-                cambioContrasenaServicio);
+            var resultadoSolicitud = await SolicitarCodigoRecuperacionAsync(
+                identificador,
+                cambioContrasenaServicio).ConfigureAwait(true);
+
             if (!resultadoSolicitud.Exito)
             {
                 return resultadoSolicitud.Error;
             }
 
-            var resultadoVerificacion = await ProcesarVerificacionCodigo(
+            NotificarCodigoEnviado();
+
+            var resultadoVerificacion = await VerificarCodigoAsync(
                 resultadoSolicitud.Token,
-                cambioContrasenaServicio);
+                cambioContrasenaServicio).ConfigureAwait(true);
 
             if (!resultadoVerificacion.Exito)
             {
                 return resultadoVerificacion.Error;
             }
 
-            return await ProcesarCambioContrasena(
+            NotificarCodigoVerificado();
+
+            return await MostrarDialogoCambioContrasena(
                 resultadoSolicitud.Token,
-                cambioContrasenaServicio);
+                cambioContrasenaServicio).ConfigureAwait(true);
         }
 
-        private async Task<(bool Exito, string Token, DTOs.ResultadoOperacionDTO Error)>
-            ProcesarSolicitudCodigo(string identificador, ICambioContrasenaServicio servicio)
+        private async static Task<(bool Exito, string Token, DTOs.ResultadoOperacionDTO Error)>
+            SolicitarCodigoRecuperacionAsync(
+                string identificador,
+                ICambioContrasenaServicio servicio)
         {
-            var respuestaServidor = await servicio.SolicitarCodigoRecuperacionAsync(identificador)
+            var respuesta = await servicio
+                .SolicitarCodigoRecuperacionAsync(identificador)
                 .ConfigureAwait(true);
 
-            var validacion = ValidarRespuestaSolicitud(respuestaServidor);
+            var validacion = ValidarRespuestaSolicitud(respuesta);
             if (!validacion.Exito)
             {
                 return (false, null, validacion.Error);
             }
 
+            return (true, respuesta.TokenCodigo, null);
+        }
+
+        private void NotificarCodigoEnviado()
+        {
             _avisoServicio.Mostrar(Lang.avisoTextoCodigoEnviado);
-            return (true, respuestaServidor.TokenCodigo, null);
         }
 
         private static (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarRespuestaSolicitud(
@@ -94,7 +133,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
             if (!respuesta.CuentaEncontrada)
             {
-                return (false, CrearError(respuesta.Mensaje, Lang.errorTextoCuentaNoRegistrada));
+                return (false, CrearError(
+                    respuesta.Mensaje,
+                    Lang.errorTextoCuentaNoRegistrada));
             }
 
             if (!respuesta.CodigoEnviado)
@@ -108,26 +149,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         }
 
         private async Task<(bool Exito, DTOs.ResultadoOperacionDTO Error)>
-            ProcesarVerificacionCodigo(string token, ICambioContrasenaServicio servicio)
+            VerificarCodigoAsync(string token, ICambioContrasenaServicio servicio)
         {
             var adaptador = CrearAdaptadorVerificacion(servicio);
+            var respuestaDialogo = await MostrarDialogoVerificacionAsync(token, adaptador)
+                .ConfigureAwait(true);
 
-            var respuestaDialogo = await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
-                Lang.cambiarContrasenaTextoCodigoVerificacion,
-                token,
-                adaptador,
-                _avisoServicio,
-                _sonidoManejador).ConfigureAwait(true);
-
-            var validacion = ValidarRespuestaVerificacion(respuestaDialogo);
-            if (!validacion.Exito)
-            {
-                _logger.Warn("Verificacion de codigo fallida.");
-                return (false, validacion.Error);
-            }
-
-            _avisoServicio.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
-            return (true, null);
+            return ValidarResultadoVerificacion(respuestaDialogo);
         }
 
         private static ICodigoVerificacionServicio CrearAdaptadorVerificacion(
@@ -136,7 +164,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             return new CodigoRecuperacionServicioAdaptador(servicio);
         }
 
-        private static (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarRespuestaVerificacion(
+        private async Task<DTOs.ResultadoRegistroCuentaDTO> MostrarDialogoVerificacionAsync(
+            string token,
+            ICodigoVerificacionServicio adaptador)
+        {
+            return await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
+                Lang.cambiarContrasenaTextoCodigoVerificacion,
+                token,
+                adaptador,
+                _avisoServicio,
+                _sonidoManejador).ConfigureAwait(true);
+        }
+
+        private static (bool Exito, DTOs.ResultadoOperacionDTO Error) ValidarResultadoVerificacion(
             DTOs.ResultadoRegistroCuentaDTO respuesta)
         {
             if (respuesta == null)
@@ -146,35 +186,70 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
             if (!respuesta.RegistroExitoso)
             {
-                return (false, CrearError(respuesta.Mensaje, Lang.errorTextoCodigoIncorrecto));
+                _logger.Warn("Verificacion de codigo fallida.");
+                return (false, CrearError(
+                    respuesta.Mensaje,
+                    Lang.errorTextoCodigoIncorrecto));
             }
 
             return (true, null);
         }
 
-        private Task<DTOs.ResultadoOperacionDTO> ProcesarCambioContrasena(
-            string token,
-            ICambioContrasenaServicio servicio)
+        private void NotificarCodigoVerificado()
         {
-            return MostrarDialogoCambio(token, servicio);
+            _avisoServicio.Mostrar(Lang.avisoTextoCodigoVerificadoCambio);
         }
 
-        private Task<DTOs.ResultadoOperacionDTO> MostrarDialogoCambio(
+        private Task<DTOs.ResultadoOperacionDTO> MostrarDialogoCambioContrasena(
             string token,
             ICambioContrasenaServicio servicio)
         {
-            var ventana = new CambioContrasena();
-            var vistaModelo = new CambioContrasenaVistaModelo(
+            var finalizacion = new TaskCompletionSource<DTOs.ResultadoOperacionDTO>();
+            var ventana = CrearVentanaCambioContrasena();
+            var vistaModelo = CrearVistaModeloCambioContrasena(token, servicio);
+
+            ConfigurarCierreVentana(ventana, finalizacion);
+            ConfigurarCallbackFinalizacion(vistaModelo, finalizacion);
+            MostrarVentana(ventana, vistaModelo);
+
+            return finalizacion.Task;
+        }
+
+        private static CambioContrasena CrearVentanaCambioContrasena()
+        {
+            return new CambioContrasena();
+        }
+
+        private CambioContrasenaVistaModelo CrearVistaModeloCambioContrasena(
+            string token,
+            ICambioContrasenaServicio servicio)
+        {
+            return new CambioContrasenaVistaModelo(
                 App.VentanaServicio,
                 App.Localizador,
                 token,
                 servicio,
                 _avisoServicio,
                 _sonidoManejador);
-            var finalizacion = new TaskCompletionSource<DTOs.ResultadoOperacionDTO>();
+        }
 
-            ConfigurarCierreVentana(ventana, finalizacion);
-            
+        private static void ConfigurarCierreVentana(
+            CambioContrasena ventana,
+            TaskCompletionSource<DTOs.ResultadoOperacionDTO> tareaFinalizada)
+        {
+            ventana.Closed += (_, __) =>
+            {
+                if (!tareaFinalizada.Task.IsCompleted)
+                {
+                    tareaFinalizada.TrySetResult(null);
+                }
+            };
+        }
+
+        private static void ConfigurarCallbackFinalizacion(
+            CambioContrasenaVistaModelo vistaModelo,
+            TaskCompletionSource<DTOs.ResultadoOperacionDTO> finalizacion)
+        {
             vistaModelo.CambioContrasenaFinalizada = resultado =>
             {
                 if (finalizacion.Task.IsCompleted)
@@ -184,33 +259,28 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
 
                 finalizacion.TrySetResult(resultado);
             };
+        }
 
+        private static void MostrarVentana(
+            CambioContrasena ventana,
+            CambioContrasenaVistaModelo vistaModelo)
+        {
             ventana.DataContext = vistaModelo;
             ventana.ShowDialog();
-
-            return finalizacion.Task;
         }
 
-        private static void ConfigurarCierreVentana(
-            CambioContrasena ventana,
-            TaskCompletionSource<DTOs.ResultadoOperacionDTO> tcs)
+        private static DTOs.ResultadoOperacionDTO CrearError(
+            string mensajeServidor,
+            string mensajeContingencia)
         {
-            ventana.Closed += (_, __) =>
-            {
-                if (!tcs.Task.IsCompleted)
-                {
-                    tcs.TrySetResult(null);
-                }
-            };
-        }
+            var mensajeFinal = string.IsNullOrWhiteSpace(mensajeServidor)
+                ? mensajeContingencia
+                : mensajeServidor;
 
-        private static DTOs.ResultadoOperacionDTO CrearError(string mensajeServer, 
-            string contingencia)
-        {
             return new DTOs.ResultadoOperacionDTO
             {
                 OperacionExitosa = false,
-                Mensaje = string.IsNullOrWhiteSpace(mensajeServer) ? contingencia : mensajeServer
+                Mensaje = mensajeFinal
             };
         }
     }

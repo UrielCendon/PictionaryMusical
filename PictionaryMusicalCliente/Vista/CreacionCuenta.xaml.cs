@@ -51,40 +51,55 @@ namespace PictionaryMusicalCliente.Vista
 
         private void MarcarCamposInvalidos(IList<string> camposInvalidos)
         {
+            RestablecerEstadoCampos();
+
+            if (camposInvalidos == null)
+            {
+                return;
+            }
+
+            MarcarCamposSegunLista(camposInvalidos);
+        }
+
+        private void RestablecerEstadoCampos()
+        {
             ControlVisual.RestablecerEstadoCampo(campoTextoUsuario);
             ControlVisual.RestablecerEstadoCampo(campoTextoNombre);
             ControlVisual.RestablecerEstadoCampo(campoTextoApellido);
             ControlVisual.RestablecerEstadoCampo(campoTextoCorreo);
             ControlVisual.RestablecerEstadoCampo(campoContrasenaContrasena);
+        }
 
-            if (camposInvalidos == null) return;
-
-            if (DataContext is CreacionCuentaVistaModelo vistaModelo)
+        private void MarcarCamposSegunLista(IList<string> camposInvalidos)
+        {
+            if (!(DataContext is CreacionCuentaVistaModelo vistaModelo))
             {
-                if (camposInvalidos.Contains(nameof(vistaModelo.Usuario)))
-                {
-                    ControlVisual.MarcarCampoInvalido(campoTextoUsuario);
-                }
+                return;
+            }
 
-                if (camposInvalidos.Contains(nameof(vistaModelo.Nombre)))
-                {
-                    ControlVisual.MarcarCampoInvalido(campoTextoNombre);
-                }
+            if (camposInvalidos.Contains(nameof(vistaModelo.Usuario)))
+            {
+                ControlVisual.MarcarCampoInvalido(campoTextoUsuario);
+            }
 
-                if (camposInvalidos.Contains(nameof(vistaModelo.Apellido)))
-                {
-                    ControlVisual.MarcarCampoInvalido(campoTextoApellido);
-                }
+            if (camposInvalidos.Contains(nameof(vistaModelo.Nombre)))
+            {
+                ControlVisual.MarcarCampoInvalido(campoTextoNombre);
+            }
 
-                if (camposInvalidos.Contains(nameof(vistaModelo.Correo)))
-                {
-                    ControlVisual.MarcarCampoInvalido(campoTextoCorreo);
-                }
+            if (camposInvalidos.Contains(nameof(vistaModelo.Apellido)))
+            {
+                ControlVisual.MarcarCampoInvalido(campoTextoApellido);
+            }
 
-                if (camposInvalidos.Contains(nameof(vistaModelo.Contrasena)))
-                {
-                    ControlVisual.MarcarCampoInvalido(campoContrasenaContrasena);
-                }
+            if (camposInvalidos.Contains(nameof(vistaModelo.Correo)))
+            {
+                ControlVisual.MarcarCampoInvalido(campoTextoCorreo);
+            }
+
+            if (camposInvalidos.Contains(nameof(vistaModelo.Contrasena)))
+            {
+                ControlVisual.MarcarCampoInvalido(campoContrasenaContrasena);
             }
         }
     }
