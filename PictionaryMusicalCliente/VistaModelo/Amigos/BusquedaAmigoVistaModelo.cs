@@ -144,12 +144,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 _avisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
                 _ventana.CerrarVentana(this);
             },
-            ex =>
+            excepcion =>
             {
-                _logger.ErrorFormat("Error al enviar solicitud a {0}.", nombreAmigo, ex);
+                _logger.ErrorFormat("Error al enviar solicitud a {0}.", nombreAmigo, excepcion);
                 _sonidoManejador.ReproducirError();
 
-                string mensajeError = ex.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+                string mensajeError = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
                 _avisoServicio.Mostrar(mensajeError);
                 
                 EstaProcesando = false;

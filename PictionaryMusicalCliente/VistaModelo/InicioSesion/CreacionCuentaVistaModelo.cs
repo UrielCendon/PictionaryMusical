@@ -16,6 +16,9 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 {
+    /// <summary>
+    /// Gestiona la logica para el registro de nuevas cuentas de usuario.
+    /// </summary>
     public class CreacionCuentaVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -479,7 +482,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             MostrarErrorCorreo = resultado.CorreoRegistrado;
         }
 
-        private bool TieneCamposDuplicados(
+        private static bool TieneCamposDuplicados(
             DTOs.ResultadoSolicitudCodigoDTO resultado)
         {
             return resultado.UsuarioRegistrado || resultado.CorreoRegistrado;
@@ -516,7 +519,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             return (true, resultadoVerificacion);
         }
 
-        private bool ValidarResultadoVerificacion(
+        private static bool ValidarResultadoVerificacion(
             DTOs.ResultadoRegistroCuentaDTO resultadoVerificacion)
         {
             return resultadoVerificacion != null && 

@@ -65,12 +65,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 CrearElementos(amigos, amigoInvitado));
         }
 
+        /// <summary>
+        /// Coleccion de amigos disponibles para invitar.
+        /// </summary>
         public ObservableCollection<AmigoInvitacionItemVistaModelo> Amigos { get; }
 
         internal async Task InvitarAsync(AmigoInvitacionItemVistaModelo amigo)
         {
-            if (!ValidarAmigo(amigo))
+            ResultadoValidacionAmigo validacion = ValidarAmigo(amigo);
+            
+            if (!validacion.EsValido)
             {
+                MostrarErrorValidacion(validacion);
                 return;
             }
 
@@ -88,39 +94,49 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
                 await EnviarInvitacionPorCorreoAsync(perfil.Correo, amigo);
             },
-            ex =>
+            excepcion =>
             {
-                _logger.Error("Error al enviar invitacion.", ex);
+                _logger.Error("Error al enviar invitacion.", excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoEnviarCorreo);
+                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoEnviarCorreo);
                 amigo.EstaProcesando = false;
             });
 
             amigo.EstaProcesando = false;
         }
 
-        private bool ValidarAmigo(AmigoInvitacionItemVistaModelo amigo)
+        private static ResultadoValidacionAmigo ValidarAmigo(
+            AmigoInvitacionItemVistaModelo amigo)
         {
             if (amigo == null)
             {
-                return false;
+                return ResultadoValidacionAmigo.Invalido(null);
             }
 
             if (amigo.InvitacionEnviada)
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.invitarAmigosTextoYaInvitado);
-                return false;
+                return ResultadoValidacionAmigo.Invalido(
+                    Lang.invitarAmigosTextoYaInvitado);
             }
 
             if (amigo.UsuarioId <= 0)
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
-                return false;
+                return ResultadoValidacionAmigo.Invalido(
+                    Lang.errorTextoErrorProcesarSolicitud);
             }
 
-            return true;
+            return ResultadoValidacionAmigo.Valido();
+        }
+
+        private void MostrarErrorValidacion(ResultadoValidacionAmigo validacion)
+        {
+            if (string.IsNullOrWhiteSpace(validacion.MensajeError))
+            {
+                return;
+            }
+
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(validacion.MensajeError);
         }
 
         private async Task<DTOs.UsuarioDTO> ObtenerPerfilAmigoAsync(int usuarioId)
@@ -247,17 +263,24 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
 
-            InvitarComando = new ComandoAsincrono(async () =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await _padre.InvitarAsync(this).ConfigureAwait(true);
-            }, () => !EstaProcesando);
+            InvitarComando = new ComandoAsincrono(
+                async () => await EjecutarInvitarAsync(),
+                () => !EstaProcesando);
         }
 
+        /// <summary>
+        /// Identificador unico del usuario amigo.
+        /// </summary>
         public int UsuarioId { get; }
 
+        /// <summary>
+        /// Nombre de usuario del amigo.
+        /// </summary>
         public string NombreUsuario { get; }
 
+        /// <summary>
+        /// Indica si ya se envio una invitacion a este amigo.
+        /// </summary>
         public bool InvitacionEnviada
         {
             get => _invitacionEnviada;
@@ -266,15 +289,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 if (_invitacionEnviada != value)
                 {
                     _invitacionEnviada = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
-                        nameof(InvitacionEnviada)));
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
-                        nameof(TextoBoton)));
+                    NotificarCambioPropiedad(nameof(InvitacionEnviada));
+                    NotificarCambioPropiedad(nameof(TextoBoton));
                     InvitarComando.NotificarPuedeEjecutar();
                 }
             }
         }
 
+        /// <summary>
+        /// Indica si hay una operacion en curso para este amigo.
+        /// </summary>
         public bool EstaProcesando
         {
             get => _estaProcesando;
@@ -283,22 +307,79 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 if (_estaProcesando != value)
                 {
                     _estaProcesando = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(
-                        nameof(EstaProcesando)));
+                    NotificarCambioPropiedad(nameof(EstaProcesando));
                     InvitarComando.NotificarPuedeEjecutar();
                 }
             }
         }
 
+        /// <summary>
+        /// Texto a mostrar en el boton de invitar.
+        /// </summary>
         public string TextoBoton => InvitacionEnviada
             ? Lang.invitarAmigosTextoInvitado
             : Lang.globalTextoInvitar;
 
+        /// <summary>
+        /// Comando para enviar la invitacion al amigo.
+        /// </summary>
         public IComandoAsincrono InvitarComando { get; }
+
+        private async Task EjecutarInvitarAsync()
+        {
+            _sonidoManejador.ReproducirClick();
+            await _padre.InvitarAsync(this).ConfigureAwait(true);
+        }
+
+        private void NotificarCambioPropiedad(string nombrePropiedad)
+        {
+            PropertyChanged?.Invoke(
+                this, 
+                new PropertyChangedEventArgs(nombrePropiedad));
+        }
 
         internal void MarcarInvitacionEnviada()
         {
             InvitacionEnviada = true;
+        }
+    }
+
+    /// <summary>
+    /// Resultado de la validacion de un amigo para invitar.
+    /// </summary>
+    internal sealed class ResultadoValidacionAmigo
+    {
+        private ResultadoValidacionAmigo(bool esValido, string mensajeError)
+        {
+            EsValido = esValido;
+            MensajeError = mensajeError;
+        }
+
+        /// <summary>
+        /// Indica si la validacion fue exitosa.
+        /// </summary>
+        public bool EsValido { get; }
+
+        /// <summary>
+        /// Mensaje de error si la validacion fallo.
+        /// </summary>
+        public string MensajeError { get; }
+
+        /// <summary>
+        /// Crea un resultado de validacion exitosa.
+        /// </summary>
+        public static ResultadoValidacionAmigo Valido()
+        {
+            return new ResultadoValidacionAmigo(true, null);
+        }
+
+        /// <summary>
+        /// Crea un resultado de validacion fallida.
+        /// </summary>
+        /// <param name="mensajeError">Mensaje de error a mostrar.</param>
+        public static ResultadoValidacionAmigo Invalido(string mensajeError)
+        {
+            return new ResultadoValidacionAmigo(false, mensajeError);
         }
     }
 }

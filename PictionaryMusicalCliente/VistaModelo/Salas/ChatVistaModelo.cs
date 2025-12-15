@@ -9,6 +9,9 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas
 {
+    /// <summary>
+    /// Gestiona la logica del chat durante una partida.
+    /// </summary>
     public class ChatVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -46,24 +49,36 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _tiempoRestante = 0;
         }
 
+        /// <summary>
+        /// Indica si el jugador puede escribir mensajes en el chat.
+        /// </summary>
         public bool PuedeEscribir
         {
             get => _puedeEscribir;
             set => EstablecerPropiedad(ref _puedeEscribir, value);
         }
 
+        /// <summary>
+        /// Indica si la partida ha iniciado.
+        /// </summary>
         public bool EsPartidaIniciada
         {
             get => _esPartidaIniciada;
             set => EstablecerPropiedad(ref _esPartidaIniciada, value);
         }
 
+        /// <summary>
+        /// Indica si el jugador actual es el dibujante.
+        /// </summary>
         public bool EsDibujante
         {
             get => _esDibujante;
             set => EstablecerPropiedad(ref _esDibujante, value);
         }
 
+        /// <summary>
+        /// Nombre de la cancion correcta para la ronda actual.
+        /// </summary>
         public string NombreCancionCorrecta
         {
             get => _nombreCancionCorrecta;
@@ -76,6 +91,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Tiempo restante en segundos de la ronda actual.
+        /// </summary>
         public int TiempoRestante
         {
             get => _tiempoRestante;
@@ -88,9 +106,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Evento disparado al recibir un mensaje de chat normal.
+        /// </summary>
         public event Action<string, string> MensajeChatRecibido;
+
+        /// <summary>
+        /// Evento disparado al recibir un mensaje dorado (acierto).
+        /// </summary>
         public event Action<string, string> MensajeDoradoRecibido;
 
+        /// <summary>
+        /// Envia un mensaje al chat aplicando las reglas de la partida.
+        /// </summary>
+        /// <param name="mensaje">Mensaje a enviar.</param>
         public async Task EnviarMensaje(string mensaje)
         {
             if (!ValidarMensaje(mensaje))
@@ -102,7 +131,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ProcesarDecisionChat(decision, mensaje);
         }
 
-        private bool ValidarMensaje(string mensaje)
+        private static bool ValidarMensaje(string mensaje)
         {
             return !string.IsNullOrWhiteSpace(mensaje);
         }
@@ -145,7 +174,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _chatMensajeria.Enviar(mensaje);
         }
 
-        private void RegistrarMensajeBloqueado()
+        private static void RegistrarMensajeBloqueado()
         {
             _logger.Info("El dibujante no puede enviar mensajes durante su turno.");
         }
@@ -155,23 +184,34 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             PuedeEscribir = false;
         }
 
+        /// <summary>
+        /// Notifica la recepcion de un mensaje de chat.
+        /// </summary>
+        /// <param name="nombreJugador">Nombre del jugador que envio el mensaje.</param>
+        /// <param name="mensaje">Contenido del mensaje.</param>
         public void NotificarMensajeChat(string nombreJugador, string mensaje)
         {
-            EjecutarEnDispatcher(() => MensajeChatRecibido?.Invoke(nombreJugador, mensaje));
+            EjecutarEnDispatcher(
+                () => MensajeChatRecibido?.Invoke(nombreJugador, mensaje));
         }
 
+        /// <summary>
+        /// Notifica que un jugador adivino la cancion correcta.
+        /// </summary>
+        /// <param name="nombreJugador">Nombre del jugador que adivino.</param>
         public void NotificarJugadorAdivinoEnChat(string nombreJugador)
         {
             string mensajeDorado = CrearMensajeAdivinacion(nombreJugador);
-            EjecutarEnDispatcher(() => MensajeDoradoRecibido?.Invoke(string.Empty, mensajeDorado));
+            EjecutarEnDispatcher(
+                () => MensajeDoradoRecibido?.Invoke(string.Empty, mensajeDorado));
         }
 
-        private string CrearMensajeAdivinacion(string nombreJugador)
+        private static string CrearMensajeAdivinacion(string nombreJugador)
         {
             return string.Format(Lang.chatTextoJugadorAdivino, nombreJugador);
         }
 
-        private void EjecutarEnDispatcher(Action accion)
+        private static void EjecutarEnDispatcher(Action accion)
         {
             var dispatcher = Application.Current?.Dispatcher;
             if (dispatcher == null)

@@ -257,7 +257,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 Lang.errorTextoCodigoIncorrecto);
         }
 
-        private bool EsCodigoExpirado(string mensajeLocalizado, string mensajeOriginal)
+        private static bool EsCodigoExpirado(string mensajeLocalizado, string mensajeOriginal)
         {
             return string.Equals(
                     mensajeLocalizado,

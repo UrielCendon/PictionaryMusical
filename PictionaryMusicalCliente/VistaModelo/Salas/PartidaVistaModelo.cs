@@ -15,6 +15,9 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas
 {
+    /// <summary>
+    /// Gestiona la logica del estado de una partida en curso.
+    /// </summary>
     public class PartidaVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -59,6 +62,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _archivoCancionActual;
         private Brush _colorPalabraAdivinar;
         private string _textoDibujoDe;
+        private const string IdiomaIngles = "Ingles";
+        private const string IdiomaEspanol = "Espanol";
 
         public PartidaVistaModelo(
             IVentanaServicio ventana,
@@ -240,63 +245,77 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             get => _visibilidadInfoCancion;
             set => EstablecerPropiedad(ref _visibilidadInfoCancion, value);
         }
+        /// <summary>
         /// Visibilidad del texto de artista.
-
+        /// </summary>
         public Visibility VisibilidadArtista
         {
             get => _visibilidadArtista;
             set => EstablecerPropiedad(ref _visibilidadArtista, value);
         }
-        /// Visibilidad del texto de genero musical.
 
+        /// <summary>
+        /// Visibilidad del texto de genero musical.
+        /// </summary>
         public Visibility VisibilidadGenero
         {
             get => _visibilidadGenero;
             set => EstablecerPropiedad(ref _visibilidadGenero, value);
         }
-        /// Palabra que se debe dibujar o adivinar.
 
+        /// <summary>
+        /// Palabra que se debe dibujar o adivinar.
+        /// </summary>
         public string PalabraAdivinar
         {
             get => _palabraAdivinar;
             set => EstablecerPropiedad(ref _palabraAdivinar, value);
         }
-        /// Color del texto de la palabra a adivinar.
 
+        /// <summary>
+        /// Color del texto de la palabra a adivinar.
+        /// </summary>
         public Brush ColorPalabraAdivinar
         {
             get => _colorPalabraAdivinar;
             set => EstablecerPropiedad(ref _colorPalabraAdivinar, value);
         }
-        /// Nombre del artista de la cancion actual.
 
+        /// <summary>
+        /// Nombre del artista de la cancion actual.
+        /// </summary>
         public string TextoArtista
         {
             get => _textoArtista;
             set => EstablecerPropiedad(ref _textoArtista, value);
         }
-        /// Genero musical de la cancion actual.
 
+        /// <summary>
+        /// Genero musical de la cancion actual.
+        /// </summary>
         public string TextoGenero
         {
             get => _textoGenero;
             set => EstablecerPropiedad(ref _textoGenero, value);
         }
-        /// Texto que muestra quien es el dibujante actual.
 
+        /// <summary>
+        /// Texto que muestra quien es el dibujante actual.
+        /// </summary>
         public string TextoDibujoDe
         {
             get => _textoDibujoDe;
             set => EstablecerPropiedad(ref _textoDibujoDe, value);
         }
-        /// Indica si el usuario es el dibujante de la ronda.
 
+        /// <summary>
+        /// Indica si el usuario es el dibujante de la ronda.
+        /// </summary>
         public bool EsDibujante
         {
             get => _esDibujante;
             private set => EstablecerPropiedad(ref _esDibujante, value);
         }
-        /// Manejador de canciones para ajustes de volumen.
 
         public CancionManejador CancionManejador => _cancionManejador;
         /// Comando para seleccionar el lapiz como herramienta.
@@ -368,47 +387,47 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             return new Dictionary<int, CancionCatalogo>
             {
-                { 1, new CancionCatalogo("Gasolina", "Gasolina_Daddy_Yankee.mp3", "Espanol") },
-                { 2, new CancionCatalogo("Bocanada", "Bocanada_Gustavo_Cerati.mp3", "Espanol") },
-                { 3, new CancionCatalogo("La Nave Del Olvido", "La_Nave_Del_Olvido_Jose_Jose.mp3", "Espanol") },
-                { 4, new CancionCatalogo("Tiburón", "Tiburon_Proyecto_Uno.mp3", "Espanol") },
-                { 5, new CancionCatalogo("Pupilas De Gato", "Pupilas_De_Gato_Luis_Miguel.mp3", "Espanol") },
-                { 6, new CancionCatalogo("El Triste", "El_Triste_Jose_Jose.mp3", "Espanol") },
-                { 7, new CancionCatalogo("El Reloj", "El_Reloj_Luis_Miguel.mp3", "Espanol") },
-                { 8, new CancionCatalogo("La Camisa Negra", "La_Camisa_Negra_Juanes.mp3", "Espanol") },
-                { 9, new CancionCatalogo("Rosas", "Rosas_La_Oreja_de_Van_Gogh.mp3", "Espanol") },
-                { 10, new CancionCatalogo("La Bicicleta", "La_Bicicleta_Shakira.mp3", "Espanol") },
-                { 11, new CancionCatalogo("El Taxi", "El_Taxi_Pitbull.mp3", "Espanol") },
-                { 12, new CancionCatalogo("La Puerta Negra", "La_Puerta_Negra_Los_Tigres_del_Norte.mp3", "Espanol") },
-                { 13, new CancionCatalogo("Baraja de Oro", "Baraja_de_Oro_Chalino_Sanchez.mp3", "Espanol") },
-                { 14, new CancionCatalogo("Los Luchadores", "Los_Luchadores_La_Sonora_Santanera.mp3", "Espanol") },
-                { 15, new CancionCatalogo("El Oso Polar", "El_Oso_Polar_Nelson_Kanzela.mp3", "Espanol") },
-                { 16, new CancionCatalogo("El Teléfono", "El_Telefono_Wisin_&_Yandel.mp3", "Espanol") },
-                { 17, new CancionCatalogo("La Planta", "La_Planta_Caos.mp3", "Espanol") },
-                { 18, new CancionCatalogo("Lluvia", "Lluvia_Eddie_Santiago.mp3", "Espanol") },
-                { 19, new CancionCatalogo("Pose", "Pose_Daddy_Yankee.mp3", "Espanol") },
-                { 20, new CancionCatalogo("Cama y Mesa", "Cama_y_Mesa_Roberto_Carlos.mp3", "Espanol") },
+                { 1, new CancionCatalogo("Gasolina", "Gasolina_Daddy_Yankee.mp3", IdiomaEspanol) },
+                { 2, new CancionCatalogo("Bocanada", "Bocanada_Gustavo_Cerati.mp3", IdiomaEspanol) },
+                { 3, new CancionCatalogo("La Nave Del Olvido", "La_Nave_Del_Olvido_Jose_Jose.mp3", IdiomaEspanol) },
+                { 4, new CancionCatalogo("Tiburón", "Tiburon_Proyecto_Uno.mp3", IdiomaEspanol) },
+                { 5, new CancionCatalogo("Pupilas De Gato", "Pupilas_De_Gato_Luis_Miguel.mp3", IdiomaEspanol) },
+                { 6, new CancionCatalogo("El Triste", "El_Triste_Jose_Jose.mp3", IdiomaEspanol) },
+                { 7, new CancionCatalogo("El Reloj", "El_Reloj_Luis_Miguel.mp3", IdiomaEspanol) },
+                { 8, new CancionCatalogo("La Camisa Negra", "La_Camisa_Negra_Juanes.mp3", IdiomaEspanol) },
+                { 9, new CancionCatalogo("Rosas", "Rosas_La_Oreja_de_Van_Gogh.mp3", IdiomaEspanol) },
+                { 10, new CancionCatalogo("La Bicicleta", "La_Bicicleta_Shakira.mp3", IdiomaEspanol) },
+                { 11, new CancionCatalogo("El Taxi", "El_Taxi_Pitbull.mp3", IdiomaEspanol) },
+                { 12, new CancionCatalogo("La Puerta Negra", "La_Puerta_Negra_Los_Tigres_del_Norte.mp3", IdiomaEspanol) },
+                { 13, new CancionCatalogo("Baraja de Oro", "Baraja_de_Oro_Chalino_Sanchez.mp3", IdiomaEspanol) },
+                { 14, new CancionCatalogo("Los Luchadores", "Los_Luchadores_La_Sonora_Santanera.mp3", IdiomaEspanol) },
+                { 15, new CancionCatalogo("El Oso Polar", "El_Oso_Polar_Nelson_Kanzela.mp3", IdiomaEspanol) },
+                { 16, new CancionCatalogo("El Teléfono", "El_Telefono_Wisin_&_Yandel.mp3", IdiomaEspanol) },
+                { 17, new CancionCatalogo("La Planta", "La_Planta_Caos.mp3", IdiomaEspanol) },
+                { 18, new CancionCatalogo("Lluvia", "Lluvia_Eddie_Santiago.mp3", IdiomaEspanol) },
+                { 19, new CancionCatalogo("Pose", "Pose_Daddy_Yankee.mp3", IdiomaEspanol) },
+                { 20, new CancionCatalogo("Cama y Mesa", "Cama_y_Mesa_Roberto_Carlos.mp3", IdiomaEspanol) },
 
-                { 21, new CancionCatalogo("Black Or White", "Black_Or_White_Michael_Jackson.mp3", "Ingles") },
-                { 22, new CancionCatalogo("Don't Stop The Music", "Dont_Stop_The_Music_Rihanna.mp3", "Ingles") },
-                { 23, new CancionCatalogo("Man In The Mirror", "Man_In_The_Mirror_Michael_Jackson.mp3", "Ingles") },
-                { 24, new CancionCatalogo("Earth Song", "Earth_Song_Michael_Jackson.mp3", "Ingles") },
-                { 25, new CancionCatalogo("Redbone", "Redbone_Childish_Gambino.mp3", "Ingles") },
-                { 26, new CancionCatalogo("The Chain", "The_Chain_Fleetwood_Mac.mp3", "Ingles") },
-                { 27, new CancionCatalogo("Umbrella", "Umbrella_Rihanna.mp3", "Ingles") },
-                { 28, new CancionCatalogo("Yellow Submarine", "Yellow_Submarine_The_Beatles.mp3", "Ingles") },
-                { 29, new CancionCatalogo("Money", "Money_Pink_Floyd.mp3", "Ingles") },
-                { 30, new CancionCatalogo("Diamonds", "Diamonds_Rihanna.mp3", "Ingles") },
-                { 31, new CancionCatalogo("Grenade", "Grenade_Bruno_Mars.mp3", "Ingles") },
-                { 32, new CancionCatalogo("Scarface", "Scarface_Paul_Engemann.mp3", "Ingles") },
-                { 33, new CancionCatalogo("Animals", "Animals_Martin_Garrix.mp3", "Ingles") },
-                { 34, new CancionCatalogo("Hotel California", "Hotel_California_Eagles.mp3", "Ingles") },
-                { 35, new CancionCatalogo("67", "67_Skrilla.mp3", "Ingles") },
-                { 36, new CancionCatalogo("Blackbird", "Blackbird_The_Beatles.mp3", "Ingles") },
-                { 37, new CancionCatalogo("Pony", "Pony_Ginuwine.mp3", "Ingles") },
-                { 38, new CancionCatalogo("Rocket Man", "Rocket_Man_Elton_John.mp3", "Ingles") },
-                { 39, new CancionCatalogo("Starman", "Starman_David_Bowie.mp3", "Ingles") },
-                { 40, new CancionCatalogo("Time In A Bottle", "Time_In_A_Bottle_Jim_Croce.mp3", "Ingles") }
+                { 21, new CancionCatalogo("Black Or White", "Black_Or_White_Michael_Jackson.mp3", IdiomaIngles) },
+                { 22, new CancionCatalogo("Don't Stop The Music", "Dont_Stop_The_Music_Rihanna.mp3", IdiomaIngles) },
+                { 23, new CancionCatalogo("Man In The Mirror", "Man_In_The_Mirror_Michael_Jackson.mp3", IdiomaIngles) },
+                { 24, new CancionCatalogo("Earth Song", "Earth_Song_Michael_Jackson.mp3", IdiomaIngles) },
+                { 25, new CancionCatalogo("Redbone", "Redbone_Childish_Gambino.mp3", IdiomaIngles) },
+                { 26, new CancionCatalogo("The Chain", "The_Chain_Fleetwood_Mac.mp3", IdiomaIngles) },
+                { 27, new CancionCatalogo("Umbrella", "Umbrella_Rihanna.mp3", IdiomaIngles) },
+                { 28, new CancionCatalogo("Yellow Submarine", "Yellow_Submarine_The_Beatles.mp3", IdiomaIngles) },
+                { 29, new CancionCatalogo("Money", "Money_Pink_Floyd.mp3", IdiomaIngles) },
+                { 30, new CancionCatalogo("Diamonds", "Diamonds_Rihanna.mp3", IdiomaIngles) },
+                { 31, new CancionCatalogo("Grenade", "Grenade_Bruno_Mars.mp3", IdiomaIngles) },
+                { 32, new CancionCatalogo("Scarface", "Scarface_Paul_Engemann.mp3", IdiomaIngles) },
+                { 33, new CancionCatalogo("Animals", "Animals_Martin_Garrix.mp3", IdiomaIngles) },
+                { 34, new CancionCatalogo("Hotel California", "Hotel_California_Eagles.mp3", IdiomaIngles) },
+                { 35, new CancionCatalogo("67", "67_Skrilla.mp3", IdiomaIngles) },
+                { 36, new CancionCatalogo("Blackbird", "Blackbird_The_Beatles.mp3", IdiomaIngles) },
+                { 37, new CancionCatalogo("Pony", "Pony_Ginuwine.mp3", IdiomaIngles) },
+                { 38, new CancionCatalogo("Rocket Man", "Rocket_Man_Elton_John.mp3", IdiomaIngles) },
+                { 39, new CancionCatalogo("Starman", "Starman_David_Bowie.mp3", IdiomaIngles) },
+                { 40, new CancionCatalogo("Time In A Bottle", "Time_In_A_Bottle_Jim_Croce.mp3", IdiomaIngles) }
             };
         }
 
@@ -428,7 +447,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             return string.IsNullOrWhiteSpace(textoPista) ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private class CancionCatalogo
+        private sealed class CancionCatalogo
         {
             public CancionCatalogo(string nombre, string archivo, string idioma)
             {
@@ -516,26 +535,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             };
 
             EnviarTrazoAlServidor?.Invoke(trazoLimpiar);
-        }
-
-        private void EjecutarMostrarOverlayDibujante()
-        {
-            VisibilidadOverlayAdivinador = Visibility.Collapsed;
-            VisibilidadOverlayDibujante = Visibility.Visible;
-            VisibilidadPalabraAdivinar = Visibility.Visible;
-
-            _overlayTimer.Stop();
-            _overlayTimer.Start();
-        }
-
-        private void EjecutarMostrarOverlayAdivinador()
-        {
-            VisibilidadOverlayDibujante = Visibility.Collapsed;
-            VisibilidadOverlayAdivinador = Visibility.Visible;
-            VisibilidadPalabraAdivinar = Visibility.Collapsed;
-
-            _overlayTimer.Stop();
-            _overlayTimer.Start();
         }
 
         private void MostrarOverlayAlarma()
