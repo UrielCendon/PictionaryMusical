@@ -4,6 +4,7 @@ using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
@@ -92,7 +93,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (string.IsNullOrWhiteSpace(idSala))
             {
-                throw new FaultException("El identificador de sala es obligatorio.");
+                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
             }
 
             if (string.IsNullOrWhiteSpace(idJugador))
@@ -126,7 +127,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (string.IsNullOrWhiteSpace(idSala))
             {
-                throw new FaultException("El identificador de sala es obligatorio.");
+                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
             }
 
             _logger.InfoFormat(
@@ -149,7 +150,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (string.IsNullOrWhiteSpace(idSala))
             {
-                throw new FaultException("El identificador de sala es obligatorio.");
+                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
             }
 
             if (SuperaLimiteCaracteres(mensaje))
@@ -178,7 +179,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (string.IsNullOrWhiteSpace(idSala))
             {
-                throw new FaultException("El identificador de sala es obligatorio.");
+                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
             }
 
             var controlador = ObtenerOCrearControlador(idSala.Trim());
@@ -241,7 +242,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 ManejarFinPartida(idSala, resultado, controlador);
         }
 
-        private void ManejarPartidaIniciada(string idSala)
+        private static void ManejarPartidaIniciada(string idSala)
         {
             NotificarCallbacks(idSala, callback => callback.NotificarPartidaIniciada());
         }
@@ -324,7 +325,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.WarnFormat(
-                    "Error notificando inicio de ronda a {0}",
+                    MensajesError.Log.ErrorNotificandoInicioRonda,
                     idJugador,
                     excepcion);
 
@@ -333,7 +334,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (TimeoutException excepcion)
             {
                 _logger.WarnFormat(
-                    "Error notificando inicio de ronda a {0}",
+                    MensajesError.Log.ErrorNotificandoInicioRonda,
                     idJugador,
                     excepcion);
 
@@ -342,7 +343,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (ObjectDisposedException excepcion)
             {
                 _logger.WarnFormat(
-                    "Error notificando inicio de ronda a {0}",
+                    MensajesError.Log.ErrorNotificandoInicioRonda,
                     idJugador,
                     excepcion);
 
@@ -351,7 +352,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception excepcion)
             {
                 _logger.WarnFormat(
-                    "Error notificando inicio de ronda a {0}",
+                    MensajesError.Log.ErrorNotificandoInicioRonda,
                     idJugador,
                     excepcion);
 
@@ -359,26 +360,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
+        private static void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
         {
             NotificarCallbacks(
                 idSala,
                 callback => callback.NotificarJugadorAdivino(jugador, puntos));
         }
 
-        private void ManejarMensajeChat(string idSala, string jugador, string mensaje)
+        private static void ManejarMensajeChat(string idSala, string jugador, string mensaje)
         {
             NotificarCallbacks(
                 idSala,
                 callback => callback.NotificarMensajeChat(jugador, mensaje));
         }
 
-        private void ManejarTrazoRecibido(string idSala, TrazoDTO trazo)
+        private static void ManejarTrazoRecibido(string idSala, TrazoDTO trazo)
         {
             NotificarCallbacks(idSala, callback => callback.NotificarTrazoRecibido(trazo));
         }
 
-        private void ManejarFinRonda(string idSala)
+        private static void ManejarFinRonda(string idSala)
         {
             NotificarCallbacks(idSala, callback => callback.NotificarFinRonda());
         }
@@ -437,23 +438,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
             }
         }
 
-        private List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)
+        private static List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)
         {
             try
             {
@@ -462,34 +463,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
+                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
+                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
+                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error al obtener jugadores para actualizar clasificacion.",
+                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
         }
 
-        private HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
+        private static HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
         {
             int puntajeMaximo = jugadores.Max(jugador => jugador.PuntajeTotal);
 
@@ -499,7 +500,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
-        private void PersistirEstadisticasJugador(
+        private static void PersistirEstadisticasJugador(
             IClasificacionRepositorio repositorio,
             JugadorPartida jugador,
             HashSet<string> ganadores)
@@ -521,34 +522,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DbUpdateException excepcion)
             {
                 _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    MensajesError.Log.ErrorActualizarClasificacionJugador,
                     jugadorId,
                     excepcion);
             }
             catch (EntityException excepcion)
             {
                 _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    MensajesError.Log.ErrorActualizarClasificacionJugador,
                     jugadorId,
                     excepcion);
             }
             catch (DataException excepcion)
             {
                 _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    MensajesError.Log.ErrorActualizarClasificacionJugador,
                     jugadorId,
                     excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
-                    "No se pudo actualizar clasificacion del jugador {0}.",
+                    MensajesError.Log.ErrorActualizarClasificacionJugador,
                     jugadorId,
                     excepcion);
             }
         }
 
-        private void NotificarCallbacks(
+        private static void NotificarCallbacks(
             string idSala,
             Action<ICursoPartidaManejadorCallback> accion)
         {
@@ -637,7 +638,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return true;
         }
 
-        private void RegistrarCallback(
+        private static void RegistrarCallback(
             string idSala,
             string idJugador,
             ICursoPartidaManejadorCallback callback)
@@ -663,7 +664,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void RemoverCallback(string idSala, string idJugador)
+        private static void RemoverCallback(string idSala, string idJugador)
         {
             lock (_sincronizacion)
             {
@@ -706,7 +707,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
+                    MensajesError.Log.ErrorObtenerConfiguracionSala,
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -714,7 +715,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (TimeoutException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
+                    MensajesError.Log.ErrorObtenerConfiguracionSala,
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -722,7 +723,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (ObjectDisposedException excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
+                    MensajesError.Log.ErrorObtenerConfiguracionSala,
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();
@@ -730,7 +731,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Exception excepcion)
             {
                 _logger.WarnFormat(
-                    "No se pudo obtener configuracion de sala. Usara la sala por defecto.",
+                    MensajesError.Log.ErrorObtenerConfiguracionSala,
                     idSala);
                 _logger.Warn(excepcion);
                 return CrearConfiguracionPorDefecto();

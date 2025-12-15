@@ -138,6 +138,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string PartidaComenzo = "La partida ya comenzo";
             public const string FaltanJugadores = "Faltan jugadores.";
             public const string SoloHost = "Solo Host.";
+
+            public const string IdSalaObligatorio = 
+                "El identificador de sala es obligatorio.";
+        }
+
+        /// <summary>
+        /// Mensajes para registro de errores en log.
+        /// Contienen detalles tecnicos para depuracion.
+        /// </summary>
+        public static class Log
+        {
+            public const string ErrorNotificandoInicioRonda = 
+                "Error notificando inicio de ronda a {0}";
+            public const string ErrorActualizarClasificaciones = 
+                "Error inesperado al actualizar clasificaciones.";
+            public const string ErrorObtenerJugadoresClasificacion = 
+                "Error al obtener jugadores para actualizar clasificacion.";
+            public const string ErrorActualizarClasificacionJugador = 
+                "No se pudo actualizar clasificacion del jugador {0}.";
+            public const string ErrorObtenerConfiguracionSala = 
+                "No se pudo obtener configuracion de sala. Usara la sala por defecto.";
         }
     }
 }
