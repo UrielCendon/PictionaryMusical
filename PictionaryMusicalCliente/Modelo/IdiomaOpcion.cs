@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.Modelo
+﻿namespace PictionaryMusicalCliente.Modelo
 {
     /// <summary>
     /// Representa un idioma disponible para la seleccion en la configuracion.

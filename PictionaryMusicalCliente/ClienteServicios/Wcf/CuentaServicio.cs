@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using PictionaryMusicalCliente.Properties.Langs;

@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.ServiceModel;

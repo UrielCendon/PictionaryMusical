@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.VistaModelo.Salas;
+﻿using PictionaryMusicalCliente.VistaModelo.Salas;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

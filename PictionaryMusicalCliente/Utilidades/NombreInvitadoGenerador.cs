@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using System;

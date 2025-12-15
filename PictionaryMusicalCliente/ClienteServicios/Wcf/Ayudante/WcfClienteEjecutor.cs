@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.ServiceModel;

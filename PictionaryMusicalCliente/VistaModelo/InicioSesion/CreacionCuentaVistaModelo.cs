@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
@@ -19,6 +19,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
     /// <summary>
     /// Gestiona la logica para el registro de nuevas cuentas de usuario.
     /// </summary>
+    /// <remarks>
+    /// Coordina la validacion de campos, envio de codigo de verificacion
+    /// y registro final de la cuenta.
+    /// </remarks>
     public class CreacionCuentaVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -45,6 +49,30 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private bool _mostrarErrorCorreo;
         private bool _estaProcesando;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="ventana">Servicio para gestionar ventanas.</param>
+        /// <param name="localizador">Servicio de localizacion de mensajes.</param>
+        /// <param name="codigoVerificacionServicio">
+        /// Servicio para enviar codigos de verificacion.
+        /// </param>
+        /// <param name="cuentaServicio">Servicio para registrar cuentas.</param>
+        /// <param name="seleccionarAvatarServicio">
+        /// Servicio para seleccionar avatares.
+        /// </param>
+        /// <param name="verificarCodigoDialogoServicio">
+        /// Servicio para mostrar dialogo de verificacion.
+        /// </param>
+        /// <param name="sonidoManejador">Manejador de sonidos.</param>
+        /// <param name="catalogoAvatares">Catalogo de avatares disponibles.</param>
+        /// <param name="avisoServicio">Servicio para mostrar avisos.</param>
+        /// <param name="localizacionServicio">
+        /// Servicio de localizacion opcional.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public CreacionCuentaVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -96,60 +124,90 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             EstablecerAvatarPredeterminado();
         }
 
+        /// <summary>
+        /// Nombre de usuario para la nueva cuenta.
+        /// </summary>
         public string Usuario
         {
             get => _usuario;
             set => EstablecerPropiedad(ref _usuario, value);
         }
 
+        /// <summary>
+        /// Nombre del usuario.
+        /// </summary>
         public string Nombre
         {
             get => _nombre;
             set => EstablecerPropiedad(ref _nombre, value);
         }
 
+        /// <summary>
+        /// Apellido del usuario.
+        /// </summary>
         public string Apellido
         {
             get => _apellido;
             set => EstablecerPropiedad(ref _apellido, value);
         }
 
+        /// <summary>
+        /// Correo electronico del usuario.
+        /// </summary>
         public string Correo
         {
             get => _correo;
             set => EstablecerPropiedad(ref _correo, value);
         }
 
+        /// <summary>
+        /// Contrasena para la nueva cuenta.
+        /// </summary>
         public string Contrasena
         {
             get => _contrasena;
             set => EstablecerPropiedad(ref _contrasena, value);
         }
 
+        /// <summary>
+        /// Imagen del avatar seleccionado.
+        /// </summary>
         public ImageSource AvatarSeleccionadoImagen
         {
             get => _avatarSeleccionadoImagen;
             private set => EstablecerPropiedad(ref _avatarSeleccionadoImagen, value);
         }
 
+        /// <summary>
+        /// Identificador del avatar seleccionado.
+        /// </summary>
         public int AvatarSeleccionadoId
         {
             get => _avatarSeleccionadoId;
             private set => EstablecerPropiedad(ref _avatarSeleccionadoId, value);
         }
 
+        /// <summary>
+        /// Indica si debe mostrarse error en el campo usuario.
+        /// </summary>
         public bool MostrarErrorUsuario
         {
             get => _mostrarErrorUsuario;
             private set => EstablecerPropiedad(ref _mostrarErrorUsuario, value);
         }
 
+        /// <summary>
+        /// Indica si debe mostrarse error en el campo correo.
+        /// </summary>
         public bool MostrarErrorCorreo
         {
             get => _mostrarErrorCorreo;
             private set => EstablecerPropiedad(ref _mostrarErrorCorreo, value);
         }
 
+        /// <summary>
+        /// Indica si hay una operacion en curso.
+        /// </summary>
         public bool EstaProcesando
         {
             get => _estaProcesando;
@@ -163,24 +221,46 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
         }
 
+        /// <summary>
+        /// Comando para iniciar el proceso de creacion de cuenta.
+        /// </summary>
         public IComandoAsincrono CrearCuentaComando { get; }
 
+        /// <summary>
+        /// Comando para cancelar y cerrar la ventana.
+        /// </summary>
         public ICommand CancelarComando { get; }
 
+        /// <summary>
+        /// Comando para abrir el selector de avatar.
+        /// </summary>
         public IComandoAsincrono SeleccionarAvatarComando { get; }
 
+        /// <summary>
+        /// Accion para notificar campos invalidos a la vista.
+        /// </summary>
         public Action<IList<string>> MostrarCamposInvalidos { get; set; }
 
+        /// <summary>
+        /// Accion para mostrar mensajes al usuario.
+        /// </summary>
         public Action<string> MostrarMensaje { get; set; }
 
+        /// <summary>
+        /// Indica si el registro se completo exitosamente.
+        /// </summary>
         public bool RegistroExitoso { get; private set; }
 
         private async Task CrearCuentaAsync()
         {
-            var (esValido, solicitud) = ValidarEntradasYMostrarErrores();
+            LimpiarErroresVisuales();
+            var resultadoValidacion = ValidarEntradas();
             
-            if (!esValido)
+            if (!resultadoValidacion.EsValido)
             {
+                MostrarErroresValidacion(
+                    resultadoValidacion.CamposInvalidos,
+                    resultadoValidacion.PrimerMensajeError);
                 _sonidoManejador.ReproducirError();
                 _logger.Warn(
                     "Intento de creacion de cuenta fallido por validacion.");
@@ -189,40 +269,39 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                _logger.InfoFormat("Iniciando flujo de registro para usuario: {0}",
-                    solicitud.Usuario);
-                
-                await EjecutarFlujoDeRegistroAsync(solicitud);
-            },
-            ex =>
-            {
-                _logger.Error("Error de servicio durante la creacion de cuenta.", ex);
-                _sonidoManejador.ReproducirError();
-                MostrarMensaje?.Invoke(ex.Message ?? 
-                    Lang.errorTextoRegistrarCuentaMasTarde);
-                EstaProcesando = false;
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarFlujoDeRegistroAsync(
+                    resultadoValidacion.Solicitud),
+                excepcion => ManejarErrorCreacion(excepcion));
 
             EstaProcesando = false;
         }
 
-        private (bool EsValido, DTOs.NuevaCuentaDTO Solicitud) 
-            ValidarEntradasYMostrarErrores()
+        private void ManejarErrorCreacion(Exception excepcion)
         {
-            LimpiarErroresVisuales();
+            _logger.Error(
+                "Error de servicio durante la creacion de cuenta.",
+                excepcion);
+            _sonidoManejador.ReproducirError();
+            string mensaje = excepcion.Message 
+                ?? Lang.errorTextoRegistrarCuentaMasTarde;
+            MostrarMensaje?.Invoke(mensaje);
+            EstaProcesando = false;
+        }
 
+        private ResultadoValidacionCuenta ValidarEntradas()
+        {
             var (solicitud, camposInvalidos, primerMensajeError) = 
                 LimpiarYValidarEntradas();
 
             if (camposInvalidos.Count == 0)
             {
-                return (true, solicitud);
+                return ResultadoValidacionCuenta.Exitoso(solicitud);
             }
 
-            MostrarErroresValidacion(camposInvalidos, primerMensajeError);
-            return (false, null);
+            return ResultadoValidacionCuenta.Fallido(
+                camposInvalidos,
+                primerMensajeError);
         }
 
         private void LimpiarErroresVisuales()
@@ -248,6 +327,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private async Task EjecutarFlujoDeRegistroAsync(DTOs.NuevaCuentaDTO solicitud)
         {
+            _logger.InfoFormat(
+                "Iniciando flujo de registro para usuario: {0}",
+                solicitud.Usuario);
+
             if (!await SolicitarYValidarCodigoRegistroAsync(solicitud))
             {
                 return;
@@ -619,6 +702,70 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 AvatarSeleccionadoId = avatar.Id;
                 AvatarSeleccionadoImagen = avatar.Imagen;
             }
+        }
+    }
+
+    /// <summary>
+    /// Encapsula el resultado de la validacion de datos de una nueva cuenta.
+    /// </summary>
+    internal sealed class ResultadoValidacionCuenta
+    {
+        private ResultadoValidacionCuenta(
+            bool esValido,
+            DTOs.NuevaCuentaDTO solicitud,
+            List<string> camposInvalidos,
+            string primerMensajeError)
+        {
+            EsValido = esValido;
+            Solicitud = solicitud;
+            CamposInvalidos = camposInvalidos ?? new List<string>();
+            PrimerMensajeError = primerMensajeError;
+        }
+
+        /// <summary>
+        /// Indica si la validacion fue exitosa.
+        /// </summary>
+        public bool EsValido { get; }
+
+        /// <summary>
+        /// Solicitud de nueva cuenta si la validacion fue exitosa.
+        /// </summary>
+        public DTOs.NuevaCuentaDTO Solicitud { get; }
+
+        /// <summary>
+        /// Lista de nombres de campos que fallaron la validacion.
+        /// </summary>
+        public List<string> CamposInvalidos { get; }
+
+        /// <summary>
+        /// Primer mensaje de error encontrado durante la validacion.
+        /// </summary>
+        public string PrimerMensajeError { get; }
+
+        /// <summary>
+        /// Crea un resultado de validacion exitosa.
+        /// </summary>
+        /// <param name="solicitud">Solicitud validada.</param>
+        public static ResultadoValidacionCuenta Exitoso(
+            DTOs.NuevaCuentaDTO solicitud)
+        {
+            return new ResultadoValidacionCuenta(true, solicitud, null, null);
+        }
+
+        /// <summary>
+        /// Crea un resultado de validacion fallida.
+        /// </summary>
+        /// <param name="camposInvalidos">Campos que fallaron.</param>
+        /// <param name="primerMensajeError">Mensaje del primer error.</param>
+        public static ResultadoValidacionCuenta Fallido(
+            List<string> camposInvalidos,
+            string primerMensajeError)
+        {
+            return new ResultadoValidacionCuenta(
+                false,
+                null,
+                camposInvalidos,
+                primerMensajeError);
         }
     }
 }

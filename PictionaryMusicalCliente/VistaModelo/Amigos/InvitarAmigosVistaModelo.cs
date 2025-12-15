@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -17,6 +17,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
     /// <summary>
     /// Controla la logica para invitar amigos conectados a una sala de juego.
     /// </summary>
+    /// <remarks>
+    /// Gestiona la lista de amigos disponibles y el envio de invitaciones
+    /// mediante correo electronico.
+    /// </remarks>
     public class InvitarAmigosVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -70,6 +74,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         /// </summary>
         public ObservableCollection<AmigoInvitacionItemVistaModelo> Amigos { get; }
 
+        /// <summary>
+        /// Envia una invitacion al amigo especificado.
+        /// </summary>
+        /// <param name="amigo">Amigo al que se enviara la invitacion.</param>
         internal async Task InvitarAsync(AmigoInvitacionItemVistaModelo amigo)
         {
             ResultadoValidacionAmigo validacion = ValidarAmigo(amigo);
@@ -236,6 +244,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
     /// <summary>
     /// Representa un item individual en la lista de amigos para invitar.
     /// </summary>
+    /// <remarks>
+    /// Encapsula los datos del amigo y el estado de la invitacion.
+    /// </remarks>
     public class AmigoInvitacionItemVistaModelo : INotifyPropertyChanged
     {
         private readonly InvitarAmigosVistaModelo _padre;
@@ -245,6 +256,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="amigo">Datos del amigo.</param>
+        /// <param name="padre">ViewModel padre que gestiona las invitaciones.</param>
+        /// <param name="sonidoManejador">Manejador para reproducir sonidos.</param>
+        /// <param name="invitacionEnviada">
+        /// Indica si ya se envio previamente una invitacion.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si amigo, padre o sonidoManejador son nulos.
+        /// </exception>
         public AmigoInvitacionItemVistaModelo(
             DTOs.AmigoDTO amigo,
             InvitarAmigosVistaModelo padre,
@@ -338,6 +361,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 new PropertyChangedEventArgs(nombrePropiedad));
         }
 
+        /// <summary>
+        /// Marca la invitacion como enviada para este amigo.
+        /// </summary>
         internal void MarcarInvitacionEnviada()
         {
             InvitacionEnviada = true;

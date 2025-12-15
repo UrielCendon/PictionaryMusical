@@ -36,9 +36,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             "NetTcpBinding_ICursoPartidaManejador";
 
         /// <summary>
-        /// Crea una instancia del cliente para el servicio de verificación de códigos.
+        /// Crea una instancia del cliente para el servicio de verificacion de codigos.
         /// </summary>
-        /// <returns>Cliente WCF para la verificación de códigos.</returns>
+        /// <returns>Cliente WCF para la verificacion de codigos.</returns>
         public PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador
             CrearClienteVerificacion()
         {
@@ -47,9 +47,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para el servicio de gestión de cuentas de usuario.
+        /// Crea una instancia del cliente para el servicio de gestion de cuentas de usuario.
         /// </summary>
-        /// <returns>Cliente WCF para la administración de cuentas.</returns>
+        /// <returns>Cliente WCF para la administracion de cuentas.</returns>
         public PictionaryServidorServicioCuenta.ICuentaManejador CrearClienteCuenta()
         {
             return new PictionaryServidorServicioCuenta
@@ -79,7 +79,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para el inicio de sesión y autenticación.
+        /// Crea una instancia del cliente para el inicio de sesion y autenticacion.
         /// </summary>
         /// <returns>Cliente WCF para el manejo de sesiones.</returns>
         public PictionaryServidorServicioInicioSesion.IInicioSesionManejador
@@ -101,7 +101,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para la gestión del perfil de usuario.
+        /// Crea una instancia del cliente para la gestion del perfil de usuario.
         /// </summary>
         /// <returns>Cliente WCF para consultar y modificar perfiles.</returns>
         public PictionaryServidorServicioPerfil.IPerfilManejador CrearClientePerfil()
@@ -121,11 +121,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para la gestión de amigos (dúplex).
+        /// Crea una instancia del cliente para la gestion de amigos (duplex).
         /// </summary>
         /// <param name="callback">Contexto de instancia para recibir respuestas del servidor.
         /// </param>
-        /// <returns>Cliente WCF para gestión de amigos.</returns>
+        /// <returns>Cliente WCF para gestion de amigos.</returns>
         /// <exception cref="ArgumentNullException">Se lanza si el callback es nulo.</exception>
         public PictionaryServidorServicioAmigos.IAmigosManejador
             CrearClienteAmigos(InstanceContext callback)
@@ -139,7 +139,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para consultar la lista de amigos conectados (dúplex).
+        /// Crea una instancia del cliente para consultar la lista de amigos conectados (duplex).
         /// </summary>
         /// <param name="callback">Contexto de instancia para recibir actualizaciones de estado.
         /// </param>
@@ -157,10 +157,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para la gestión de salas de juego (dúplex).
+        /// Crea una instancia del cliente para la gestion de salas de juego (duplex).
         /// </summary>
         /// <param name="callback">Contexto de instancia para eventos de la sala.</param>
-        /// <returns>Cliente WCF para gestión de salas.</returns>
+        /// <returns>Cliente WCF para gestion de salas.</returns>
         /// <exception cref="ArgumentNullException">Se lanza si el callback es nulo.</exception>
         public PictionaryServidorServicioSalas.ISalasManejador
             CrearClienteSalas(InstanceContext callback)
@@ -174,7 +174,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para la lógica de la partida en curso (dúplex).
+        /// Crea una instancia del cliente para la logica de la partida en curso (duplex).
         /// </summary>
         /// <param name="callback">Contexto de instancia para eventos del juego en tiempo real.
         /// </param>
