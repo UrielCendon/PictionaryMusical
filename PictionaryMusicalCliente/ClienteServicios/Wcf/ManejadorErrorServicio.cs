@@ -13,15 +13,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly ILocalizadorServicio _localizador;
 
         /// <summary>
-        /// Inicializa una nueva instancia del manejador de errores con el servicio de localizacion
-        /// necesario.
+        /// Inicializa una nueva instancia del manejador de errores con el servicio de 
+        /// localizacion necesario.
         /// </summary>
         /// <param name="localizador">El servicio encargado de traducir los mensajes extraidos.
         /// </param>
         /// <exception cref="ArgumentNullException">Se lanza si el localizador es nulo.</exception>
         public ManejadorErrorServicio(ILocalizadorServicio localizador)
         {
-            _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
+            _localizador = localizador ?? 
+                throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             string mensajePredeterminado)
         {
             string mensajeDetalle = ObtenerMensajeDetalle(excepcion);
-            string mensajeExcepcion = excepcion?.Message;
+            string mensajeExcepcion = excepcion?.Message ?? string.Empty;
 
             return DeterminarMensajeFinal(
                 mensajeDetalle,
@@ -59,48 +60,48 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return _localizador.Localizar(mensajeBase, predeterminado);
             }
 
-            return _localizador.Localizar(null, predeterminado);
+            return _localizador.Localizar(string.Empty, predeterminado);
         }
 
-        private string ObtenerMensajeDetalle(FaultException excepcion)
+        private static string ObtenerMensajeDetalle(FaultException excepcion)
         {
             if (excepcion == null)
             {
-                return null;
+                return string.Empty;
             }
 
             Type tipoExcepcion = excepcion.GetType();
 
             if (!EsFaultExceptionGenerica(tipoExcepcion))
             {
-                return null;
+                return string.Empty;
             }
 
             object detalle = ObtenerObjetoDetalle(excepcion, tipoExcepcion);
             return ObtenerTextoMensajeDeDetalle(detalle);
         }
 
-        private bool EsFaultExceptionGenerica(Type tipo)
+        private static bool EsFaultExceptionGenerica(Type tipo)
         {
             return tipo.GetTypeInfo().IsGenericType &&
                    tipo.GetGenericTypeDefinition() == typeof(FaultException<>);
         }
 
-        private object ObtenerObjetoDetalle(FaultException excepcion, Type tipo)
+        private static object ObtenerObjetoDetalle(FaultException excepcion, Type tipo)
         {
             PropertyInfo detallePropiedad = tipo.GetRuntimeProperty("Detail");
             return detallePropiedad?.GetValue(excepcion);
         }
 
-        private string ObtenerTextoMensajeDeDetalle(object detalle)
+        private static string ObtenerTextoMensajeDeDetalle(object detalle)
         {
             if (detalle == null)
             {
-                return null;
+                return string.Empty;
             }
 
             PropertyInfo mensajePropiedad = detalle.GetType().GetRuntimeProperty("Mensaje");
-            return mensajePropiedad?.GetValue(detalle) as string;
+            return mensajePropiedad?.GetValue(detalle) as string ?? string.Empty;
         }
     }
 }

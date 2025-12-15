@@ -181,9 +181,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     continue;
                 }
 
-                SolicitudAmistadEntrada entrada = CrearEntradaSolicitud(solicitud);
-                
-                if (entrada != null)
+                if (IntentarCrearEntradaSolicitud(solicitud, out var entrada))
                 {
                     Solicitudes.Add(entrada);
                 }
@@ -195,15 +193,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             return solicitud != null && !solicitud.SolicitudAceptada;
         }
 
-        private SolicitudAmistadEntrada CrearEntradaSolicitud(
-            DTOs.SolicitudAmistadDTO solicitud)
+        private bool IntentarCrearEntradaSolicitud(
+            DTOs.SolicitudAmistadDTO solicitud,
+            out SolicitudAmistadEntrada entrada)
         {
+            entrada = null;
+
             bool esEmisorActual = EsUsuarioActual(solicitud.UsuarioEmisor);
             bool esReceptorActual = EsUsuarioActual(solicitud.UsuarioReceptor);
 
             if (!esEmisorActual && !esReceptorActual)
             {
-                return null;
+                return false;
             }
 
             string nombreMostrado = ObtenerNombreMostrado(
@@ -212,15 +213,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(nombreMostrado))
             {
-                return null;
+                return false;
             }
 
             bool puedeAceptar = esReceptorActual;
 
-            return new SolicitudAmistadEntrada(
+            entrada = new SolicitudAmistadEntrada(
                 solicitud,
                 nombreMostrado,
                 puedeAceptar);
+
+            return true;
         }
 
         private bool EsUsuarioActual(string nombreUsuario)

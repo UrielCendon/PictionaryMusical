@@ -20,19 +20,21 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
             CrearDiccionario(_listaCanciones);
 
         /// <summary>
-        /// Obtiene una cancion por su identificador.
+        /// Intenta obtener una cancion por su identificador.
         /// </summary>
         /// <param name="id">Identificador de la cancion.</param>
-        /// <returns>La cancion si existe, o null si no se encuentra.</returns>
-        public Cancion ObtenerPorId(int id)
+        /// <param name="cancion">La cancion si existe.</param>
+        /// <returns>True si se encontro la cancion, false en caso contrario.</returns>
+        public bool IntentarObtenerPorId(int id, out Cancion cancion)
         {
-            if (_diccionarioCanciones.TryGetValue(id, out var cancion))
+            if (_diccionarioCanciones.TryGetValue(id, out cancion))
             {
-                return cancion;
+                return true;
             }
 
             RegistrarCancionNoEncontrada(id);
-            return null;
+            cancion = null;
+            return false;
         }
 
         /// <summary>

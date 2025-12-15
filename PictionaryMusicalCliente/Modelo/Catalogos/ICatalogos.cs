@@ -15,11 +15,12 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         IReadOnlyList<ObjetoAvatar> ObtenerAvatares();
 
         /// <summary>
-        /// Busca un avatar especifico por su identificador unico.
+        /// Intenta obtener un avatar especifico por su identificador unico.
         /// </summary>
         /// <param name="id">Identificador del avatar.</param>
-        /// <returns>El objeto avatar si existe, o null.</returns>
-        ObjetoAvatar ObtenerPorId(int id);
+        /// <param name="avatar">El objeto avatar si existe.</param>
+        /// <returns>True si se encontro el avatar, false en caso contrario.</returns>
+        bool IntentarObtenerPorId(int id, out ObjetoAvatar avatar);
     }
 
     /// <summary>
@@ -31,7 +32,9 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         /// Recupera el icono asociado a una red social especifica.
         /// </summary>
         /// <param name="nombre">Nombre clave de la red social.</param>
-        /// <returns>El recurso grafico correspondiente o null si no existe.</returns>
+        /// <returns>
+        /// El recurso grafico correspondiente, o valor vacio si no existe.
+        /// </returns>
         ImageSource ObtenerIconoRedSocial(string nombre);
     }
 
@@ -41,11 +44,12 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
     public interface ICatalogoCanciones
     {
         /// <summary>
-        /// Obtiene una cancion por su identificador.
+        /// Intenta obtener una cancion por su identificador.
         /// </summary>
         /// <param name="id">Identificador de la cancion.</param>
-        /// <returns>La cancion si existe, o null si no se encuentra.</returns>
-        Cancion ObtenerPorId(int id);
+        /// <param name="cancion">La cancion si existe.</param>
+        /// <returns>True si se encontro la cancion, false en caso contrario.</returns>
+        bool IntentarObtenerPorId(int id, out Cancion cancion);
 
         /// <summary>
         /// Obtiene todas las canciones del catalogo.

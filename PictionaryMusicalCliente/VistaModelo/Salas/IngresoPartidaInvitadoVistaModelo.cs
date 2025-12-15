@@ -5,6 +5,7 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.Utilidades.Resultados;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -186,15 +187,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             for (int intento = 0; intento < maxIntentos; intento++)
             {
-                string nombreInvitado = GenerarNombreInvitado(
+                ResultadoGeneracion resultadoGeneracion = GenerarNombreInvitado(
                     culturaActual, 
                     nombresReservados);
 
-                if (string.IsNullOrWhiteSpace(nombreInvitado))
+                if (!resultadoGeneracion.Exitoso)
                 {
-                    _logger.Warn("Generador de nombres retorno vacio/nulo.");
+                    RegistrarFalloGeneracion(resultadoGeneracion.Motivo);
                     break;
                 }
+
+                string nombreInvitado = resultadoGeneracion.NombreGenerado;
 
                 ResultadoUnionInvitado resultado = await IntentarUnirseAsync(
                     codigo,
@@ -212,7 +215,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             MostrarErrorIntentosAgotados();
         }
 
-        private string GenerarNombreInvitado(
+        private static void RegistrarFalloGeneracion(MotivoFalloGeneracion motivo)
+        {
+            _logger.WarnFormat("Generador de nombres fallo con motivo: {0}", motivo);
+        }
+
+        private ResultadoGeneracion GenerarNombreInvitado(
             System.Globalization.CultureInfo cultura,
             HashSet<string> nombresReservados)
         {

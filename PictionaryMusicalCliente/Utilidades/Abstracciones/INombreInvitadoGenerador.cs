@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PictionaryMusicalCliente.Utilidades.Resultados;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace PictionaryMusicalCliente.Utilidades.Abstracciones
@@ -13,7 +14,9 @@ namespace PictionaryMusicalCliente.Utilidades.Abstracciones
         /// </summary>
         /// <param name="cultura">Cultura a utilizar. Si es null se usa la actual.</param>
         /// <param name="nombresExcluidos">Lista de nombres que no deben repetirse.</param>
-        /// <returns>Nombre de invitado localizado.</returns>
-        string Generar(CultureInfo cultura, IEnumerable<string> nombresExcluidos = null);
+        /// <returns>Resultado de la generacion con el nombre o motivo de fallo.</returns>
+        ResultadoGeneracion Generar(
+            CultureInfo cultura,
+            IEnumerable<string> nombresExcluidos = null);
     }
 }

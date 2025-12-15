@@ -478,7 +478,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private Cancion ObtenerCancion(int idCancion)
         {
-            return _catalogoCanciones.ObtenerPorId(idCancion);
+            if (_catalogoCanciones.IntentarObtenerPorId(idCancion, out var cancion))
+            {
+                return cancion;
+            }
+
+            return null;
         }
 
         private static Visibility DeterminarVisibilidadPista(string textoPista)

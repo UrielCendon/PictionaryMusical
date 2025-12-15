@@ -782,16 +782,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private void EstablecerAvatarPorId(int avatarId)
         {
             var avatares = _catalogoAvatares.ObtenerAvatares();
-            ObjetoAvatar avatar = _catalogoAvatares.ObtenerPorId(avatarId);
 
-            if (avatar == null && avatares != null && avatares.Count > 0)
-            {
-                avatar = avatares[0];
-            }
-
-            if (avatar != null)
+            if (_catalogoAvatares.IntentarObtenerPorId(avatarId, out var avatar))
             {
                 EstablecerAvatar(avatar);
+                return;
+            }
+
+            if (avatares != null && avatares.Count > 0)
+            {
+                EstablecerAvatar(avatares[0]);
             }
         }
         private void EstablecerAvatar(ObjetoAvatar avatar)

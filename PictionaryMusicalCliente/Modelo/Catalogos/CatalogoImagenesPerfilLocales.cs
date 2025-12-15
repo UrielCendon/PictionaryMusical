@@ -10,6 +10,8 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
     /// </summary>
     public class CatalogoImagenesPerfilLocales : ICatalogoImagenesPerfil
     {
+        private static readonly ImageSource ImagenVacia = null;
+
         private static readonly IReadOnlyDictionary<string, ImageSource> IconosRedesSociales =
             new Dictionary<string, ImageSource>(StringComparer.OrdinalIgnoreCase)
             {
@@ -23,16 +25,23 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         /// Recupera el icono asociado a una red social especifica.
         /// </summary>
         /// <param name="nombre">Nombre clave de la red social.</param>
-        /// <returns>El recurso grafico correspondiente o null si no existe.</returns>
+        /// <returns>
+        /// El recurso grafico correspondiente, o un valor vacio si el nombre es invalido 
+        /// o no existe la red social.
+        /// </returns>
         public ImageSource ObtenerIconoRedSocial(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre))
             {
-                return null;
+                return ImagenVacia;
             }
 
-            IconosRedesSociales.TryGetValue(nombre, out ImageSource icono);
-            return icono;
+            if (IconosRedesSociales.TryGetValue(nombre, out ImageSource icono))
+            {
+                return icono;
+            }
+
+            return ImagenVacia;
         }
 
         private static ImageSource CrearImagen(string archivo)
