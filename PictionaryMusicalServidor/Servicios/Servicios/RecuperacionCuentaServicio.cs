@@ -184,7 +184,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static bool ValidarSolicitudEntrada(SolicitudRecuperarCuentaDTO solicitud)
         {
-            if (solicitud == null) return false;
+            if (solicitud == null)
+            {
+                return false;
+            }
             string identificador = EntradaComunValidador.NormalizarTexto(solicitud.Identificador);
             return EntradaComunValidador.EsLongitudValida(identificador);
         }

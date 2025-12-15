@@ -150,13 +150,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
         }
 
-        private List<ISalasManejadorCallback> ObtenerDestinatariosExcluyendo
-            (string usuarioExcluido)
+        private List<ISalasManejadorCallback> ObtenerDestinatariosExcluyendo(
+            string usuarioExcluido)
         {
             lock (_sincronizacion)
             {
                 return _callbacks
-                    .Where(callbackRegistrado => !string.Equals(callbackRegistrado.Key, usuarioExcluido,
+                    .Where(callbackRegistrado => !string.Equals(
+                        callbackRegistrado.Key, 
+                        usuarioExcluido,
                         StringComparison.OrdinalIgnoreCase))
                     .Select(callbackRegistrado => callbackRegistrado.Value)
                     .ToList();
@@ -196,7 +198,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
+                _logger.Warn("Canal WCF cerrado al ejecutar notificacion en sala.", excepcion);
             }
             catch (Exception excepcion)
             {

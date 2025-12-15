@@ -193,10 +193,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return usuario;
         }
 
-        private UsuarioDTO ConstruirPerfilDTO(Usuario usuario)
+        private static UsuarioDTO ConstruirPerfilDTO(Usuario usuario)
         {
-            var jugador = usuario.Jugador;
-            var redSocial = jugador.RedSocial.FirstOrDefault();
+            Jugador jugador = usuario.Jugador;
+            RedSocial redSocial = jugador.RedSocial.FirstOrDefault();
 
             return new UsuarioDTO
             {

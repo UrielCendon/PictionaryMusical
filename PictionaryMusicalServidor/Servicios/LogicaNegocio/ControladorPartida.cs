@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading.Tasks;
-using log4net;
 using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -17,9 +16,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     /// </summary>
     public class ControladorPartida
     {
-        private static readonly ILog _logger =
-            LogManager.GetLogger(typeof(ControladorPartida));
-
         private const string RolDibujante = "Dibujante";
         private const int LimitePalabrasMensaje = 150;
         private const int TiempoOverlayClienteSegundos = 5;
@@ -57,7 +53,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             if (tiempoRonda <= 0 || totalRondas <= 0)
             {
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(
+                    nameof(tiempoRonda), 
+                    "El tiempo de ronda y el número total de rondas deben ser mayores que cero.");
             }
 
             if (string.IsNullOrWhiteSpace(dificultad))
@@ -359,7 +357,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             return esCorrecto;
         }
 
-        private void RegistrarAcierto(JugadorPartida jugador, int puntos)
+        private static void RegistrarAcierto(JugadorPartida jugador, int puntos)
         {
             jugador.YaAdivino = true;
             jugador.PuntajeTotal += puntos;
@@ -532,7 +530,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             _gestorTiempos.TiempoTransicionAgotado += PrepararSiguienteRonda;
         }
 
-        private bool EsMensajeInvalido(string id, string mensaje)
+        private static bool EsMensajeInvalido(string id, string mensaje)
         {
             return string.IsNullOrWhiteSpace(id) ||
                    string.IsNullOrWhiteSpace(mensaje) ||

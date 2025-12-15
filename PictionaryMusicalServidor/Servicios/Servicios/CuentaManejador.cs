@@ -213,11 +213,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             BaseDatosPruebaEntities contexto,
             NuevaCuentaDTO nuevaCuenta)
         {
-                bool usuarioRegistrado = contexto.Usuario.Any(
-                    usuario => usuario.Nombre_Usuario == nuevaCuenta.Usuario);
+            bool usuarioRegistrado = contexto.Usuario.Any(
+                usuario => usuario.Nombre_Usuario == nuevaCuenta.Usuario);
 
-                bool correoRegistrado = contexto.Jugador.Any(
-                    jugador => jugador.Correo == nuevaCuenta.Correo);
+            bool correoRegistrado = contexto.Jugador.Any(
+                jugador => jugador.Correo == nuevaCuenta.Correo);
 
             if (usuarioRegistrado || correoRegistrado)
             {

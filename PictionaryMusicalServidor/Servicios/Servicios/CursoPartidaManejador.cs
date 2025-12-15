@@ -164,12 +164,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static bool SuperaLimiteCaracteres(string mensaje)
         {
-            if (string.IsNullOrWhiteSpace(mensaje))
-            {
-                return false;
-            }
-
-            return mensaje.Length > LimiteCaracteresMensaje;
+            return !string.IsNullOrWhiteSpace(mensaje) && mensaje.Length > LimiteCaracteresMensaje;
         }
 
         /// <summary>
@@ -318,41 +313,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 NombreDibujante = nombreDibujante
             };
 
+            EjecutarNotificacionSegura(
+                () => callback.NotificarInicioRonda(rondaPersonalizada),
+                idSala,
+                idJugador,
+                MensajesError.Log.ErrorNotificandoInicioRonda);
+        }
+
+        private static void EjecutarNotificacionSegura(
+            Action accion,
+            string idSala,
+            string idJugador,
+            string mensajeError)
+        {
             try
             {
-                callback.NotificarInicioRonda(rondaPersonalizada);
+                accion();
             }
             catch (CommunicationException excepcion)
             {
-                _logger.WarnFormat(
-                    MensajesError.Log.ErrorNotificandoInicioRonda,
-                    idJugador,
-                    excepcion);
-
+                _logger.WarnFormat(mensajeError, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.WarnFormat(
-                    MensajesError.Log.ErrorNotificandoInicioRonda,
-                    idJugador,
-                    excepcion);
-
+                _logger.WarnFormat(mensajeError, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.WarnFormat(
-                    MensajesError.Log.ErrorNotificandoInicioRonda,
-                    idJugador,
-                    excepcion);
-
+                _logger.WarnFormat(mensajeError, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (Exception excepcion)
             {
-                _logger.WarnFormat(
-                    MensajesError.Log.ErrorNotificandoInicioRonda,
+                _logger.ErrorFormat(
+                    "Error inesperado al notificar jugador {0}: {1}",
                     idJugador,
                     excepcion);
 
