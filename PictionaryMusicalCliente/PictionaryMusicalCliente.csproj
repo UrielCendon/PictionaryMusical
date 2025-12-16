@@ -167,6 +167,7 @@
     <Compile Include="Modelo\ResultadoReporteJugador.cs" />
     <Compile Include="Utilidades\Abstracciones\INombreInvitadoGenerador.cs" />
     <Compile Include="Utilidades\Abstracciones\IVentanaServicio.cs" />
+    <Compile Include="Utilidades\LimiteCaracteresEntrada.cs" />
     <Compile Include="Utilidades\Resultados\ResultadoGeneracion.cs" />
     <Compile Include="Utilidades\CancionManejador.cs" />
     <Compile Include="Utilidades\MusicaManejador.cs" />

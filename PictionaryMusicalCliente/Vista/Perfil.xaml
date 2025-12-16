@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
         xmlns:convertidores="clr-namespace:PictionaryMusicalCliente.Convertidores"
+        xmlns:utilidades="clr-namespace:PictionaryMusicalCliente.Utilidades"
         Title="{x:Static language:Lang.perfilTextoMiPerfil}" Height="500" Width="700"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent"
@@ -96,7 +97,8 @@
                                    FontFamily="Comic Sans MS" FontWeight="Bold"/>
                         <TextBox x:Name="campoTextoNombre" 
                                  Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="25" FontFamily="Comic Sans MS" MaxLength="50"/>
+                                 Height="25" FontFamily="Comic Sans MS" MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"/>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,10,10">
@@ -104,7 +106,8 @@
                                    FontFamily="Comic Sans MS" FontWeight="Bold"/>
                         <TextBox x:Name="campoTextoApellido" 
                                  Text="{Binding Apellido, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="25" FontFamily="Comic Sans MS" MaxLength="50"/>
+                                 Height="25" FontFamily="Comic Sans MS" MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,0,10">
                         <TextBlock Text="{x:Static language:Lang.globalTextoCorreo}" 
@@ -154,6 +157,7 @@
                                                 <TextBox x:Name="campoTextoRedSocial" MinWidth="140"
                                                          Text="{Binding Identificador, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                          MaxLength="50"
+                                                         utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                                          Tag="{Binding ElementName=toggleRedSocial}"
                                                          KeyDown="AlPresionarTeclaEnCajaTextoRedSocial" />
                                             </Border>

@@ -394,6 +394,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Llegaste al límite de caracteres permitido, intenta ingresando un texto más corto..
+        /// </summary>
+        public static string avisoTextoLimiteCaracteres {
+            get {
+                return ResourceManager.GetString("avisoTextoLimiteCaracteres", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Los datos del perfil se actualizaron correctamente..
         /// </summary>
         public static string avisoTextoPerfilActualizado {

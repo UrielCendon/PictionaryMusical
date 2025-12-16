@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
+             xmlns:utilidades="clr-namespace:PictionaryMusicalCliente.Utilidades"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="320">
     <Grid>
@@ -27,6 +28,7 @@
                  BorderThickness="1"
                  Text="{Binding DataContext.MensajeChat, RelativeSource={RelativeSource AncestorType=Window}, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding PuedeEscribir}" KeyDown="AlPresionarTeclaEnCampoTextoChat"
-                 MaxLength="150"/>
+                 MaxLength="150"
+                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"/>
     </Grid>
 </UserControl>

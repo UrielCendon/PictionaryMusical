@@ -1110,4 +1110,7 @@
   <data name="botonExpulsarJugador" xml:space="preserve">
     <value>REMOVE PLAYER</value>
   </data>
+  <data name="avisoTextoLimiteCaracteres" xml:space="preserve">
+    <value>You have reached the character limit, try entering a shorter text.</value>
+  </data>
 </root>

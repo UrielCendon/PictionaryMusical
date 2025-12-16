@@ -1101,4 +1101,7 @@
   <data name="botonExpulsarJugador" xml:space="preserve">
     <value>EXPULSAR JUGADOR</value>
   </data>
+  <data name="avisoTextoLimiteCaracteres" xml:space="preserve">
+    <value>Llegaste al límite de caracteres permitido, intenta ingresando un texto más corto.</value>
+  </data>
 </root>

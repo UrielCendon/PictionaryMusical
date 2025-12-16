@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
         xmlns:convertidores="clr-namespace:PictionaryMusicalCliente.Convertidores"
+        xmlns:utilidades="clr-namespace:PictionaryMusicalCliente.Utilidades"
         Title="{x:Static language:Lang.tituloTextoRegistroUsuarios}" Height="500" Width="500"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True" WindowStyle="None" Background="Transparent">
@@ -69,6 +70,7 @@
 
                         <TextBox x:Name="campoTextoUsuario" Height="25" FontFamily="Comic Sans MS"
                                  MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                  Text="{Binding Usuario, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Label Content="{x:Static language:Lang.errorTextoUsuarioEnUso}" 
@@ -83,6 +85,7 @@
 
                         <TextBox x:Name="campoTextoNombre" Height="25" FontFamily="Comic Sans MS"
                                  MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                  Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                 </Grid>
@@ -100,6 +103,7 @@
 
                         <TextBox x:Name="campoTextoApellido" Height="25" FontFamily="Comic Sans MS"
                                  MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                  Text="{Binding Apellido, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
@@ -110,6 +114,7 @@
 
                         <TextBox x:Name="campoTextoCorreo" Height="25" FontFamily="Comic Sans MS"
                                  MaxLength="50"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                  Text="{Binding Correo, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Label Content="{x:Static language:Lang.errorTextoCorreoEnUso}" 
@@ -125,6 +130,7 @@
 
                     <PasswordBox x:Name="campoContrasenaContrasena" Height="25" 
                                  FontFamily="Comic Sans MS" MaxLength="15"
+                                 utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                                  PasswordChanged="AlCambiarContrasena"/>
                 </StackPanel>
 
