@@ -6,12 +6,12 @@ using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares;
 using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas
@@ -24,12 +24,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly SonidoManejador _sonidoManejador;
-
         private readonly CancionManejador _cancionManejador;
-        private DispatcherTimer _overlayTimer;
-        private DispatcherTimer _temporizadorAlarma;
-        private DispatcherTimer _temporizador;
         private readonly ICatalogoCanciones _catalogoCanciones;
+        private readonly PartidaTemporizadores _temporizadores;
 
         private bool _juegoIniciado;
         private int _numeroRondaActual;
@@ -86,6 +83,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _catalogoCanciones = catalogoCanciones ??
                 throw new ArgumentNullException(nameof(catalogoCanciones));
+            _temporizadores = new PartidaTemporizadores();
                 
             _cronometroRonda = new Stopwatch();
 
@@ -122,20 +120,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void InicializarTemporizadores()
         {
-            var uiDispatcher = Application.Current?.Dispatcher
-                ?? Dispatcher.CurrentDispatcher;
-
-            _overlayTimer = new DispatcherTimer(DispatcherPriority.Normal, uiDispatcher);
-            _overlayTimer.Interval = TimeSpan.FromSeconds(5);
-            _overlayTimer.Tick += OverlayTimer_Tick;
-
-            _temporizadorAlarma = new DispatcherTimer(DispatcherPriority.Normal, uiDispatcher);
-            _temporizadorAlarma.Interval = TimeSpan.FromSeconds(5);
-            _temporizadorAlarma.Tick += TemporizadorAlarma_Tick;
-
-            _temporizador = new DispatcherTimer(DispatcherPriority.Normal, uiDispatcher);
-            _temporizador.Interval = TimeSpan.FromSeconds(1);
-            _temporizador.Tick += Temporizador_Tick;
+            _temporizadores.OverlayTick += OverlayTimer_Tick;
+            _temporizadores.AlarmaTick += TemporizadorAlarma_Tick;
+            _temporizadores.TemporizadorTick += Temporizador_Tick;
         }
 
         /// <summary>
@@ -594,8 +581,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ColorPalabraAdivinar = Brushes.Blue;
             VisibilidadOverlayAlarma = Visibility.Visible;
 
-            _temporizadorAlarma.Stop();
-            _temporizadorAlarma.Start();
+            _temporizadores.DetenerAlarma();
+            _temporizadores.IniciarAlarma();
         }
 
         private void OcultarOverlayAlarma()
@@ -605,7 +592,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void OverlayTimer_Tick(object remitente, EventArgs argumentosEvento)
         {
-            _overlayTimer.Stop();
+            _temporizadores.DetenerOverlay();
             VisibilidadOverlayDibujante = Visibility.Collapsed;
             VisibilidadOverlayAdivinador = Visibility.Collapsed;
             HabilitarEscrituraTrasOverlay();
@@ -637,7 +624,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             TextoContador = _contador.ToString();
             ColorContador = Brushes.Black;
 
-            _temporizador.Start();
+            _temporizadores.IniciarTemporizador();
         }
 
         private void Temporizador_Tick(object remitente, EventArgs argumentosEvento)
@@ -649,7 +636,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             if (_contador <= 0)
             {
-                _temporizador.Stop();
+                _temporizadores.DetenerTemporizador();
                 TextoContador = "0";
                 _cancionManejador.Detener();
 
@@ -674,7 +661,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
-            _temporizadorAlarma.Stop();
+            _temporizadores.DetenerAlarma();
             _cancionManejador.Detener();
             VisibilidadOverlayAlarma = Visibility.Collapsed;
             _alarmaActiva = false;
@@ -787,12 +774,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void DetenerTemporizadoresYAlarma()
         {
-            _temporizadorAlarma.Stop();
+            _temporizadores.DetenerTodos();
             _cancionManejador.Detener();
             _alarmaActiva = false;
             VisibilidadOverlayAlarma = Visibility.Collapsed;
-            _temporizador.Stop();
-            _overlayTimer.Stop();
             LimpiarTrazos?.Invoke();
         }
 
@@ -871,8 +856,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             VisibilidadOverlayAdivinador = Visibility.Collapsed;
             VisibilidadOverlayDibujante = Visibility.Visible;
-            _overlayTimer.Stop();
-            _overlayTimer.Start();
+            _temporizadores.DetenerOverlay();
+            _temporizadores.IniciarOverlay();
         }
 
         private void ConfigurarRolAdivinador(DTOs.RondaDTO ronda)
@@ -897,8 +882,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             VisibilidadOverlayDibujante = Visibility.Collapsed;
             VisibilidadOverlayAdivinador = Visibility.Visible;
-            _overlayTimer.Stop();
-            _overlayTimer.Start();
+            _temporizadores.DetenerOverlay();
+            _temporizadores.IniciarOverlay();
         }
 
         private static string FormatearPistaArtista(string pistaArtista)
@@ -979,8 +964,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     return;
                 }
 
-                _temporizador.Stop();
-                _overlayTimer.Stop();
+                _temporizadores.DetenerTemporizador();
+                _temporizadores.DetenerOverlay();
                 _cancionManejador.Detener();
                 LimpiarTrazos?.Invoke();
                 PuedeEscribirCambiado?.Invoke(false);
@@ -1004,8 +989,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.BeginInvoke(new Action(() =>
             {
-                _temporizador.Stop();
-                _overlayTimer.Stop();
+                _temporizadores.DetenerTemporizador();
+                _temporizadores.DetenerOverlay();
                 LimpiarTrazos?.Invoke();
                 PuedeEscribirCambiado?.Invoke(false);
                 MostrarEstadoRonda = false;
@@ -1025,8 +1010,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 }
 
                 _alarmaActiva = true;
-                _temporizadorAlarma.Stop();
-                _temporizadorAlarma.Start();
+                _temporizadores.DetenerAlarma();
+                _temporizadores.IniciarAlarma();
             }));
         }
 
@@ -1043,9 +1028,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.BeginInvoke(new Action(() =>
             {
-                _temporizador.Stop();
-                _overlayTimer.Stop();
-                _temporizadorAlarma.Stop();
+                _temporizadores.DetenerTodos();
                 _cancionManejador.Detener();
                 JuegoIniciado = false;
                 MostrarEstadoRonda = false;
@@ -1105,9 +1088,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// </summary>
         public void Detener()
         {
-            _overlayTimer.Stop();
-            _temporizador.Stop();
-            _temporizadorAlarma.Stop();
+            _temporizadores.DetenerTodos();
             _cronometroRonda.Stop();
             _cancionManejador.Detener();
         }
@@ -1117,8 +1098,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// </summary>
         public void ReiniciarEstadoVisualSalaCancelada()
         {
-            _temporizador.Stop();
-            _overlayTimer.Stop();
+            _temporizadores.DetenerTodos();
             _cancionManejador.Detener();
 
             JuegoIniciado = false;

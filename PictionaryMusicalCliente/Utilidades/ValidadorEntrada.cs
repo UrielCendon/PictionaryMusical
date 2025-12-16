@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Properties.Langs;
+﻿using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.Text.RegularExpressions;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;

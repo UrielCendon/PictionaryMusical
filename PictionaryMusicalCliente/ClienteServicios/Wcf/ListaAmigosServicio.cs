@@ -81,7 +81,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _cliente = cliente;
                 _usuarioSuscrito = nombreUsuario;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarErrorSuscripcion(excepcion);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarErrorSuscripcion(excepcion);
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarErrorSuscripcion(excepcion);
             }
@@ -135,7 +143,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 return lista;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                if (esTemporal) cliente.Abort();
+                throw ConvertirExcepcion(excepcion);
+            }
+            catch (CommunicationException excepcion)
+            {
+                if (esTemporal) cliente.Abort();
+                throw ConvertirExcepcion(excepcion);
+            }
+            catch (TimeoutException excepcion)
             {
                 if (esTemporal) cliente.Abort();
                 throw ConvertirExcepcion(excepcion);
@@ -185,11 +203,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 if (!string.IsNullOrWhiteSpace(usuario))
                 {
-                    await cliente.CancelarSuscripcionAsync(usuario).ConfigureAwait(false);
+                    await cliente.CancelarSuscripcionAsync(usuario)
+                        .ConfigureAwait(false);
                 }
                 CerrarClienteSeguro(cliente);
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion.", excepcion);
+                cliente.Abort();
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion.", excepcion);
+                cliente.Abort();
+            }
+            catch (TimeoutException excepcion)
             {
                 _logger.Warn("Error al cancelar suscripcion.", excepcion);
                 cliente.Abort();

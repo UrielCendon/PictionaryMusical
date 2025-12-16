@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Chat
+﻿namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Chat
 {
     /// <summary>
     /// Define la capacidad de enviar mensajes al sistema de chat.

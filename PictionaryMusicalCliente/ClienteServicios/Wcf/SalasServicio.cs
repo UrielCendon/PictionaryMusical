@@ -107,7 +107,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     sala.Codigo);
                 return sala;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -133,7 +143,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     .ConfigureAwait(false);
                 return sala;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -161,7 +181,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 await _cliente.AbandonarSalaAsync(codigoSala, nombreUsuario).ConfigureAwait(false);
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
@@ -190,7 +218,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     nombreHost,
                     nombreJugadorAExpulsar).ConfigureAwait(false);
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -216,7 +254,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 _suscrito = true;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
@@ -239,7 +285,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 await _cliente.CancelarSuscripcionListaSalasAsync().ConfigureAwait(false);
                 _suscrito = false;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
+            }
+            catch (TimeoutException excepcion)
             {
                 _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
             }

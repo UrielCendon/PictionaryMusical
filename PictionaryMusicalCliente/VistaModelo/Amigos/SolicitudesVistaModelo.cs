@@ -334,7 +334,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             _avisoServicio.Mostrar(mensaje);
         }
 
-        private bool ValidarEntrada(SolicitudAmistadEntrada entrada, string operacion)
+        private static bool ValidarEntrada(SolicitudAmistadEntrada entrada, string operacion)
         {
             if (entrada == null)
             {

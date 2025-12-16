@@ -1,0 +1,332 @@
+﻿C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IAvisoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IInvitacionSalaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ILocalizadorServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IManejadorErrorServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IReportesServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ISalasServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IUsuarioMapeador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IWcfClienteEjecutor.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Administrador\ISolicitudesAmistadAdministrador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Administrador\SolicitudesAmistadAdministrador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\ChatDecision.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\IChatMensajeria.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\IChatAciertosServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\IChatReglasPartida.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\ChatMensajeriaDelegado.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\ChatAciertosDelegado.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Chat\ChatReglasPartida.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\InvitacionSalaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\ReportesServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\SalasServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\WcfClienteFabrica.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\Cancion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\Catalogos\CatalogoCancionesLocales.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\Catalogos\ICatalogos.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\IUsuarioAutenticado.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\JugadorElemento.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\ResultadoReporteJugador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\Abstracciones\INombreInvitadoGenerador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\Abstracciones\IVentanaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\Resultados\ResultadoGeneracion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\CancionManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\MusicaManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\EntradaNumerica.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\NombreInvitadoGenerador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Ayudante\CodigoRecuperacionServicioAdaptador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Comandos\Comando.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Comandos\ComandoAsincrono.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Comandos\ComandoDelegado.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Comandos\IComandoAsincrono.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Comandos\IComandoNotificable.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Convertidores\ConvertidorBooleanoInverso.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Convertidores\ConvertidorBooleanoVisibilidad.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Convertidores\ConvertidorCadenaVaciaVisibilidad.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\Catalogos\CatalogoAvataresLocales.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\Catalogos\CatalogoImagenesPerfilLocales.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\ObjetoAvatar.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\IdiomaOpcion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ICambioContrasenaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IAmigosServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IListaAmigosServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ICodigoVerificacionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IClasificacionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IInvitacionesServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ICuentaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ILocalizacionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IInicioSesionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IRecuperacionCuentaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\ISeleccionarAvatarServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IVerificacionCodigoDialogoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Abstracciones\IPerfilServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Dialogos\RecuperacionCuentaDialogoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Dialogos\SeleccionAvatarDialogoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Dialogos\VerificacionCodigoDialogoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Idiomas\LocalizacionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\ServicioExcepcion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\CambioContrasenaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\ClasificacionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\CuentaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\InvitacionesServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\AmigosServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\ListaAmigosServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\InicioSesionServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\PerfilServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\VerificacionCodigoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\OpcionEntero.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\OpcionTexto.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\SolicitudAmistadEntrada.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Modelo\UsuarioAutenticado.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\AvisoServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\ControlVisual.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\Idiomas\LocalizacionContexto.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\SonidoManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\ValidadorEntrada.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\ManejadorErrorServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\LocalizadorServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Ayudante\UsuarioMapeador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\ClienteServicios\Wcf\Ayudante\WcfClienteEjecutor.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Utilidades\VentanaServicio.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\BaseVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\App.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Amigos\BusquedaAmigoVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Amigos\EliminacionAmigoVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Amigos\InvitarAmigosVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Amigos\SolicitudesVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasCreacionCuenta.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasInicioSesion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasInvitarAmigos.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasPerfil.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasSala.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Dependencias\DependenciasVistaModeloBase.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\CambioContrasenaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\RedSocialItemVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\ReportarJugadorVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\VentanaPrincipal\ClasificacionVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Ajustes\AjustesVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Ajustes\AjustesPartidaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Ajustes\ConfirmacionSalirPartidaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\InicioSesion\InicioSesionVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\PerfilVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\SeleccionAvatarVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\InicioSesion\CreacionCuentaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Sesion\TerminacionSesionVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\InicioSesion\Auxiliares\ValidadorCuenta.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\InicioSesion\Auxiliares\InicioSesionNavegacion.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\Auxiliares\RedesSocialesManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\Auxiliares\SalaNavegacionManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\Auxiliares\SalaJugadoresManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\Auxiliares\SalaEventosManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\Auxiliares\SalaInvitacionesManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\Auxiliares\PartidaTemporizadores.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\VentanaPrincipal\Auxiliares\OpcionesPartidaManejador.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\SalaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\PartidaVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\ChatVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\ExpulsionJugadorVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Salas\IngresoPartidaInvitadoVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\VentanaPrincipal\VentanaPrincipalVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\VistaModelo\Perfil\VerificacionCodigoVistaModelo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Ajustes.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\AjustesPartida.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Avisos.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\BusquedaAmigo.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\CambioContrasena.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Chat.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Partida.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\ReportarJugador.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\TerminacionSesion.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Clasificacion.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\ComoJugar.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\ConfirmacionSalirPartida.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\CreacionCuenta.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\EliminacionAmigo.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\ExpulsionJugador.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\InicioSesion.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Perfil.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\SeleccionAvatar.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Solicitudes.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\InvitarAmigos.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\IngresoPartidaInvitado.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\Sala.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\VentanaPrincipal.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Vista\VerificacionCodigo.xaml.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\AssemblyInfo.cs
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Adivinador.png
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\67_Skrilla.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Animals_Martin_Garrix.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Baraja_de_Oro_Chalino_Sanchez.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Blackbird_The_Beatles.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Black_Or_White_Michael_Jackson.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Bocanada_Gustavo_Cerati.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Cama_y_Mesa_Roberto_Carlos.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Diamonds_Rihanna.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Dont_Stop_The_Music_Rihanna.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Earth_Song_Michael_Jackson.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\El_Oso_Polar_Nelson_Kanzela.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\El_Reloj_Luis_Miguel.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\El_Taxi_Pitbull.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\El_Telefono_Wisin_&_Yandel.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\El_Triste_Jose_Jose.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Gasolina_Daddy_Yankee.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Grenade_Bruno_Mars.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Hotel_California_Eagles.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\La_Bicicleta_Shakira.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\La_Camisa_Negra_Juanes.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\La_Nave_Del_Olvido_Jose_Jose.MP3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\La_Planta_Caos.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\La_Puerta_Negra_Los_Tigres_Del_Norte.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Lluvia_Eddie_Santiago.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Los_Luchadores_La_Sonora_Santanera.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Man_In_The_Mirror_Michael_Jackson.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Money_Pink_Floyd.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Pony_Ginuwine.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Pose_Daddy_Yankee.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Pupilas_De_Gato_Luis_Miguel.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Redbone_Childish_Gambino.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Rocket_Man_Elton_John.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Rosas_La_Oreja_de_Van_Gogh.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Scarface_Paul_Engemann.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Starman_David_Bowie.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\The_Chain_Fleetwood_Mac.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Tiburon_Proyecto_Uno.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Time_In_A_Bottle_Jim_Croce.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Umbrella_Rihanna.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Canciones\Yellow_Submarine_The_Beatles.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\Dibujante.png
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\error.MP3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\exito.MP3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\inicio_sesion_musica.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\piano_boton.MP3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Recursos\ventana_principal_musica.mp3
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\Langs\Lang.en-US.resx
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\Langs\Lang.es-MX.resx
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\Langs\Lang.resx
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\Resources.resx
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\Amigos.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\Amigos1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\Amigos2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\AmigosManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\CambioContrasena.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\CambioContrasena1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\CambioContrasena2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\CambioContrasenaManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\Chat.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\Chat1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\ChatManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\Clasificacion.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\Clasificacion1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\Clasificacion2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\ClasificacionManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacionManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\Cuenta.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\Cuenta1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\Cuenta2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\CuentaManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartida.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartida1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartida2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartida3.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartidaManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\InicioSesionManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\Invitaciones.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\Invitaciones1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\Invitaciones2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\InvitacionesManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\ListaAmigos.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\ListaAmigos1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\ListaAmigos2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\ListaAmigosManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\Perfil.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\Perfil1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\Perfil2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\PerfilManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\Reportes.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\Reportes1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\Reportes2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\ReportesManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Salas.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Salas1.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Salas2.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Salas3.xsd
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\SalasManejador.wsdl
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\packages.config
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.AmigoDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ClasificacionUsuarioDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoInicioSesionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoOperacionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoSolicitudRecuperacionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.SalaDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\PictionaryMusicalServidor.Servicios.Contratos.DTOs.UsuarioDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.AmigoDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.AvatarDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ClasificacionUsuarioDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ResultadoInicioSesionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ResultadoOperacionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ResultadoRegistroCuentaDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudCodigoDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.ResultadoSolicitudRecuperacionDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.SalaDTO1.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\DataSources\Servicios.Contratos.DTOs.UsuarioDTO.datasource
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Properties\Settings.settings
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\App.config
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\CodigoVerificacion.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCodigoVerificacion\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\Cuenta.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCuenta\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\InicioSesion.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInicioSesion\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\Clasificacion.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioClasificacion\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\Perfil.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioPerfil\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\ListaAmigos.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioListaAmigos\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCambioContrasena\CambioContrasena.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\Amigos.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioAmigos\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\Invitaciones.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioInvitaciones\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Salas.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioSalas\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\CursoPartida.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioCursoPartida\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\Chat.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioChat\Reference.svcmap
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\Reportes.disco
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\configuration91.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\configuration.svcinfo
+C:\Users\uriel\source\repos\PictionaryMusical\PictionaryMusical\PictionaryMusicalCliente\Connected Services\PictionaryServidorServicioReportes\Reference.svcmap

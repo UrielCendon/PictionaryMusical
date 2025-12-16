@@ -59,9 +59,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             }
         }
 
-        private void ValidarParametrosEntrada<TClient, TResult>(
+        private static void ValidarParametrosEntrada<TClient, TResult>(
             TClient cliente,
             Func<TClient, Task<TResult>> operacion)
+            where TClient : class
         {
             if (cliente == null)
             {
@@ -74,7 +75,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             }
         }
 
-        private void IntentarCerrarCliente(object cliente)
+        private static void IntentarCerrarCliente(object cliente)
         {
             if (cliente == null)
             {
@@ -96,23 +97,29 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 }
                 catch (CommunicationException excepcion)
                 {
-                    _logger.Error("Excepcion de comunicacion al intentar cerrar el cliente WCF.", excepcion);
+                    _logger.Error(
+                        "Excepcion de comunicacion al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
                 catch (TimeoutException excepcion)
                 {
-                    _logger.Error("Tiempo de espera agotado al intentar cerrar el cliente WCF.", excepcion);
+                    _logger.Error(
+                        "Tiempo agotado al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
                 catch (InvalidOperationException excepcion)
                 {
-                    _logger.Error("Operacion invalida al intentar cerrar el cliente WCF.", excepcion);
+                    _logger.Error(
+                        "Operacion invalida al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
             }
         }
 
-        private void ForzarAbortoCliente(object cliente)
+        private static void ForzarAbortoCliente(object cliente)
         {
             if (cliente == null)
             {

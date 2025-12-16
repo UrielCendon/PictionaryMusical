@@ -33,7 +33,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// </summary>
         /// <param name="ventana">Servicio para gestionar ventanas.</param>
         /// <param name="localizador">Servicio de localizacion.</param>
-        /// <param name="clasificacionServicio">Servicio para obtener los datos del ranking.</param>
+        /// <param name="clasificacionServicio">Servicio para obtener los datos del ranking.
+        /// </param>
         /// <param name="avisoServicio">Servicio de avisos.</param>
         /// <param name="sonidoManejador">Servicio de sonido.</param>
         public ClasificacionVistaModelo(

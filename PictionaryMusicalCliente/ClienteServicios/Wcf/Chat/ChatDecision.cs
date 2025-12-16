@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Chat
+﻿namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Chat
 {
     /// <summary>
     /// Representa los posibles resultados al evaluar un mensaje en el chat.

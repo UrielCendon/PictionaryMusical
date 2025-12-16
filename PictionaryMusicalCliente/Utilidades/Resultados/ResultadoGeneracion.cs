@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.Utilidades.Resultados
+﻿namespace PictionaryMusicalCliente.Utilidades.Resultados
 {
     /// <summary>
     /// Representa el resultado de una operacion de generacion de nombre de invitado.

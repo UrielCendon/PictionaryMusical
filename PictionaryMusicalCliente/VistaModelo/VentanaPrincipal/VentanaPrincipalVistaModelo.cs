@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
+using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,13 +30,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private string _nombreUsuario;
         private string _codigoSala;
-        private ObservableCollection<OpcionEntero> _numeroRondasOpciones;
         private OpcionEntero _numeroRondasSeleccionada;
-        private ObservableCollection<OpcionEntero> _tiempoRondaOpciones;
         private OpcionEntero _tiempoRondaSeleccionada;
-        private ObservableCollection<IdiomaOpcion> _idiomasDisponibles;
         private IdiomaOpcion _idiomaSeleccionado;
-        private ObservableCollection<OpcionTexto> _dificultadesDisponibles;
         private OpcionTexto _dificultadSeleccionada;
         private ObservableCollection<DTOs.AmigoDTO> _amigos;
         private DTOs.AmigoDTO _amigoSeleccionado;
@@ -47,6 +44,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private readonly ISalasServicio _salasServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly OpcionesPartidaManejador _opcionesPartida;
 
         private bool _suscripcionActiva;
 
@@ -78,9 +76,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
 
             _nombreUsuarioSesion = _usuarioSesion.NombreUsuario ?? string.Empty;
+            _opcionesPartida = new OpcionesPartidaManejador();
 
             CargarDatosUsuario();
-            CargarOpcionesPartida();
+            InicializarOpcionesSeleccionadas();
 
             AbrirPerfilComando = new ComandoDelegado(_ =>
             {
@@ -153,11 +152,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene la coleccion de opciones disponibles para el numero de rondas.
         /// </summary>
-        public ObservableCollection<OpcionEntero> NumeroRondasOpciones
-        {
-            get => _numeroRondasOpciones;
-            private set => EstablecerPropiedad(ref _numeroRondasOpciones, value);
-        }
+        public ObservableCollection<OpcionEntero> NumeroRondasOpciones 
+            => _opcionesPartida.NumeroRondasOpciones;
 
         /// <summary>
         /// Obtiene o establece el numero de rondas seleccionado para la partida.
@@ -177,11 +173,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene la coleccion de opciones disponibles para el tiempo de ronda.
         /// </summary>
-        public ObservableCollection<OpcionEntero> TiempoRondaOpciones
-        {
-            get => _tiempoRondaOpciones;
-            private set => EstablecerPropiedad(ref _tiempoRondaOpciones, value);
-        }
+        public ObservableCollection<OpcionEntero> TiempoRondaOpciones 
+            => _opcionesPartida.TiempoRondaOpciones;
 
         /// <summary>
         /// Obtiene o establece el tiempo de ronda seleccionado en segundos.
@@ -201,11 +194,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene la coleccion de idiomas disponibles para las canciones.
         /// </summary>
-        public ObservableCollection<IdiomaOpcion> IdiomasDisponibles
-        {
-            get => _idiomasDisponibles;
-            private set => EstablecerPropiedad(ref _idiomasDisponibles, value);
-        }
+        public ObservableCollection<IdiomaOpcion> IdiomasDisponibles 
+            => _opcionesPartida.IdiomasDisponibles;
 
         /// <summary>
         /// Obtiene o establece el idioma seleccionado para las canciones de la partida.
@@ -225,11 +215,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene la coleccion de niveles de dificultad disponibles.
         /// </summary>
-        public ObservableCollection<OpcionTexto> DificultadesDisponibles
-        {
-            get => _dificultadesDisponibles;
-            private set => EstablecerPropiedad(ref _dificultadesDisponibles, value);
-        }
+        public ObservableCollection<OpcionTexto> DificultadesDisponibles 
+            => _opcionesPartida.DificultadesDisponibles;
 
         /// <summary>
         /// Obtiene o establece el nivel de dificultad seleccionado para la partida.
@@ -404,34 +391,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             NombreUsuario = _nombreUsuarioSesion;
         }
 
-        private void CargarOpcionesPartida()
+        private void InicializarOpcionesSeleccionadas()
         {
-            NumeroRondasOpciones = new ObservableCollection<OpcionEntero>(
-                new[] { new OpcionEntero(2), new OpcionEntero(3), new OpcionEntero(4) });
-            NumeroRondasSeleccionada = NumeroRondasOpciones.FirstOrDefault();
-
-            TiempoRondaOpciones = new ObservableCollection<OpcionEntero>(
-                new[] { new OpcionEntero(60), new OpcionEntero(90), new OpcionEntero(120) });
-            TiempoRondaSeleccionada = TiempoRondaOpciones.FirstOrDefault();
-
-            IdiomasDisponibles = new ObservableCollection<IdiomaOpcion>(
-                new[]
-                {
-                    new IdiomaOpcion("es-MX", Lang.idiomaTextoEspanol),
-                    new IdiomaOpcion("en-US", Lang.idiomaTextoIngles),
-                    new IdiomaOpcion("mixto", Lang.principalTextoMixto)
-                });
-
-            IdiomaSeleccionado = IdiomasDisponibles.FirstOrDefault();
-
-            DificultadesDisponibles = new ObservableCollection<OpcionTexto>(
-                new[]
-                {
-                    new OpcionTexto("facil", Lang.principalTextoFacil),
-                    new OpcionTexto("media", Lang.principalTextoMedia),
-                    new OpcionTexto("dificil", Lang.principalTextoDificil)
-                });
-            DificultadSeleccionada = DificultadesDisponibles.FirstOrDefault();
+            NumeroRondasSeleccionada = _opcionesPartida.NumeroRondasPredeterminado;
+            TiempoRondaSeleccionada = _opcionesPartida.TiempoRondaPredeterminado;
+            IdiomaSeleccionado = _opcionesPartida.IdiomaPredeterminado;
+            DificultadSeleccionada = _opcionesPartida.DificultadPredeterminada;
         }
 
         private void ListaActualizada(object remitente, IReadOnlyList<DTOs.AmigoDTO> amigos)

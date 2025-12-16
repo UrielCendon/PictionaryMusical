@@ -4,6 +4,7 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Salas;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,6 +43,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly INombreInvitadoGenerador _generadorNombres;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly Func<ISalasServicio> _salasServicioFactory;
+        private readonly InicioSesionNavegacion _navegacion;
+        private readonly ValidadorCuenta _validadorCuenta;
 
         /// <summary>
         /// Nombre del campo contrasena para validacion.
@@ -87,6 +90,14 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             _generadorNombres = dependencias.GeneradorNombres;
             _usuarioSesion = dependencias.UsuarioSesion;
             _salasServicioFactory = dependencias.SalasServicioFactory;
+            _validadorCuenta = new ValidadorCuenta();
+            _navegacion = new InicioSesionNavegacion(
+                _ventana,
+                _localizador,
+                _localizacionServicio,
+                _sonidoManejador,
+                _avisoServicio,
+                _usuarioSesion);
 
             IniciarSesionComando = new ComandoAsincrono(async _ =>
             {
@@ -259,20 +270,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void NavegarAVentanaPrincipal()
         {
-            App.MusicaManejador.Detener();
-
-            var principalVistaModelo = new VentanaPrincipal.VentanaPrincipalVistaModelo(
-                _ventana,
-                _localizador,
-                _localizacionServicio,
-                App.ListaAmigosServicio,
-                App.AmigosServicio,
-                App.SalasServicio,
-                _sonidoManejador,
-                _usuarioSesion);
-
-            _ventana.MostrarVentana(principalVistaModelo);
-            _ventana.CerrarVentana(this);
+            _navegacion.NavegarAVentanaPrincipal(this);
         }
 
         private void NavegarAVentanaSala(
@@ -281,46 +279,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             string nombre,
             bool esInvitado)
         {
-            App.MusicaManejador.Detener();
-
-            var comunicacion = new DependenciasComunicacionSala(
-                servicio,
-                App.InvitacionesServicio,
-                new InvitacionSalaServicio(
-                    App.InvitacionesServicio,
-                    App.ListaAmigosServicio,
-                    App.PerfilServicio,
-                    _sonidoManejador,
-                    _avisoServicio),
-                App.WcfFabrica);
-
-            var perfiles = new DependenciasPerfilesSala(
-                App.ListaAmigosServicio,
-                App.PerfilServicio,
-                App.ReportesServicio,
-                _usuarioSesion);
-
-            var audio = new DependenciasAudioSala(
-                _sonidoManejador,
-                new CancionManejador(),
-                App.CatalogoCanciones);
-
-            var dependenciasSala = new DependenciasSalaVistaModelo(
-                comunicacion,
-                perfiles,
-                audio,
-                _avisoServicio);
-
-            var salaVistaModelo = new Salas.SalaVistaModelo(
-                _ventana,
-                _localizador,
-                sala,
-                dependenciasSala,
-                nombre,
-                esInvitado);
-
-            _ventana.MostrarVentana(salaVistaModelo);
-            _ventana.CerrarVentana(this);
+            _navegacion.NavegarAVentanaSala(sala, servicio, nombre, esInvitado, this);
         }
 
         private async Task IniciarSesionInvitadoAsync()
@@ -468,22 +427,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private List<string> ValidarCamposInicioSesion()
         {
             string identificador = Identificador?.Trim();
-            bool identificadorIngresado = !string.IsNullOrWhiteSpace(identificador);
-            bool contrasenaIngresada = !string.IsNullOrWhiteSpace(_contrasena);
-
-            var camposInvalidos = new List<string>();
-
-            if (!identificadorIngresado)
-            {
-                camposInvalidos.Add(nameof(Identificador));
-            }
-
-            if (!contrasenaIngresada)
-            {
-                camposInvalidos.Add(CampoContrasena);
-            }
-
-            return camposInvalidos;
+            return _validadorCuenta.ValidarCamposInicioSesion(identificador, _contrasena);
         }
 
         private void LimpiarErroresVisuales()

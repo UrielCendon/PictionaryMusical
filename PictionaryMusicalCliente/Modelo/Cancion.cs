@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.Modelo
+﻿namespace PictionaryMusicalCliente.Modelo
 {
     /// <summary>
     /// Representa una cancion del catalogo de audio de la partida.

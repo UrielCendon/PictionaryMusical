@@ -7,6 +7,7 @@ using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -38,6 +39,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly SonidoManejador _sonidoManejador;
         private readonly ICatalogoAvatares _catalogoAvatares;
         private readonly IAvisoServicio _avisoServicio;
+        private readonly ValidadorCuenta _validadorCuenta;
 
         private string _usuario;
         private string _nombre;
@@ -79,6 +81,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 dependencias.VerificacionCodigoDialogoServicio;
             _catalogoAvatares = dependencias.CatalogoAvatares;
             _localizacionServicio = dependencias.LocalizacionServicio;
+            _validadorCuenta = new ValidadorCuenta();
 
             CrearCuentaComando = new ComandoAsincrono(async _ =>
             {
@@ -429,18 +432,16 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             LimpiarCamposTexto();
             
-            var camposInvalidos = new List<string>();
-            string primerMensajeError = null;
+            ResultadoValidacionCampos resultado = _validadorCuenta.ValidarCamposCreacion(
+                Usuario, Nombre, Apellido, Correo, Contrasena, AvatarSeleccionadoId);
 
-            ValidarTodosCampos(camposInvalidos, ref primerMensajeError);
-
-            if (camposInvalidos.Count > 0)
+            if (!resultado.EsValido)
             {
-                return (null, camposInvalidos, primerMensajeError);
+                return (null, resultado.CamposInvalidos, resultado.PrimerMensajeError);
             }
 
             DTOs.NuevaCuentaDTO solicitud = CrearSolicitudNuevaCuenta();
-            return (solicitud, camposInvalidos, primerMensajeError);
+            return (solicitud, resultado.CamposInvalidos, resultado.PrimerMensajeError);
         }
 
         private void LimpiarCamposTexto()
@@ -450,28 +451,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             Apellido = Apellido?.Trim();
             Correo = Correo?.Trim();
             Contrasena = Contrasena?.Trim();
-        }
-
-        private void ValidarTodosCampos(
-            List<string> camposInvalidos,
-            ref string primerMensajeError)
-        {
-            ValidarCampo(ValidadorEntrada.ValidarUsuario(Usuario),
-                nameof(Usuario), camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidadorEntrada.ValidarNombre(Nombre),
-                nameof(Nombre), camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidadorEntrada.ValidarApellido(Apellido),
-                nameof(Apellido), camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidadorEntrada.ValidarCorreo(Correo),
-                nameof(Correo), camposInvalidos, ref primerMensajeError);
-            ValidarCampo(ValidadorEntrada.ValidarContrasena(Contrasena),
-                nameof(Contrasena), camposInvalidos, ref primerMensajeError);
-
-            if (AvatarSeleccionadoId <= 0)
-            {
-                camposInvalidos.Add("Avatar");
-                primerMensajeError ??= Lang.errorTextoSeleccionAvatarValido;
-            }
         }
 
         private DTOs.NuevaCuentaDTO CrearSolicitudNuevaCuenta()
@@ -487,19 +466,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 Idioma = _localizacionServicio?.CulturaActual?.Name
                     ?? CultureInfo.CurrentUICulture?.Name
             };
-        }
-
-        private static void ValidarCampo(
-            DTOs.ResultadoOperacionDTO resultado,
-            string nombreCampo,
-            List<string> invalidos,
-            ref string primerError)
-        {
-            if (resultado?.OperacionExitosa != true)
-            {
-                invalidos.Add(nombreCampo);
-                primerError ??= resultado?.Mensaje;
-            }
         }
 
         private DTOs.ResultadoSolicitudCodigoDTO _resultadoSolicitudCodigo;

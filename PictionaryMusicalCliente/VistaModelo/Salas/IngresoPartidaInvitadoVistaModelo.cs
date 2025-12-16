@@ -9,6 +9,7 @@ using PictionaryMusicalCliente.Utilidades.Resultados;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -442,7 +443,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             return coincidencias > 1;
         }
 
-        private async Task IntentarAbandonarSalaAsync(string codigoSala, string nombreInvitado)
+        private async Task IntentarAbandonarSalaAsync(
+            string codigoSala, 
+            string nombreInvitado)
         {
             try
             {
@@ -450,12 +453,25 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     codigoSala,
                     nombreInvitado).ConfigureAwait(true);
             }
-            catch (Exception excepcion)
+            catch (ServicioExcepcion excepcion)
             {
-                // Se captura Exception general porque es un cleanup "best effort"
-                _logger.Warn("Error en cleanup al abandonar sala (ignorado intencionalmente).",
-                    excepcion);
+                RegistrarErrorCleanup(excepcion);
             }
+            catch (CommunicationException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
+        }
+
+        private static void RegistrarErrorCleanup(Exception excepcion)
+        {
+            _logger.Warn(
+                "Error en cleanup al abandonar sala (ignorado intencionalmente).",
+                excepcion);
         }
 
         private enum EstadoUnionInvitado

@@ -50,7 +50,8 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (EndpointNotFoundException excepcion)
             {
-                ManejarError(excepcion, "No se pudo conectar con el servidor. Verifique su conexion.",
+                ManejarError(excepcion, 
+                    "No se pudo conectar con el servidor. Verifique su conexion.",
                     accionError);
             }
             catch (CommunicationException excepcion)

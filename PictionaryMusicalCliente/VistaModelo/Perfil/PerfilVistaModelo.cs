@@ -5,13 +5,11 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
+using PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -27,12 +25,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private const string RedSocialInstagram = "Instagram";
-        private const string RedSocialFacebook = "Facebook";
-        private const string RedSocialX = "X";
-        private const string RedSocialDiscord = "Discord";
-
-        private const int LongitudMaximaRedSocial = 50;
         private readonly IPerfilServicio _perfilServicio;
         private readonly ISeleccionarAvatarServicio _seleccionarAvatarServicio;
         private readonly ICambioContrasenaServicio _cambioContrasenaServicio;
@@ -42,10 +34,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private readonly SonidoManejador _sonidoManejador;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly ICatalogoAvatares _catalogoAvatares;
-        private readonly ICatalogoImagenesPerfil _catalogoPerfil;
-
-        private readonly Dictionary<string, RedSocialItemVistaModelo> 
-            _redesPorNombre;
+        private readonly RedesSocialesManejador _redesSocialesManejador;
 
         private int _usuarioId;
         private string _usuario;
@@ -94,12 +83,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             _recuperacionCuentaDialogoServicio = dependencias.RecuperacionCuentaServicio;
             _usuarioSesion = dependencias.UsuarioSesion;
             _catalogoAvatares = dependencias.CatalogoAvatares;
-            _catalogoPerfil = dependencias.CatalogoPerfil;
 
-            RedesSociales = CrearRedesSociales();
-            _redesPorNombre = RedesSociales.ToDictionary(
-                r => r.Nombre,
-                StringComparer.OrdinalIgnoreCase);
+            var catalogoPerfil = dependencias.CatalogoPerfil;
+            _redesSocialesManejador = new RedesSocialesManejador(catalogoPerfil);
 
             GuardarCambiosComando = new ComandoAsincrono(async _ =>
             {
@@ -207,7 +193,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         /// <summary>
         /// Obtiene la coleccion de redes sociales editables.
         /// </summary>
-        public ObservableCollection<RedSocialItemVistaModelo> RedesSociales { get; }
+        public ObservableCollection<RedSocialItemVistaModelo> RedesSociales 
+            => _redesSocialesManejador.RedesSociales;
 
         /// <summary>
         /// Obtiene un valor que indica si hay una operacion en proceso.
@@ -415,14 +402,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private void LimpiarEstadosValidacion()
         {
             MostrarCamposInvalidos?.Invoke(Array.Empty<string>());
-            LimpiarErroresRedesSociales();
+            _redesSocialesManejador.LimpiarErrores();
         }
 
         private bool ValidarDatosFormulario(out List<string> camposInvalidos)
         {
             var (sonCamposValidos, _, invalidos) = 
                 ValidarCamposPrincipales();
-            var (sonRedesValidas, _) = ValidarRedesSociales();
+            var (sonRedesValidas, _) = _redesSocialesManejador.ValidarRedesSociales();
 
             camposInvalidos = invalidos ?? new List<string>();
             
@@ -493,10 +480,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 Nombre = Nombre.Trim(),
                 Apellido = Apellido.Trim(),
                 AvatarId = AvatarSeleccionadoId,
-                Instagram = ObtenerIdentificador(RedSocialInstagram),
-                Facebook = ObtenerIdentificador(RedSocialFacebook),
-                X = ObtenerIdentificador(RedSocialX),
-                Discord = ObtenerIdentificador(RedSocialDiscord)
+                Instagram = _redesSocialesManejador.Instagram,
+                Facebook = _redesSocialesManejador.Facebook,
+                X = _redesSocialesManejador.X,
+                Discord = _redesSocialesManejador.Discord
             };
         }
 
@@ -600,58 +587,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 invalidos.Add(nombreCampo);
                 primerError ??= resultado?.Mensaje;
             }
-        }
-
-        private (bool EsValido, string MensajeError) ValidarRedesSociales()
-        {
-            string primerMensaje = null;
-            bool algunaInvalida = false;
-
-            foreach (RedSocialItemVistaModelo item in RedesSociales)
-            {
-                bool esInvalida = ValidarRedSocialIndividual(item, ref primerMensaje);
-                
-                if (esInvalida)
-                {
-                    algunaInvalida = true;
-                }
-            }
-
-            return (!algunaInvalida, primerMensaje);
-        }
-
-        private static bool ValidarRedSocialIndividual(
-            RedSocialItemVistaModelo item,
-            ref string primerMensaje)
-        {
-            string valor = item.Identificador;
-
-            if (string.IsNullOrWhiteSpace(valor))
-            {
-                item.TieneError = false;
-                return false;
-            }
-
-            string normalizado = valor.Trim();
-            bool excedeLongitud = normalizado.Length > LongitudMaximaRedSocial;
-
-            item.TieneError = excedeLongitud;
-
-            if (excedeLongitud)
-            {
-                primerMensaje ??= CrearMensajeErrorLongitudRedSocial(item.Nombre);
-            }
-
-            return excedeLongitud;
-        }
-
-        private static string CrearMensajeErrorLongitudRedSocial(string nombreRed)
-        {
-            return string.Format(
-                CultureInfo.CurrentCulture,
-                Lang.errorTextoIdentificadorRedSocialLongitud,
-                nombreRed,
-                LongitudMaximaRedSocial);
         }
 
         private async Task CambiarContrasenaAsync()
@@ -771,10 +706,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             EstablecerAvatarPorId(perfil.AvatarId);
 
-            EstablecerIdentificador(RedSocialInstagram, perfil.Instagram);
-            EstablecerIdentificador(RedSocialFacebook, perfil.Facebook);
-            EstablecerIdentificador(RedSocialX, perfil.X);
-            EstablecerIdentificador(RedSocialDiscord, perfil.Discord);
+            _redesSocialesManejador.CargarDesdeDTO(
+                perfil.Instagram,
+                perfil.Facebook,
+                perfil.X,
+                perfil.Discord);
 
             ActualizarSesion(perfil);
         }
@@ -806,49 +742,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             AvatarSeleccionadoImagen = avatar.Imagen;
         }
 
-        private void EstablecerIdentificador(string redSocial, string valor)
-        {
-            if (_redesPorNombre.TryGetValue(redSocial, out RedSocialItemVistaModelo item))
-            {
-                item.Identificador = valor;
-                item.TieneError = false;
-            }
-        }
-        private string ObtenerIdentificador(string redSocial)
-        {
-            if (_redesPorNombre.TryGetValue(redSocial, out RedSocialItemVistaModelo item))
-            {
-                string valor = item.Identificador?.Trim();
-                return string.IsNullOrWhiteSpace(valor) ? null : valor;
-            }
-            return null;
-        }
-
-
-        private void LimpiarErroresRedesSociales()
-        {
-            foreach (RedSocialItemVistaModelo redSocial in RedesSociales)
-            {
-                redSocial.TieneError = false;
-            }
-        }
-
-        private ObservableCollection<RedSocialItemVistaModelo> CrearRedesSociales()
-        {
-            return new ObservableCollection<RedSocialItemVistaModelo>
-            {
-                CrearRedSocial(RedSocialInstagram),
-                CrearRedSocial(RedSocialFacebook),
-                CrearRedSocial(RedSocialX),
-                CrearRedSocial(RedSocialDiscord)
-            };
-        }
-        private RedSocialItemVistaModelo CrearRedSocial(string nombre)
-        {
-            ImageSource icono = _catalogoPerfil.ObtenerIconoRedSocial(nombre);
-            return new RedSocialItemVistaModelo(nombre, icono);
-        }
-
         private void ActualizarSesion()
         {
             if (_usuarioSesion == null || _usuarioSesion.IdUsuario <= 0)
@@ -865,10 +758,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 Apellido = Apellido?.Trim(),
                 Correo = Correo,
                 AvatarId = AvatarSeleccionadoId,
-                Instagram = ObtenerIdentificador(RedSocialInstagram),
-                Facebook = ObtenerIdentificador(RedSocialFacebook),
-                X = ObtenerIdentificador(RedSocialX),
-                Discord = ObtenerIdentificador(RedSocialDiscord)
+                Instagram = _redesSocialesManejador.Instagram,
+                Facebook = _redesSocialesManejador.Facebook,
+                X = _redesSocialesManejador.X,
+                Discord = _redesSocialesManejador.Discord
             };
             _usuarioSesion.CargarDesdeDTO(dto);
         }
