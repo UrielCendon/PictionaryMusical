@@ -147,9 +147,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = await _servicio.InvitarPorCorreoAsync("SALA123", "correo-invalido");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado.Mensaje));
         }
 
         [TestMethod]
@@ -157,7 +156,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = await _servicio.InvitarPorCorreoAsync("SALA123", null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -166,7 +164,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = await _servicio.InvitarPorCorreoAsync("SALA123", "");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -186,7 +183,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.InvitarPorCorreoAsync(codigoSala, correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.Exitoso);
             _invitacionesServicioMock.Verify(
                 s => s.EnviarInvitacionAsync(codigoSala, correo),
@@ -209,7 +205,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.InvitarPorCorreoAsync(codigoSala, correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -225,7 +220,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 amigosInvitados,
                 mostrarMensaje);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -241,7 +235,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 amigosInvitados,
                 mostrarMensaje);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -261,7 +254,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 amigosInvitados,
                 mostrarMensaje);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.Exitoso);
         }
 
@@ -271,7 +263,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _servicio.Dispose();
             _servicio.Dispose();
 
-            Assert.IsNotNull(_servicio, "El servicio no debe ser nulo después de Dispose");
+            Assert.IsInstanceOfType(_servicio, typeof(InvitacionSalaServicio), "El servicio debe mantener su tipo después de Dispose");
         }
     }
 }

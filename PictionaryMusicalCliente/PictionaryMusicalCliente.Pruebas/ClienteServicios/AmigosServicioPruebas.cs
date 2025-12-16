@@ -93,7 +93,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 _manejadorErrorMock.Object,
                 _fabricaClientesMock.Object);
 
-            Assert.IsNotNull(servicio);
+            Assert.IsInstanceOfType(servicio, typeof(AmigosServicio));
             servicio.Dispose();
         }
 
@@ -129,7 +129,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.CancelarSuscripcionAsync(null);
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));
         }
 
         [TestMethod]
@@ -137,7 +137,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.CancelarSuscripcionAsync("");
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _servicio.SolicitudesActualizadas += (sender, args) => eventoInvocado = true;
 
             Assert.IsFalse(eventoInvocado, "El evento no deberia haberse invocado aun");
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));
         }
 
         [TestMethod]
@@ -232,7 +232,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _servicio.Dispose();
             _servicio.Dispose();
 
-            Assert.IsNotNull(_servicio, "El servicio no debe ser nulo después de Dispose");
+            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio), "El servicio debe mantener su tipo después de Dispose");
         }
     }
 }

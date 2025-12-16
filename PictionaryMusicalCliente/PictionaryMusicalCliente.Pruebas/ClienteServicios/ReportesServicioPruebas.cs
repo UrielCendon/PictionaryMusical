@@ -127,7 +127,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ReportarJugadorAsync(reporte);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -145,7 +144,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ReportarJugadorAsync(reporte);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 

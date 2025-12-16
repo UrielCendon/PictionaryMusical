@@ -104,7 +104,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.RegistrarCuentaAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.RegistroExitoso);
             Assert.AreEqual("Cuenta registrada exitosamente", resultado.Mensaje);
         }
@@ -123,7 +122,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.RegistrarCuentaAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.RegistroExitoso);
             Assert.AreEqual("El correo ya esta registrado", resultado.Mensaje);
         }
@@ -142,7 +140,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.RegistrarCuentaAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.RegistroExitoso);
         }
 

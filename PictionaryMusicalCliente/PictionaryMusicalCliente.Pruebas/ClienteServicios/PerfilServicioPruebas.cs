@@ -100,7 +100,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerPerfilAsync(usuarioId);
 
-            Assert.IsNotNull(resultado);
             Assert.AreEqual(usuarioId, resultado.UsuarioId);
             Assert.AreEqual("UsuarioPrueba", resultado.NombreUsuario);
         }
@@ -270,7 +269,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ActualizarPerfilAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -288,7 +286,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ActualizarPerfilAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -301,7 +298,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ActualizarPerfilAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 

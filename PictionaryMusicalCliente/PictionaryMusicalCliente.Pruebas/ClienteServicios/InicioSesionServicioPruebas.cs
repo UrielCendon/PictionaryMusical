@@ -150,8 +150,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.IniciarSesionAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
-            Assert.IsNotNull(resultado.Usuario);
             Assert.AreEqual(usuarioEsperado.UsuarioId, resultado.Usuario.UsuarioId);
         }
 
@@ -208,7 +206,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.IniciarSesionAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsNull(resultado.Usuario);
         }
 

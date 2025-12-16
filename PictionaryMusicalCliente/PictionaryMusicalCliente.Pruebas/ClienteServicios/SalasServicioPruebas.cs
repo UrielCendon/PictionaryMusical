@@ -74,7 +74,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 _fabricaClientesMock.Object,
                 _manejadorErrorMock.Object);
 
-            Assert.IsNotNull(servicio);
+            Assert.IsInstanceOfType(servicio, typeof(SalasServicio));
             servicio.Dispose();
         }
 
@@ -150,7 +150,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.AbandonarSalaAsync(null, "usuario");
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(SalasServicio));
         }
 
         [TestMethod]
@@ -158,7 +158,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.AbandonarSalaAsync("", "usuario");
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(SalasServicio));
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.AbandonarSalaAsync("SALA123", null);
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(SalasServicio));
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             await _servicio.AbandonarSalaAsync("SALA123", "");
 
-            Assert.IsNotNull(_servicio);
+            Assert.IsInstanceOfType(_servicio, typeof(SalasServicio));
         }
 
         [TestMethod]
@@ -249,7 +249,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             
             servicioLocal.Dispose();
 
-            Assert.IsNotNull(servicioLocal, "El servicio no debe ser nulo después de Dispose");
+            Assert.IsInstanceOfType(servicioLocal, typeof(SalasServicio), "El servicio debe ser una instancia válida después de Dispose");
         }
 
         [TestMethod]
@@ -257,7 +257,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = _servicio.ListaSalasActual;
 
-            Assert.IsNotNull(resultado);
             Assert.IsInstanceOfType(resultado, typeof(IReadOnlyList<DTOs.SalaDTO>));
         }
 

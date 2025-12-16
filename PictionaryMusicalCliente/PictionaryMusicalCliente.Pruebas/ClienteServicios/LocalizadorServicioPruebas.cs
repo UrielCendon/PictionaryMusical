@@ -56,7 +56,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = _localizador.Localizar(null, null);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = _localizador.Localizar("", "");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -74,7 +74,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
             Assert.AreNotEqual("default", resultado);
         }
 
@@ -85,7 +84,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -95,7 +94,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -105,7 +104,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -115,7 +114,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -125,7 +124,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -135,7 +134,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -145,7 +144,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -155,7 +154,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -165,7 +164,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -175,7 +174,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.Contains("30") || resultado != "default");
         }
 
@@ -188,8 +186,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado60 = _localizador.Localizar(mensaje60, "default");
             var resultado120 = _localizador.Localizar(mensaje120, "default");
 
-            Assert.IsNotNull(resultado60);
-            Assert.IsNotNull(resultado120);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado60));
+            Assert.IsFalse(string.IsNullOrEmpty(resultado120));
         }
 
         [TestMethod]
@@ -199,7 +197,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -211,8 +209,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultadoFacebook = _localizador.Localizar(mensajeFacebook, "default");
             var resultadoGoogle = _localizador.Localizar(mensajeGoogle, "default");
 
-            Assert.IsNotNull(resultadoFacebook);
-            Assert.IsNotNull(resultadoGoogle);
+            Assert.IsFalse(string.IsNullOrEmpty(resultadoFacebook));
+            Assert.IsFalse(string.IsNullOrEmpty(resultadoGoogle));
         }
 
         [TestMethod]
@@ -244,7 +242,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -255,7 +253,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _localizador.Localizar(mensaje, mensajePredeterminado);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
     }
 }

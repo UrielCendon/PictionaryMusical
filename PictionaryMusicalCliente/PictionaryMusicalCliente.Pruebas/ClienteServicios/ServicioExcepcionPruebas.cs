@@ -21,7 +21,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje);
 
-            Assert.IsNotNull(excepcion);
+            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(tipo, excepcion.Tipo);
             Assert.AreEqual(mensaje, excepcion.Message);
         }
@@ -35,7 +35,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje, causaInterna);
 
-            Assert.IsNotNull(excepcion);
+            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(causaInterna, excepcion.InnerException);
         }
 
@@ -46,7 +46,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, null);
 
-            Assert.IsNotNull(excepcion);
+            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(tipo, excepcion.Tipo);
         }
 
@@ -58,7 +58,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje);
 
-            Assert.IsNotNull(excepcion);
+            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje);
 
-            Assert.IsNotNull(excepcion);
+            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
         }
 
         [TestMethod]

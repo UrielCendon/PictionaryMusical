@@ -17,7 +17,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarUsuario(usuario);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -26,9 +25,8 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarUsuario(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado.Mensaje));
         }
 
         [TestMethod]
@@ -36,7 +34,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarUsuario("");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -45,7 +42,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarUsuario("   ");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -56,7 +52,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarNombre(nombre);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -65,7 +60,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarNombre(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -74,7 +68,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarNombre("");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -83,7 +76,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarNombre("   ");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -94,7 +86,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarApellido(apellido);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -103,7 +94,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarApellido(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -112,7 +102,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarApellido("");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -121,7 +110,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarApellido("   ");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -132,7 +120,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -143,7 +130,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -152,7 +138,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarCorreo(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -161,7 +146,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarCorreo("");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -172,7 +156,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -183,7 +166,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -194,7 +176,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -205,7 +186,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -216,7 +196,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarCorreo(correo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -227,7 +206,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -238,7 +216,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -247,7 +224,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarContrasena(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -256,7 +232,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = ValidadorEntrada.ValidarContrasena("");
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -267,7 +242,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -278,7 +252,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -289,7 +262,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -300,7 +272,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -311,7 +282,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -322,7 +292,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -333,7 +302,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -344,7 +312,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = ValidadorEntrada.ValidarContrasena(contrasena);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
     }

@@ -106,7 +106,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -125,7 +124,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
@@ -404,7 +402,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 codigoSala, 
                 correoConEspacios);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
@@ -424,7 +421,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 codigoSalaConEspacios,
                 correoDestino);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 

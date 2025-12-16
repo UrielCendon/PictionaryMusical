@@ -80,7 +80,6 @@ namespace PictionaryMusicalServidor.Pruebas
             Assert.AreEqual("ABCD", sala.Codigo);
             Assert.AreEqual("Usuario1", sala.Creador);
             Assert.AreSame(configuracion, sala.Configuracion);
-            Assert.IsNotNull(sala.Jugadores);
             Assert.AreEqual(0, sala.Jugadores.Count);
             Assert.IsFalse(sala.DebeEliminarse);
         }
@@ -96,7 +95,6 @@ namespace PictionaryMusicalServidor.Pruebas
             Assert.AreEqual("ABCD", dto.Codigo);
             Assert.AreEqual("Usuario1", dto.Creador);
             Assert.AreSame(configuracion, dto.Configuracion);
-            Assert.IsNotNull(dto.Jugadores);
             Assert.AreEqual(0, dto.Jugadores.Count);
         }
 
@@ -110,7 +108,6 @@ namespace PictionaryMusicalServidor.Pruebas
 
             Assert.AreEqual(1, sala.Jugadores.Count);
             Assert.AreEqual("Usuario2", sala.Jugadores[0]);
-            Assert.IsNotNull(resultado);
             Assert.AreEqual(1, resultado.Jugadores.Count);
         }
 

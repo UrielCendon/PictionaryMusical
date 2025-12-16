@@ -47,7 +47,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var manejador = new ManejadorErrorServicio(_localizadorMock.Object);
 
-            Assert.IsNotNull(manejador);
+            Assert.IsInstanceOfType(manejador, typeof(ManejadorErrorServicio));
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado != null);
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, null);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado != null);
         }
 
         [TestMethod]
@@ -130,7 +130,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado));
             _localizadorMock.Verify(
                 l => l.Localizar(mensajeOriginal, mensajePredeterminado),
                 Times.Once);

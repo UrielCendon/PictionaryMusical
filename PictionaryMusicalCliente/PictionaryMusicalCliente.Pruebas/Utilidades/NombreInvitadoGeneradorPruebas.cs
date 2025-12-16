@@ -36,9 +36,8 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = _generador.Generar(null);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.Exitoso);
-            Assert.IsNotNull(resultado.NombreGenerado);
+            Assert.IsFalse(string.IsNullOrEmpty(resultado.NombreGenerado));
         }
 
         [TestMethod]
@@ -46,7 +45,6 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = _generador.Generar(CultureInfo.CurrentUICulture);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.Exitoso);
         }
 
@@ -57,7 +55,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = _generador.Generar(cultura);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado.Exitoso || resultado.Motivo != MotivoFalloGeneracion.Ninguno);
         }
 
         [TestMethod]
@@ -67,7 +65,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = _generador.Generar(cultura);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado.Exitoso || resultado.Motivo != MotivoFalloGeneracion.Ninguno);
         }
 
         [TestMethod]
@@ -104,7 +102,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         {
             var resultado = _generador.Generar(null, null);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado.Exitoso || resultado.Motivo != MotivoFalloGeneracion.Ninguno);
         }
 
         [TestMethod]
@@ -114,7 +112,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = _generador.Generar(null, nombresExcluidos);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado.Exitoso || resultado.Motivo != MotivoFalloGeneracion.Ninguno);
         }
 
         [TestMethod]
@@ -124,7 +122,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             var resultado = _generador.Generar(null, nombresExcluidos);
 
-            Assert.IsNotNull(resultado);
+            Assert.IsTrue(resultado.Exitoso || resultado.Motivo != MotivoFalloGeneracion.Ninguno);
         }
 
         [TestMethod]

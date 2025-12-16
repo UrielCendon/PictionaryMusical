@@ -113,7 +113,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.SolicitarCodigoRegistroAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.CodigoEnviado);
             Assert.AreEqual("token123", resultado.TokenCodigo);
         }
@@ -132,7 +131,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.SolicitarCodigoRegistroAsync(solicitud);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.CodigoEnviado);
         }
 
@@ -155,7 +153,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.SolicitarCodigoRegistroAsync(solicitud);
 
-            Assert.IsNotNull(solicitud.Idioma);
+            Assert.IsFalse(string.IsNullOrEmpty(solicitud.Idioma));
         }
 
         [TestMethod]
@@ -257,7 +255,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 tokenCodigo,
                 codigoIngresado);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.RegistroExitoso);
         }
 
@@ -278,7 +275,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 tokenCodigo,
                 codigoIngresado);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.RegistroExitoso);
         }
 
@@ -351,7 +347,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsTrue(resultado.CodigoEnviado);
         }
 
@@ -369,7 +364,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
 
-            Assert.IsNotNull(resultado);
             Assert.IsFalse(resultado.CodigoEnviado);
         }
 
