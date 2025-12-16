@@ -542,6 +542,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _nombreUsuarioSesion,
                     _esHost);
             }
+            catch (FaultException excepcion)
+            {
+                _logger.Error(
+                    "Fallo del servicio al suscribir al jugador en la partida.",
+                    excepcion);
+            }
             catch (CommunicationException excepcion)
             {
                 _logger.Error(
@@ -680,6 +686,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 await _proxyJuego.EnviarMensajeJuegoAsync(mensaje, _codigoSala, _idJugador)
                     .ConfigureAwait(false);
             }
+            catch (FaultException excepcion)
+            {
+                _logger.Error("Fallo del servicio al enviar mensaje de juego.", excepcion);
+                _sonidoManejador.ReproducirError();
+            }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo enviar el mensaje de juego.", excepcion);
@@ -726,6 +737,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         .ConfigureAwait(false);
                 }
             }
+            catch (FaultException excepcion)
+            {
+                _logger.Error("Fallo del servicio al registrar acierto.", excepcion);
+                _sonidoManejador.ReproducirError();
+            }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo registrar el acierto en el servidor.", excepcion);
@@ -757,6 +773,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             try
             {
                 _proxyJuego?.EnviarTrazo(trazo, _codigoSala, _idJugador);
+            }
+            catch (FaultException excepcion)
+            {
+                _logger.Error("Fallo del servicio al enviar trazo al servidor.", excepcion);
             }
             catch (CommunicationException excepcion)
             {
@@ -799,6 +819,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 {
                     AplicarInicioVisualPartida();
                 }
+            }
+            catch (FaultException excepcion)
+            {
+                _logger.Error("Fallo del servicio al iniciar la partida.", excepcion);
+                _sonidoManejador.ReproducirError();
             }
             catch (CommunicationException excepcion)
             {
@@ -1278,6 +1303,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         canal.Close();
                     }
                 }
+            }
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Fallo del servicio al cerrar el canal de partida.", excepcion);
+                (_proxyJuego as ICommunicationObject)?.Abort();
             }
             catch (CommunicationException excepcion)
             {

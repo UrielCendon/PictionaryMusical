@@ -443,6 +443,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 RegistrarErrorCleanup(excepcion);
             }
+            catch (FaultException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
             catch (CommunicationException excepcion)
             {
                 RegistrarErrorCleanup(excepcion);

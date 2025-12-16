@@ -286,6 +286,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 if (cliente.State == CommunicationState.Opened) cliente.Close();
                 else cliente.Abort();
             }
+            catch (FaultException)
+            {
+                cliente.Abort();
+            }
             catch (CommunicationException)
             {
                 cliente.Abort();

@@ -37,6 +37,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 IntentarCerrarCliente(cliente);
                 return resultado;
             }
+            catch (FaultException)
+            {
+                ForzarAbortoCliente(cliente);
+                throw;
+            }
             catch (CommunicationException)
             {
                 ForzarAbortoCliente(cliente);
@@ -52,7 +57,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 ForzarAbortoCliente(cliente);
                 throw;
             }
-            catch (Exception)
+            catch (ObjectDisposedException)
             {
                 ForzarAbortoCliente(cliente);
                 throw;

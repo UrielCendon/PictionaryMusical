@@ -399,6 +399,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 {
                     _logger.Warn("Error al cerrar suscripcion de salas en Dispose.", excepcion);
                 }
+                catch (FaultException excepcion)
+                {
+                    _logger.Warn("Fallo del servicio al cerrar suscripcion.", excepcion);
+                }
                 catch (CommunicationException excepcion)
                 {
                     _logger.Warn("Error de comunicacion al cerrar suscripcion.", excepcion);
@@ -431,6 +435,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 {
                     if (canal.State == CommunicationState.Faulted) canal.Abort();
                     else canal.Close();
+                }
+                catch (FaultException)
+                {
+                    canal.Abort();
                 }
                 catch (CommunicationException)
                 {

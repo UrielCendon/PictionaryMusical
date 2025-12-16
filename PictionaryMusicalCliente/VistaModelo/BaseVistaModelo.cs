@@ -54,6 +54,10 @@ namespace PictionaryMusicalCliente.VistaModelo
                     "No se pudo conectar con el servidor. Verifique su conexion.",
                     accionError);
             }
+            catch (FaultException excepcion)
+            {
+                ManejarError(excepcion, "El servicio reporto un error.", accionError);
+            }
             catch (CommunicationException excepcion)
             {
                 ManejarError(excepcion, "Error de comunicacion con el servicio.", accionError);
