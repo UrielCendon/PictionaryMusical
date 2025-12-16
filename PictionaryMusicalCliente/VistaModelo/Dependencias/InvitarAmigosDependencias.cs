@@ -11,7 +11,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Incluye la lista de amigos, codigo de sala y callbacks de invitacion.
     /// </remarks>
-    public class DependenciasInvitarAmigos
+    public class InvitarAmigosDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de invitacion.
@@ -34,7 +34,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentException">
         /// Si el codigo de sala esta vacio o es solo espacios.
         /// </exception>
-        public DependenciasInvitarAmigos(
+        public InvitarAmigosDependencias(
             IInvitacionesServicio invitacionesServicio,
             IPerfilServicio perfilServicio,
             IEnumerable<DTOs.AmigoDTO> amigos,

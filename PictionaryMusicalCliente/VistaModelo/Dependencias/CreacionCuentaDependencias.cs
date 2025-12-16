@@ -10,7 +10,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Incluye servicios de verificacion, cuenta, avatar y localizacion.
     /// </remarks>
-    public class DependenciasCreacionCuenta
+    public class CreacionCuentaDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de registro.
@@ -32,7 +32,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasCreacionCuenta(
+        public CreacionCuentaDependencias(
             ICodigoVerificacionServicio codigoVerificacionServicio,
             ICuentaServicio cuentaServicio,
             ISeleccionarAvatarServicio seleccionarAvatarServicio,

@@ -3,7 +3,6 @@ using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
@@ -47,8 +46,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         /// Si algun parametro requerido es nulo.
         /// </exception>
         public InvitarAmigosVistaModelo(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasInvitarAmigos dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            InvitarAmigosDependencias dependencias)
             : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
             ValidarDependencias(dependenciasBase, dependencias);
@@ -66,8 +65,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         }
 
         private static void ValidarDependencias(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasInvitarAmigos dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            InvitarAmigosDependencias dependencias)
         {
             if (dependenciasBase == null)
             {

@@ -580,13 +580,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarAbrirPerfil()
         {
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
                 _sonidoManejador,
                 App.AvisoServicio);
 
-            var dependenciasPerfil = new DependenciasPerfil(
+            var dependenciasPerfil = new PerfilDependencias(
                 App.PerfilServicio,
                 new ClienteServicios.Dialogos.SeleccionAvatarDialogoServicio(
                     App.AvisoServicio, App.CatalogoAvatares, _sonidoManejador),
@@ -608,13 +608,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             _usuarioSesion.Limpiar();
 
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
                 _sonidoManejador,
                 App.AvisoServicio);
 
-            var dependenciasInicioSesion = new DependenciasInicioSesion(
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 App.InicioSesionServicio,
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,
@@ -811,24 +811,24 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _sonidoManejador,
                 App.AvisoServicio);
 
-            var comunicacion = new DependenciasComunicacionSala(
+            var comunicacion = new ComunicacionSalaDependencias(
                 _salasServicio,
                 App.InvitacionesServicio,
                 invitacionSalaServicio,
                 App.WcfFabrica);
 
-            var perfiles = new DependenciasPerfilesSala(
+            var perfiles = new PerfilesSalaDependencias(
                 _listaAmigosServicio,
                 App.PerfilServicio,
                 App.ReportesServicio,
                 _usuarioSesion);
 
-            var audio = new DependenciasAudioSala(
+            var audio = new AudioSalaDependencias(
                 _sonidoManejador,
                 new CancionManejador(),
                 App.CatalogoCanciones);
 
-            var dependenciasSala = new DependenciasSalaVistaModelo(
+            var dependenciasSala = new SalaVistaModeloDependencias(
                 comunicacion,
                 perfiles,
                 audio,

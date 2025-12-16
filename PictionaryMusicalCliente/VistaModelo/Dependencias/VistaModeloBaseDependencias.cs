@@ -11,7 +11,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Incluye servicios de UI basicos como ventana, localizacion, sonido y avisos.
     /// </remarks>
-    public class DependenciasVistaModeloBase
+    public class VistaModeloBaseDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias comunes.
@@ -23,7 +23,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasVistaModeloBase(
+        public VistaModeloBaseDependencias(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
             SonidoManejador sonidoManejador,

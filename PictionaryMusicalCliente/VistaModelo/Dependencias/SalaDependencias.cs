@@ -12,7 +12,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Incluye servicios de sala, invitaciones, chat y comunicacion WCF.
     /// </remarks>
-    public class DependenciasComunicacionSala
+    public class ComunicacionSalaDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de comunicacion.
@@ -26,7 +26,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasComunicacionSala(
+        public ComunicacionSalaDependencias(
             ISalasServicio salasServicio,
             IInvitacionesServicio invitacionesServicio,
             IInvitacionSalaServicio invitacionSalaServicio,
@@ -66,7 +66,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <summary>
     /// Agrupa las dependencias de perfiles y reportes para la sala.
     /// </summary>
-    public class DependenciasPerfilesSala
+    public class PerfilesSalaDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de perfiles.
@@ -78,7 +78,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasPerfilesSala(
+        public PerfilesSalaDependencias(
             IListaAmigosServicio listaAmigosServicio,
             IPerfilServicio perfilServicio,
             IReportesServicio reportesServicio,
@@ -118,7 +118,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <summary>
     /// Agrupa las dependencias de audio para la sala de juego.
     /// </summary>
-    public class DependenciasAudioSala
+    public class AudioSalaDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de audio.
@@ -129,7 +129,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasAudioSala(
+        public AudioSalaDependencias(
             SonidoManejador sonidoManejador,
             CancionManejador cancionManejador,
             ICatalogoCanciones catalogoCanciones)
@@ -164,7 +164,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Combina dependencias de comunicacion, perfiles y audio en un solo objeto.
     /// </remarks>
-    public class DependenciasSalaVistaModelo
+    public class SalaVistaModeloDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de sala.
@@ -176,10 +176,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasSalaVistaModelo(
-            DependenciasComunicacionSala comunicacion,
-            DependenciasPerfilesSala perfiles,
-            DependenciasAudioSala audio,
+        public SalaVistaModeloDependencias(
+            ComunicacionSalaDependencias comunicacion,
+            PerfilesSalaDependencias perfiles,
+            AudioSalaDependencias audio,
             IAvisoServicio avisoServicio)
         {
             Comunicacion = comunicacion ?? 
@@ -195,17 +195,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <summary>
         /// Dependencias relacionadas con comunicacion de sala.
         /// </summary>
-        public DependenciasComunicacionSala Comunicacion { get; }
+        public ComunicacionSalaDependencias Comunicacion { get; }
 
         /// <summary>
         /// Dependencias relacionadas con perfiles y reportes.
         /// </summary>
-        public DependenciasPerfilesSala Perfiles { get; }
+        public PerfilesSalaDependencias Perfiles { get; }
 
         /// <summary>
         /// Dependencias relacionadas con audio y canciones.
         /// </summary>
-        public DependenciasAudioSala Audio { get; }
+        public AudioSalaDependencias Audio { get; }
 
         /// <summary>
         /// Servicio para mostrar avisos y notificaciones al usuario.

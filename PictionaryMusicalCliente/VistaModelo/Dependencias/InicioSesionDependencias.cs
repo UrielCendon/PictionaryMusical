@@ -12,7 +12,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// Incluye servicios de login, cambio/recuperacion de contrasena
     /// y gestion de usuario.
     /// </remarks>
-    public class DependenciasInicioSesion
+    public class InicioSesionDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de autenticacion.
@@ -33,7 +33,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasInicioSesion(
+        public InicioSesionDependencias(
             IInicioSesionServicio inicioSesionServicio,
             ICambioContrasenaServicio cambioContrasenaServicio,
             IRecuperacionCuentaServicio recuperacionCuentaServicio,

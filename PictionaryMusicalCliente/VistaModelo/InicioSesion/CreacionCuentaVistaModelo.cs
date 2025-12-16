@@ -5,7 +5,6 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
 using System;
@@ -65,8 +64,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         /// Si algun parametro requerido es nulo.
         /// </exception>
         public CreacionCuentaVistaModelo(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasCreacionCuenta dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            CreacionCuentaDependencias dependencias)
             : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
             ValidarDependencias(dependenciasBase, dependencias);
@@ -105,8 +104,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         }
 
         private static void ValidarDependencias(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasCreacionCuenta dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            CreacionCuentaDependencias dependencias)
         {
             if (dependenciasBase == null)
             {

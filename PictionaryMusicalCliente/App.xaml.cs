@@ -68,13 +68,13 @@ namespace PictionaryMusicalCliente
             InicializarServicios();
             ConfigurarIdioma();
 
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 VentanaServicio,
                 Localizador,
                 SonidoManejador,
                 AvisoServicio);
 
-            var dependenciasInicioSesion = new DependenciasInicioSesion(
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 InicioSesionServicio,
                 CambioContrasenaServicio,
                 RecuperacionCuentaServicio,

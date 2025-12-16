@@ -235,12 +235,12 @@
     <Compile Include="VistaModelo\Amigos\EliminacionAmigoVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\InvitarAmigosVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\SolicitudesVistaModelo.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasCreacionCuenta.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasInicioSesion.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasInvitarAmigos.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasPerfil.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasSala.cs" />
-    <Compile Include="VistaModelo\Dependencias\DependenciasVistaModeloBase.cs" />
+    <Compile Include="VistaModelo\Dependencias\CreacionCuentaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\InicioSesionDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\InvitarAmigosDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\PerfilDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\SalaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\VistaModeloBaseDependencias.cs" />
     <Compile Include="VistaModelo\Perfil\CambioContrasenaVistaModelo.cs" />
     <Compile Include="VistaModelo\Perfil\RedSocialItemVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />
@@ -258,6 +258,8 @@
     <Compile Include="VistaModelo\Perfil\Auxiliares\RedesSocialesManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaNavegacionManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaJugadoresManejador.cs" />
+    <Compile Include="VistaModelo\Dependencias\SalaJugadoresManejadorDependencias.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\ContextoSalaJugador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaEventosManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaInvitacionesManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\PartidaTemporizadores.cs" />

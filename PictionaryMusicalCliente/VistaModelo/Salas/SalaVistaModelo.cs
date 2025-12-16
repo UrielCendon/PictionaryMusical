@@ -106,7 +106,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
             DTOs.SalaDTO sala,
-            DependenciasSalaVistaModelo dependencias,
+            SalaVistaModeloDependencias dependencias,
             string nombreJugador = null,
             bool esInvitado = false)
             : base(ventana, localizador)
@@ -145,7 +145,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
-        private void AsignarServicios(DependenciasSalaVistaModelo dependencias)
+        private void AsignarServicios(SalaVistaModeloDependencias dependencias)
         {
             _salasServicio = dependencias.Comunicacion.SalasServicio;
             _invitacionSalaServicio = dependencias.Comunicacion.InvitacionSalaServicio;
@@ -189,16 +189,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _nombreUsuarioSesion,
                 _sala.Creador);
             _invitacionesManejador = new SalaInvitacionesManejador(_esInvitado);
-            _jugadoresManejador = new SalaJugadoresManejador(
+
+            var jugadoresDependencias = new SalaJugadoresManejadorDependencias(
                 _salasServicio,
                 _reportesServicio,
                 _sonidoManejador,
-                _avisoServicio,
+                _avisoServicio);
+            var jugadoresContexto = new ContextoSalaJugador(
                 _nombreUsuarioSesion,
                 _sala.Creador,
                 _sala.Codigo,
                 _esHost,
                 _esInvitado);
+            _jugadoresManejador = new SalaJugadoresManejador(
+                jugadoresDependencias,
+                jugadoresContexto);
         }
 
         private void ConfigurarEventosViewModels()

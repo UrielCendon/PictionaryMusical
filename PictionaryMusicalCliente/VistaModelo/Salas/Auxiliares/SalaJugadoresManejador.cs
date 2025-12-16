@@ -1,17 +1,14 @@
 ﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios;
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
@@ -28,17 +25,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         private static readonly StringComparer ComparadorJugadores =
             StringComparer.OrdinalIgnoreCase;
 
-        private readonly ISalasServicio _salasServicio;
-        private readonly IReportesServicio _reportesServicio;
-        private readonly SonidoManejador _sonidoManejador;
-        private readonly IAvisoServicio _avisoServicio;
-        private readonly string _nombreUsuarioSesion;
-        private readonly string _creadorSala;
-        private readonly string _codigoSala;
-        private readonly bool _esHost;
-        private readonly bool _esInvitado;
+        private readonly SalaJugadoresManejadorDependencias _dependencias;
+        private readonly ContextoSalaJugador _contexto;
 
-        private ObservableCollection<JugadorElemento> _jugadores;
+        private readonly ObservableCollection<JugadorElemento> _jugadores;
         private Func<bool> _obtenerJuegoIniciado;
 
         /// <summary>
@@ -46,29 +36,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// <see cref="SalaJugadoresManejador"/>.
         /// </summary>
         public SalaJugadoresManejador(
-            ISalasServicio salasServicio,
-            IReportesServicio reportesServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            string nombreUsuarioSesion,
-            string creadorSala,
-            string codigoSala,
-            bool esHost,
-            bool esInvitado)
+            SalaJugadoresManejadorDependencias dependencias,
+            ContextoSalaJugador contexto)
         {
-            _salasServicio = salasServicio ?? 
-                throw new ArgumentNullException(nameof(salasServicio));
-            _reportesServicio = reportesServicio ?? 
-                throw new ArgumentNullException(nameof(reportesServicio));
-            _sonidoManejador = sonidoManejador ?? 
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _avisoServicio = avisoServicio ?? 
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _nombreUsuarioSesion = nombreUsuarioSesion ?? string.Empty;
-            _creadorSala = creadorSala ?? string.Empty;
-            _codigoSala = codigoSala ?? string.Empty;
-            _esHost = esHost;
-            _esInvitado = esInvitado;
+            _dependencias = dependencias ?? 
+                throw new ArgumentNullException(nameof(dependencias));
+            _contexto = contexto ?? 
+                throw new ArgumentNullException(nameof(contexto));
 
             _jugadores = new ObservableCollection<JugadorElemento>();
         }
@@ -266,14 +240,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             bool juegoIniciado = _obtenerJuegoIniciado?.Invoke() ?? false;
             bool esElMismo = string.Equals(
                 nombreJugador,
-                _nombreUsuarioSesion,
+                _contexto.NombreUsuarioSesion,
                 StringComparison.OrdinalIgnoreCase);
             bool esCreador = string.Equals(
                 nombreJugador,
-                _creadorSala,
+                _contexto.CreadorSala,
                 StringComparison.OrdinalIgnoreCase);
 
-            return _esHost && !juegoIniciado && !esElMismo && !esCreador;
+            return _contexto.EsHost && !juegoIniciado && !esElMismo && !esCreador;
         }
 
         private bool PuedeReportarJugador(string nombreJugador)
@@ -283,14 +257,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 return false;
             }
 
-            if (_esInvitado)
+            if (_contexto.EsInvitado)
             {
                 return false;
             }
 
             return !string.Equals(
                 nombreJugador,
-                _nombreUsuarioSesion,
+                _contexto.NombreUsuarioSesion,
                 StringComparison.OrdinalIgnoreCase);
         }
 
@@ -321,13 +295,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 _logger.InfoFormat(
                     "Solicitando expulsion de: {0}",
                     nombreJugador);
-                await _salasServicio.ExpulsarJugadorAsync(
-                    _codigoSala,
-                    _nombreUsuarioSesion,
+                await _dependencias.SalasServicio.ExpulsarJugadorAsync(
+                    _contexto.CodigoSala,
+                    _contexto.NombreUsuarioSesion,
                     nombreJugador).ConfigureAwait(true);
 
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(Lang.expulsarJugadorTextoExito);
+                _dependencias.SonidoManejador.ReproducirNotificacion();
+                _dependencias.AvisoServicio.Mostrar(Lang.expulsarJugadorTextoExito);
             }
             catch (ServicioExcepcion excepcion)
             {
@@ -345,14 +319,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 "Error al expulsar jugador {0}.",
                 nombreJugador,
                 excepcion);
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(
+            _dependencias.SonidoManejador.ReproducirError();
+            _dependencias.AvisoServicio.Mostrar(
                 excepcion.Message ?? Lang.errorTextoExpulsarJugador);
         }
 
         private async Task EjecutarReportarJugadorAsync(string nombreJugador)
         {
-            if (SolicitarDatosReporte == null || _esInvitado)
+            if (SolicitarDatosReporte == null || _contexto.EsInvitado)
             {
                 return;
             }
@@ -365,7 +339,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
             if (string.IsNullOrWhiteSpace(resultado.Motivo))
             {
-                _avisoServicio.Mostrar(Lang.reportarJugadorTextoMotivoRequerido);
+                _dependencias.AvisoServicio.Mostrar(Lang.reportarJugadorTextoMotivoRequerido);
                 return;
             }
 
@@ -392,7 +366,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             return new DTOs.ReporteJugadorDTO
             {
                 NombreUsuarioReportado = nombreJugador,
-                NombreUsuarioReportante = _nombreUsuarioSesion,
+                NombreUsuarioReportante = _contexto.NombreUsuarioSesion,
                 Motivo = motivo
             };
         }
@@ -402,7 +376,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             DTOs.ReporteJugadorDTO reporte)
         {
             _logger.InfoFormat("Enviando reporte contra: {0}", nombreJugador);
-            DTOs.ResultadoOperacionDTO respuesta = await _reportesServicio
+            DTOs.ResultadoOperacionDTO respuesta = await _dependencias.ReportesServicio
                 .ReportarJugadorAsync(reporte)
                 .ConfigureAwait(true);
 
@@ -413,13 +387,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         {
             if (respuesta?.OperacionExitosa == true)
             {
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(Lang.reportarJugadorTextoExito);
+                _dependencias.SonidoManejador.ReproducirNotificacion();
+                _dependencias.AvisoServicio.Mostrar(Lang.reportarJugadorTextoExito);
             }
             else
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(
+                _dependencias.SonidoManejador.ReproducirError();
+                _dependencias.AvisoServicio.Mostrar(
                     respuesta?.Mensaje ?? Lang.errorTextoReportarJugador);
             }
         }
@@ -430,8 +404,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 "Error al reportar jugador {0}.",
                 nombreJugador,
                 excepcion);
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(
+            _dependencias.SonidoManejador.ReproducirError();
+            _dependencias.AvisoServicio.Mostrar(
                 excepcion.Message ?? Lang.errorTextoReportarJugador);
         }
     }

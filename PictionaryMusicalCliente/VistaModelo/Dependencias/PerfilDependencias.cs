@@ -11,7 +11,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
     /// <remarks>
     /// Incluye servicios de perfil, avatar, contrasena y catalogos.
     /// </remarks>
-    public class DependenciasPerfil
+    public class PerfilDependencias
     {
         /// <summary>
         /// Inicializa una nueva instancia con las dependencias de perfil.
@@ -32,7 +32,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia requerida es nula.
         /// </exception>
-        public DependenciasPerfil(
+        public PerfilDependencias(
             IPerfilServicio perfilServicio,
             ISeleccionarAvatarServicio seleccionarAvatarServicio,
             ICambioContrasenaServicio cambioContrasenaServicio,

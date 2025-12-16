@@ -68,8 +68,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         /// <param name="catalogoAvatares">Catalogo de avatares.</param>
         /// <param name="catalogoPerfil">Catalogo de imagenes de perfil.</param>
         public PerfilVistaModelo(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasPerfil dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            PerfilDependencias dependencias)
             : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
             ValidarDependencias(dependenciasBase, dependencias);
@@ -113,8 +113,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         }
 
         private static void ValidarDependencias(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasPerfil dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            PerfilDependencias dependencias)
         {
             if (dependenciasBase == null)
             {

@@ -9,7 +9,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
     /// </summary>
     public sealed class PartidaTemporizadores : IDisposable
     {
-        private DispatcherTimer _overlayTimer;
+        private DispatcherTimer _capaMinutero;
         private DispatcherTimer _temporizadorAlarma;
         private DispatcherTimer _temporizador;
 
@@ -42,7 +42,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// </summary>
         public void IniciarOverlay()
         {
-            _overlayTimer?.Start();
+            _capaMinutero?.Start();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// </summary>
         public void DetenerOverlay()
         {
-            _overlayTimer?.Stop();
+            _capaMinutero?.Stop();
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         public void Dispose()
         {
             DetenerTodos();
-            _overlayTimer = null;
+            _capaMinutero = null;
             _temporizadorAlarma = null;
             _temporizador = null;
         }
@@ -109,13 +109,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             var uiDispatcher = Application.Current?.Dispatcher
                 ?? Dispatcher.CurrentDispatcher;
 
-            _overlayTimer = new DispatcherTimer(
+            _capaMinutero = new DispatcherTimer(
                 DispatcherPriority.Normal, 
                 uiDispatcher)
             {
                 Interval = TimeSpan.FromSeconds(5)
             };
-            _overlayTimer.Tick += (s, e) => OverlayTick?.Invoke(s, e);
+            _capaMinutero.Tick += (s, e) => OverlayTick?.Invoke(s, e);
 
             _temporizadorAlarma = new DispatcherTimer(
                 DispatcherPriority.Normal, 

@@ -89,7 +89,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         {
             App.MusicaManejador.Detener();
 
-            var comunicacion = new DependenciasComunicacionSala(
+            var comunicacion = new ComunicacionSalaDependencias(
                 servicio,
                 App.InvitacionesServicio,
                 new ClienteServicios.Wcf.InvitacionSalaServicio(
@@ -100,18 +100,18 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
                     _avisoServicio),
                 App.WcfFabrica);
 
-            var perfiles = new DependenciasPerfilesSala(
+            var perfiles = new PerfilesSalaDependencias(
                 App.ListaAmigosServicio,
                 App.PerfilServicio,
                 App.ReportesServicio,
                 _usuarioSesion);
 
-            var audio = new DependenciasAudioSala(
+            var audio = new AudioSalaDependencias(
                 _sonidoManejador,
                 new CancionManejador(),
                 App.CatalogoCanciones);
 
-            var dependenciasSala = new DependenciasSalaVistaModelo(
+            var dependenciasSala = new SalaVistaModeloDependencias(
                 comunicacion,
                 perfiles,
                 audio,

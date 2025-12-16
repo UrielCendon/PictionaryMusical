@@ -92,13 +92,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         {
             _usuarioSesion.Limpiar();
 
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
                 _sonidoManejador,
                 _avisoServicio);
 
-            var dependenciasInicioSesion = new DependenciasInicioSesion(
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 App.InicioSesionServicio,
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,

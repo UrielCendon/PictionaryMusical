@@ -71,8 +71,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         /// Si algun parametro requerido es nulo.
         /// </exception>
         public InicioSesionVistaModelo(
-            DependenciasVistaModeloBase dependenciasBase,
-            DependenciasInicioSesion dependencias)
+            VistaModeloBaseDependencias dependenciasBase,
+            InicioSesionDependencias dependencias)
             : base(
                 dependenciasBase?.Ventana, 
                 dependenciasBase?.Localizador)
@@ -127,7 +127,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         }
 
         private static void ValidarDependenciasBase(
-            DependenciasVistaModeloBase dependenciasBase)
+            VistaModeloBaseDependencias dependenciasBase)
         {
             if (dependenciasBase == null)
             {
@@ -136,7 +136,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         }
 
         private static void ValidarDependenciasInicioSesion(
-            DependenciasInicioSesion dependencias)
+            InicioSesionDependencias dependencias)
         {
             if (dependencias == null)
             {
@@ -247,13 +247,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 _avisoServicio, App.CatalogoAvatares, _sonidoManejador);
             var verifCodigo = new VerificacionCodigoDialogoServicio();
 
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
                 _sonidoManejador,
                 _avisoServicio);
 
-            var dependenciasCreacion = new DependenciasCreacionCuenta(
+            var dependenciasCreacion = new CreacionCuentaDependencias(
                 codigoServ,
                 cuentaServ,
                 selectAvatar,

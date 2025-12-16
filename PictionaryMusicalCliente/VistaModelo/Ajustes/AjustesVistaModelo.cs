@@ -111,13 +111,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
 
         private InicioSesion.InicioSesionVistaModelo CrearInicioSesionVistaModelo()
         {
-            var dependenciasBase = new DependenciasVistaModeloBase(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
                 App.SonidoManejador,
                 App.AvisoServicio);
 
-            var dependenciasInicioSesion = new DependenciasInicioSesion(
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 App.InicioSesionServicio,
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,

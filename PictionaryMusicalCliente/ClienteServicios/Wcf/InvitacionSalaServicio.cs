@@ -107,13 +107,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     return InvitacionAmigosResultado.Fallo(Lang.invitarAmigosTextoSinAmigos);
                 }
 
-                var dependenciasBase = new DependenciasVistaModeloBase(
+                var dependenciasBase = new VistaModeloBaseDependencias(
                     App.VentanaServicio,
                     App.Localizador,
                     _sonidoManejador,
                     _aviso);
 
-                var dependenciasInvitar = new DependenciasInvitarAmigos(
+                var dependenciasInvitar = new InvitarAmigosDependencias(
                     _invitacionesServicio,
                     _perfilServicio,
                     amigos,
