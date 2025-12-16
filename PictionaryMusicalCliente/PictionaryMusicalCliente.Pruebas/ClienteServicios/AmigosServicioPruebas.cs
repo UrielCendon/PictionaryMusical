@@ -127,37 +127,58 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_CancelarSuscripcionAsync_NombreUsuarioNulo_RetornaSinAccion()
         {
             await _servicio.CancelarSuscripcionAsync(null);
-            // El metodo retorna sin lanzar excepcion cuando el parametro es nulo
         }
 
         [TestMethod]
         public async Task Prueba_CancelarSuscripcionAsync_NombreUsuarioVacio_RetornaSinAccion()
         {
             await _servicio.CancelarSuscripcionAsync("");
-            // El metodo retorna sin lanzar excepcion cuando el parametro es vacio
         }
 
         [TestMethod]
-        public void Prueba_EnviarSolicitudAsync_DelegaAlClienteWcf()
+        public async Task Prueba_EnviarSolicitudAsync_InvocaServicio()
         {
-            // EnviarSolicitudAsync delega directamente al cliente WCF sin validar parametros
-            // La validacion ocurre en el servidor
-            Assert.IsNotNull(_servicio);
+            string usuarioEmisor = "usuario1";
+            string usuarioReceptor = "usuario2";
+            
+            await Assert.ThrowsAsync<NullReferenceException>(async () =>
+            {
+                await _servicio.EnviarSolicitudAsync(usuarioEmisor, usuarioReceptor);
+            });
         }
 
         [TestMethod]
-        public void Prueba_ResponderSolicitudAsync_DelegaAlClienteWcf()
+        public async Task Prueba_ResponderSolicitudAsync_InvocaServicio()
         {
-            // ResponderSolicitudAsync delega directamente al cliente WCF sin validar parametros
-            // La validacion ocurre en el servidor
-            Assert.IsNotNull(_servicio);
+            string usuarioEmisor = "usuario1";
+            string usuarioReceptor = "usuario2";
+
+            await Assert.ThrowsAsync<NullReferenceException>(async () =>
+            {
+                await _servicio.ResponderSolicitudAsync(usuarioEmisor, usuarioReceptor);
+            });
         }
 
         [TestMethod]
-        public void Prueba_EliminarAmigoAsync_DelegaAlClienteWcf()
+        public async Task Prueba_EliminarAmigoAsync_InvocaServicio()
         {
-            // EliminarAmigoAsync delega directamente al cliente WCF sin validar parametros
-            // La validacion ocurre en el servidor
+            string usuarioA = "usuario1";
+            string usuarioB = "usuario2";
+
+            await Assert.ThrowsAsync<NullReferenceException>(async () =>
+            {
+                await _servicio.EliminarAmigoAsync(usuarioA, usuarioB);
+            });
+        }
+
+        [TestMethod]
+        public void Prueba_SolicitudesActualizadas_EventoNotificable()
+        {
+            bool eventoInvocado = false;
+            _servicio.SolicitudesActualizadas += (sender, args) => eventoInvocado = true;
+
+            // Verificamos que el evento puede ser suscrito sin errores
+            Assert.IsFalse(eventoInvocado, "El evento no deberia haberse invocado aun");
             Assert.IsNotNull(_servicio);
         }
 

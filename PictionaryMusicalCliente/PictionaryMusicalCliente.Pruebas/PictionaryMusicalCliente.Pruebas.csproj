@@ -135,11 +135,16 @@
     <Compile Include="ClienteServicios\InvitacionesServicioPruebas.cs" />
     <Compile Include="ClienteServicios\InvitacionSalaServicioPruebas.cs" />
     <Compile Include="ClienteServicios\ListaAmigosServicioPruebas.cs" />
+    <Compile Include="ClienteServicios\LocalizadorServicioPruebas.cs" />
+    <Compile Include="ClienteServicios\ManejadorErrorServicioPruebas.cs" />
     <Compile Include="ClienteServicios\PerfilServicioPruebas.cs" />
     <Compile Include="ClienteServicios\ReportesServicioPruebas.cs" />
     <Compile Include="ClienteServicios\SalasServicioPruebas.cs" />
+    <Compile Include="ClienteServicios\ServicioExcepcionPruebas.cs" />
     <Compile Include="ClienteServicios\VerificacionCodigoServicioPruebas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilidades\NombreInvitadoGeneradorPruebas.cs" />
+    <Compile Include="Utilidades\ValidadorEntradaPruebas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
