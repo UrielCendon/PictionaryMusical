@@ -429,3 +429,4 @@ FodyWeavers.xsd
 
 # SonarQube generated files
 .sonarqube/
+.vscode/settings.json
