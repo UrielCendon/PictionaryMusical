@@ -57,9 +57,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
-        /// Crea una instancia del cliente para el servicio de cambio de contraseña.
+        /// Crea una instancia del cliente para el servicio de cambio de contrasena.
         /// </summary>
-        /// <returns>Cliente WCF para el cambio de contraseña.</returns>
+        /// <returns>Cliente WCF para el cambio de contrasena.</returns>
         public PictionaryServidorServicioCambioContrasena.ICambioContrasenaManejador
             CrearClienteCambioContrasena()
         {

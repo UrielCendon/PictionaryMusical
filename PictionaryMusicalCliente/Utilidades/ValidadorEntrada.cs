@@ -73,7 +73,7 @@ namespace PictionaryMusicalCliente.Utilidades
         }
 
         /// <summary>
-        /// Valida que la contrase�a cumpla con los requisitos de seguridad.
+        /// Valida que la contrasena cumpla con los requisitos de seguridad.
         /// </summary>
         public static DTOs.ResultadoOperacionDTO ValidarContrasena(string contrasena)
         {
