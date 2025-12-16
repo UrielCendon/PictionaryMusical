@@ -2,6 +2,7 @@
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -614,19 +615,25 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarAbrirPerfil()
         {
-            var perfilVistaModelo = new Perfil.PerfilVistaModelo(
+            var dependenciasBase = new DependenciasVistaModeloBase(
                 _ventana,
                 _localizador,
+                _sonidoManejador,
+                App.AvisoServicio);
+
+            var dependenciasPerfil = new DependenciasPerfil(
                 App.PerfilServicio,
                 new ClienteServicios.Dialogos.SeleccionAvatarDialogoServicio(
                     App.AvisoServicio, App.CatalogoAvatares, _sonidoManejador),
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,
-                App.AvisoServicio,
-                _sonidoManejador,
                 _usuarioSesion,
                 App.CatalogoAvatares,
                 App.CatalogoImagenes);
+
+            var perfilVistaModelo = new Perfil.PerfilVistaModelo(
+                dependenciasBase,
+                dependenciasPerfil);
 
             perfilVistaModelo.SolicitarReinicioSesion = () => ReiniciarAplicacion();
             _ventana.MostrarVentanaDialogo(perfilVistaModelo);
@@ -635,18 +642,25 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void ReiniciarAplicacion()
         {
             _usuarioSesion.Limpiar();
-            var inicioVistaModelo = new InicioSesion.InicioSesionVistaModelo(
+
+            var dependenciasBase = new DependenciasVistaModeloBase(
                 _ventana,
                 _localizador,
+                _sonidoManejador,
+                App.AvisoServicio);
+
+            var dependenciasInicioSesion = new DependenciasInicioSesion(
                 App.InicioSesionServicio,
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,
                 _localizacion,
-                _sonidoManejador,
-                App.AvisoServicio,
                 App.GeneradorNombres,
                 _usuarioSesion,
                 App.FabricaSalas);
+
+            var inicioVistaModelo = new InicioSesion.InicioSesionVistaModelo(
+                dependenciasBase,
+                dependenciasInicioSesion);
             _ventana.MostrarVentana(inicioVistaModelo);
             _ventana.CerrarVentana(this);
         }
@@ -832,22 +846,34 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _sonidoManejador,
                 App.AvisoServicio);
 
+            var comunicacion = new DependenciasComunicacionSala(
+                _salasServicio,
+                App.InvitacionesServicio,
+                invitacionSalaServicio,
+                App.WcfFabrica);
+
+            var perfiles = new DependenciasPerfilesSala(
+                _listaAmigosServicio,
+                App.PerfilServicio,
+                App.ReportesServicio,
+                _usuarioSesion);
+
+            var audio = new DependenciasAudioSala(
+                _sonidoManejador,
+                new CancionManejador(),
+                App.CatalogoCanciones);
+
+            var dependenciasSala = new DependenciasSalaVistaModelo(
+                comunicacion,
+                perfiles,
+                audio,
+                App.AvisoServicio);
+
             var salaVistaModelo = new Salas.SalaVistaModelo(
                 _ventana,
                 _localizador,
                 sala,
-                _salasServicio,
-                App.InvitacionesServicio,
-                _listaAmigosServicio,
-                App.PerfilServicio,
-                App.ReportesServicio,
-                _sonidoManejador,
-                App.AvisoServicio,
-                _usuarioSesion,
-                invitacionSalaServicio,
-                App.WcfFabrica,
-                new CancionManejador(),
-                App.CatalogoCanciones,
+                dependenciasSala,
                 _usuarioSesion.NombreUsuario,
                 esInvitado);
 

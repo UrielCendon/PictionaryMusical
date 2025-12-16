@@ -94,19 +94,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                         canal.Abort();
                     }
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException excepcion)
                 {
-                    _logger.Error("Excepcion de comunicacion al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error("Excepcion de comunicacion al intentar cerrar el cliente WCF.", excepcion);
                     canal.Abort();
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException excepcion)
                 {
-                    _logger.Error("Tiempo de espera agotado al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error("Tiempo de espera agotado al intentar cerrar el cliente WCF.", excepcion);
                     canal.Abort();
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException excepcion)
                 {
-                    _logger.Error("Operacion invalida al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error("Operacion invalida al intentar cerrar el cliente WCF.", excepcion);
                     canal.Abort();
                 }
             }
@@ -125,11 +125,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 {
                     canal.Abort();
                 }
-                catch (Exception ex)
+                catch (Exception excepcion)
                 {
                     // Ignorado de manera intencional: No se puede hacer nada para manejar
                     // una excepcion al abortar, pero se registra como error.
-                    _logger.Error("Error critico inesperado al abortar cliente WCF.", ex);
+                    _logger.Error("Error critico inesperado al abortar cliente WCF.", excepcion);
                 }
             }
         }

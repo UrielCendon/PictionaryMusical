@@ -6,6 +6,7 @@ using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -78,38 +79,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         /// <param name="catalogoAvatares">Catalogo de avatares.</param>
         /// <param name="catalogoPerfil">Catalogo de imagenes de perfil.</param>
         public PerfilVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            IPerfilServicio perfilServicio,
-            ISeleccionarAvatarServicio seleccionarAvatarServicio,
-            ICambioContrasenaServicio cambioContrasenaServicio,
-            IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio,
-            IAvisoServicio avisoServicio,
-            SonidoManejador sonidoManejador,
-            IUsuarioAutenticado usuarioSesion,
-            ICatalogoAvatares catalogoAvatares,
-            ICatalogoImagenesPerfil catalogoPerfil)
-            : base(ventana, localizador)
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasPerfil dependencias)
+            : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
-            _perfilServicio = perfilServicio ??
-                throw new ArgumentNullException(nameof(perfilServicio));
-            _seleccionarAvatarServicio = seleccionarAvatarServicio ??
-                throw new ArgumentNullException(nameof(seleccionarAvatarServicio));
-            _cambioContrasenaServicio = cambioContrasenaServicio ??
-                throw new ArgumentNullException(nameof(cambioContrasenaServicio));
-            _recuperacionCuentaDialogoServicio = recuperacionCuentaDialogoServicio ??
-                throw new ArgumentNullException(
-                    nameof(recuperacionCuentaDialogoServicio));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _usuarioSesion = usuarioSesion ??
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            _catalogoAvatares = catalogoAvatares ??
-                throw new ArgumentNullException(nameof(catalogoAvatares));
-            _catalogoPerfil = catalogoPerfil ??
-                throw new ArgumentNullException(nameof(catalogoPerfil));
+            ValidarDependencias(dependenciasBase, dependencias);
+
+            _avisoServicio = dependenciasBase.AvisoServicio;
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+
+            _perfilServicio = dependencias.PerfilServicio;
+            _seleccionarAvatarServicio = dependencias.SeleccionarAvatarServicio;
+            _cambioContrasenaServicio = dependencias.CambioContrasenaServicio;
+            _recuperacionCuentaDialogoServicio = dependencias.RecuperacionCuentaServicio;
+            _usuarioSesion = dependencias.UsuarioSesion;
+            _catalogoAvatares = dependencias.CatalogoAvatares;
+            _catalogoPerfil = dependencias.CatalogoPerfil;
 
             RedesSociales = CrearRedesSociales();
             _redesPorNombre = RedesSociales.ToDictionary(
@@ -139,6 +124,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 _sonidoManejador.ReproducirClick();
                 _ventana.CerrarVentana(this);
             });
+        }
+
+        private static void ValidarDependencias(
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasPerfil dependencias)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
         }
 
         /// <summary>

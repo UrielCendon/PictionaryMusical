@@ -23,6 +23,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Inicializa el servicio de inicio de sesion.
         /// </summary>
+        /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <param name="usuarioMapeador">Mapeador para actualizar datos de sesion.</param>
+        /// <param name="localizador">Servicio de localizacion de textos.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public InicioSesionServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
@@ -85,9 +93,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado en inicio de sesion.", excepcion);
+                _logger.Error("Operacion invalida en inicio de sesion.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
@@ -99,16 +107,36 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (resultado == null)
             {
-                _logger.Warn("Servicio retorno null en inicio de sesion.");
+                RegistrarResultadoNulo();
                 return;
             }
 
-            _usuarioMapeador.ActualizarSesion(resultado.Usuario);
-            resultado.Mensaje = _localizador.Localizar(resultado.Mensaje, resultado.Mensaje);
+            ActualizarDatosSesion(resultado);
+            LocalizarMensaje(resultado);
+            RegistrarResultadoSesion(resultado);
+        }
 
+        private void ActualizarDatosSesion(DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            _usuarioMapeador.ActualizarSesion(resultado.Usuario);
+        }
+
+        private void LocalizarMensaje(DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            resultado.Mensaje = _localizador.Localizar(resultado.Mensaje, resultado.Mensaje);
+        }
+
+        private static void RegistrarResultadoNulo()
+        {
+            _logger.Warn("Servicio retorno null en inicio de sesion.");
+        }
+
+        private static void RegistrarResultadoSesion(DTOs.ResultadoInicioSesionDTO resultado)
+        {
             if (resultado.Usuario != null)
             {
-                _logger.InfoFormat("Usuario con id '{0}' inicio sesion.", 
+                _logger.InfoFormat(
+                    "Usuario con id '{0}' inicio sesion.",
                     resultado.Usuario.UsuarioId);
             }
             else

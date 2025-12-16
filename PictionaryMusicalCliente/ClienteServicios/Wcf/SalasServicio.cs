@@ -348,9 +348,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Task.Run(async () =>
                         await _cliente.CancelarSuscripcionListaSalasAsync()).Wait(2000);
                 }
-                catch (Exception excepcion)
+                catch (AggregateException excepcion)
                 {
                     _logger.Warn("Error al cerrar suscripcion de salas en Dispose.", excepcion);
+                }
+                catch (CommunicationException excepcion)
+                {
+                    _logger.Warn("Error de comunicacion al cerrar suscripcion.", excepcion);
+                }
+                catch (TimeoutException excepcion)
+                {
+                    _logger.Warn("Timeout al cerrar suscripcion de salas.", excepcion);
                 }
             }
         }
@@ -377,7 +385,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     if (canal.State == CommunicationState.Faulted) canal.Abort();
                     else canal.Close();
                 }
-                catch (Exception)
+                catch (CommunicationException)
+                {
+                    canal.Abort();
+                }
+                catch (TimeoutException)
                 {
                     canal.Abort();
                 }

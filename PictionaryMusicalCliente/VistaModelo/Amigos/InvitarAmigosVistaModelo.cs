@@ -4,6 +4,7 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,40 +34,50 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private readonly string _codigoSala;
         private readonly Action<int> _registrarAmigoInvitado;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="dependenciasBase">
+        /// Dependencias comunes de UI del ViewModel.
+        /// </param>
+        /// <param name="dependencias">
+        /// Dependencias especificas de invitacion de amigos.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public InvitarAmigosVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            IEnumerable<DTOs.AmigoDTO> amigos,
-            IInvitacionesServicio invitacionesServicio,
-            IPerfilServicio perfilServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            string codigoSala,
-            Func<int, bool> amigoInvitado,
-            Action<int> registrarAmigoInvitado)
-            : base(ventana, localizador)
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasInvitarAmigos dependencias)
+            : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
-            _invitacionesServicio = invitacionesServicio ??
-                throw new ArgumentNullException(nameof(invitacionesServicio));
-            _perfilServicio = perfilServicio ??
-                throw new ArgumentNullException(nameof(perfilServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
+            ValidarDependencias(dependenciasBase, dependencias);
 
-            if (string.IsNullOrWhiteSpace(codigoSala))
-            {
-                throw new ArgumentException(
-                    "El codigo de la sala es obligatorio.",
-                    nameof(codigoSala));
-            }
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+            _avisoServicio = dependenciasBase.AvisoServicio;
 
-            _codigoSala = codigoSala;
-            _registrarAmigoInvitado = registrarAmigoInvitado;
+            _invitacionesServicio = dependencias.InvitacionesServicio;
+            _perfilServicio = dependencias.PerfilServicio;
+            _codigoSala = dependencias.CodigoSala;
+            _registrarAmigoInvitado = dependencias.RegistrarAmigoInvitado;
 
             Amigos = new ObservableCollection<AmigoInvitacionItemVistaModelo>(
-                CrearElementos(amigos, amigoInvitado));
+                CrearElementos(dependencias.Amigos, dependencias.AmigoInvitado));
+        }
+
+        private static void ValidarDependencias(
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasInvitarAmigos dependencias)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
         }
 
         /// <summary>

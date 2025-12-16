@@ -169,9 +169,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 await BuscarNombreUnicoYUnirseAsync(codigo).ConfigureAwait(true);
             },
-            ex =>
+            excepcion =>
             {
-                _logger.Error("Error al intentar unirse a la sala.", ex);
+                _logger.Error("Error al intentar unirse a la sala.", excepcion);
                 EstaProcesando = false;
             });
 
@@ -396,17 +396,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 return ResultadoUnionInvitado.Exito(sala);
             }
-            catch (ServicioExcepcion ex)
+            catch (ServicioExcepcion excepcion)
             {
-                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", ex);
+                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", excepcion);
                 string mensaje;
-                if (string.IsNullOrWhiteSpace(ex?.Message))
+                if (string.IsNullOrWhiteSpace(excepcion?.Message))
                 {
                     mensaje = Lang.errorTextoNoEncuentraPartida;
                 }
                 else
                 {
-                    mensaje = ex.Message;
+                    mensaje = excepcion.Message;
                 }
 
                 _sonidoManejador.ReproducirError();
@@ -450,11 +450,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     codigoSala,
                     nombreInvitado).ConfigureAwait(true);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
                 // Se captura Exception general porque es un cleanup "best effort"
                 _logger.Warn("Error en cleanup al abandonar sala (ignorado intencionalmente).",
-                    ex);
+                    excepcion);
             }
         }
 

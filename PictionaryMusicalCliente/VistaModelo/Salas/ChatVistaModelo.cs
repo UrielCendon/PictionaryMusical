@@ -1,6 +1,6 @@
 ﻿using log4net;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Chat;
 using System;
 using System.Threading.Tasks;
 using System.Windows;

@@ -32,7 +32,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private void EjecutarMostrarReal(string mensaje)
+        private static void EjecutarMostrarReal(string mensaje)
         {
             Cursor cursorAnterior = Mouse.OverrideCursor;
             Mouse.OverrideCursor = null;

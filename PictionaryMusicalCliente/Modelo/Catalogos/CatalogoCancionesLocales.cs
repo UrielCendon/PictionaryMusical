@@ -68,29 +68,61 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         {
             return new List<Cancion>
             {
-                new Cancion(1, "Gasolina", "Gasolina_Daddy_Yankee.mp3", IdiomaEspanol),
-                new Cancion(2, "Bocanada", "Bocanada_Gustavo_Cerati.mp3", IdiomaEspanol),
+                new Cancion(
+                    1, 
+                    "Gasolina", 
+                    "Gasolina_Daddy_Yankee.mp3", 
+                    IdiomaEspanol),
+                new Cancion(
+                    2, 
+                    "Bocanada", 
+                    "Bocanada_Gustavo_Cerati.mp3", 
+                    IdiomaEspanol),
                 new Cancion(
                     3,
                     "La Nave Del Olvido",
                     "La_Nave_Del_Olvido_Jose_Jose.mp3",
                     IdiomaEspanol),
-                new Cancion(4, "Tiburón", "Tiburon_Proyecto_Uno.mp3", IdiomaEspanol),
+                new Cancion(
+                    4,
+                    "Tiburón",
+                    "Tiburon_Proyecto_Uno.mp3",
+                    IdiomaEspanol),
                 new Cancion(
                     5,
                     "Pupilas De Gato",
                     "Pupilas_De_Gato_Luis_Miguel.mp3",
                     IdiomaEspanol),
-                new Cancion(6, "El Triste", "El_Triste_Jose_Jose.mp3", IdiomaEspanol),
-                new Cancion(7, "El Reloj", "El_Reloj_Luis_Miguel.mp3", IdiomaEspanol),
-                new Cancion(8, "La Camisa Negra", "La_Camisa_Negra_Juanes.mp3", IdiomaEspanol),
+                new Cancion(
+                    6, 
+                    "El Triste", 
+                    "El_Triste_Jose_Jose.mp3", 
+                    IdiomaEspanol),
+                new Cancion(
+                    7,
+                    "El Reloj",
+                    "El_Reloj_Luis_Miguel.mp3",
+                    IdiomaEspanol),
+                new Cancion(
+                    8,
+                    "La Camisa Negra",
+                    "La_Camisa_Negra_Juanes.mp3",
+                    IdiomaEspanol),
                 new Cancion(
                     9,
                     "Rosas",
                     "Rosas_La_Oreja_de_Van_Gogh.mp3",
                     IdiomaEspanol),
-                new Cancion(10, "La Bicicleta", "La_Bicicleta_Shakira.mp3", IdiomaEspanol),
-                new Cancion(11, "El Taxi", "El_Taxi_Pitbull.mp3", IdiomaEspanol),
+                new Cancion(
+                    10, 
+                    "La Bicicleta", 
+                    "La_Bicicleta_Shakira.mp3",
+                    IdiomaEspanol),
+                new Cancion(
+                    11,
+                    "El Taxi",
+                    "El_Taxi_Pitbull.mp3",
+                    IdiomaEspanol),
                 new Cancion(
                     12,
                     "La Puerta Negra",
@@ -106,16 +138,36 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
                     "Los Luchadores",
                     "Los_Luchadores_La_Sonora_Santanera.mp3",
                     IdiomaEspanol),
-                new Cancion(15, "El Oso Polar", "El_Oso_Polar_Nelson_Kanzela.mp3", IdiomaEspanol),
+                new Cancion(
+                    15,
+                    "El Oso Polar",
+                    "El_Oso_Polar_Nelson_Kanzela.mp3",
+                    IdiomaEspanol),
                 new Cancion(
                     16,
                     "El Teléfono",
                     "El_Telefono_Wisin_&_Yandel.mp3",
                     IdiomaEspanol),
-                new Cancion(17, "La Planta", "La_Planta_Caos.mp3", IdiomaEspanol),
-                new Cancion(18, "Lluvia", "Lluvia_Eddie_Santiago.mp3", IdiomaEspanol),
-                new Cancion(19, "Pose", "Pose_Daddy_Yankee.mp3", IdiomaEspanol),
-                new Cancion(20, "Cama y Mesa", "Cama_y_Mesa_Roberto_Carlos.mp3", IdiomaEspanol),
+                new Cancion(
+                    17, 
+                    "La Planta", 
+                    "La_Planta_Caos.mp3", 
+                    IdiomaEspanol),
+                new Cancion(
+                    18,
+                    "Lluvia",
+                    "Lluvia_Eddie_Santiago.mp3",
+                    IdiomaEspanol),
+                new Cancion(
+                    19,
+                    "Pose",
+                    "Pose_Daddy_Yankee.mp3",
+                    IdiomaEspanol),
+                new Cancion(
+                    20,
+                    "Cama y Mesa",
+                    "Cama_y_Mesa_Roberto_Carlos.mp3",
+                    IdiomaEspanol),
 
                 new Cancion(
                     21,
@@ -132,26 +184,86 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
                     "Man In The Mirror",
                     "Man_In_The_Mirror_Michael_Jackson.mp3",
                     IdiomaIngles),
-                new Cancion(24, "Earth Song", "Earth_Song_Michael_Jackson.mp3", IdiomaIngles),
-                new Cancion(25, "Redbone", "Redbone_Childish_Gambino.mp3", IdiomaIngles),
-                new Cancion(26, "The Chain", "The_Chain_Fleetwood_Mac.mp3", IdiomaIngles),
-                new Cancion(27, "Umbrella", "Umbrella_Rihanna.mp3", IdiomaIngles),
+                new Cancion(
+                    24, 
+                    "Earth Song", 
+                    "Earth_Song_Michael_Jackson.mp3", 
+                    IdiomaIngles),
+                new Cancion(
+                    25,
+                    "Redbone",
+                    "Redbone_Childish_Gambino.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    26,
+                    "The Chain",
+                    "The_Chain_Fleetwood_Mac.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    27,
+                    "Umbrella",
+                    "Umbrella_Rihanna.mp3",
+                    IdiomaIngles),
                 new Cancion(
                     28,
                     "Yellow Submarine",
                     "Yellow_Submarine_The_Beatles.mp3",
                     IdiomaIngles),
-                new Cancion(29, "Money", "Money_Pink_Floyd.mp3", IdiomaIngles),
-                new Cancion(30, "Diamonds", "Diamonds_Rihanna.mp3", IdiomaIngles),
-                new Cancion(31, "Grenade", "Grenade_Bruno_Mars.mp3", IdiomaIngles),
-                new Cancion(32, "Scarface", "Scarface_Paul_Engemann.mp3", IdiomaIngles),
-                new Cancion(33, "Animals", "Animals_Martin_Garrix.mp3", IdiomaIngles),
-                new Cancion(34, "Hotel California", "Hotel_California_Eagles.mp3", IdiomaIngles),
-                new Cancion(35, "67", "67_Skrilla.mp3", IdiomaIngles),
-                new Cancion(36, "Blackbird", "Blackbird_The_Beatles.mp3", IdiomaIngles),
-                new Cancion(37, "Pony", "Pony_Ginuwine.mp3", IdiomaIngles),
-                new Cancion(38, "Rocket Man", "Rocket_Man_Elton_John.mp3", IdiomaIngles),
-                new Cancion(39, "Starman", "Starman_David_Bowie.mp3", IdiomaIngles),
+                new Cancion(
+                    29,
+                    "Money",
+                    "Money_Pink_Floyd.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    30,
+                    "Diamonds",
+                    "Diamonds_Rihanna.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    31,
+                    "Grenade",
+                    "Grenade_Bruno_Mars.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    32,
+                    "Scarface",
+                    "Scarface_Paul_Engemann.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    33,
+                    "Animals",
+                    "Animals_Martin_Garrix.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    34,
+                    "Hotel California",
+                    "Hotel_California_Eagles.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    35,
+                    "67",
+                    "67_Skrilla.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    36,
+                    "Blackbird",
+                    "Blackbird_The_Beatles.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    37,
+                    "Pony",
+                    "Pony_Ginuwine.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    38,
+                    "Rocket Man",
+                    "Rocket_Man_Elton_John.mp3",
+                    IdiomaIngles),
+                new Cancion(
+                    39,
+                    "Starman",
+                    "Starman_David_Bowie.mp3",
+                    IdiomaIngles),
                 new Cancion(
                     40,
                     "Time In A Bottle",

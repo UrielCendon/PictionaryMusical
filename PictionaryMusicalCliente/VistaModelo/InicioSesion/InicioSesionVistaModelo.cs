@@ -2,6 +2,7 @@
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using System;
 using System.Collections.Generic;
@@ -57,56 +58,35 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         /// <summary>
         /// Inicializa una nueva instancia de la clase.
         /// </summary>
-        /// <param name="ventana">Servicio para gestionar ventanas.</param>
-        /// <param name="localizador">Servicio de localizacion de mensajes.</param>
-        /// <param name="inicioSesionServicio">Servicio de autenticacion.</param>
-        /// <param name="cambioContrasenaServicio">
-        /// Servicio para cambiar contrasena.
+        /// <param name="dependenciasBase">
+        /// Dependencias comunes de UI del ViewModel.
         /// </param>
-        /// <param name="recuperacionCuentaDialogoServicio">
-        /// Servicio para recuperar cuenta.
+        /// <param name="dependencias">
+        /// Dependencias especificas de inicio de sesion.
         /// </param>
-        /// <param name="localizacionServicio">Servicio de idiomas.</param>
-        /// <param name="sonidoManejador">Manejador de sonidos.</param>
-        /// <param name="avisoServicio">Servicio para mostrar avisos.</param>
-        /// <param name="generadorNombres">Generador de nombres de invitado.</param>
-        /// <param name="usuarioSesion">Datos del usuario autenticado.</param>
-        /// <param name="salasServicioFactory">Fabrica de servicios de salas.</param>
         /// <exception cref="ArgumentNullException">
         /// Si algun parametro requerido es nulo.
         /// </exception>
         public InicioSesionVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            IInicioSesionServicio inicioSesionServicio,
-            ICambioContrasenaServicio cambioContrasenaServicio,
-            IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio,
-            ILocalizacionServicio localizacionServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            INombreInvitadoGenerador generadorNombres,
-            IUsuarioAutenticado usuarioSesion,
-            Func<ISalasServicio> salasServicioFactory)
-            : base(ventana, localizador)
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasInicioSesion dependencias)
+            : base(
+                dependenciasBase?.Ventana, 
+                dependenciasBase?.Localizador)
         {
-            _inicioSesionServicio = inicioSesionServicio ??
-                throw new ArgumentNullException(nameof(inicioSesionServicio));
-            _cambioContrasenaServicio = cambioContrasenaServicio ??
-                throw new ArgumentNullException(nameof(cambioContrasenaServicio));
-            _recuperacionCuentaDialogoServicio = recuperacionCuentaDialogoServicio ??
-                throw new ArgumentNullException(nameof(recuperacionCuentaDialogoServicio));
-            _localizacionServicio = localizacionServicio ??
-                throw new ArgumentNullException(nameof(localizacionServicio));
-            _salasServicioFactory = salasServicioFactory ??
-                throw new ArgumentNullException(nameof(salasServicioFactory));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _usuarioSesion = usuarioSesion ??
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            _generadorNombres = generadorNombres ??
-                throw new ArgumentNullException(nameof(generadorNombres));
+            ValidarDependenciasBase(dependenciasBase);
+            ValidarDependenciasInicioSesion(dependencias);
+
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+            _avisoServicio = dependenciasBase.AvisoServicio;
+
+            _inicioSesionServicio = dependencias.InicioSesionServicio;
+            _cambioContrasenaServicio = dependencias.CambioContrasenaServicio;
+            _recuperacionCuentaDialogoServicio = dependencias.RecuperacionCuentaServicio;
+            _localizacionServicio = dependencias.LocalizacionServicio;
+            _generadorNombres = dependencias.GeneradorNombres;
+            _usuarioSesion = dependencias.UsuarioSesion;
+            _salasServicioFactory = dependencias.SalasServicioFactory;
 
             IniciarSesionComando = new ComandoAsincrono(async _ =>
             {
@@ -133,6 +113,24 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }, _ => !EstaProcesando);
 
             CargarIdiomas();
+        }
+
+        private static void ValidarDependenciasBase(
+            DependenciasVistaModeloBase dependenciasBase)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+        }
+
+        private static void ValidarDependenciasInicioSesion(
+            DependenciasInicioSesion dependencias)
+        {
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
         }
 
         /// <summary>
@@ -231,24 +229,30 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private void AbrirVentanaCrearCuenta()
         {
             var codigoServ = new VerificacionCodigoServicio(
-                App.WcfEjecutor, App.WcfFabrica, _localizador, App.ManejadorError);
+                App.WcfEjecutor, App.WcfFabrica, App.ManejadorError);
             var cuentaServ = new CuentaServicio(
                 App.WcfEjecutor, App.WcfFabrica, App.ManejadorError);
             var selectAvatar = new SeleccionAvatarDialogoServicio(
                 _avisoServicio, App.CatalogoAvatares, _sonidoManejador);
             var verifCodigo = new VerificacionCodigoDialogoServicio();
 
-            var crearCuentaVistaModelo = new CreacionCuentaVistaModelo(
+            var dependenciasBase = new DependenciasVistaModeloBase(
                 _ventana,
                 _localizador,
+                _sonidoManejador,
+                _avisoServicio);
+
+            var dependenciasCreacion = new DependenciasCreacionCuenta(
                 codigoServ,
                 cuentaServ,
                 selectAvatar,
                 verifCodigo,
-                _sonidoManejador,
                 App.CatalogoAvatares,
-                _avisoServicio,
                 _localizacionServicio);
+
+            var crearCuentaVistaModelo = new CreacionCuentaVistaModelo(
+                dependenciasBase,
+                dependenciasCreacion);
 
             _ventana.MostrarVentanaDialogo(crearCuentaVistaModelo);
         }
@@ -279,27 +283,39 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             App.MusicaManejador.Detener();
 
-            var salaVistaModelo = new Salas.SalaVistaModelo(
-                _ventana,
-                _localizador,
-                sala,
+            var comunicacion = new DependenciasComunicacionSala(
                 servicio,
                 App.InvitacionesServicio,
-                App.ListaAmigosServicio,
-                App.PerfilServicio,
-                App.ReportesServicio,
-                _sonidoManejador,
-                _avisoServicio,
-                _usuarioSesion,
                 new InvitacionSalaServicio(
                     App.InvitacionesServicio,
                     App.ListaAmigosServicio,
                     App.PerfilServicio,
                     _sonidoManejador,
                     _avisoServicio),
-                App.WcfFabrica,
+                App.WcfFabrica);
+
+            var perfiles = new DependenciasPerfilesSala(
+                App.ListaAmigosServicio,
+                App.PerfilServicio,
+                App.ReportesServicio,
+                _usuarioSesion);
+
+            var audio = new DependenciasAudioSala(
+                _sonidoManejador,
                 new CancionManejador(),
-                App.CatalogoCanciones,
+                App.CatalogoCanciones);
+
+            var dependenciasSala = new DependenciasSalaVistaModelo(
+                comunicacion,
+                perfiles,
+                audio,
+                _avisoServicio);
+
+            var salaVistaModelo = new Salas.SalaVistaModelo(
+                _ventana,
+                _localizador,
+                sala,
+                dependenciasSala,
                 nombre,
                 esInvitado);
 

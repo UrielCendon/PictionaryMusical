@@ -72,7 +72,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.avisoTextoServidorTiempoSesion,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Error inesperado en perfil.", excepcion);
                 throw new ServicioExcepcion(
@@ -132,7 +132,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Error inesperado al actualizar perfil.", excepcion);
                 throw new ServicioExcepcion(

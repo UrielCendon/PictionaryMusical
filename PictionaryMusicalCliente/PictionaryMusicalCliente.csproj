@@ -83,7 +83,13 @@
     <Compile Include="ClienteServicios\Wcf\Administrador\ISolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Administrador\SolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
-    <Compile Include="ClienteServicios\Wcf\ChatServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatDecision.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatMensajeria.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatAciertosServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatReglasPartida.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatMensajeriaDelegado.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatAciertosDelegado.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatReglasPartida.cs" />
     <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
@@ -229,6 +235,12 @@
     <Compile Include="VistaModelo\Amigos\EliminacionAmigoVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\InvitarAmigosVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\SolicitudesVistaModelo.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasCreacionCuenta.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasInicioSesion.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasInvitarAmigos.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasPerfil.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasSala.cs" />
+    <Compile Include="VistaModelo\Dependencias\DependenciasVistaModeloBase.cs" />
     <Compile Include="VistaModelo\Perfil\CambioContrasenaVistaModelo.cs" />
     <Compile Include="VistaModelo\Perfil\RedSocialItemVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />

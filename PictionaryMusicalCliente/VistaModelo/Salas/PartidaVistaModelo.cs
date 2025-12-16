@@ -476,16 +476,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             OcultarOverlayAlarmaComando = new ComandoDelegado(_ => OcultarOverlayAlarma());
         }
 
-        private Cancion ObtenerCancion(int idCancion)
-        {
-            if (_catalogoCanciones.IntentarObtenerPorId(idCancion, out var cancion))
-            {
-                return cancion;
-            }
-
-            return null;
-        }
-
         private static Visibility DeterminarVisibilidadPista(string textoPista)
         {
             return string.IsNullOrWhiteSpace(textoPista)
@@ -775,7 +765,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ConfigurarTiempoRonda(ronda.TiempoSegundos);
             ActualizarContadorRondas(_totalJugadoresPendiente);
 
-            var cancion = ObtenerCancion(ronda.IdCancion);
+            _catalogoCanciones.IntentarObtenerPorId(ronda.IdCancion, out var cancion);
             AlmacenarDatosCancionActual(cancion);
             NotificarCambiosCancionYTiempo();
             ConfigurarTextoDibujante(ronda.NombreDibujante);

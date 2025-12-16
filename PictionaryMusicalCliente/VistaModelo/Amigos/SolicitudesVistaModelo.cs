@@ -30,7 +30,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private readonly IAmigosServicio _amigosServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
-        private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly string _usuarioActual;
         private bool _estaProcesando;
 
@@ -55,15 +54,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             IUsuarioAutenticado usuarioSesion)
             : base(ventana, localizador)
         {
+            if (usuarioSesion == null)
+            {
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            }
             _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
-            _usuarioSesion = usuarioSesion ?? 
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            _usuarioActual = _usuarioSesion.NombreUsuario ?? string.Empty;
+            _usuarioActual = usuarioSesion.NombreUsuario;
 
             Solicitudes = new ObservableCollection<SolicitudAmistadEntrada>();
 

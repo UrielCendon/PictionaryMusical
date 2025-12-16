@@ -227,13 +227,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
                 await ProcesarResultadoVerificacionAsync(resultado);
             },
-            ex =>
+            excepcion =>
             {
                 _logger.Error(
-                    "Error de servicio durante la verificacion del codigo.", ex);
+                    "Error de servicio durante la verificacion del codigo.", excepcion);
                 _sonidoManejador.ReproducirError();
                 MarcarCodigoInvalido?.Invoke(true);
-                _avisoServicio.Mostrar(ex.Message ?? 
+                _avisoServicio.Mostrar(excepcion.Message ?? 
                     Lang.errorTextoVerificarCodigo);
                 EstaVerificando = false;
             });
@@ -414,11 +414,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
                 ProcesarResultadoReenvio(resultado);
             },
-            ex =>
+            excepcion =>
             {
-                _logger.Error("Excepcion de servicio al reenviar codigo.", ex);
+                _logger.Error("Excepcion de servicio al reenviar codigo.", excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? 
+                _avisoServicio.Mostrar(excepcion.Message ?? 
                     Lang.errorTextoSolicitarNuevoCodigo);
             });
         }

@@ -6,6 +6,7 @@ using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -52,56 +53,32 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         /// <summary>
         /// Inicializa una nueva instancia de la clase.
         /// </summary>
-        /// <param name="ventana">Servicio para gestionar ventanas.</param>
-        /// <param name="localizador">Servicio de localizacion de mensajes.</param>
-        /// <param name="codigoVerificacionServicio">
-        /// Servicio para enviar codigos de verificacion.
+        /// <param name="dependenciasBase">
+        /// Dependencias comunes de UI del ViewModel.
         /// </param>
-        /// <param name="cuentaServicio">Servicio para registrar cuentas.</param>
-        /// <param name="seleccionarAvatarServicio">
-        /// Servicio para seleccionar avatares.
-        /// </param>
-        /// <param name="verificarCodigoDialogoServicio">
-        /// Servicio para mostrar dialogo de verificacion.
-        /// </param>
-        /// <param name="sonidoManejador">Manejador de sonidos.</param>
-        /// <param name="catalogoAvatares">Catalogo de avatares disponibles.</param>
-        /// <param name="avisoServicio">Servicio para mostrar avisos.</param>
-        /// <param name="localizacionServicio">
-        /// Servicio de localizacion opcional.
+        /// <param name="dependencias">
+        /// Dependencias especificas de creacion de cuenta.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// Si algun parametro requerido es nulo.
         /// </exception>
         public CreacionCuentaVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            ICodigoVerificacionServicio codigoVerificacionServicio,
-            ICuentaServicio cuentaServicio,
-            ISeleccionarAvatarServicio seleccionarAvatarServicio,
-            IVerificacionCodigoDialogoServicio verificarCodigoDialogoServicio,
-            SonidoManejador sonidoManejador,
-            ICatalogoAvatares catalogoAvatares,
-            IAvisoServicio avisoServicio,
-            ILocalizacionServicio localizacionServicio = null)
-            : base(ventana, localizador)
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasCreacionCuenta dependencias)
+            : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
-            _codigoVerificacionServicio = codigoVerificacionServicio ??
-                throw new ArgumentNullException(nameof(codigoVerificacionServicio));
-            _cuentaServicio = cuentaServicio ??
-                throw new ArgumentNullException(nameof(cuentaServicio));
-            _seleccionarAvatarServicio = seleccionarAvatarServicio ??
-                throw new ArgumentNullException(nameof(seleccionarAvatarServicio));
-            _verificarCodigoDialogoServicio = verificarCodigoDialogoServicio ??
-                throw new ArgumentNullException(
-                    nameof(verificarCodigoDialogoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _catalogoAvatares = catalogoAvatares ??
-                throw new ArgumentNullException(nameof(catalogoAvatares));
-            _localizacionServicio = localizacionServicio;
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
+            ValidarDependencias(dependenciasBase, dependencias);
+
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+            _avisoServicio = dependenciasBase.AvisoServicio;
+
+            _codigoVerificacionServicio = dependencias.CodigoVerificacionServicio;
+            _cuentaServicio = dependencias.CuentaServicio;
+            _seleccionarAvatarServicio = dependencias.SeleccionarAvatarServicio;
+            _verificarCodigoDialogoServicio = 
+                dependencias.VerificacionCodigoDialogoServicio;
+            _catalogoAvatares = dependencias.CatalogoAvatares;
+            _localizacionServicio = dependencias.LocalizacionServicio;
 
             CrearCuentaComando = new ComandoAsincrono(async _ =>
             {
@@ -122,6 +99,21 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             });
 
             EstablecerAvatarPredeterminado();
+        }
+
+        private static void ValidarDependencias(
+            DependenciasVistaModeloBase dependenciasBase,
+            DependenciasCreacionCuenta dependencias)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
         }
 
         /// <summary>
@@ -347,7 +339,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private async Task<bool> SolicitarYValidarCodigoRegistroAsync(
             DTOs.NuevaCuentaDTO solicitud)
         {
-            var (codigoEnviado, resultadoSolicitud, errorDuplicado) =
+            var (codigoEnviado, _, errorDuplicado) =
                 await SolicitarCodigoRegistroAsync(solicitud);
 
             if (!codigoEnviado)

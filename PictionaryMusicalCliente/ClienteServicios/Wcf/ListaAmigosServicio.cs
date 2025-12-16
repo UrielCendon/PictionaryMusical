@@ -244,6 +244,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                    _fabricaClientes.CrearClienteListaAmigos(contexto);
         }
 
+        /// <summary>
+        /// Cierra el cliente WCF de forma segura, abortando si el cierre normal falla.
+        /// El catch general es necesario porque el cierre de WCF puede lanzar multiples 
+        /// tipos de excepciones y siempre debe intentarse Abort como fallback.
+        /// </summary>
         private static void CerrarClienteSeguro(ICommunicationObject cliente)
         {
             if (cliente == null) return;
@@ -252,7 +257,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 if (cliente.State == CommunicationState.Opened) cliente.Close();
                 else cliente.Abort();
             }
-            catch (Exception)
+            catch (CommunicationException)
+            {
+                cliente.Abort();
+            }
+            catch (TimeoutException)
             {
                 cliente.Abort();
             }

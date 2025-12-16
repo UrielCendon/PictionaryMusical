@@ -4,6 +4,7 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,11 +24,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IPerfilServicio _perfilServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _aviso;
-        private bool _disposed;
+        private bool _desechado;
 
         /// <summary>
         /// Inicializa el servicio facade de invitaciones de sala.
         /// </summary>
+        /// <param name="invitacionesServicio">Servicio para enviar invitaciones.</param>
+        /// <param name="listaAmigosServicio">Servicio para obtener lista de amigos.</param>
+        /// <param name="perfilServicio">Servicio de perfiles de usuario.</param>
+        /// <param name="sonidoManejador">Manejador de efectos de sonido.</param>
+        /// <param name="aviso">Servicio para mostrar avisos al usuario.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public InvitacionSalaServicio(
             IInvitacionesServicio invitacionesServicio,
             IListaAmigosServicio listaAmigosServicio,
@@ -98,35 +107,60 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     return InvitacionAmigosResultado.Fallo(Lang.invitarAmigosTextoSinAmigos);
                 }
 
-                var vistaModelo = new InvitarAmigosVistaModelo(
+                var dependenciasBase = new DependenciasVistaModeloBase(
                     App.VentanaServicio,
                     App.Localizador,
-                    amigos,
+                    _sonidoManejador,
+                    _aviso);
+
+                var dependenciasInvitar = new DependenciasInvitarAmigos(
                     _invitacionesServicio,
                     _perfilServicio,
-                    _sonidoManejador,
-                    _aviso,
+                    amigos,
                     codigoSala,
                     id => amigosInvitados?.Contains(id) ?? false,
-                    id => amigosInvitados?.Add(id)
-                );
+                    id => amigosInvitados?.Add(id));
+
+                var vistaModelo = new InvitarAmigosVistaModelo(
+                    dependenciasBase,
+                    dependenciasInvitar);
 
                 return InvitacionAmigosResultado.Exito(vistaModelo);
             }
-            catch (Exception excepcion)
+            catch (ServicioExcepcion excepcion)
             {
-                _logger.Error("Error al obtener lista de amigos para invitar.", excepcion);
+                _logger.Error("Error de servicio al obtener amigos.", excepcion);
                 return InvitacionAmigosResultado.Fallo(
                     excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud);
             }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Error("Operacion invalida al obtener amigos.", excepcion);
+                return InvitacionAmigosResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
+            }
+        }
+
+        /// <summary>
+        /// Libera los recursos utilizados por el servicio.
+        /// </summary>
+        /// <param name="desechando">
+        /// True si se llama desde Dispose, false desde el finalizador.
+        /// </param>
+        protected virtual void Dispose(bool desechando)
+        {
+            if (_desechado)
+            {
+                return;
+            }
+
+            _desechado = true;
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            if (_disposed) return;
-
-            _disposed = true;
+            Dispose(desechando: true);
+            GC.SuppressFinalize(this);
         }
 
         private async Task<InvitacionCorreoResultado> ProcesarEnvioCorreoAsync(
@@ -148,9 +182,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return InvitacionCorreoResultado.Fallo(
                     resultado?.Mensaje ?? Lang.errorTextoEnviarCorreo);
             }
-            catch (Exception excepcion)
+            catch (ServicioExcepcion excepcion)
             {
-                _logger.Error("Error al procesar envio de correo.", excepcion);
+                _logger.Error("Error de servicio al enviar correo.", excepcion);
                 return InvitacionCorreoResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
             }
         }

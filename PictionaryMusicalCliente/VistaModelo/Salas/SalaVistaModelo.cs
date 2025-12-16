@@ -2,6 +2,7 @@
 using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Chat;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
@@ -10,6 +11,7 @@ using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal;
 using System;
@@ -110,29 +112,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
             DTOs.SalaDTO sala,
-            ISalasServicio salasServicio,
-            IInvitacionesServicio invitacionesServicio,
-            IListaAmigosServicio listaAmigosServicio,
-            IPerfilServicio perfilServicio,
-            IReportesServicio reportesServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            IUsuarioAutenticado usuarioSesion,
-            IInvitacionSalaServicio invitacionSalaServicio,
-            IWcfClienteFabrica fabricaClientes,
-            CancionManejador cancionManejador,
-            ICatalogoCanciones catalogoCanciones,
+            DependenciasSalaVistaModelo dependencias,
             string nombreJugador = null,
             bool esInvitado = false)
             : base(ventana, localizador)
         {
-            ValidarDependencias(sala, salasServicio, reportesServicio, sonidoManejador,
-                avisoServicio, invitacionSalaServicio, usuarioSesion, fabricaClientes,
-                cancionManejador, catalogoCanciones);
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
 
-            AsignarServicios(salasServicio, reportesServicio, sonidoManejador, avisoServicio,
-                invitacionSalaServicio, usuarioSesion, fabricaClientes, cancionManejador,
-                catalogoCanciones);
+            ValidarDependenciasSala(sala);
+            AsignarServicios(dependencias);
 
             _sala = sala;
             _esInvitado = esInvitado;
@@ -153,55 +144,25 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             InicializarProxyPartida();
         }
 
-        private static void ValidarDependencias(
-            DTOs.SalaDTO sala,
-            ISalasServicio salasServicio,
-            IReportesServicio reportesServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            IInvitacionSalaServicio invitacionSalaServicio,
-            IUsuarioAutenticado usuarioSesion,
-            IWcfClienteFabrica fabricaClientes,
-            CancionManejador cancionManejador,
-            ICatalogoCanciones catalogoCanciones)
+        private static void ValidarDependenciasSala(DTOs.SalaDTO sala)
         {
             if (sala == null)
+            {
                 throw new ArgumentNullException(nameof(sala));
-            if (salasServicio == null)
-                throw new ArgumentNullException(nameof(salasServicio));
-            if (reportesServicio == null)
-                throw new ArgumentNullException(nameof(reportesServicio));
-            if (sonidoManejador == null)
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            if (avisoServicio == null)
-                throw new ArgumentNullException(nameof(avisoServicio));
-            if (invitacionSalaServicio == null)
-                throw new ArgumentNullException(nameof(invitacionSalaServicio));
-            if (usuarioSesion == null)
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            if (fabricaClientes == null)
-                throw new ArgumentNullException(nameof(fabricaClientes));
-            if (cancionManejador == null)
-                throw new ArgumentNullException(nameof(cancionManejador));
-            if (catalogoCanciones == null)
-                throw new ArgumentNullException(nameof(catalogoCanciones));
+            }
         }
 
-        private void AsignarServicios(ISalasServicio salasServicio,
-            IReportesServicio reportesServicio, SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio, IInvitacionSalaServicio invitacionSalaServicio,
-            IUsuarioAutenticado usuarioSesion, IWcfClienteFabrica fabricaClientes,
-            CancionManejador cancionManejador, ICatalogoCanciones catalogoCanciones)
+        private void AsignarServicios(DependenciasSalaVistaModelo dependencias)
         {
-            _salasServicio = salasServicio;
-            _reportesServicio = reportesServicio;
-            _sonidoManejador = sonidoManejador;
-            _avisoServicio = avisoServicio;
-            _invitacionSalaServicio = invitacionSalaServicio;
-            _usuarioSesion = usuarioSesion;
-            _fabricaClientes = fabricaClientes;
-            _cancionManejador = cancionManejador;
-            _catalogoCanciones = catalogoCanciones;
+            _salasServicio = dependencias.Comunicacion.SalasServicio;
+            _invitacionSalaServicio = dependencias.Comunicacion.InvitacionSalaServicio;
+            _fabricaClientes = dependencias.Comunicacion.FabricaClientes;
+            _reportesServicio = dependencias.Perfiles.ReportesServicio;
+            _usuarioSesion = dependencias.Perfiles.UsuarioSesion;
+            _sonidoManejador = dependencias.Audio.SonidoManejador;
+            _cancionManejador = dependencias.Audio.CancionManejador;
+            _catalogoCanciones = dependencias.Audio.CatalogoCanciones;
+            _avisoServicio = dependencias.AvisoServicio;
         }
 
         private void InicializarColecciones()
@@ -552,23 +513,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 _logger.Info("Cliente WCF de partida inicializado y jugador suscrito.");
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
                 _logger.Error(
                     "Error de comunicacion al suscribir al jugador en la partida.",
-                    ex);
+                    excepcion);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
                 _logger.Error(
                     "Se agoto el tiempo para inicializar el proxy de partida.",
-                    ex);
+                    excepcion);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error(
                     "Operacion invalida al inicializar el proxy de partida.",
-                    ex);
+                    excepcion);
             }
         }
 
@@ -691,19 +652,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 await _proxyJuego.EnviarMensajeJuegoAsync(mensaje, _codigoSala, _idJugador)
                     .ConfigureAwait(false);
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Error("No se pudo enviar el mensaje de juego.", ex);
+                _logger.Error("No se pudo enviar el mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo agotado al enviar mensaje de juego.", ex);
+                _logger.Error("Tiempo agotado al enviar mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al enviar mensaje de juego.", ex);
+                _logger.Error("Operacion invalida al enviar mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
         }
@@ -735,19 +696,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         .ConfigureAwait(false);
                 }
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Error("No se pudo registrar el acierto en el servidor.", ex);
+                _logger.Error("No se pudo registrar el acierto en el servidor.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo agotado al registrar acierto.", ex);
+                _logger.Error("Tiempo agotado al registrar acierto.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al registrar acierto.", ex);
+                _logger.Error("Operacion invalida al registrar acierto.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
         }
@@ -767,17 +728,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 _proxyJuego?.EnviarTrazo(trazo, _codigoSala, _idJugador);
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Error("No se pudo enviar el trazo al servidor.", ex);
+                _logger.Error("No se pudo enviar el trazo al servidor.", excepcion);
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo agotado al enviar trazo al servidor.", ex);
+                _logger.Error("Tiempo agotado al enviar trazo al servidor.", excepcion);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al enviar trazo al servidor.", ex);
+                _logger.Error("Operacion invalida al enviar trazo al servidor.", excepcion);
             }
         }
 
@@ -809,19 +770,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     AplicarInicioVisualPartida();
                 }
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Error("No se pudo solicitar el inicio de la partida.", ex);
+                _logger.Error("No se pudo solicitar el inicio de la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo agotado al iniciar la partida.", ex);
+                _logger.Error("Tiempo agotado al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al iniciar la partida.", ex);
+                _logger.Error("Operacion invalida al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
                 BotonIniciarPartidaHabilitado = true;
             }
@@ -1491,12 +1452,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _sonidoManejador.ReproducirNotificacion();
                 _avisoServicio.Mostrar(Lang.expulsarJugadorTextoExito);
             }
-            catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
+            catch (Exception excepcion) when (excepcion is ServicioExcepcion || 
+                excepcion is ArgumentException)
             {
-                _logger.ErrorFormat("Error al expulsar jugador {0}.",
-					nombreJugador, ex);
+                _logger.ErrorFormat("Error al excepcionpulsar jugador {0}.",
+					nombreJugador, excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoExpulsarJugador);
+                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoExpulsarJugador);
             }
         }
 
@@ -1550,11 +1512,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         respuesta?.Mensaje ?? Lang.errorTextoReportarJugador);
                 }
             }
-            catch (Exception ex) when (ex is ServicioExcepcion || ex is ArgumentException)
+            catch (Exception excepcion) when (excepcion is ServicioExcepcion || 
+                excepcion is ArgumentException)
             {
-                _logger.ErrorFormat("Error al reportar jugador {0}.", nombreJugador, ex);
+                _logger.ErrorFormat("Error al reportar jugador {0}.", nombreJugador, excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoReportarJugador);
+                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoReportarJugador);
             }
         }
 
@@ -1628,19 +1591,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     }
                 }
             }
-            catch (CommunicationException ex)
+            catch (CommunicationException excepcion)
             {
-                _logger.Warn("Error de comunicacion al cerrar el canal de partida.", ex);
+                _logger.Warn("Error de comunicacion al cerrar el canal de partida.", excepcion);
                 (_proxyJuego as ICommunicationObject)?.Abort();
             }
-            catch (TimeoutException ex)
+            catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al cerrar el canal de partida.", ex);
+                _logger.Warn("Timeout al cerrar el canal de partida.", excepcion);
                 (_proxyJuego as ICommunicationObject)?.Abort();
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Operacion invalida al cerrar el canal de partida.", ex);
+                _logger.Warn("Operacion invalida al cerrar el canal de partida.", excepcion);
                 (_proxyJuego as ICommunicationObject)?.Abort();
             }
             finally
@@ -1659,10 +1622,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                         _sala.Codigo,
                         _nombreUsuarioSesion).ConfigureAwait(false);
                 }
-                catch (ServicioExcepcion ex)
+                catch (ServicioExcepcion excepcion)
                 {
                     _logger.WarnFormat("Error al abandonar sala en finalizacion: {0}",
-						ex.Message);
+						excepcion.Message);
                 }
             }
         }
@@ -1689,18 +1652,25 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             if (destino == DestinoNavegacion.InicioSesion)
             {
                 _usuarioSesion.Limpiar();
-                var inicioVistaModelo = new InicioSesionVistaModelo(
+
+                var dependenciasBase = new DependenciasVistaModeloBase(
                     _ventana,
                     _localizador,
+                    _sonidoManejador,
+                    _avisoServicio);
+
+                var dependenciasInicioSesion = new DependenciasInicioSesion(
                     App.InicioSesionServicio,
                     App.CambioContrasenaServicio,
                     App.RecuperacionCuentaServicio,
                     App.ServicioIdioma,
-                    _sonidoManejador,
-                    _avisoServicio,
                     App.GeneradorNombres,
                     _usuarioSesion,
                     App.FabricaSalas);
+
+                var inicioVistaModelo = new InicioSesionVistaModelo(
+                    dependenciasBase,
+                    dependenciasInicioSesion);
                 _ventana.MostrarVentana(inicioVistaModelo);
             }
             else

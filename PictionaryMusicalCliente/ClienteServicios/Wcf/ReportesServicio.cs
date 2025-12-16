@@ -79,7 +79,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.avisoTextoServidorTiempoSesion,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Operacion invalida al enviar reporte de jugador.", excepcion);
                 throw new ServicioExcepcion(
