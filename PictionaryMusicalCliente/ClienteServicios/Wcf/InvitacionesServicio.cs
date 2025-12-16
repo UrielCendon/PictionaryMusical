@@ -62,8 +62,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     c => c.EnviarInvitacionAsync(solicitud)
                 ).ConfigureAwait(false);
 
-                _logger.InfoFormat("Invitacion enviada a '{0}' para sala '{1}'.",
-                    correoDestino, codigoSala);
                 return resultado;
             }
             catch (FaultException excepcion)

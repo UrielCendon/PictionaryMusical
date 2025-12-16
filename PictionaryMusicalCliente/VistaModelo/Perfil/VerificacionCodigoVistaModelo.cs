@@ -356,7 +356,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private Task ManejarCodigoExpiradoAsync(
             DTOs.ResultadoRegistroCuentaDTO resultado)
         {
-            _logger.Info("Codigo expirado detectado durante verificacion.");
             DetenerTemporizadores();
             FinalizarConResultado(resultado, false);
             return Task.CompletedTask;
@@ -484,15 +483,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private void Cancelar()
         {
-            RegistrarCancelacion();
             DetenerTemporizadores();
             Cancelado?.Invoke(); 
             _ventana.CerrarVentana(this);
-        }
-
-        private static void RegistrarCancelacion()
-        {
-            _logger.Info("Operacion de verificacion cancelada por el usuario.");
         }
 
         private void IniciarTemporizadorReenvio()

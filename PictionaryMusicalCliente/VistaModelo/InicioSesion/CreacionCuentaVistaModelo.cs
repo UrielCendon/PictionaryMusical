@@ -321,10 +321,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private async Task EjecutarFlujoDeRegistroAsync(DTOs.NuevaCuentaDTO solicitud)
         {
-            _logger.InfoFormat(
-                "Iniciando flujo de registro para usuario: {0}",
-                solicitud.Usuario);
-
             if (!await SolicitarYValidarCodigoRegistroAsync(solicitud))
             {
                 return;
@@ -350,7 +346,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 
                 if (errorDuplicado)
                 {
-                    _logger.Info(
+                    _logger.Warn(
                         "Intento de registro con usuario o correo ya existente.");
                     MostrarErroresCamposDuplicados();
                 }
@@ -368,7 +364,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             if (!verificacionExitosa)
             {
-                _logger.Info(
+                _logger.Warn(
                     "Verificacion de codigo fallida o cancelada por el usuario.");
                 _sonidoManejador.ReproducirError();
                 return false;

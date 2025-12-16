@@ -82,8 +82,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 return;
             }
 
-            _logger.InfoFormat("Avatar seleccionado: ID {0}",
-                AvatarSeleccionado.Id);
             SeleccionConfirmada?.Invoke(AvatarSeleccionado);
         }
     }

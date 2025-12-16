@@ -265,7 +265,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private async Task EjecutarAceptacionAsync(SolicitudAmistadEntrada entrada)
         {
             _logger.InfoFormat(
-                "Aceptando solicitud de amistad de: {0}",
+                "Se aceptó una solicitud de amistad del usuario: {0}",
                 entrada.Solicitud.UsuarioEmisor);
 
             await _amigosServicio.ResponderSolicitudAsync(
@@ -308,7 +308,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private async Task EjecutarRechazoAsync(SolicitudAmistadEntrada entrada)
         {
             _logger.InfoFormat(
-                "Rechazando/Cancelando solicitud con: {0}",
+                "Se rechazó una solicitud de amistad con: {0}",
                 entrada.NombreUsuario);
 
             await _amigosServicio.EliminarAmigoAsync(

@@ -67,13 +67,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
 
         private void EjecutarCancelar()
         {
-            RegistrarCancelacionCierreSesion();
             _ventana.CerrarVentana(this);
-        }
-
-        private static void RegistrarCancelacionCierreSesion()
-        {
-            _logger.Info("Usuario cancelo el cierre de sesion.");
         }
     }
 }

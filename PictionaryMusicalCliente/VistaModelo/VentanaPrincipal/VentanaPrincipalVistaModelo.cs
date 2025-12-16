@@ -325,8 +325,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task SuscribirAServiciosAsync()
         {
-            _logger.InfoFormat("Inicializando suscripciones para usuario: {0}",
-                _nombreUsuarioSesion);
             await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
                 ConfigureAwait(false);
             await _amigosServicio.SuscribirAsync(_nombreUsuarioSesion).ConfigureAwait(false);
@@ -372,7 +370,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task CancelarSuscripcionesAsync()
         {
-            _logger.Info("Cancelando suscripciones al finalizar ventana principal.");
             await _listaAmigosServicio.CancelarSuscripcionAsync(
                 _nombreUsuarioSesion).ConfigureAwait(false);
             await _amigosServicio.CancelarSuscripcionAsync(
@@ -561,7 +558,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task EliminarAmigoEnServidorAsync(string nombreAmigo)
         {
-            _logger.InfoFormat("Eliminando amigo: {0}", nombreAmigo);
             await _amigosServicio.EliminarAmigoAsync(
                 _nombreUsuarioSesion,
                 nombreAmigo).ConfigureAwait(true);

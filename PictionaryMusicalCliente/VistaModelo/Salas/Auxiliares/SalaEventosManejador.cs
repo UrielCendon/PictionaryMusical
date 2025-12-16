@@ -130,7 +130,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                     return;
                 }
 
-                _logger.InfoFormat("Jugador unido a la sala: {0}", nombreJugador);
                 JugadorSeUnio?.Invoke(nombreJugador);
             });
         }
@@ -152,7 +151,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                     return;
                 }
 
-                _logger.InfoFormat("Jugador salio de la sala: {0}", nombreJugador);
                 JugadorSalio?.Invoke(nombreJugador);
             });
         }
@@ -184,9 +182,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 }
                 else
                 {
-                    _logger.InfoFormat(
-                        "Jugador expulsado de la sala: {0}",
-                        nombreJugador);
                     JugadorExpulsado?.Invoke(nombreJugador);
                 }
             });
@@ -239,7 +234,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             }
 
             _expulsionProcesada = true;
-            _logger.Info("Este usuario ha sido expulsado de la sala.");
             _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
             ExpulsionPropia?.Invoke();
         }

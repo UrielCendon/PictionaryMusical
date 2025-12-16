@@ -87,7 +87,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private void RegistrarConfirmacion()
         {
             _logger.InfoFormat(
-                "Usuario confirmo la eliminacion del amigo: {0}",
+                "Usuario eliminó al amigo: {0}",
                 _nombreAmigo);
         }
 
@@ -100,15 +100,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private void EjecutarCancelar()
         {
             _sonidoManejador.ReproducirClick();
-            RegistrarCancelacion();
             CancelarYCerrar();
-        }
-
-        private void RegistrarCancelacion()
-        {
-            _logger.InfoFormat(
-                "Usuario cancelo la eliminacion del amigo: {0}",
-                _nombreAmigo);
         }
 
         private void CancelarYCerrar()

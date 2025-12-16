@@ -159,9 +159,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private async Task<DTOs.UsuarioDTO> ObtenerPerfilAmigoAsync(int usuarioId)
         {
-            _logger.InfoFormat("Obteniendo perfil para invitar amigo ID: {0}",
-                usuarioId);
-            
             return await _perfilServicio
                 .ObtenerPerfilAsync(usuarioId)
                 .ConfigureAwait(true);
@@ -186,8 +183,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             string correo,
             AmigoInvitacionItemVistaModelo amigo)
         {
-            _logger.InfoFormat("Enviando invitacion por correo a: {0}", correo);
-            
             DTOs.ResultadoOperacionDTO resultado = await _invitacionesServicio
                 .EnviarInvitacionAsync(_codigoSala, correo)
                 .ConfigureAwait(true);

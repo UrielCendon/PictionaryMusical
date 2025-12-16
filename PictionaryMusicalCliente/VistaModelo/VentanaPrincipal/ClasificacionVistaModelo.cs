@@ -135,7 +135,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             await EjecutarOperacionAsync(async () =>
             {
-                RegistrarSolicitudClasificacion();
                 IReadOnlyList<DTOs.ClasificacionUsuarioDTO> clasificacion =
                     await ObtenerClasificacionAsync().ConfigureAwait(true);
 
@@ -149,11 +148,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             });
 
             EstaCargando = false;
-        }
-
-        private static void RegistrarSolicitudClasificacion()
-        {
-            _logger.Info("Solicitando tabla de clasificacion al servidor.");
         }
 
         private async Task<IReadOnlyList<DTOs.ClasificacionUsuarioDTO>> 

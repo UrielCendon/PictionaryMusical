@@ -682,7 +682,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private void CompletarCambioContrasenaExitoso()
         {
-            _logger.Info("Cambio de contrasena finalizado correctamente.");
             _sonidoManejador.ReproducirNotificacion();
             FinalizarSesionPorCambioContrasena();
         }

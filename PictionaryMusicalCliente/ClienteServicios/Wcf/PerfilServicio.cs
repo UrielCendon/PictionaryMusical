@@ -45,7 +45,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     cliente => cliente.ObtenerPerfilAsync(usuarioId)
                 ).ConfigureAwait(false);
 
-                _logger.InfoFormat("Perfil obtenido para ID: {0}", usuarioId);
                 return perfil;
             }
             catch (FaultException excepcion)

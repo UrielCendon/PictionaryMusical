@@ -292,9 +292,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
             try
             {
-                _logger.InfoFormat(
-                    "Solicitando expulsion de: {0}",
-                    nombreJugador);
                 await _dependencias.SalasServicio.ExpulsarJugadorAsync(
                     _contexto.CodigoSala,
                     _contexto.NombreUsuarioSesion,
@@ -375,7 +372,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             string nombreJugador,
             DTOs.ReporteJugadorDTO reporte)
         {
-            _logger.InfoFormat("Enviando reporte contra: {0}", nombreJugador);
             DTOs.ResultadoOperacionDTO respuesta = await _dependencias.ReportesServicio
                 .ReportarJugadorAsync(reporte)
                 .ConfigureAwait(true);

@@ -98,11 +98,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.ResultadoRegistroCuentaDTO resultado,
             string correo)
         {
-            if (resultado?.RegistroExitoso == true)
-            {
-                _logger.InfoFormat("Registro de cuenta exitoso para: {0}", correo);
-            }
-            else
+            if (!resultado?.RegistroExitoso == true)
             {
                 _logger.WarnFormat("Registro fallido para: {0}. Razon: {1}",
                     correo, resultado?.Mensaje);

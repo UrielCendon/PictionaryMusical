@@ -160,9 +160,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 case ChatDecision.IntentoFallido:
                     EnviarMensajeIntentoFallido(mensaje);
                     break;
-                case ChatDecision.MensajeBloqueado:
-                    RegistrarMensajeBloqueado();
-                    break;
                 case ChatDecision.AciertoRegistrado:
                     MarcarAciertoRegistrado();
                     break;
@@ -171,15 +168,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void EnviarMensajeCanalLibre(string mensaje)
         {
-            RegistrarEnvioMensajeCanalLibre(mensaje);
             _chatMensajeria.Enviar(mensaje);
-        }
-
-        private static void RegistrarEnvioMensajeCanalLibre(string mensaje)
-        {
-            _logger.InfoFormat(
-                "Enviando mensaje de chat (partida no iniciada): {0}",
-                mensaje);
         }
 
         private void EnviarMensajeIntentoFallido(string mensaje)
@@ -190,14 +179,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private static void RegistrarEnvioIntentoFallido(string mensaje)
         {
-            _logger.InfoFormat(
+            _logger.WarnFormat(
                 "Enviando mensaje de chat (intento fallido): {0}",
                 mensaje);
-        }
-
-        private static void RegistrarMensajeBloqueado()
-        {
-            _logger.Info("El dibujante no puede enviar mensajes durante su turno.");
         }
 
         private void MarcarAciertoRegistrado()

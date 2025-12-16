@@ -264,15 +264,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void MarcarUnionExitosa(DTOs.SalaDTO sala, string nombreInvitado)
         {
-            RegistrarUnionExitosa(nombreInvitado);
             _sonidoManejador.ReproducirNotificacion();
             EstablecerResultadoUnion(sala, nombreInvitado);
             _ventana.CerrarVentana(this);
-        }
-
-        private static void RegistrarUnionExitosa(string nombreInvitado)
-        {
-            _logger.InfoFormat("Invitado unido exitosamente: {0}", nombreInvitado);
         }
 
         private void EstablecerResultadoUnion(DTOs.SalaDTO sala, string nombreInvitado)
@@ -287,16 +281,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IReadOnlyCollection<string> jugadoresActuales,
             HashSet<string> nombresReservados)
         {
-            RegistrarNombreDuplicado(nombreInvitado);
             nombresReservados.Add(nombreInvitado);
             AgregarJugadoresAReservados(jugadoresActuales, nombresReservados);
-        }
-
-        private static void RegistrarNombreDuplicado(string nombreInvitado)
-        {
-            _logger.InfoFormat(
-                "Nombre duplicado '{0}', reintentando...",
-                nombreInvitado);
         }
 
         private static void AgregarJugadoresAReservados(

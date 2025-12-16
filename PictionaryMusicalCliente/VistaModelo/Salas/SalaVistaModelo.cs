@@ -541,8 +541,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _idJugador,
                     _nombreUsuarioSesion,
                     _esHost);
-
-                _logger.Info("Cliente WCF de partida inicializado y jugador suscrito.");
             }
             catch (CommunicationException excepcion)
             {
@@ -581,7 +579,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void AplicarInicioVisualPartida()
         {
-            _logger.Info("Iniciando partida...");
             _partidaVistaModelo.AplicarInicioVisualPartida(Jugadores?.Count ?? 0);
             ReiniciarPuntajesJugadores();
             BotonIniciarPartidaHabilitado = false;
@@ -1214,7 +1211,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
 
             _eventosManejador.MarcarSalaCancelada();
-            _logger.Info("Este usuario ha sido expulsado de la sala.");
             _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
             var destino = ObtenerDestinoSegunSesion();
 
@@ -1308,8 +1304,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 try
                 {
-                    _logger.InfoFormat("Abandonando sala {0} al finalizar vista.",
-						_sala.Codigo);
                     await _salasServicio.AbandonarSalaAsync(
                         _sala.Codigo,
                         _nombreUsuarioSesion).ConfigureAwait(false);

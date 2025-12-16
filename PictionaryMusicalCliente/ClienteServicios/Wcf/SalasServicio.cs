@@ -103,8 +103,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 var sala = await cliente.CrearSalaAsync(nombreCreador, configuracion)
                     .ConfigureAwait(false);
 
-                _logger.InfoFormat("Sala creada por '{0}'. Codigo: {1}", nombreCreador, 
-                    sala.Codigo);
+                _logger.InfoFormat("Sala creada. Codigo: {1}", sala.Codigo);
                 return sala;
             }
             catch (FaultException excepcion)
@@ -308,8 +307,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorSeUnio(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' se unio a la sala '{1}'.", 
-                nombreJugador, codigoSala);
             JugadorSeUnio?.Invoke(this, nombreJugador);
         }
 
@@ -318,8 +315,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorSalio(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' salio de la sala '{1}'.",
-                nombreJugador, codigoSala);
             JugadorSalio?.Invoke(this, nombreJugador);
         }
 
@@ -328,8 +323,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorExpulsado(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' fue expulsado de la sala '{1}'.",
-                nombreJugador, codigoSala);
             JugadorExpulsado?.Invoke(this, nombreJugador);
         }
 
@@ -338,7 +331,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarSalaCancelada(string codigoSala)
         {
-            _logger.InfoFormat("Callback recibido: la sala '{0}' fue cancelada por el anfitrion.",
+            _logger.InfoFormat("La sala '{0}' fue cancelada por el anfitrion.",
                 codigoSala);
             SalaCancelada?.Invoke(this, codigoSala);
         }

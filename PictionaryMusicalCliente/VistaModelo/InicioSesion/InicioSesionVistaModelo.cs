@@ -407,10 +407,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private async Task EjecutarInicioSesionAsync()
         {
             var solicitud = CrearCredenciales();
-            _logger.InfoFormat(
-                "Intentando iniciar sesion para: {0}",
-                solicitud.Identificador);
-
+            
             DTOs.ResultadoInicioSesionDTO resultado = 
                 await EnviarCredencialesAlServidorAsync(solicitud);
 

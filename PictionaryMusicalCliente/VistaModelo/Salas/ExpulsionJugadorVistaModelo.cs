@@ -75,27 +75,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void EjecutarConfirmar()
         {
             _sonidoManejador.ReproducirClick();
-            RegistrarConfirmacion();
             DialogResult = true;
             _ventana.CerrarVentana(this);
-        }
-
-        private static void RegistrarConfirmacion()
-        {
-            _logger.Info("Usuario confirmo la expulsion del jugador.");
         }
 
         private void EjecutarCancelar()
         {
             _sonidoManejador.ReproducirClick();
-            RegistrarCancelacion();
             DialogResult = false;
             _ventana.CerrarVentana(this);
-        }
-
-        private static void RegistrarCancelacion()
-        {
-            _logger.Info("Usuario cancelo la expulsion del jugador.");
         }
     }
 }
