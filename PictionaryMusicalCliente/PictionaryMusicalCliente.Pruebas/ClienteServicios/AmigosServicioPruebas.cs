@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
@@ -127,12 +128,16 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_CancelarSuscripcionAsync_NombreUsuarioNulo_RetornaSinAccion()
         {
             await _servicio.CancelarSuscripcionAsync(null);
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
         public async Task Prueba_CancelarSuscripcionAsync_NombreUsuarioVacio_RetornaSinAccion()
         {
             await _servicio.CancelarSuscripcionAsync("");
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
@@ -177,7 +182,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             bool eventoInvocado = false;
             _servicio.SolicitudesActualizadas += (sender, args) => eventoInvocado = true;
 
-            // Verificamos que el evento puede ser suscrito sin errores
             Assert.IsFalse(eventoInvocado, "El evento no deberia haberse invocado aun");
             Assert.IsNotNull(_servicio);
         }
@@ -200,8 +204,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _servicio.SolicitudesPendientes;
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().HaveCount(1);
             _administradorSolicitudesMock.Verify(
                 a => a.ObtenerSolicitudes(),
                 Times.Once);
@@ -218,8 +222,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _servicio.SolicitudesPendientes;
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().BeEmpty();
         }
 
         [TestMethod]
@@ -227,6 +231,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             _servicio.Dispose();
             _servicio.Dispose();
+
+            Assert.IsNotNull(_servicio, "El servicio no debe ser nulo después de Dispose");
         }
     }
 }

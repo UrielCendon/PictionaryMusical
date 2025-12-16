@@ -1,8 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Resultados;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 
 namespace PictionaryMusicalCliente.Pruebas.Utilidades
 {
@@ -14,6 +16,11 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
     public class NombreInvitadoGeneradorPruebas
     {
         private NombreInvitadoGenerador _generador;
+
+        /// <summary>
+        /// Obtiene o establece el contexto de la prueba.
+        /// </summary>
+        public TestContext TestContext { get; set; }
 
         /// <summary>
         /// Inicializa el generador antes de cada prueba.
@@ -84,7 +91,9 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
                 var resultado = _generador.Generar(null, nombresExcluidos);
                 if (resultado.Exitoso)
                 {
-                    Assert.IsFalse(nombresExcluidos.Contains(resultado.NombreGenerado));
+                    nombresExcluidos.Should().NotContain(
+                        resultado.NombreGenerado,
+                        $"El nombre '{resultado.NombreGenerado}' no debe estar en la lista de excluidos");
                     nombresExcluidos.Add(resultado.NombreGenerado);
                 }
             }
@@ -154,13 +163,15 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
                 }
             }
 
-            Assert.IsTrue(diferentes >= 1);
+            diferentes.Should().BeGreaterOrEqualTo(1, "Se esperaba al menos 1 nombre diferente");
         }
 
         [TestMethod]
         public void Prueba_Generar_EsThreadSafe_NoLanzaExcepcion()
         {
             var tareas = new System.Threading.Tasks.Task[10];
+            int generacionesExitosas = 0;
+            var cancellationToken = TestContext?.CancellationToken ?? CancellationToken.None;
 
             for (int i = 0; i < 10; i++)
             {
@@ -168,12 +179,18 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
                 {
                     for (int j = 0; j < 10; j++)
                     {
-                        _generador.Generar(null);
+                        var resultado = _generador.Generar(null);
+                        if (resultado.Exitoso)
+                        {
+                            Interlocked.Increment(ref generacionesExitosas);
+                        }
                     }
-                });
+                }, cancellationToken);
             }
 
-            System.Threading.Tasks.Task.WaitAll(tareas);
+            System.Threading.Tasks.Task.WaitAll(tareas, cancellationToken);
+
+            generacionesExitosas.Should().BeGreaterThan(0, "Se esperaba al menos una generación exitosa en ejecución concurrente");
         }
 
         [TestMethod]

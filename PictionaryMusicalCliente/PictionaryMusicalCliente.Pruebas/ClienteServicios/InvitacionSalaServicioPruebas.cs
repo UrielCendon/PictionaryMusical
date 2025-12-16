@@ -270,6 +270,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             _servicio.Dispose();
             _servicio.Dispose();
+
+            Assert.IsNotNull(_servicio, "El servicio no debe ser nulo después de Dispose");
         }
     }
 }

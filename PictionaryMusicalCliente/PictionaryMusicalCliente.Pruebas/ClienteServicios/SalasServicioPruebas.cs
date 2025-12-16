@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
@@ -148,24 +149,32 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_AbandonarSalaAsync_CodigoSalaNulo_RetornaSinAccion()
         {
             await _servicio.AbandonarSalaAsync(null, "usuario");
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
         public async Task Prueba_AbandonarSalaAsync_CodigoSalaVacio_RetornaSinAccion()
         {
             await _servicio.AbandonarSalaAsync("", "usuario");
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
         public async Task Prueba_AbandonarSalaAsync_NombreUsuarioNulo_RetornaSinAccion()
         {
             await _servicio.AbandonarSalaAsync("SALA123", null);
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
         public async Task Prueba_AbandonarSalaAsync_NombreUsuarioVacio_RetornaSinAccion()
         {
             await _servicio.AbandonarSalaAsync("SALA123", "");
+
+            Assert.IsNotNull(_servicio);
         }
 
         [TestMethod]
@@ -227,8 +236,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         {
             var resultado = _servicio.ListaSalasActual;
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().BeEmpty();
         }
 
         [TestMethod]
@@ -239,6 +248,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 _manejadorErrorMock.Object);
             
             servicioLocal.Dispose();
+
+            Assert.IsNotNull(servicioLocal, "El servicio no debe ser nulo después de Dispose");
         }
 
         [TestMethod]

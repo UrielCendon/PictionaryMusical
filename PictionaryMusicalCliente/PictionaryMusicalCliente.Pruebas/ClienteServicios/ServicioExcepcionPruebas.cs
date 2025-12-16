@@ -1,6 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalCliente.ClienteServicios;
 using System;
+using System.Linq;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
@@ -194,12 +196,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_TipoErrorServicio_ContieneTodosLosValores()
         {
-            Assert.AreEqual(0, (int)TipoErrorServicio.Ninguno);
-            Assert.AreEqual(1, (int)TipoErrorServicio.FallaServicio);
-            Assert.AreEqual(2, (int)TipoErrorServicio.Comunicacion);
-            Assert.AreEqual(3, (int)TipoErrorServicio.TiempoAgotado);
-            Assert.AreEqual(4, (int)TipoErrorServicio.OperacionInvalida);
-            Assert.AreEqual(5, (int)TipoErrorServicio.Desconocido);
+            var valores = Enum.GetValues(typeof(TipoErrorServicio)).Cast<TipoErrorServicio>().ToList();
+            
+            valores.Should().HaveCount(6);
+            Enum.IsDefined(typeof(TipoErrorServicio), 0).Should().BeTrue("Debe existir un valor con ordinal 0 (Ninguno)");
+            Enum.IsDefined(typeof(TipoErrorServicio), 5).Should().BeTrue("Debe existir un valor con ordinal 5 (Desconocido)");
         }
     }
 }

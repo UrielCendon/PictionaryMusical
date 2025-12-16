@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalCliente.ClienteServicios;
@@ -101,8 +102,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(3, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().HaveCount(3);
         }
 
         [TestMethod]
@@ -127,8 +128,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().BeEmpty();
         }
 
         [TestMethod]
@@ -138,8 +139,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
+            resultado.Should().NotBeNull();
+            resultado.Should().BeEmpty();
         }
 
         [TestMethod]
