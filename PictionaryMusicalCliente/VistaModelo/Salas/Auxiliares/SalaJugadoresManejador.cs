@@ -344,7 +344,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
             try
             {
-                await EnviarReporteAsync(nombreJugador, reporte).ConfigureAwait(true);
+                await EnviarReporteAsync(reporte).ConfigureAwait(true);
             }
             catch (ServicioExcepcion excepcion)
             {
@@ -369,7 +369,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         }
 
         private async Task EnviarReporteAsync(
-            string nombreJugador,
             DTOs.ReporteJugadorDTO reporte)
         {
             DTOs.ResultadoOperacionDTO respuesta = await _dependencias.ReportesServicio

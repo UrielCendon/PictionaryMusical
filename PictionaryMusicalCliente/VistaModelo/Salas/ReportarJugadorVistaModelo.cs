@@ -14,9 +14,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     /// </summary>
     public class ReportarJugadorVistaModelo : BaseVistaModelo
     {
-        private static readonly ILog _logger = LogManager.GetLogger(
-            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         private readonly SonidoManejador _sonidoManejador;
         private readonly string _nombreJugador;
         private string _motivo;
