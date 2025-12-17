@@ -12,9 +12,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
     /// </summary>
     public class ConfirmacionSalirPartidaVistaModelo : BaseVistaModelo
     {
-        private static readonly ILog _logger = LogManager.GetLogger(
-            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public Action EjecutarSalidaPartidaYNavegacion { get; set; }
 
         public ConfirmacionSalirPartidaVistaModelo(

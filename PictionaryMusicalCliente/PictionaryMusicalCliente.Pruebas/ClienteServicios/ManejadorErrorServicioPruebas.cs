@@ -108,7 +108,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
 
-            Assert.IsTrue(resultado != null);
+            Assert.IsNotNull(resultado);
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = _manejador.ObtenerMensaje(excepcion, null);
 
-            Assert.IsTrue(resultado != null);
+            Assert.IsNotNull(resultado);
         }
 
         [TestMethod]
