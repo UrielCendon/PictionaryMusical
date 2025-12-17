@@ -31,7 +31,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
         private readonly IAmistadServicio _amistadServicio;
-        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
@@ -44,8 +43,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 new ManejadorCallback<IListaAmigosManejadorCallback>(
                     StringComparer.OrdinalIgnoreCase),
                 new AmistadServicio(),
-                new RepositorioFactoria()),
-            new ValidadorNombreUsuario())
+                new RepositorioFactoria()))
         {
         }
 
@@ -56,13 +54,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
         /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="notificadorLista">Notificador de lista de amigos.</param>
-        /// <param name="validadorUsuario">Validador de nombres de usuario.</param>
         public AmigosManejador(
             IContextoFactoria contextoFactoria,
             IRepositorioFactoria repositorioFactoria,
             IAmistadServicio amistadServicio,
-            INotificadorListaAmigos notificadorLista,
-            IValidadorNombreUsuario validadorUsuario)
+            INotificadorListaAmigos notificadorLista)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
@@ -72,9 +68,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _amistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
-
-            _validadorUsuario = validadorUsuario ??
-                throw new ArgumentNullException(nameof(validadorUsuario));
 
             _notificadorListaAmigos = notificadorLista ??
                 throw new ArgumentNullException(nameof(notificadorLista));
@@ -325,7 +318,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
                 }
 
-                string nombreNormalizado = _validadorUsuario.ObtenerNombreNormalizado(
+                string nombreNormalizado = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                     usuario.Nombre_Usuario,
                     nombreUsuario);
 
@@ -354,10 +347,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
         }
 
-        private void ValidarEntradasInteraccion(string usuarioA, string usuarioB)
+        private static void ValidarEntradasInteraccion(string usuarioA, string usuarioB)
         {
-            _validadorUsuario.Validar(usuarioA, nameof(usuarioA));
-            _validadorUsuario.Validar(usuarioB, nameof(usuarioB));
+            EntradaComunValidador.ValidarNombreUsuario(usuarioA, nameof(usuarioA));
+            EntradaComunValidador.ValidarNombreUsuario(usuarioB, nameof(usuarioB));
         }
 
         private (Usuario Emisor, Usuario Receptor) EjecutarCreacionSolicitudEnBaseDatos(
@@ -393,11 +386,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     usuarioEmisor.idUsuario,
                     usuarioReceptor.idUsuario);
 
-                string normEmisor = _validadorUsuario.ObtenerNombreNormalizado(
+                string normEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                     usuarioEmisor.Nombre_Usuario,
                     nombreEmisor);
 
-                string normReceptor = _validadorUsuario.ObtenerNombreNormalizado(
+                string normReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                     usuarioReceptor.Nombre_Usuario,
                     nombreReceptor);
 
@@ -420,11 +413,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     usuarioA.idUsuario,
                     usuarioB.idUsuario);
 
-                string normA = _validadorUsuario.ObtenerNombreNormalizado(
+                string normA = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                     usuarioA.Nombre_Usuario,
                     nombreA);
 
-                string normB = _validadorUsuario.ObtenerNombreNormalizado(
+                string normB = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                     usuarioB.Nombre_Usuario,
                     nombreB);
 
@@ -472,11 +465,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             Usuario receptor,
             string nombreReceptorInput)
         {
-            string nombreEmisor = _validadorUsuario.ObtenerNombreNormalizado(
+            string nombreEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                 emisor.Nombre_Usuario,
                 nombreEmisorInput);
 
-            string nombreReceptor = _validadorUsuario.ObtenerNombreNormalizado(
+            string nombreReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                 receptor.Nombre_Usuario,
                 nombreReceptorInput);
 

@@ -29,7 +29,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 StringComparer.OrdinalIgnoreCase);
 
         private readonly INotificadorSalas _notificador;
-        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         /// <summary>
         /// Constructor por defecto que inicializa las dependencias.
@@ -37,19 +36,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         public SalasManejador()
         {
             _notificador = new NotificadorSalas(this);
-            _validadorUsuario = new ValidadorNombreUsuario();
         }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public SalasManejador(INotificadorSalas notificador, 
-            IValidadorNombreUsuario validadorUsuario)
+        public SalasManejador(INotificadorSalas notificador)
         {
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
-            _validadorUsuario = validadorUsuario ??
-                throw new ArgumentNullException(nameof(validadorUsuario));
         }
 
         /// <summary>
@@ -86,7 +81,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreCreador, nameof(nombreCreador));
+                EntradaComunValidador.ValidarNombreUsuario(nombreCreador, nameof(nombreCreador));
                 ValidarConfiguracion(configuracion);
 
                 string codigo = GenerarCodigoSala();
@@ -157,9 +152,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                EntradaComunValidador.ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
 
-                if (string.IsNullOrWhiteSpace(codigoSala))
+                if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
                 {
                     throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
                 }
@@ -257,7 +252,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                EntradaComunValidador.ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
 
                 if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
                 {
@@ -393,8 +388,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreHost, nameof(nombreHost));
-                _validadorUsuario.Validar(
+                EntradaComunValidador.ValidarNombreUsuario(nombreHost, nameof(nombreHost));
+                EntradaComunValidador.ValidarNombreUsuario(
                     nombreJugadorAExpulsar,
                     nameof(nombreJugadorAExpulsar));
 
@@ -516,12 +511,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.ConfiguracionObligatoria);
             }
 
-            if (configuracion.NumeroRondas <= 0)
+            if (configuracion.NumeroRondas <= 0 || 
+                configuracion.NumeroRondas > EntradaComunValidador.NumeroRondasMaximo)
             {
                 throw new FaultException(MensajesError.Cliente.NumeroRondasInvalido);
             }
 
-            if (configuracion.TiempoPorRondaSegundos <= 0)
+            if (configuracion.TiempoPorRondaSegundos <= 0 ||
+                configuracion.TiempoPorRondaSegundos > EntradaComunValidador.TiempoRondaMaximoSegundos)
             {
                 throw new FaultException(MensajesError.Cliente.TiempoRondaInvalido);
             }

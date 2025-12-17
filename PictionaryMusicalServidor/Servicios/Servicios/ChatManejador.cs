@@ -25,23 +25,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static readonly object _sincronizacion = new object();
 
-        private readonly IValidadorNombreUsuario _validadorUsuario;
-
         /// <summary>
         /// Constructor por defecto para WCF.
-        /// Inicializa las dependencias manualmente.
         /// </summary>
-        public ChatManejador() : this(new ValidadorNombreUsuario())
+        public ChatManejador()
         {
-        }
-
-        /// <summary>
-        /// Constructor con inyeccion de dependencias.
-        /// </summary>
-        public ChatManejador(IValidadorNombreUsuario validadorUsuario)
-        {
-            _validadorUsuario = validadorUsuario ??
-                throw new ArgumentNullException(nameof(validadorUsuario));
         }
 
         /// <summary>
@@ -115,7 +103,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
+                EntradaComunValidador.ValidarNombreUsuario(nombreJugador, nameof(nombreJugador));
 
                 if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
                 {
@@ -178,7 +166,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
+                EntradaComunValidador.ValidarNombreUsuario(nombreJugador, nameof(nombreJugador));
 
                 if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
                 {
@@ -222,9 +210,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ValidarEntradaUnirse(string idSala, string nombreJugador)
+        private static void ValidarEntradaUnirse(string idSala, string nombreJugador)
         {
-            _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
+            EntradaComunValidador.ValidarNombreUsuario(nombreJugador, nameof(nombreJugador));
 
             if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
             {

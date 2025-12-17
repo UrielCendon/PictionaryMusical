@@ -1,5 +1,7 @@
 using System;
+using System.Globalization;
 using System.Linq;
+using System.ServiceModel;
 using System.Text.RegularExpressions;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -19,6 +21,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         internal const int LongitudMaximaReporte = 100;
         internal const int LongitudMaximaContrasena = 15;
         internal const int LongitudCodigoVerificacion = 6;
+        internal const int LongitudMaximaMensajeChat = 150;
+        internal const int LongitudCodigoSala = 6;
+        internal const int NumeroRondasMaximo = 4;
+        internal const int TiempoRondaMaximoSegundos = 120;
 
         private static readonly Regex CorreoRegex = new Regex(
             @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
@@ -121,44 +127,97 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Verifica si un codigo de sala tiene formato valido (no nulo ni vacio).
+        /// Verifica si un codigo de sala tiene formato valido.
+        /// Valida que no sea nulo, tenga longitud correcta y contenga solo digitos.
         /// </summary>
         /// <param name="codigoSala">Codigo de sala a validar.</param>
         /// <returns>True si el codigo de sala tiene formato valido.</returns>
         public static bool EsCodigoSalaValido(string codigoSala)
         {
-            return !string.IsNullOrWhiteSpace(codigoSala);
+            string normalizado = NormalizarTexto(codigoSala);
+            return normalizado != null &&
+                   normalizado.Length == LongitudCodigoSala &&
+                   normalizado.All(char.IsDigit);
         }
 
         /// <summary>
         /// Verifica si un mensaje de chat tiene contenido valido.
+        /// Valida que no este vacio y no exceda la longitud maxima permitida.
         /// </summary>
         /// <param name="mensaje">Mensaje a validar.</param>
         /// <returns>True si el mensaje tiene contenido valido.</returns>
         public static bool EsMensajeValido(string mensaje)
         {
-            return !string.IsNullOrWhiteSpace(mensaje);
+            return !string.IsNullOrWhiteSpace(mensaje) && 
+                   mensaje.Trim().Length <= LongitudMaximaMensajeChat;
         }
 
         /// <summary>
         /// Verifica si una configuracion de partida tiene idioma valido.
+        /// Valida que no este vacio y no exceda la longitud maxima.
         /// </summary>
         /// <param name="idioma">Idioma a validar.</param>
         /// <returns>True si el idioma tiene valor valido.</returns>
         public static bool EsIdiomaValido(string idioma)
         {
-            return !string.IsNullOrWhiteSpace(idioma);
+            return !string.IsNullOrWhiteSpace(idioma) && 
+                   idioma.Trim().Length <= LongitudMaximaTexto;
         }
 
         /// <summary>
         /// Verifica si una configuracion de partida tiene dificultad valida.
+        /// Valida que no este vacia y no exceda la longitud maxima.
         /// </summary>
         /// <param name="dificultad">Dificultad a validar.</param>
         /// <returns>True si la dificultad tiene valor valido.</returns>
         public static bool EsDificultadValida(string dificultad)
         {
-            return !string.IsNullOrWhiteSpace(dificultad);
+            return !string.IsNullOrWhiteSpace(dificultad) && 
+                   dificultad.Trim().Length <= LongitudMaximaTexto;
         }
+
+        /// <summary>
+        /// Valida que el nombre de usuario cumpla con los requisitos de longitud.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre de usuario a validar.</param>
+        /// <returns>True si el nombre es valido.</returns>
+        public static bool EsNombreUsuarioValido(string nombreUsuario)
+        {
+            return EsLongitudValida(NormalizarTexto(nombreUsuario));
+        }
+
+        /// <summary>
+        /// Valida que el nombre de usuario sea valido y lanza FaultException si no lo es.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre de usuario a validar.</param>
+        /// <param name="nombreParametro">Nombre del parametro para el mensaje de error.</param>
+        /// <exception cref="FaultException">Se lanza si el nombre no es valido.</exception>
+        public static void ValidarNombreUsuario(string nombreUsuario, string nombreParametro)
+        {
+            if (!EsNombreUsuarioValido(nombreUsuario))
+            {
+                string mensaje = string.Format(
+                    CultureInfo.CurrentCulture,
+                    MensajesError.Cliente.ParametroObligatorio, 
+                    nombreParametro);
+                throw new FaultException(mensaje);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el nombre normalizado de usuario, priorizando el primer valor no vacio.
+        /// </summary>
+        /// <param name="nombrePrincipal">Nombre principal (ej: de base de datos).</param>
+        /// <param name="nombreAlterno">Nombre alternativo si el principal no es valido.</param>
+        /// <returns>Nombre normalizado de usuario.</returns>
+        public static string ObtenerNombreUsuarioNormalizado(
+            string nombrePrincipal, 
+            string nombreAlterno)
+        {
+            string nombre = NormalizarTexto(nombrePrincipal);
+            return nombre ?? NormalizarTexto(nombreAlterno);
+        }
+        
 
         /// <summary>
         /// Valida todos los campos de una nueva cuenta.

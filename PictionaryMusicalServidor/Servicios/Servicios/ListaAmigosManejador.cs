@@ -31,7 +31,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private readonly IRepositorioFactoria _repositorioFactoria;
         private readonly IAmistadServicio _amistadServicio;
         private readonly INotificadorListaAmigos _notificador;
-        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
@@ -44,8 +43,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 new ManejadorCallback<IListaAmigosManejadorCallback>(
                     StringComparer.OrdinalIgnoreCase),
                 new AmistadServicio(),
-                new RepositorioFactoria()),
-            new ValidadorNombreUsuario())
+                new RepositorioFactoria()))
         {
         }
 
@@ -56,13 +54,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
         /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="notificador">Notificador de lista de amigos.</param>
-        /// <param name="validadorUsuario">Validador de nombres de usuario.</param>
         public ListaAmigosManejador(
             IContextoFactoria contextoFactoria,
             IRepositorioFactoria repositorioFactoria,
             IAmistadServicio amistadServicio,
-            INotificadorListaAmigos notificador,
-            IValidadorNombreUsuario validadorUsuario)
+            INotificadorListaAmigos notificador)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
@@ -70,8 +66,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new ArgumentNullException(nameof(repositorioFactoria));
             _amistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
-            _validadorUsuario = validadorUsuario ??
-                throw new ArgumentNullException(nameof(validadorUsuario));
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
 
@@ -88,7 +82,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                EntradaComunValidador.ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
 
                 var amigosActuales = ObtenerAmigosPorNombre(nombreUsuario);
 
@@ -149,7 +143,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                EntradaComunValidador.ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
                 _manejadorCallback.Desuscribir(nombreUsuario);
             }
             catch (ArgumentException excepcion)
@@ -174,7 +168,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
+                EntradaComunValidador.ValidarNombreUsuario(nombreUsuario, nameof(nombreUsuario));
                 return ObtenerAmigosPorNombre(nombreUsuario);
             }
             catch (ArgumentException excepcion)

@@ -23,15 +23,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
-        private readonly IValidadorNombreUsuario _validadorUsuario;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
         /// </summary>
         public ReportesManejador() : this(
             new ContextoFactoria(), 
-            new RepositorioFactoria(), 
-            new ValidadorNombreUsuario())
+            new RepositorioFactoria())
         {
         }
 
@@ -40,18 +38,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         /// <param name="contextoFactoria">Factoria para crear contextos de base de datos.</param>
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
-        /// <param name="validadorUsuario">Validador de nombres de usuario.</param>
         public ReportesManejador(
             IContextoFactoria contextoFactoria,
-            IRepositorioFactoria repositorioFactoria,
-            IValidadorNombreUsuario validadorUsuario)
+            IRepositorioFactoria repositorioFactoria)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
             _repositorioFactoria = repositorioFactoria ??
                 throw new ArgumentNullException(nameof(repositorioFactoria));
-            _validadorUsuario = validadorUsuario ??
-                throw new ArgumentNullException(nameof(validadorUsuario));
         }
 
         /// <summary>
@@ -141,17 +135,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void ValidarSolicitud(ReporteJugadorDTO reporte)
+        private static void ValidarSolicitud(ReporteJugadorDTO reporte)
         {
             if (reporte == null)
             {
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
 
-            _validadorUsuario.Validar(
+            EntradaComunValidador.ValidarNombreUsuario(
                 reporte.NombreUsuarioReportante,
                 "usuario reportante");
-            _validadorUsuario.Validar(
+            EntradaComunValidador.ValidarNombreUsuario(
                 reporte.NombreUsuarioReportado,
                 "usuario reportado");
 
