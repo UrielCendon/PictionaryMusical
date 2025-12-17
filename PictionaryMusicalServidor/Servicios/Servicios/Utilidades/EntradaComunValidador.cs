@@ -121,6 +121,46 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
+        /// Verifica si un codigo de sala tiene formato valido (no nulo ni vacio).
+        /// </summary>
+        /// <param name="codigoSala">Codigo de sala a validar.</param>
+        /// <returns>True si el codigo de sala tiene formato valido.</returns>
+        public static bool EsCodigoSalaValido(string codigoSala)
+        {
+            return !string.IsNullOrWhiteSpace(codigoSala);
+        }
+
+        /// <summary>
+        /// Verifica si un mensaje de chat tiene contenido valido.
+        /// </summary>
+        /// <param name="mensaje">Mensaje a validar.</param>
+        /// <returns>True si el mensaje tiene contenido valido.</returns>
+        public static bool EsMensajeValido(string mensaje)
+        {
+            return !string.IsNullOrWhiteSpace(mensaje);
+        }
+
+        /// <summary>
+        /// Verifica si una configuracion de partida tiene idioma valido.
+        /// </summary>
+        /// <param name="idioma">Idioma a validar.</param>
+        /// <returns>True si el idioma tiene valor valido.</returns>
+        public static bool EsIdiomaValido(string idioma)
+        {
+            return !string.IsNullOrWhiteSpace(idioma);
+        }
+
+        /// <summary>
+        /// Verifica si una configuracion de partida tiene dificultad valida.
+        /// </summary>
+        /// <param name="dificultad">Dificultad a validar.</param>
+        /// <returns>True si la dificultad tiene valor valido.</returns>
+        public static bool EsDificultadValida(string dificultad)
+        {
+            return !string.IsNullOrWhiteSpace(dificultad);
+        }
+
+        /// <summary>
         /// Valida todos los campos de una nueva cuenta.
         /// Verifica usuario, nombre, apellido, correo, contrasena y avatar cumplan con los 
         /// requisitos.

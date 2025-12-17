@@ -262,7 +262,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _validadorUsuario.Validar(nombreUsuario, nameof(nombreUsuario));
 
-                if (string.IsNullOrWhiteSpace(codigoSala))
+                if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
                 {
                     throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
                 }
@@ -401,7 +401,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     nombreJugadorAExpulsar,
                     nameof(nombreJugadorAExpulsar));
 
-                if (string.IsNullOrWhiteSpace(codigoSala))
+                if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
                 {
                     throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
                 }
@@ -459,7 +459,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <returns>Datos de la sala como DTO.</returns>
         public SalaDTO ObtenerSalaPorCodigo(string codigoSala)
         {
-            if (string.IsNullOrWhiteSpace(codigoSala))
+            if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
             {
                 throw new InvalidOperationException(MensajesError.Cliente.CodigoSalaObligatorio);
             }
@@ -497,12 +497,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static string GenerarCodigoSala()
         {
-            var random = new Random();
             const int maxIntentos = 1000;
 
             for (int i = 0; i < maxIntentos; i++)
             {
-                string codigo = random.Next(0, 1_000_000).ToString("D6");
+                string codigo = GeneradorAleatorio.GenerarCodigoSala(6);
                 if (!_salas.ContainsKey(codigo))
                 {
                     return codigo;
@@ -530,12 +529,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 throw new FaultException(MensajesError.Cliente.TiempoRondaInvalido);
             }
 
-            if (string.IsNullOrWhiteSpace(configuracion.IdiomaCanciones))
+            if (!EntradaComunValidador.EsIdiomaValido(configuracion.IdiomaCanciones))
             {
                 throw new FaultException(MensajesError.Cliente.IdiomaObligatorio);
             }
 
-            if (string.IsNullOrWhiteSpace(configuracion.Dificultad))
+            if (!EntradaComunValidador.EsDificultadValida(configuracion.Dificultad))
             {
                 throw new FaultException(MensajesError.Cliente.DificultadObligatoria);
             }

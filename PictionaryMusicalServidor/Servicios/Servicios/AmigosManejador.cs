@@ -130,7 +130,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="nombreUsuario">Nombre del usuario que cancela la suscripcion.</param>
         public void CancelarSuscripcion(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            if (!EntradaComunValidador.EsMensajeValido(nombreUsuario))
             {
                 throw new FaultException(
                     MensajesError.Cliente.NombreUsuarioObligatorioCancelar);

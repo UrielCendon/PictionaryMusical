@@ -117,12 +117,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
-                if (string.IsNullOrWhiteSpace(idSala))
+                if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
                 {
                     throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
                 }
 
-                if (string.IsNullOrWhiteSpace(mensaje))
+                if (!EntradaComunValidador.EsMensajeValido(mensaje))
                 {
                     return;
                 }
@@ -180,7 +180,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
-                if (string.IsNullOrWhiteSpace(idSala))
+                if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
                 {
                     throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
                 }
@@ -226,7 +226,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             _validadorUsuario.Validar(nombreJugador, nameof(nombreJugador));
 
-            if (string.IsNullOrWhiteSpace(idSala))
+            if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
             {
                 throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
             }

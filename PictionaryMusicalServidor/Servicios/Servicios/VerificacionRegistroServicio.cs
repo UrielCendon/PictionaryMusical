@@ -244,8 +244,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private (bool Exito, string Token, SolicitudCodigoPendiente Solicitud)
             GenerarYEnviarCodigo(NuevaCuentaDTO nuevaCuenta)
         {
-            string token = TokenGenerador.GenerarToken();
-            string codigo = CodigoVerificacionGenerador.GenerarCodigo();
+            string token = GeneradorAleatorio.GenerarToken();
+            string codigo = GeneradorAleatorio.GenerarCodigoVerificacion();
             NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
 
             bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
@@ -309,7 +309,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string codigoAnterior = existente.Codigo;
             DateTime expiracionAnterior = existente.Expira;
 
-            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
+            string nuevoCodigo = GeneradorAleatorio.GenerarCodigoVerificacion();
             existente.Codigo = nuevoCodigo;
             existente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
 

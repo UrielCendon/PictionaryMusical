@@ -25,13 +25,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(InvitacionesManejador));
 
-        private static readonly TimeSpan RegexTimeout = TimeSpan.FromMilliseconds(500);
-
-        private static readonly Regex CorreoRegex = new Regex(
-            @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-            RegexOptions.Compiled | RegexOptions.CultureInvariant,
-            RegexTimeout);
-
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
         private readonly ISalasManejador _salasManejador;
@@ -153,7 +146,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     MensajesError.Cliente.SolicitudInvitacionInvalida);
             }
 
-            if (string.IsNullOrWhiteSpace(invitacion.CodigoSala) ||
+            if (!EntradaComunValidador.EsCodigoSalaValido(invitacion.CodigoSala) ||
                 string.IsNullOrWhiteSpace(invitacion.Correo))
             {
                 throw new ArgumentException(
@@ -163,7 +156,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static void ValidarFormatoCorreo(string correo)
         {
-            if (!CorreoRegex.IsMatch(correo.Trim()))
+            if (!EntradaComunValidador.EsCorreoValido(correo.Trim()))
             {
                 throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
             }

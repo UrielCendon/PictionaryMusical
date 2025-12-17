@@ -31,7 +31,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <param name="callback">Callback a registrar.</param>
         public void Suscribir(string nombreUsuario, TCallback callback)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario) || callback == null)
+            if (!EntradaComunValidador.EsMensajeValido(nombreUsuario) || callback == null)
             {
                 return;
             }
@@ -75,7 +75,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <param name="nombreUsuario">Nombre del usuario.</param>
         public void Desuscribir(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            if (!EntradaComunValidador.EsMensajeValido(nombreUsuario))
             {
                 return;
             }
