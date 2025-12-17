@@ -1170,4 +1170,22 @@
   <data name="avisoTextoLimiteCaracteres" xml:space="preserve">
     <value>You have reached the character limit, try entering a shorter text.</value>
   </data>
+  <data name="errorTextoDesconexionServidor" xml:space="preserve">
+    <value>Connection to the server was lost. Please sign in again.</value>
+  </data>
+  <data name="errorTextoServidorDesconectado" xml:space="preserve">
+    <value>The server is not available. You will be redirected to sign in.</value>
+  </data>
+  <data name="errorTextoConexionInterrumpida" xml:space="preserve">
+    <value>The connection was unexpectedly interrupted. Please sign in again.</value>
+  </data>
+  <data name="errorTextoTiempoAgotadoConexion" xml:space="preserve">
+    <value>Server connection timed out. You will be redirected to sign in.</value>
+  </data>
+  <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
+    <value>A communication error occurred. Check your connection and try again.</value>
+  </data>
+  <data name="errorTextoSesionExpirada" xml:space="preserve">
+    <value>Your session has expired. Please sign in again.</value>
+  </data>
 </root>

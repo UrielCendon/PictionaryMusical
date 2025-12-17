@@ -67,6 +67,31 @@ namespace PictionaryMusicalCliente.Utilidades
         }
 
         /// <summary>
+        /// Cierra todas las ventanas abiertas excepto la ventana de inicio de sesion.
+        /// Util para limpiar ventanas huerfanas cuando se detecta una desconexion.
+        /// </summary>
+        public void CerrarTodasLasVentanas()
+        {
+            var ventanasAbiertas = Application.Current?.Windows.OfType<Window>()
+                .Where(v => v.IsVisible && !(v is Vista.InicioSesion))
+                .ToList();
+
+            if (ventanasAbiertas == null) return;
+
+            foreach (var ventana in ventanasAbiertas)
+            {
+                try
+                {
+                    ventana.Close();
+                }
+                catch (InvalidOperationException)
+                {
+                    // La ventana ya estaba cerrandose o cerrada
+                }
+            }
+        }
+
+        /// <summary>
         /// Muestra un mensaje emergente informativo al usuario utilizando la ventana de Avisos.
         /// </summary>
         /// <param name="titulo">El titulo del mensaje (se usa para contexto si es necesario).

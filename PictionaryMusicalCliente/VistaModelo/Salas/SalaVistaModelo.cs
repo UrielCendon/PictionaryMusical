@@ -140,6 +140,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             InicializarComandos();
             ConfigurarPermisos();
             InicializarProxyPartida();
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            _logger.WarnFormat("Desconexion del servidor detectada en sala: {0}", mensaje);
+            _sonidoManejador.ReproducirError();
+            _aplicacionCerrando = true;
+            Navegar(DestinoNavegacion.InicioSesion);
         }
 
         private static void ValidarDependenciasSala(DTOs.SalaDTO sala)
@@ -565,6 +579,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 var contexto = new InstanceContext(this);
                 _proxyJuego = _fabricaClientes.CrearClienteCursoPartida(contexto);
 
+                SuscribirEventosCanalPartida();
+
                 _proxyJuego.SuscribirJugador(
                     _codigoSala,
                     _idJugador,
@@ -576,25 +592,78 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _logger.Error(
                     "Fallo del servicio al suscribir al jugador en la partida.",
                     excepcion);
+                MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                _logger.Error(
+                    "Canal en estado fallido al suscribir al jugador.",
+                    excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                _logger.Error(
+                    "Canal abortado al suscribir al jugador.",
+                    excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Error(
                     "Error de comunicacion al suscribir al jugador en la partida.",
                     excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoDesconexionServidor);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error(
                     "Se agoto el tiempo para inicializar el proxy de partida.",
                     excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoTiempoAgotadoConexion);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Error(
                     "Operacion invalida al inicializar el proxy de partida.",
                     excepcion);
+                MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
             }
+        }
+
+        private void SuscribirEventosCanalPartida()
+        {
+            if (_proxyJuego is ICommunicationObject canal)
+            {
+                canal.Faulted += CanalPartida_Faulted;
+                canal.Closed += CanalPartida_Closed;
+            }
+        }
+
+        private void DesuscribirEventosCanalPartida()
+        {
+            if (_proxyJuego is ICommunicationObject canal)
+            {
+                canal.Faulted -= CanalPartida_Faulted;
+                canal.Closed -= CanalPartida_Closed;
+            }
+        }
+
+        private void CanalPartida_Faulted(object sender, EventArgs e)
+        {
+            _logger.Error("El canal de comunicacion con el servidor entro en estado Faulted.");
+            EjecutarEnDispatcher(() =>
+            {
+                if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
+                {
+                    ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                }
+            });
+        }
+
+        private void CanalPartida_Closed(object sender, EventArgs e)
+        {
+            _logger.Info("El canal de comunicacion con el servidor fue cerrado.");
         }
 
         private string ObtenerIdentificadorJugador()
@@ -719,16 +788,32 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 _logger.Error("Fallo del servicio al enviar mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
+                EjecutarEnDispatcher(() => 
+                    _avisoServicio.Mostrar(Lang.errorTextoEnviarMensaje));
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                _logger.Error("Canal fallido al enviar mensaje de juego.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                _logger.Error("Canal abortado al enviar mensaje de juego.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo enviar el mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
+                EjecutarEnDispatcher(() => 
+                    _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible));
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error("Tiempo agotado al enviar mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
+                EjecutarEnDispatcher(() => 
+                    _avisoServicio.Mostrar(Lang.errorTextoServidorTiempoAgotado));
             }
             catch (InvalidOperationException excepcion)
             {
@@ -771,6 +856,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _logger.Error("Fallo del servicio al registrar acierto.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                _logger.Error("Canal fallido al registrar acierto.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                _logger.Error("Canal abortado al registrar acierto.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo registrar el acierto en el servidor.", excepcion);
@@ -806,6 +901,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (FaultException excepcion)
             {
                 _logger.Error("Fallo del servicio al enviar trazo al servidor.", excepcion);
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                _logger.Error("Canal fallido al enviar trazo.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                _logger.Error("Canal abortado al enviar trazo.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
@@ -853,21 +958,38 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 _logger.Error("Fallo del servicio al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
+                BotonIniciarPartidaHabilitado = true;
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                _logger.Error("Canal fallido al iniciar la partida.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                _logger.Error("Canal abortado al iniciar la partida.", excepcion);
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo solicitar el inicio de la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible);
+                BotonIniciarPartidaHabilitado = true;
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error("Tiempo agotado al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoServidorTiempoAgotado);
+                BotonIniciarPartidaHabilitado = true;
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Operacion invalida al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
                 BotonIniciarPartidaHabilitado = true;
             }
         }
@@ -1320,6 +1442,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _partidaVistaModelo.Detener();
 
             _eventosManejador?.Dispose();
+
+            DesuscribirEventosCanalPartida();
 
             try
             {

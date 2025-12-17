@@ -107,28 +107,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    MensajesError.Log.ErrorDatosSuscripcionListaAmigos,
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    MensajesError.Log.ErrorDatosSuscripcionListaAmigos,
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al suscribirse. Fallo recuperar lista de amigos.",
+                    MensajesError.Log.ErrorDatosSuscripcionListaAmigos,
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al suscribirse a lista de amigos.",
+                    MensajesError.Log.ErrorInesperadoSuscripcionListaAmigos,
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);
             }

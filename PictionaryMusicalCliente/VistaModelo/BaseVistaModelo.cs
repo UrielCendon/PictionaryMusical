@@ -1,11 +1,14 @@
-﻿using PictionaryMusicalCliente.ClienteServicios;
+﻿using log4net;
+using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PictionaryMusicalCliente.VistaModelo
 {
@@ -15,6 +18,9 @@ namespace PictionaryMusicalCliente.VistaModelo
     /// </summary>
     public abstract class BaseVistaModelo : INotifyPropertyChanged
     {
+        private static readonly ILog _logger = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         protected readonly IVentanaServicio _ventana;
         protected readonly ILocalizadorServicio _localizador;
 
@@ -22,6 +28,11 @@ namespace PictionaryMusicalCliente.VistaModelo
         /// Evento para notificar cambios en las propiedades a la interfaz de usuario.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Evento disparado cuando se detecta una desconexion critica del servidor.
+        /// </summary>
+        public event Action<string> DesconexionDetectada;
 
         /// <summary>
         /// Constructor para inyeccion de dependencias.
@@ -35,8 +46,8 @@ namespace PictionaryMusicalCliente.VistaModelo
         /// <summary>
         /// Ejecuta una operacion asincrona capturando excepciones comunes de WCF.
         /// </summary>
-        /// <param name=\"operacion\">La tarea asincrona a ejecutar.</param>
-        /// <param name=\"accionError\">Accion opcional a ejecutar si ocurre un error.</param>
+        /// <param name="operacion">La tarea asincrona a ejecutar.</param>
+        /// <param name="accionError">Accion opcional a ejecutar si ocurre un error.</param>
         protected async Task EjecutarOperacionAsync(Func<Task> operacion, Action<Exception> 
             accionError = null)
         {
@@ -46,46 +57,277 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (TimeoutException excepcion)
             {
-                ManejarError(excepcion, "El servidor tardo demasiado en responder.", accionError);
+                ManejarErrorTiempoAgotado(excepcion, accionError);
             }
             catch (EndpointNotFoundException excepcion)
             {
-                ManejarError(excepcion, 
-                    "No se pudo conectar con el servidor. Verifique su conexion.",
-                    accionError);
+                ManejarErrorServidorNoEncontrado(excepcion, accionError);
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                ManejarErrorCanalFallido(excepcion, accionError);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                ManejarErrorCanalAbortado(excepcion, accionError);
             }
             catch (FaultException excepcion)
             {
-                ManejarError(excepcion, "El servicio reporto un error.", accionError);
+                ManejarErrorFallaServicio(excepcion, accionError);
             }
             catch (CommunicationException excepcion)
             {
-                ManejarError(excepcion, "Error de comunicacion con el servicio.", accionError);
+                ManejarErrorComunicacion(excepcion, accionError);
             }
             catch (ServicioExcepcion excepcion)
             {
-                ManejarError(excepcion, excepcion.Message, accionError);
+                ManejarErrorServicio(excepcion, accionError);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                ManejarErrorOperacionInvalida(excepcion, accionError);
             }
             catch (Exception excepcion)
             {
-                ManejarError(excepcion, "Ocurrio un error inesperado.", accionError);
+                ManejarErrorDesconocido(excepcion, accionError);
             }
         }
 
-        private void ManejarError(Exception ex, string mensajePorDefecto, Action<Exception> 
+        /// <summary>
+        /// Ejecuta una operacion asincrona y redirige al inicio de sesion en caso de desconexion.
+        /// </summary>
+        /// <param name="operacion">La tarea asincrona a ejecutar.</param>
+        /// <param name="redirigirEnDesconexion">Indica si se debe redirigir al inicio de sesion en caso de desconexion.</param>
+        protected async Task EjecutarOperacionConDesconexionAsync(
+            Func<Task> operacion,
+            bool redirigirEnDesconexion = true)
+        {
+            try
+            {
+                await operacion();
+            }
+            catch (TimeoutException excepcion)
+            {
+                ManejarErrorDeConexion(excepcion, "Tiempo agotado en operacion.",
+                    Lang.errorTextoTiempoAgotadoConexion, Lang.errorTextoServidorTiempoAgotado,
+                    redirigirEnDesconexion);
+            }
+            catch (EndpointNotFoundException excepcion)
+            {
+                ManejarErrorDeConexion(excepcion, "Servidor no encontrado.",
+                    Lang.errorTextoServidorDesconectado, Lang.errorTextoServidorNoDisponible,
+                    redirigirEnDesconexion);
+            }
+            catch (CommunicationObjectFaultedException excepcion)
+            {
+                ManejarErrorDeConexion(excepcion, "Canal de comunicacion en estado fallido.",
+                    Lang.errorTextoConexionInterrumpida, Lang.errorTextoDesconexionServidor,
+                    redirigirEnDesconexion);
+            }
+            catch (CommunicationObjectAbortedException excepcion)
+            {
+                ManejarErrorDeConexion(excepcion, "Canal de comunicacion abortado.",
+                    Lang.errorTextoConexionInterrumpida, Lang.errorTextoDesconexionServidor,
+                    redirigirEnDesconexion);
+            }
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Falla controlada del servicio.", excepcion);
+                MostrarErrorEnUI(excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarErrorDeConexion(excepcion, "Error de comunicacion con el servicio.",
+                    Lang.errorTextoDesconexionServidor, Lang.errorTextoServidorNoDisponible,
+                    redirigirEnDesconexion);
+            }
+            catch (ServicioExcepcion excepcion)
+            {
+                ManejarErrorServicioConDesconexion(excepcion, redirigirEnDesconexion);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Error("Operacion invalida.", excepcion);
+                MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error inesperado en operacion.", excepcion);
+                MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
+            }
+        }
+
+        private void ManejarErrorDeConexion(
+            Exception excepcion,
+            string mensajeLog,
+            string mensajeDesconexion,
+            string mensajeError,
+            bool redirigirEnDesconexion)
+        {
+            _logger.Error(mensajeLog, excepcion);
+            if (redirigirEnDesconexion)
+            {
+                ManejarDesconexionCritica(mensajeDesconexion);
+            }
+            else
+            {
+                MostrarErrorEnUI(mensajeError);
+            }
+        }
+
+        private void ManejarErrorServicioConDesconexion(
+            ServicioExcepcion excepcion,
+            bool redirigirEnDesconexion)
+        {
+            _logger.Warn("Excepcion de servicio controlada.", excepcion);
+            if (EsExcepcionDeDesconexion(excepcion) && redirigirEnDesconexion)
+            {
+                ManejarDesconexionCritica(excepcion.Message);
+            }
+            else
+            {
+                MostrarErrorEnUI(excepcion.Message);
+            }
+        }
+
+        private void ManejarErrorTiempoAgotado(TimeoutException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("Tiempo agotado en la solicitud al servidor.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoServidorTiempoAgotado, accionError);
+        }
+
+        private void ManejarErrorServidorNoEncontrado(EndpointNotFoundException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("No se encontro el servidor.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoServidorNoDisponible, accionError);
+        }
+
+        private void ManejarErrorCanalFallido(CommunicationObjectFaultedException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("El canal de comunicacion esta en estado fallido.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoDesconexionServidor, accionError);
+        }
+
+        private void ManejarErrorCanalAbortado(CommunicationObjectAbortedException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("El canal de comunicacion fue abortado.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoConexionInterrumpida, accionError);
+        }
+
+        private void ManejarErrorFallaServicio(FaultException excepcion, Action<Exception> accionError)
+        {
+            _logger.Warn("El servicio reporto una falla controlada.", excepcion);
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message) 
+                ? excepcion.Message 
+                : Lang.errorTextoErrorProcesarSolicitud;
+            ManejarError(excepcion, mensaje, accionError);
+        }
+
+        private void ManejarErrorComunicacion(CommunicationException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("Error de comunicacion con el servicio.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoServidorNoDisponible, accionError);
+        }
+
+        private void ManejarErrorServicio(ServicioExcepcion excepcion, Action<Exception> accionError)
+        {
+            _logger.Warn("Excepcion del servicio personalizada.", excepcion);
+            ManejarError(excepcion, excepcion.Message, accionError);
+        }
+
+        private void ManejarErrorOperacionInvalida(InvalidOperationException excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("Operacion invalida ejecutada.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoErrorProcesarSolicitud, accionError);
+        }
+
+        private void ManejarErrorDesconocido(Exception excepcion, Action<Exception> accionError)
+        {
+            _logger.Error("Ocurrio un error inesperado.", excepcion);
+            ManejarError(excepcion, Lang.errorTextoErrorProcesarSolicitud, accionError);
+        }
+
+        private void ManejarError(Exception excepcion, string mensajePorDefecto, Action<Exception> 
             accionError)
         {
             if (accionError != null)
             {
-                accionError(ex);
+                accionError(excepcion);
             }
             else
             {
-                string mensajeFinal = _localizador != null
-                    ? _localizador.Localizar(null, mensajePorDefecto)
-                    : mensajePorDefecto;
+                MostrarErrorEnUI(mensajePorDefecto);
+            }
+        }
 
-                _ventana?.MostrarError(mensajeFinal);
+        /// <summary>
+        /// Muestra un mensaje de error en la interfaz de usuario.
+        /// </summary>
+        /// <param name="mensaje">Mensaje a mostrar.</param>
+        protected void MostrarErrorEnUI(string mensaje)
+        {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                _ventana?.MostrarError(mensaje);
+            }
+            else
+            {
+                dispatcher.BeginInvoke(new Action(() => _ventana?.MostrarError(mensaje)));
+            }
+        }
+
+        /// <summary>
+        /// Maneja una desconexion critica mostrando el mensaje y disparando el evento.
+        /// </summary>
+        /// <param name="mensaje">Mensaje explicativo de la desconexion.</param>
+        protected void ManejarDesconexionCritica(string mensaje)
+        {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                EjecutarDesconexionCritica(mensaje);
+            }
+            else
+            {
+                dispatcher.BeginInvoke(new Action(() => EjecutarDesconexionCritica(mensaje)));
+            }
+        }
+
+        private void EjecutarDesconexionCritica(string mensaje)
+        {
+            _ventana?.MostrarError(mensaje);
+            DesconexionDetectada?.Invoke(mensaje);
+        }
+
+        /// <summary>
+        /// Determina si una ServicioExcepcion es causada por desconexion.
+        /// </summary>
+        private static bool EsExcepcionDeDesconexion(ServicioExcepcion excepcion)
+        {
+            return excepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                   excepcion.Tipo == TipoErrorServicio.TiempoAgotado;
+        }
+
+        /// <summary>
+        /// Ejecuta una accion en el dispatcher de la aplicacion.
+        /// </summary>
+        /// <param name="accion">Accion a ejecutar.</param>
+        protected static void EjecutarEnDispatcher(Action accion)
+        {
+            if (accion == null)
+            {
+                return;
+            }
+
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null || dispatcher.CheckAccess())
+            {
+                accion();
+            }
+            else
+            {
+                dispatcher.BeginInvoke(accion);
             }
         }
 

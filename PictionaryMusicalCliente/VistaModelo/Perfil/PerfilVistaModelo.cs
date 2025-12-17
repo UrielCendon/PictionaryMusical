@@ -110,6 +110,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 _sonidoManejador.ReproducirClick();
                 _ventana.CerrarVentana(this);
             });
+
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+                _usuarioSesion?.Limpiar();
+                RequiereReinicioSesion = true;
+                SolicitarReinicioSesion?.Invoke();
+                _ventana.CerrarVentana(this);
+            });
         }
 
         private static void ValidarDependencias(
@@ -268,19 +288,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         public bool RequiereReinicioSesion { get; private set; }
 
         /// <summary>
+        /// Obtiene un valor que indica si la carga del perfil fallo.
+        /// </summary>
+        public bool CargaFallida { get; private set; }
+
+        /// <summary>
         /// Carga los datos del perfil del usuario desde el servidor.
         /// </summary>
-        /// <returns>Tarea que representa la operacion asincrona.</returns>
-        public async Task CargarPerfilAsync()
+        /// <returns>True si la carga fue exitosa; false en caso contrario.</returns>
+        public async Task<bool> CargarPerfilAsync()
         {
             if (!ValidarSesionActiva())
             {
-                return;
+                CargaFallida = true;
+                return false;
             }
 
             EstaProcesando = true;
+            bool cargaExitosa = false;
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 DTOs.UsuarioDTO perfil = await ObtenerPerfilDesdeServidorAsync();
                 
@@ -290,17 +317,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 }
 
                 AplicarPerfil(perfil);
-            },
-            ex =>
-            {
-                _logger.Error("Error de servicio al obtener perfil.", ex);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? 
-                    Lang.errorTextoServidorObtenerPerfil);
-                EstaProcesando = false;
+                cargaExitosa = true;
             });
 
             EstaProcesando = false;
+            CargaFallida = !cargaExitosa;
+            return cargaExitosa;
         }
 
         private bool ValidarSesionActiva()
@@ -380,20 +402,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             DTOs.ActualizacionPerfilDTO solicitud = CrearSolicitudActualizacion();
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 DTOs.ResultadoOperacionDTO resultado = 
                     await EnviarActualizacionAsync(solicitud);
                 
                 ProcesarResultadoActualizacion(resultado);
-            },
-            ex =>
-            {
-                _logger.Error("Excepcion de servicio al actualizar perfil.", ex);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? 
-                    Lang.errorTextoServidorActualizarPerfil);
-                EstaProcesando = false;
             });
 
             EstaProcesando = false;
@@ -599,7 +613,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             EstaProcesando = true;
             EstaCambiandoContrasena = true;
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 _logger.InfoFormat(
                     "Iniciando solicitud de cambio de contrasena para: {0}",
@@ -609,15 +623,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                     await SolicitarCambioContrasenaAsync();
 
                 ProcesarResultadoCambioContrasena(resultado);
-            },
-            excepcion =>
-            {
-                _logger.Error("Excepcion al cambiar contrasena.", excepcion);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(excepcion.Message ?? 
-                    Lang.errorTextoIniciarCambioContrasena);
-                EstaCambiandoContrasena = false;
-                EstaProcesando = false;
             });
 
             EstaCambiandoContrasena = false;

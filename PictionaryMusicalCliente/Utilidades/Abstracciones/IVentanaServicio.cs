@@ -24,6 +24,11 @@ namespace PictionaryMusicalCliente.Utilidades.Abstracciones
         void CerrarVentana(object vistaModelo);
 
         /// <summary>
+        /// Cierra todas las ventanas abiertas excepto la ventana principal de la aplicacion.
+        /// </summary>
+        void CerrarTodasLasVentanas();
+
+        /// <summary>
         /// Muestra un mensaje emergente al usuario.
         /// </summary>
         void MostrarMensaje(string titulo, string mensaje);

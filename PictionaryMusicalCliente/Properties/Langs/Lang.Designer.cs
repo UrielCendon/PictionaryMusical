@@ -3182,5 +3182,41 @@ namespace PictionaryMusicalCliente.Properties.Langs {
                 return ResourceManager.GetString("usuariosEspecificadosNoExisten", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se ha perdido la conexión con el servidor..
+        /// </summary>
+        public static string errorTextoDesconexionServidor {
+            get {
+                return ResourceManager.GetString("errorTextoDesconexionServidor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El servidor no está disponible. Intente más tarde..
+        /// </summary>
+        public static string errorTextoServidorDesconectado {
+            get {
+                return ResourceManager.GetString("errorTextoServidorDesconectado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a La conexión con el servidor fue interrumpida..
+        /// </summary>
+        public static string errorTextoConexionInterrumpida {
+            get {
+                return ResourceManager.GetString("errorTextoConexionInterrumpida", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se agotó el tiempo de espera al conectar con el servidor..
+        /// </summary>
+        public static string errorTextoTiempoAgotadoConexion {
+            get {
+                return ResourceManager.GetString("errorTextoTiempoAgotadoConexion", resourceCulture);
+            }
+        }
     }
 }

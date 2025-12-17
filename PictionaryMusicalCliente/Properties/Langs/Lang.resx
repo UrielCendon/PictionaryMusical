@@ -1161,4 +1161,22 @@
   <data name="avisoTextoLimiteCaracteres" xml:space="preserve">
     <value>Llegaste al límite de caracteres permitido, intenta ingresando un texto más corto.</value>
   </data>
+  <data name="errorTextoDesconexionServidor" xml:space="preserve">
+    <value>Se perdió la conexión con el servidor. Por favor, inicia sesión nuevamente.</value>
+  </data>
+  <data name="errorTextoServidorDesconectado" xml:space="preserve">
+    <value>El servidor no está disponible. Serás redirigido al inicio de sesión.</value>
+  </data>
+  <data name="errorTextoConexionInterrumpida" xml:space="preserve">
+    <value>La conexión fue interrumpida inesperadamente. Intenta iniciar sesión de nuevo.</value>
+  </data>
+  <data name="errorTextoTiempoAgotadoConexion" xml:space="preserve">
+    <value>Se agotó el tiempo de espera con el servidor. Serás redirigido al inicio de sesión.</value>
+  </data>
+  <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
+    <value>Ocurrió un error de comunicación. Verifica tu conexión e intenta de nuevo.</value>
+  </data>
+  <data name="errorTextoSesionExpirada" xml:space="preserve">
+    <value>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</value>
+  </data>
 </root>

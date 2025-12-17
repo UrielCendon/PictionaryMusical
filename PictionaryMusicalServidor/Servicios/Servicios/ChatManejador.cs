@@ -73,22 +73,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
         }
 
@@ -137,22 +137,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
         }
 
@@ -191,22 +191,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (CommunicationException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperado);
+                throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
         }
 

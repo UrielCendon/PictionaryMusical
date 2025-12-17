@@ -41,7 +41,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var config = ObtenerConfiguracionSmtp();
             if (!config.EsValida)
             {
-                _logger.Error(MensajesError.Log.ConfiguracionCorreoInvalida);
+                _logger.Error("La configuracion de correo es invalida o esta incompleta.");
                 return false;
             }
 
@@ -181,7 +181,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
+                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
                 return false;
             }
         }

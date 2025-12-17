@@ -17,6 +17,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         event EventHandler<IReadOnlyCollection<DTOs.SolicitudAmistadDTO>> SolicitudesActualizadas;
 
         /// <summary>
+        /// Se dispara cuando el canal de comunicacion con el servidor falla o se desconecta.
+        /// </summary>
+        event EventHandler CanalDesconectado;
+
+        /// <summary>
         /// Coleccion de solicitudes pendientes de responder en cache local.
         /// </summary>
         IReadOnlyCollection<DTOs.SolicitudAmistadDTO> SolicitudesPendientes { get; }

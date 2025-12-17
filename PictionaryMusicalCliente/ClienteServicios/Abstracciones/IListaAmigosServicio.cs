@@ -16,6 +16,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         event EventHandler<IReadOnlyList<DTOs.AmigoDTO>> ListaActualizada;
 
         /// <summary>
+        /// Se dispara cuando el canal de comunicacion con el servidor falla o se desconecta.
+        /// </summary>
+        event EventHandler CanalDesconectado;
+
+        /// <summary>
         /// Obtiene la coleccion local actual de amigos sin realizar una peticion al servidor.
         /// </summary>
         IReadOnlyList<DTOs.AmigoDTO> ListaActual { get; }

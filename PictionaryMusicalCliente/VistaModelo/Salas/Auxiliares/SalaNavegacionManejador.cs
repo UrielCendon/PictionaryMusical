@@ -111,6 +111,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 dependenciasBase,
                 dependenciasInicioSesion);
             _ventana.MostrarVentana(inicioVistaModelo);
+            _ventana.CerrarTodasLasVentanas();
         }
 
         private void NavegarAVentanaPrincipal()

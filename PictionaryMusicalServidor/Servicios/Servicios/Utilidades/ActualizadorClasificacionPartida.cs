@@ -210,14 +210,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             catch (DataException excepcion)
             {
                 _logger.ErrorFormat(
-                    "Error de datos al actualizar clasificacion del jugador id {0}.", 
+                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
-                    "Error inesperado al actualizar clasificacion del jugador id {0}.", 
+                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }

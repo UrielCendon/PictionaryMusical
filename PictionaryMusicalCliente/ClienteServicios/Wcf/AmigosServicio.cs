@@ -57,6 +57,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public event EventHandler<IReadOnlyCollection<DTOs.SolicitudAmistadDTO>>
             SolicitudesActualizadas;
+
+        /// <summary>
+        /// Se dispara cuando el canal de comunicacion con el servidor falla o se desconecta.
+        /// </summary>
+        public event EventHandler CanalDesconectado;
         
         /// <summary>
         /// Obtiene una copia segura de las solicitudes actuales.
@@ -395,12 +400,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             NotificarSolicitudesActualizadas();
         }
 
-        private static void CerrarClienteSeguro(ICommunicationObject cliente)
+        private void CerrarClienteSeguro(ICommunicationObject cliente)
         {
             if (cliente == null)
             {
                 return;
             }
+
+            DesuscribirEventosCanal(cliente);
 
             try
             {
@@ -426,8 +433,33 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private PictionaryServidorServicioAmigos.AmigosManejadorClient CrearCliente()
         {
             var contexto = new InstanceContext(this);
-            return (PictionaryServidorServicioAmigos.AmigosManejadorClient)
+            var cliente = (PictionaryServidorServicioAmigos.AmigosManejadorClient)
                    _fabricaClientes.CrearClienteAmigos(contexto);
+            
+            SuscribirEventosCanal(cliente);
+            return cliente;
+        }
+
+        private void SuscribirEventosCanal(ICommunicationObject canal)
+        {
+            if (canal != null)
+            {
+                canal.Faulted += Canal_Faulted;
+            }
+        }
+
+        private void DesuscribirEventosCanal(ICommunicationObject canal)
+        {
+            if (canal != null)
+            {
+                canal.Faulted -= Canal_Faulted;
+            }
+        }
+
+        private void Canal_Faulted(object sender, EventArgs e)
+        {
+            _logger.Error("El canal de amigos entro en estado Faulted.");
+            CanalDesconectado?.Invoke(this, EventArgs.Empty);
         }
 
         private async Task EjecutarEnSeccionCriticaAsync(Func<Task> accion)

@@ -67,7 +67,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (ArgumentNullException excepcion)
             {
                 _logger.Warn(
-                    "Argumento nulo al solicitar codigo de recuperacion. Datos nulos.", excepcion);
+                    MensajesError.Log.ArgumentoNuloSolicitarCodigoRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -77,7 +77,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error de base de datos al solicitar codigo de recuperacion.", excepcion);
+                    MensajesError.Log.ErrorBaseDatosSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -86,7 +86,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al solicitar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -95,7 +95,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al solicitar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -125,7 +125,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al reenviar codigo de recuperacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -134,7 +134,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al reenviar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -143,7 +143,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al reenviar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -152,7 +152,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al reenviar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -183,7 +183,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al confirmar codigo de recuperacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -193,7 +193,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al confirmar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -203,7 +203,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al confirmar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -213,7 +213,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al confirmar codigo de recuperacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -242,7 +242,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al actualizar contrasena.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -252,7 +252,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error("Validacion de entidad fallida al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ValidacionEntidadActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -263,7 +263,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    "Error de actualizacion de base de datos al actualizar contrasena.", excepcion);
+                    MensajesError.Log.ErrorActualizacionBDContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -273,7 +273,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -283,7 +283,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosActualizarContrasenaManejador, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -293,7 +293,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarContrasenaManejador, excepcion);
 
                 return new ResultadoOperacionDTO
                 {

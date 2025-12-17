@@ -867,13 +867,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             var contexto = OperationContext.Current;
             if (contexto == null)
             {
-                throw new FaultException("No se encontro un contexto de operacion activo.");
+                throw new FaultException(MensajesError.Cliente.ErrorContextoOperacion);
             }
 
             var callback = contexto.GetCallbackChannel<ICursoPartidaManejadorCallback>();
             if (callback == null)
             {
-                throw new FaultException("No se pudo obtener el callback del cliente.");
+                throw new FaultException(MensajesError.Cliente.ErrorObtenerCallback);
             }
 
             return callback;

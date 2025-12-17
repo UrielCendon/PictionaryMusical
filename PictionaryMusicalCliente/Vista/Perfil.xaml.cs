@@ -41,7 +41,12 @@ namespace PictionaryMusicalCliente.Vista
         {
             if (DataContext is PerfilVistaModelo vistaModelo)
             {
-                await vistaModelo.CargarPerfilAsync().ConfigureAwait(true);
+                bool cargaExitosa = await vistaModelo.CargarPerfilAsync().ConfigureAwait(true);
+                
+                if (!cargaExitosa || vistaModelo.CargaFallida)
+                {
+                    Close();
+                }
             }
         }
 

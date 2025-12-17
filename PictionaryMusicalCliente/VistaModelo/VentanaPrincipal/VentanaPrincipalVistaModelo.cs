@@ -74,6 +74,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 throw new ArgumentNullException(nameof(usuarioSesion));
             _listaAmigosServicio.ListaActualizada += ListaActualizada;
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
+            _listaAmigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
+            _amigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
+            DesconexionDetectada += ManejarDesconexion;
 
             _nombreUsuarioSesion = _usuarioSesion.NombreUsuario ?? string.Empty;
             _opcionesPartida = new OpcionesPartidaManejador();
@@ -310,7 +313,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 await SuscribirAServiciosAsync();
                 MarcarSuscripcionActiva();
@@ -366,6 +369,17 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             _listaAmigosServicio.ListaActualizada -= ListaActualizada;
             _amigosServicio.SolicitudesActualizadas -= SolicitudesAmistadActualizadas;
+            _listaAmigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
+            _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
+        }
+
+        private void CanalAmigos_Desconectado(object sender, EventArgs e)
+        {
+            _logger.Error("Se detecto desconexion del canal de amigos.");
+            EjecutarEnDispatcher(() =>
+            {
+                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            });
         }
 
         private async Task CancelarSuscripcionesAsync()
@@ -460,7 +474,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 var amigos = await ObtenerAmigosDelServidorAsync();
                 ActualizarListaEnDispatcher(amigos);
@@ -483,25 +497,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             EjecutarEnDispatcher(() => ActualizarAmigos(amigos));
         }
 
-        private static void EjecutarEnDispatcher(Action accion)
-        {
-            if (accion == null)
-            {
-                return;
-            }
-
-            var dispatcher = Application.Current?.Dispatcher;
-
-            if (dispatcher == null || dispatcher.CheckAccess())
-            {
-                accion();
-            }
-            else
-            {
-                dispatcher.BeginInvoke(accion);
-            }
-        }
-
         private async Task EjecutarEliminarAmigoAsync(DTOs.AmigoDTO amigo)
         {
             if (!ValidarAmigoParaEliminar(amigo))
@@ -520,7 +515,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 await EliminarAmigoEnServidorAsync(amigo.NombreUsuario);
                 await ActualizarListaTrasEliminacion();
@@ -623,6 +618,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 dependenciasBase,
                 dependenciasInicioSesion);
             _ventana.MostrarVentana(inicioVistaModelo);
+            _ventana.CerrarTodasLasVentanas();
             _ventana.CerrarVentana(this);
         }
 
@@ -698,7 +694,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 var sala = await UnirseSalaEnServidorAsync(codigo);
                 NavegarASala(sala);
@@ -746,7 +742,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 return;
             }
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 var configuracion = CrearConfiguracionPartida();
                 var sala = await CrearSalaEnServidorAsync(configuracion);
@@ -853,6 +849,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void ActualizarEstadoIniciarJuego()
         {
             IniciarJuegoComando?.NotificarPuedeEjecutar();
+        }
+
+        private void ManejarDesconexion(string mensaje)
+        {
+            _logger.WarnFormat("Desconexion detectada: {0}", mensaje);
+            _sonidoManejador.ReproducirError();
+            ReiniciarAplicacion();
         }
     }
 }

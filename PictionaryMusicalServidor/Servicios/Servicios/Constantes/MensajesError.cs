@@ -276,6 +276,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
                 "Tu mensaje es muy largo. Usa menos de 200 caracteres.";
             public const string ErrorEnviarMensaje = 
                 "No pudimos enviar el mensaje. Intenta de nuevo.";
+            public const string ErrorUnirseChat = 
+                "No pudimos conectarte al chat de la sala. Intenta de nuevo.";
+            public const string ErrorSalirChat = 
+                "Ocurrio un problema al salir del chat.";
         }
 
         /// <summary>
@@ -678,6 +682,58 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
                 "Error de datos al confirmar codigo.";
             public const string ArgumentoNuloSolicitarCodigoRecuperacion = 
                 "Argumento nulo al solicitar codigo de recuperacion.";
+
+            // Clasificacion
+            public const string ErrorBaseDatosObtenerClasificacion = 
+                "Error de base de datos al obtener la clasificacion.";
+            public const string ErrorDatosObtenerClasificacion = 
+                "Error de datos al obtener la clasificacion.";
+            public const string OperacionInvalidaObtenerClasificacion = 
+                "Operacion invalida al obtener la clasificacion.";
+            public const string ErrorInesperadoObtenerClasificacion = 
+                "Error inesperado al obtener la clasificacion.";
+
+            // Cambio de contrasena
+            public const string ErrorBaseDatosSolicitarRecuperacion = 
+                "Error de base de datos al solicitar codigo de recuperacion.";
+            public const string ErrorDatosSolicitarRecuperacion = 
+                "Error de datos al solicitar codigo de recuperacion.";
+            public const string ErrorInesperadoSolicitarRecuperacion = 
+                "Error inesperado al solicitar codigo de recuperacion.";
+            public const string ErrorBaseDatosReenviarRecuperacion = 
+                "Error de base de datos al reenviar codigo de recuperacion.";
+            public const string ErrorDatosReenviarRecuperacion = 
+                "Error de datos al reenviar codigo de recuperacion.";
+            public const string ErrorInesperadoReenviarRecuperacion = 
+                "Error inesperado al reenviar codigo de recuperacion.";
+            public const string ErrorBaseDatosConfirmarRecuperacion = 
+                "Error de base de datos al confirmar codigo de recuperacion.";
+            public const string ErrorDatosConfirmarRecuperacion = 
+                "Error de datos al confirmar codigo de recuperacion.";
+            public const string ErrorInesperadoConfirmarRecuperacion = 
+                "Error inesperado al confirmar codigo de recuperacion.";
+            public const string ValidacionEntidadActualizarContrasena = 
+                "Validacion de entidad fallida al actualizar contrasena.";
+            public const string ErrorActualizacionBDContrasena = 
+                "Error de actualizacion de base de datos al actualizar contrasena.";
+            public const string ErrorBaseDatosActualizarContrasena = 
+                "Error de base de datos al actualizar contrasena.";
+            public const string ErrorDatosActualizarContrasenaManejador = 
+                "Error de datos al actualizar contrasena.";
+            public const string ErrorInesperadoActualizarContrasenaManejador = 
+                "Error inesperado al actualizar contrasena.";
+            public const string ArgumentoNuloReenviarRecuperacion = 
+                "Argumento nulo al reenviar codigo de recuperacion.";
+            public const string ArgumentoNuloConfirmarRecuperacion = 
+                "Argumento nulo al confirmar codigo de recuperacion.";
+            public const string ArgumentoNuloActualizarContrasena = 
+                "Argumento nulo al actualizar contrasena.";
+
+            // Lista amigos suscripcion
+            public const string ErrorDatosSuscripcionListaAmigos = 
+                "Error de datos al suscribirse. Fallo recuperar lista de amigos.";
+            public const string ErrorInesperadoSuscripcionListaAmigos = 
+                "Error inesperado al suscribirse a lista de amigos.";
         }
     }
 }

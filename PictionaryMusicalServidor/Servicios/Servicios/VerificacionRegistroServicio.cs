@@ -107,7 +107,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     MensajesError.Log.ErrorReenviarCodigoVerificacion,
                     excepcion);
                 return CrearFalloReenvio(
-                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+                    MensajesError.Cliente.ErrorReenviarCodigoVerificacion);
             }
         }
 
@@ -157,7 +157,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     "Error inesperado al confirmar codigo de verificacion.",
                     excepcion);
                 return CrearFalloConfirmacion(
-                    MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
+                    MensajesError.Cliente.ErrorConfirmarCodigo);
             }
         }
 

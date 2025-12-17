@@ -48,6 +48,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public event EventHandler<IReadOnlyList<DTOs.AmigoDTO>> ListaActualizada;
 
         /// <summary>
+        /// Se dispara cuando el canal de comunicacion con el servidor falla o se desconecta.
+        /// </summary>
+        public event EventHandler CanalDesconectado;
+
+        /// <summary>
         /// Obtiene la coleccion local actual de amigos.
         /// </summary>
         public IReadOnlyList<DTOs.AmigoDTO> ListaActual
@@ -272,8 +277,33 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient CrearCliente()
         {
             var contexto = new InstanceContext(this);
-            return (PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient)
+            var cliente = (PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient)
                    _fabricaClientes.CrearClienteListaAmigos(contexto);
+            
+            SuscribirEventosCanal(cliente);
+            return cliente;
+        }
+
+        private void SuscribirEventosCanal(ICommunicationObject canal)
+        {
+            if (canal != null)
+            {
+                canal.Faulted += Canal_Faulted;
+            }
+        }
+
+        private void DesuscribirEventosCanal(ICommunicationObject canal)
+        {
+            if (canal != null)
+            {
+                canal.Faulted -= Canal_Faulted;
+            }
+        }
+
+        private void Canal_Faulted(object sender, EventArgs e)
+        {
+            _logger.Error("El canal de lista de amigos entro en estado Faulted.");
+            CanalDesconectado?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -281,9 +311,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// El catch general es necesario porque el cierre de WCF puede lanzar multiples 
         /// tipos de excepciones y siempre debe intentarse Abort como fallback.
         /// </summary>
-        private static void CerrarClienteSeguro(ICommunicationObject cliente)
+        private void CerrarClienteSeguro(ICommunicationObject cliente)
         {
             if (cliente == null) return;
+            
+            DesuscribirEventosCanal(cliente);
+            
             try
             {
                 if (cliente.State == CommunicationState.Opened) cliente.Close();

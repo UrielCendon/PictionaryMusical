@@ -3,6 +3,7 @@ using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
@@ -82,22 +83,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al obtener la clasificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosObtenerClasificacion, excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al obtener la clasificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosObtenerClasificacion, excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al obtener la clasificacion.", excepcion);
+                _logger.Error(MensajesError.Log.OperacionInvalidaObtenerClasificacion, excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al obtener la clasificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerClasificacion, excepcion);
                 return new List<ClasificacionUsuarioDTO>();
             }
         }
