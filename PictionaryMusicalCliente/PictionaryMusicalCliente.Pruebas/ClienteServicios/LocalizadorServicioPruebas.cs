@@ -70,7 +70,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_Localizar_MensajePartidaYaIniciada_RetornaTraducido()
         {
-            string mensaje = "La partida ya comenzo";
+            string mensaje = "La partida ya comenzo, no puedes unirte.";
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
