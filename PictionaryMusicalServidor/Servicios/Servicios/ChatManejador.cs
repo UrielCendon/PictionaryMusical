@@ -239,17 +239,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             lock (_sincronizacion)
             {
-                if (!_clientesPorSala.TryGetValue(idSala, out var clientesSala))
+                List<ClienteChat> clientesSala;
+                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
                 {
                     clientesSala = new List<ClienteChat>();
                     _clientesPorSala[idSala] = clientesSala;
                 }
 
-                var clienteExistente = clientesSala.Find(clienteChat =>
-                    string.Equals(
+                ClienteChat clienteExistente = null;
+                foreach (var clienteChat in clientesSala)
+                {
+                    if (string.Equals(
                         clienteChat.NombreJugador,
                         nombreJugador,
-                        StringComparison.OrdinalIgnoreCase));
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        clienteExistente = clienteChat;
+                        break;
+                    }
+                }
 
                 if (clienteExistente != null)
                 {
@@ -260,12 +268,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     clientesSala.Add(new ClienteChat(nombreJugador, callback));
                 }
 
-                return clientesSala
-                    .Where(clienteChat => !string.Equals(
+                var clientesFiltrados = new List<ClienteChat>();
+                foreach (var clienteChat in clientesSala)
+                {
+                    if (!string.Equals(
                         clienteChat.NombreJugador,
                         nombreJugador,
                         StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                    {
+                        clientesFiltrados.Add(clienteChat);
+                    }
+                }
+                return clientesFiltrados;
             }
         }
 
@@ -276,10 +290,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             foreach (var cliente in destinatarios)
             {
-                EjecutarNotificacionSegura(
-                    idSala,
-                    cliente,
-                    callback => callback.NotificarJugadorUnido(nombreJugador));
+                NotificarJugadorUnidoSeguro(idSala, cliente, nombreJugador);
+            }
+        }
+
+        private static void NotificarJugadorUnidoSeguro(
+            string idSala,
+            ClienteChat cliente,
+            string nombreJugador)
+        {
+            try
+            {
+                cliente.Callback.NotificarJugadorUnido(nombreJugador);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion con cliente. Removiendo callback.", excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Timeout al notificar cliente. Removiendo callback.", excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Warn(
+                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn(
+                    "Error inesperado al notificar cliente. Removiendo callback.",
+                    excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
         }
 
@@ -297,16 +343,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             lock (_sincronizacion)
             {
-                if (!_clientesPorSala.TryGetValue(idSala, out var clientesSala))
+                List<ClienteChat> clientesSala;
+                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
                 {
                     return new List<ClienteChat>();
                 }
 
-                var clienteRemovido = clientesSala.RemoveAll(clienteChat =>
-                    string.Equals(
-                        clienteChat.NombreJugador,
+                int cantidadRemovida = 0;
+                for (int i = clientesSala.Count - 1; i >= 0; i--)
+                {
+                    if (string.Equals(
+                        clientesSala[i].NombreJugador,
                         nombreJugador,
-                        StringComparison.OrdinalIgnoreCase)) > 0;
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        clientesSala.RemoveAt(i);
+                        cantidadRemovida++;
+                    }
+                }
+
+                bool clienteRemovido = cantidadRemovida > 0;
 
                 if (!clienteRemovido)
                 {
@@ -331,10 +387,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             foreach (var cliente in destinatarios)
             {
-                EjecutarNotificacionSegura(
-                    idSala,
-                    cliente,
-                    callback => callback.NotificarJugadorSalio(nombreJugador));
+                NotificarJugadorSalioSeguro(idSala, cliente, nombreJugador);
+            }
+        }
+
+        private static void NotificarJugadorSalioSeguro(
+            string idSala,
+            ClienteChat cliente,
+            string nombreJugador)
+        {
+            try
+            {
+                cliente.Callback.NotificarJugadorSalio(nombreJugador);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion con cliente. Removiendo callback.", excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Timeout al notificar cliente. Removiendo callback.", excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Warn(
+                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn(
+                    "Error inesperado al notificar cliente. Removiendo callback.",
+                    excepcion);
+                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
         }
 
@@ -360,8 +448,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             var canal = OperationContext.Current?.Channel;
             if (canal != null)
             {
-                canal.Closed += (_, __) => RemoverCliente(idSala, nombreJugador);
-                canal.Faulted += (_, __) => RemoverCliente(idSala, nombreJugador);
+                EventHandler manejadorClosed = null;
+                EventHandler manejadorFaulted = null;
+
+                manejadorClosed = delegate(object remitente, EventArgs argumentos)
+                {
+                    RemoverCliente(idSala, nombreJugador);
+                };
+
+                manejadorFaulted = delegate(object remitente, EventArgs argumentos)
+                {
+                    RemoverCliente(idSala, nombreJugador);
+                };
+
+                canal.Closed += manejadorClosed;
+                canal.Faulted += manejadorFaulted;
             }
         }
 
@@ -374,7 +475,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             lock (_sincronizacion)
             {
-                if (!_clientesPorSala.TryGetValue(idSala, out var clientesSala))
+                List<ClienteChat> clientesSala;
+                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
                 {
                     return;
                 }
@@ -384,21 +486,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             foreach (var cliente in clientesANotificar)
             {
-                EjecutarNotificacionSegura(
-                    idSala,
-                    cliente,
-                    callback => callback.RecibirMensaje(nombreJugador, mensaje));
+                NotificarMensajeSeguro(idSala, cliente, nombreJugador, mensaje);
             }
         }
 
-        private static void EjecutarNotificacionSegura(
+        private static void NotificarMensajeSeguro(
             string idSala,
             ClienteChat cliente,
-            Action<IChatManejadorCallback> accion)
+            string nombreJugador,
+            string mensaje)
         {
             try
             {
-                accion(cliente.Callback);
+                cliente.Callback.RecibirMensaje(nombreJugador, mensaje);
             }
             catch (CommunicationException excepcion)
             {
@@ -430,13 +530,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             lock (_sincronizacion)
             {
-                if (_clientesPorSala.TryGetValue(idSala, out var clientesSala))
+                List<ClienteChat> clientesSala;
+                if (_clientesPorSala.TryGetValue(idSala, out clientesSala))
                 {
-                    clientesSala.RemoveAll(clienteChat =>
-                        string.Equals(
-                            clienteChat.NombreJugador,
+                    for (int i = clientesSala.Count - 1; i >= 0; i--)
+                    {
+                        if (string.Equals(
+                            clientesSala[i].NombreJugador,
                             nombreJugador,
-                            StringComparison.OrdinalIgnoreCase));
+                            StringComparison.OrdinalIgnoreCase))
+                        {
+                            clientesSala.RemoveAt(i);
+                        }
+                    }
 
                     if (clientesSala.Count == 0)
                     {

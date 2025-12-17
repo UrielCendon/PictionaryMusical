@@ -148,12 +148,41 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             public string PuertoString { get; set; }
             public string SslString { get; set; }
 
-            public int Puerto => int.TryParse(PuertoString, out int p) ? p : 587;
-            public bool HabilitarSsl => bool.TryParse(SslString, out bool ssl) && ssl;
+            public int Puerto
+            {
+                get
+                {
+                    int puerto;
+                    if (int.TryParse(PuertoString, out puerto))
+                    {
+                        return puerto;
+                    }
+                    return 587;
+                }
+            }
 
-            public bool EsValida => !string.IsNullOrWhiteSpace(Remitente)
-                                 && !string.IsNullOrWhiteSpace(Host)
-                                 && HabilitarSsl;
+            public bool HabilitarSsl
+            {
+                get
+                {
+                    bool ssl;
+                    if (bool.TryParse(SslString, out ssl))
+                    {
+                        return ssl;
+                    }
+                    return false;
+                }
+            }
+
+            public bool EsValida
+            {
+                get
+                {
+                    return !string.IsNullOrWhiteSpace(Remitente)
+                        && !string.IsNullOrWhiteSpace(Host)
+                        && HabilitarSsl;
+                }
+            }
         }
 
         internal static string ConstruirCuerpoMensaje(string codigoSala, string creador, 

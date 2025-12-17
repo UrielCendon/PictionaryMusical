@@ -55,7 +55,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(tiempoRonda), 
-                    "El tiempo de ronda y el número total de rondas deben ser mayores que cero.");
+                    "El tiempo de ronda y el nï¿½mero total de rondas deben ser mayores que cero.");
             }
 
             if (string.IsNullOrWhiteSpace(dificultad))
@@ -417,16 +417,18 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void IniciarTimerRondaConRetardo()
         {
-            Task.Delay(TiempoOverlayClienteSegundos * 1000).ContinueWith(_ =>
+            Task.Delay(TiempoOverlayClienteSegundos * 1000).ContinueWith(ManejarRetardoTimer);
+        }
+
+        private void ManejarRetardoTimer(Task tarea)
+        {
+            lock (_sincronizacion)
             {
-                lock (_sincronizacion)
+                if (_estadoActual == EstadoPartida.Jugando)
                 {
-                    if (_estadoActual == EstadoPartida.Jugando)
-                    {
-                        _gestorTiempos.IniciarRonda();
-                    }
+                    _gestorTiempos.IniciarRonda();
                 }
-            });
+            }
         }
 
         private void FinalizarRondaActual(bool forzarPorAciertos = false)
@@ -526,8 +528,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void SuscribirEventosTiempo()
         {
-            _gestorTiempos.TiempoRondaAgotado += () => FinalizarRondaActual();
+            _gestorTiempos.TiempoRondaAgotado += ManejarTiempoRondaAgotado;
             _gestorTiempos.TiempoTransicionAgotado += PrepararSiguienteRonda;
+        }
+
+        private void ManejarTiempoRondaAgotado()
+        {
+            FinalizarRondaActual();
         }
 
         private static bool EsMensajeInvalido(string id, string mensaje)

@@ -57,7 +57,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             lock (_sincronizacion)
             {
-                if (_callbacks.TryGetValue(nombreUsuario, out var callback))
+                ISalasManejadorCallback callback;
+                if (_callbacks.TryGetValue(nombreUsuario, out callback))
                 {
                     return callback;
                 }
@@ -86,7 +87,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var destinatarios = ObtenerDestinatariosExcluyendo(nombreUsuario);
             foreach (var callback in destinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarJugadorSeUnio(codigoSala, nombreUsuario));
+                NotificarJugadorSeUnioSeguro(callback, codigoSala, nombreUsuario);
             }
             NotificarActualizacionGlobal(salaActualizada);
         }
@@ -100,8 +101,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var destinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in destinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarJugadorSalio(codigoSala, nombreUsuario));
-                EjecutarSeguro(() => callback.NotificarSalaActualizada(salaActualizada));
+                NotificarJugadorSalioSeguro(callback, codigoSala, nombreUsuario);
+                NotificarSalaActualizadaSeguro(callback, salaActualizada);
             }
         }
 
@@ -118,19 +119,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in todosLosDestinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarJugadorExpulsado(codigoSala, nombreExpulsado));
+                NotificarJugadorExpulsadoSeguro(callback, codigoSala, nombreExpulsado);
             }
 
             if (callbackExpulsado != null)
             {
-                EjecutarSeguro(() => callbackExpulsado.NotificarJugadorExpulsado(codigoSala,
-                    nombreExpulsado));
+                NotificarJugadorExpulsadoSeguro(callbackExpulsado, codigoSala, nombreExpulsado);
             }
 
             var destinatarios = ObtenerDestinatariosExcluyendo(nombreExpulsado);
             foreach (var callback in destinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarSalaActualizada(salaActualizada));
+                NotificarSalaActualizadaSeguro(callback, salaActualizada);
             }
 
             _logger.InfoFormat(
@@ -146,7 +146,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var destinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in destinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarSalaCancelada(codigoSala));
+                NotificarSalaCanceladaSeguro(callback, codigoSala);
             }
         }
 
@@ -155,13 +155,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             lock (_sincronizacion)
             {
-                return _callbacks
-                    .Where(callbackRegistrado => !string.Equals(
-                        callbackRegistrado.Key, 
+                var resultado = new List<ISalasManejadorCallback>();
+                foreach (var callbackRegistrado in _callbacks)
+                {
+                    bool esUsuarioExcluido = string.Equals(
+                        callbackRegistrado.Key,
                         usuarioExcluido,
-                        StringComparison.OrdinalIgnoreCase))
-                    .Select(callbackRegistrado => callbackRegistrado.Value)
-                    .ToList();
+                        StringComparison.OrdinalIgnoreCase);
+
+                    if (!esUsuarioExcluido)
+                    {
+                        resultado.Add(callbackRegistrado.Value);
+                    }
+                }
+                return resultado;
             }
         }
 
@@ -169,7 +176,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             lock (_sincronizacion)
             {
-                return _callbacks.Values.ToList();
+                return new List<ISalasManejadorCallback>(_callbacks.Values);
             }
         }
 
@@ -178,15 +185,124 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var destinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in destinatarios)
             {
-                EjecutarSeguro(() => callback.NotificarSalaActualizada(sala));
+                NotificarSalaActualizadaSeguro(callback, sala);
             }
         }
 
-        private static void EjecutarSeguro(Action accion)
+        private static void NotificarJugadorSeUnioSeguro(
+            ISalasManejadorCallback callback, 
+            string codigoSala, 
+            string nombreUsuario)
         {
             try
             {
-                accion();
+                callback.NotificarJugadorSeUnio(codigoSala, nombreUsuario);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion al notificar cliente en sala.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", excepcion);
+            }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Warn("Canal WCF cerrado al ejecutar notificacion en sala.", excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
+            }
+        }
+
+        private static void NotificarJugadorSalioSeguro(
+            ISalasManejadorCallback callback, 
+            string codigoSala, 
+            string nombreUsuario)
+        {
+            try
+            {
+                callback.NotificarJugadorSalio(codigoSala, nombreUsuario);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion al notificar cliente en sala.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", excepcion);
+            }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Warn("Canal WCF cerrado al ejecutar notificacion en sala.", excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
+            }
+        }
+
+        private static void NotificarSalaActualizadaSeguro(
+            ISalasManejadorCallback callback, 
+            SalaDTO sala)
+        {
+            try
+            {
+                callback.NotificarSalaActualizada(sala);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion al notificar cliente en sala.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", excepcion);
+            }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Warn("Canal WCF cerrado al ejecutar notificacion en sala.", excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
+            }
+        }
+
+        private static void NotificarJugadorExpulsadoSeguro(
+            ISalasManejadorCallback callback, 
+            string codigoSala, 
+            string nombreExpulsado)
+        {
+            try
+            {
+                callback.NotificarJugadorExpulsado(codigoSala, nombreExpulsado);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error de comunicacion al notificar cliente en sala.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Tiempo de espera agotado al notificar cliente en sala.", excepcion);
+            }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Warn("Canal WCF cerrado al ejecutar notificacion en sala.", excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error inesperado al ejecutar notificacion WCF en sala.", excepcion);
+            }
+        }
+
+        private static void NotificarSalaCanceladaSeguro(
+            ISalasManejadorCallback callback, 
+            string codigoSala)
+        {
+            try
+            {
+                callback.NotificarSalaCancelada(codigoSala);
             }
             catch (CommunicationException excepcion)
             {

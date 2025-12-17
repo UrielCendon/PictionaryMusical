@@ -150,7 +150,8 @@ namespace PictionaryMusicalServidor.Datos
         /// catalogo.</exception>
         public Cancion ObtenerCancionPorId(int idCancion)
         {
-            if (_canciones.TryGetValue(idCancion, out var cancion))
+            Cancion cancion;
+            if (_canciones.TryGetValue(idCancion, out cancion))
             {
                 return cancion;
             }
@@ -225,17 +226,26 @@ namespace PictionaryMusicalServidor.Datos
         private static List<Cancion> ObtenerCandidatos(string idiomaNormalizado, 
             HashSet<int> idsRechazados)
         {
-            var candidatos = _canciones.Values
-                .Where(cancion => !idsRechazados.Contains(cancion.Id));
-
-            if (!string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase))
+            var candidatos = new List<Cancion>();
+            foreach (var cancion in _canciones.Values)
             {
-                candidatos = candidatos.Where(cancion =>
-                    string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
-                    StringComparison.OrdinalIgnoreCase));
+                if (idsRechazados.Contains(cancion.Id))
+                {
+                    continue;
+                }
+
+                if (string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase))
+                {
+                    candidatos.Add(cancion);
+                }
+                else if (string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    candidatos.Add(cancion);
+                }
             }
 
-            return candidatos.ToList();
+            return candidatos;
         }
 
         private static void RegistrarErrorFaltaCanciones(string idiomaOriginal, 

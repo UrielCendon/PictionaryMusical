@@ -162,14 +162,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return new List<AmigoDTO>();
                 }
 
-                return amigos
-                    .Where(amigo => amigo != null)
-                    .Select(amigo => new AmigoDTO
+                var resultado = new List<AmigoDTO>();
+                foreach (var amigo in amigos)
+                {
+                    if (amigo != null)
                     {
-                        UsuarioId = amigo.idUsuario,
-                        NombreUsuario = amigo.Nombre_Usuario
-                    })
-                    .ToList();
+                        resultado.Add(new AmigoDTO
+                        {
+                            UsuarioId = amigo.idUsuario,
+                            NombreUsuario = amigo.Nombre_Usuario
+                        });
+                    }
+                }
+                return resultado;
             }
         }
 

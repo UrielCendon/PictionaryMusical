@@ -36,7 +36,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return;
             }
 
-            _suscripciones.AddOrUpdate(nombreUsuario, callback, (_, __) => callback);
+            _suscripciones[nombreUsuario] = callback;
         }
 
         /// <summary>
@@ -48,17 +48,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var canal = OperationContext.Current?.Channel;
             if (canal != null)
             {
-                canal.Closed += (_, __) => 
+                EventHandler manejadorClosed = null;
+                EventHandler manejadorFaulted = null;
+
+                manejadorClosed = delegate(object remitente, EventArgs argumentos)
                 {
                     Desuscribir(nombreUsuario);
                 };
-                canal.Faulted += (_, __) => 
+
+                manejadorFaulted = delegate(object remitente, EventArgs argumentos)
                 {
                     _logger.WarnFormat(
                         "Canal fallado (Faulted) para usuario '{0}'. Desuscribiendo.", 
                         nombreUsuario);
                     Desuscribir(nombreUsuario);
                 };
+
+                canal.Closed += manejadorClosed;
+                canal.Faulted += manejadorFaulted;
             }
         }
 
@@ -73,18 +80,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return;
             }
 
-            _suscripciones.TryRemove(nombreUsuario, out _);
+            TCallback valorDescartado;
+            _suscripciones.TryRemove(nombreUsuario, out valorDescartado);
         }
 
         /// <summary>
         /// Intenta obtener el callback registrado para un usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario.</param>
-        /// <param name="callback">Callback registrado si existe.</param>
-        /// <returns>True si el callback existe, false en caso contrario.</returns>
-        public bool TryGetCallback(string nombreUsuario, out TCallback callback)
+        /// <returns>Callback registrado si existe, null en caso contrario.</returns>
+        public TCallback ObtenerCallback(string nombreUsuario)
         {
-            return _suscripciones.TryGetValue(nombreUsuario, out callback);
+            TCallback callback;
+            if (_suscripciones.TryGetValue(nombreUsuario, out callback))
+            {
+                return callback;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Verifica si existe un callback registrado para un usuario.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario.</param>
+        /// <returns>True si el callback existe, false en caso contrario.</returns>
+        public bool ExisteCallback(string nombreUsuario)
+        {
+            return _suscripciones.ContainsKey(nombreUsuario);
         }
 
         /// <summary>
@@ -117,7 +139,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <param name="accionNotificacion">Accion de notificacion a ejecutar.</param>
         public void Notificar(string nombreUsuario, Action<TCallback> accionNotificacion)
         {
-            if (!TryGetCallback(nombreUsuario, out var callback))
+            TCallback callback = ObtenerCallback(nombreUsuario);
+            if (callback == null)
             {
                 return;
             }

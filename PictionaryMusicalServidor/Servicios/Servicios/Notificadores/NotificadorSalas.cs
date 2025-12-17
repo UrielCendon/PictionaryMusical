@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
@@ -17,11 +18,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorSalas));
         private readonly ConcurrentDictionary<Guid, ISalasManejadorCallback> _suscripciones =
             new ConcurrentDictionary<Guid, ISalasManejadorCallback>();
-        private readonly Func<IEnumerable<SalaInternaManejador>> _obtenerSalas;
+        private readonly IObtenerSalas _proveedorSalas;
 
-        public NotificadorSalas(Func<IEnumerable<SalaInternaManejador>> obtenerSalas)
+        public NotificadorSalas(IObtenerSalas proveedorSalas)
         {
-            _obtenerSalas = obtenerSalas;
+            _proveedorSalas = proveedorSalas;
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         public Guid Suscribir(ISalasManejadorCallback callback)
         {
             var sesionId = Guid.NewGuid();
-            _suscripciones.AddOrUpdate(sesionId, callback, (idSuscripcion, _) => callback);
+            _suscripciones[sesionId] = callback;
 
             return sesionId;
         }
@@ -43,7 +44,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="sesionId">ID de la suscripcion a eliminar.</param>
         public void Desuscribir(Guid sesionId)
         {
-            _suscripciones.TryRemove(sesionId, out _);
+            ISalasManejadorCallback valorDescartado;
+            _suscripciones.TryRemove(sesionId, out valorDescartado);
         }
 
         /// <summary>
@@ -52,14 +54,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="callback">Callback a desuscribir.</param>
         public void DesuscribirPorCallback(ISalasManejadorCallback callback)
         {
-            var clavesSuscripciones = _suscripciones
-                .Where(suscripcion => ReferenceEquals(suscripcion.Value, callback))
-                .Select(suscripcion => suscripcion.Key)
-                .ToList();
+            var clavesSuscripciones = new List<Guid>();
+
+            foreach (var suscripcion in _suscripciones)
+            {
+                if (ReferenceEquals(suscripcion.Value, callback))
+                {
+                    clavesSuscripciones.Add(suscripcion.Key);
+                }
+            }
 
             foreach (var claveSuscripcion in clavesSuscripciones)
             {
-                _suscripciones.TryRemove(claveSuscripcion, out _);
+                ISalasManejadorCallback valorDescartado;
+                _suscripciones.TryRemove(claveSuscripcion, out valorDescartado);
             }
         }
 
@@ -71,7 +79,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         {
             try
             {
-                var salas = _obtenerSalas().Select(sala => sala.ConvertirADto()).ToArray();
+                var salasInternas = _proveedorSalas.ObtenerSalasInternas();
+                var salas = ConvertirSalasADto(salasInternas);
                 callback.NotificarListaSalasActualizada(salas);
             }
             catch (CommunicationException excepcion)
@@ -101,7 +110,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// </summary>
         public void NotificarListaSalasATodos()
         {
-            var salas = _obtenerSalas().Select(sala => sala.ConvertirADto()).ToArray();
+            var salasInternas = _proveedorSalas.ObtenerSalasInternas();
+            var salas = ConvertirSalasADto(salasInternas);
 
             foreach (var suscripcion in _suscripciones)
             {
@@ -114,14 +124,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                     _logger.Warn(
                         "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.",
                         excepcion);
-                    _suscripciones.TryRemove(suscripcion.Key, out _);
+                    ISalasManejadorCallback valorDescartado;
+                    _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
                 }
                 catch (TimeoutException excepcion)
                 {
                     _logger.Warn(
                         "Timeout al notificar masivamente lista de salas. Eliminando suscripcion defectuosa.",
                         excepcion);
-                        _suscripciones.TryRemove(suscripcion.Key, out _);
+                    ISalasManejadorCallback valorDescartado;
+                    _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
                 }
                 catch (ObjectDisposedException excepcion)
                 {
@@ -135,5 +147,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
             }
         }
+
+        private static SalaDTO[] ConvertirSalasADto(IEnumerable<SalaInternaManejador> salasInternas)
+        {
+            var listaSalas = new List<SalaDTO>();
+            foreach (var sala in salasInternas)
+            {
+                listaSalas.Add(sala.ConvertirADto());
+            }
+            return listaSalas.ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Interfaz para obtener la coleccion de salas.
+    /// </summary>
+    internal interface IObtenerSalas
+    {
+        IEnumerable<SalaInternaManejador> ObtenerSalasInternas();
     }
 }
