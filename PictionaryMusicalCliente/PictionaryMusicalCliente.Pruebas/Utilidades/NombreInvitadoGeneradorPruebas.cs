@@ -212,7 +212,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_ResultadoGeneracion_FalloRecursoNoEncontrado_MotivoCorreecto()
+        public void Prueba_ResultadoGeneracion_FalloRecursoNoEncontrado_MotivoCorrecto()
         {
             var resultado = ResultadoGeneracion.Fallo(MotivoFalloGeneracion.RecursoNoEncontrado);
 
