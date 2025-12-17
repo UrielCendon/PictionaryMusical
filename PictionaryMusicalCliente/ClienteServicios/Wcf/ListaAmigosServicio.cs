@@ -14,6 +14,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// <summary>
     /// Administra la conexion Duplex para mantener actualizada la lista de amigos conectados.
     /// </summary>
+    [CallbackBehavior(
+        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        UseSynchronizationContext = false)]
     public sealed class ListaAmigosServicio : IListaAmigosServicio,
         PictionaryServidorServicioListaAmigos.IListaAmigosManejadorCallback
     {

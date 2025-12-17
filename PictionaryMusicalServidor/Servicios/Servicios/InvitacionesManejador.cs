@@ -103,7 +103,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.OperacionInvalidaInvitacion, excepcion);
-                return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
+                return CrearFallo(
+                    excepcion.Message ?? MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (EntityException excepcion)
             {

@@ -281,7 +281,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.ErrorOperacionAbandonar, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorOperacionInvalida);
+                throw new FaultException(
+                    excepcion.Message ?? MensajesError.Cliente.ErrorOperacionInvalida);
             }
             catch (Exception excepcion)
             {
@@ -435,7 +436,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.ErrorOperacionExpulsar, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorInesperadoExpulsar);
+                throw new FaultException(
+                    excepcion.Message ?? MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
             catch (Exception excepcion)
             {

@@ -43,6 +43,7 @@ namespace PictionaryMusicalCliente.Vista
         private void AlCerrarSeSala(object sender, CancelEventArgs argumentosEvento)
         {
             if (DataContext is SalaVistaModelo vistaModelo && 
+                vistaModelo.DebeEjecutarAccionAlCerrar() &&
                 vistaModelo.CerrarVentanaComando.CanExecute(null))
             {
                 vistaModelo.CerrarVentanaComando.Execute(null);
@@ -55,9 +56,18 @@ namespace PictionaryMusicalCliente.Vista
             Closed -= AlCerrarSala;
             Closing -= AlCerrarSeSala;
 
+            bool debeCerrarAplicacion = false;
+
             if (DataContext is SalaVistaModelo vistaModelo)
             {
-                await vistaModelo.FinalizarAsync().ConfigureAwait(false);
+                await vistaModelo.FinalizarAsync().ConfigureAwait(true);
+                debeCerrarAplicacion = vistaModelo.DebeEjecutarAccionAlCerrar() && 
+                    DebeCerrarAplicacionPorCierreDeVentana();
+            }
+
+            if (debeCerrarAplicacion)
+            {
+                Application.Current?.Shutdown();
             }
         }
 

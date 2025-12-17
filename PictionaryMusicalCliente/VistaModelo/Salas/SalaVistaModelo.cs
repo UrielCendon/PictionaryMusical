@@ -29,6 +29,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     /// ViewModel que gestiona la logica de una sala de juego.
     /// Coordina la comunicacion entre jugadores, el chat y el estado de la partida.
     /// </summary>
+    [CallbackBehavior(
+        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        UseSynchronizationContext = false)]
     public class SalaVistaModelo : BaseVistaModelo, ICursoPartidaManejadorCallback
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -68,6 +71,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _codigoSala;
         private string _correoInvitacion;
         private bool _aplicacionCerrando;
+        private bool _expulsionNavegada;
+        private bool _cancelacionNavegada;
         private HashSet<string> _adivinadoresQuienYaAcertaron;
         private string _nombreDibujanteActual;
         private bool _rondaTerminadaTemprano;
@@ -184,7 +189,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _esInvitado);
             _eventosManejador = new SalaEventosManejador(
                 _salasServicio,
-                _avisoServicio,
                 _sala.Codigo,
                 _nombreUsuarioSesion,
                 _sala.Creador);
@@ -476,15 +480,40 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// </summary>
         public ICommand EnviarMensajeChatComando { get; private set; }
 
+        private Func<string, bool> _mostrarConfirmacion;
+        private Func<string, ResultadoReporteJugador> _solicitarDatosReporte;
+
         /// <summary>
         /// Delegado para mostrar dialogos de confirmacion.
         /// </summary>
-        public Func<string, bool> MostrarConfirmacion { get; set; }
+        public Func<string, bool> MostrarConfirmacion
+        {
+            get => _mostrarConfirmacion;
+            set
+            {
+                _mostrarConfirmacion = value;
+                if (_jugadoresManejador != null)
+                {
+                    _jugadoresManejador.MostrarConfirmacion = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Delegado para solicitar datos de un reporte de jugador.
         /// </summary>
-        public Func<string, ResultadoReporteJugador> SolicitarDatosReporte { get; set; }
+        public Func<string, ResultadoReporteJugador> SolicitarDatosReporte
+        {
+            get => _solicitarDatosReporte;
+            set
+            {
+                _solicitarDatosReporte = value;
+                if (_jugadoresManejador != null)
+                {
+                    _jugadoresManejador.SolicitarDatosReporte = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Accion para cerrar la ventana actual.
@@ -1211,7 +1240,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _nombreUsuarioSesion,
                     StringComparison.OrdinalIgnoreCase)) == true;
 
-            if (!_eventosManejador.ExpulsionProcesada && !usuarioSiguePresente)
+            if (!_expulsionNavegada && !usuarioSiguePresente)
             {
                 ManejarExpulsionPropia();
                 return;
@@ -1230,11 +1259,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void ManejarExpulsionPropia()
         {
-            if (_eventosManejador.ExpulsionProcesada)
+            if (_expulsionNavegada)
             {
                 return;
             }
 
+            _expulsionNavegada = true;
             _eventosManejador.MarcarSalaCancelada();
             _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
             var destino = ObtenerDestinoSegunSesion();
@@ -1254,11 +1284,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void CancelarSalaPorAnfitrion()
         {
-            if (_eventosManejador.SalaCancelada)
+            if (_cancelacionNavegada)
             {
                 return;
             }
 
+            _cancelacionNavegada = true;
             _eventosManejador.MarcarSalaCancelada();
             _logger.Warn("La sala se cancelo porque el anfitrion abandono la partida.");
 

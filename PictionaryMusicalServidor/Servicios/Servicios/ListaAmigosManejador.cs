@@ -34,14 +34,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
+        /// Usa CallbacksCompartidos para asegurar que AmigosManejador pueda
+        /// notificar a los clientes suscritos aqui.
         /// </summary>
         public ListaAmigosManejador() : this(
             new ContextoFactoria(),
             new RepositorioFactoria(),
             new AmistadServicio(),
             new NotificadorListaAmigos(
-                new ManejadorCallback<IListaAmigosManejadorCallback>(
-                    StringComparer.OrdinalIgnoreCase),
+                CallbacksCompartidos.ListaAmigos,
                 new AmistadServicio(),
                 new RepositorioFactoria()))
         {
@@ -69,8 +70,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
 
-            _manejadorCallback = new ManejadorCallback<IListaAmigosManejadorCallback>(
-                StringComparer.OrdinalIgnoreCase);
+            _manejadorCallback = CallbacksCompartidos.ListaAmigos;
         }
 
         /// <summary>

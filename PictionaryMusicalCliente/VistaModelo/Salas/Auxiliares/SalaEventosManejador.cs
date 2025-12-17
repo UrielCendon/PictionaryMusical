@@ -1,6 +1,5 @@
 ﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.Linq;
 using System.Windows;
@@ -17,7 +16,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly ISalasServicio _salasServicio;
-        private readonly IAvisoServicio _avisoServicio;
         private readonly string _codigoSala;
         private readonly string _nombreUsuarioSesion;
         private readonly string _creadorSala;
@@ -31,15 +29,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// </summary>
         public SalaEventosManejador(
             ISalasServicio salasServicio,
-            IAvisoServicio avisoServicio,
             string codigoSala,
             string nombreUsuarioSesion,
             string creadorSala)
         {
             _salasServicio = salasServicio ?? 
                 throw new ArgumentNullException(nameof(salasServicio));
-            _avisoServicio = avisoServicio ?? 
-                throw new ArgumentNullException(nameof(avisoServicio));
             _codigoSala = codigoSala ?? string.Empty;
             _nombreUsuarioSesion = nombreUsuarioSesion ?? string.Empty;
             _creadorSala = creadorSala ?? string.Empty;
@@ -234,7 +229,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             }
 
             _expulsionProcesada = true;
-            _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
             ExpulsionPropia?.Invoke();
         }
 
@@ -248,7 +242,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             _salaCancelada = true;
             _logger.Warn(
                 "La sala se cancelo porque el anfitrion abandono la partida.");
-            _avisoServicio.Mostrar(Lang.partidaTextoHostCanceloSala);
             SalaCanceladaPorAnfitrion?.Invoke();
         }
 

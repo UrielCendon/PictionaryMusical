@@ -14,6 +14,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// <summary>
     /// Gestiona la comunicacion y eventos en tiempo real para las salas de juego.
     /// </summary>
+    [CallbackBehavior(
+        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        UseSynchronizationContext = false)]
     public sealed class SalasServicio : ISalasServicio,
         PictionaryServidorServicioSalas.ISalasManejadorCallback
     {

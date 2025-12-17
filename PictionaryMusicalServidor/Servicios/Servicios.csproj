@@ -103,6 +103,7 @@
     <Compile Include="LogicaNegocio\GestorTiemposPartida.cs" />
     <Compile Include="Servicios\ReportesManejador.cs" />
     <Compile Include="Servicios\Utilidades\ActualizadorClasificacionPartida.cs" />
+    <Compile Include="Servicios\Utilidades\CallbacksCompartidos.cs" />
     <Compile Include="Servicios\Utilidades\GestorCallbacksPartida.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />
     <Compile Include="Contratos\IVerificacionRegistroServicio.cs" />

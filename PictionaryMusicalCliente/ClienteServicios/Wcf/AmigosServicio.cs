@@ -14,6 +14,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// <summary>
     /// Gestiona la comunicacion Duplex para solicitudes de amistad en tiempo real.
     /// </summary>
+    [CallbackBehavior(
+        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        UseSynchronizationContext = false)]
     public class AmigosServicio : IAmigosServicio,
         PictionaryServidorServicioAmigos.IAmigosManejadorCallback
     {

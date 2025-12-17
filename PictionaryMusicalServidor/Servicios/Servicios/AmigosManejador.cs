@@ -34,14 +34,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
+        /// Usa CallbacksCompartidos para asegurar que las notificaciones lleguen
+        /// a todos los clientes suscritos en ListaAmigosManejador.
         /// </summary>
         public AmigosManejador() : this(
             new ContextoFactoria(),
             new RepositorioFactoria(),
             new AmistadServicio(),
             new NotificadorListaAmigos(
-                new ManejadorCallback<IListaAmigosManejadorCallback>(
-                    StringComparer.OrdinalIgnoreCase),
+                CallbacksCompartidos.ListaAmigos,
                 new AmistadServicio(),
                 new RepositorioFactoria()))
         {
@@ -169,7 +170,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.ReglaNegocioVioladaSolicitud, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
+                throw new FaultException(
+                    excepcion.Message ?? MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
@@ -221,7 +223,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.ReglaNegocioVioladaAceptar, excepcion);
-                throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
+                throw new FaultException(
+                    excepcion.Message ?? MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
@@ -271,7 +274,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Log.ReglaNegocioVioladaEliminar, excepcion);
-                throw new FaultException(MensajesError.Cliente.RelacionAmistadNoExiste);
+                throw new FaultException(
+                    excepcion.Message ?? MensajesError.Cliente.RelacionAmistadNoExiste);
             }
             catch (DbUpdateException excepcion)
             {
