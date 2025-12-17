@@ -23,11 +23,7 @@ namespace PictionaryMusicalServidor.HostServidor
         {
             ConfigurarLogging();
 
-            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
-            {
-                _logger.Fatal("Excepcion no controlada en el dominio de la aplicacion.", 
-                    (Exception)e.ExceptionObject);
-            };
+            AppDomain.CurrentDomain.UnhandledException += ManejarExcepcionNoControlada;
 
             try
             {
@@ -152,6 +148,13 @@ namespace PictionaryMusicalServidor.HostServidor
                 _logger.Error("Error inesperado al intentar cerrar un host.", excepcion);
                 host.Abort();
             }
+        }
+
+        private static void ManejarExcepcionNoControlada(object sender, 
+            UnhandledExceptionEventArgs argumentos)
+        {
+            _logger.Fatal("Excepcion no controlada en el dominio de la aplicacion.", 
+                (Exception)argumentos.ExceptionObject);
         }
     }
 }

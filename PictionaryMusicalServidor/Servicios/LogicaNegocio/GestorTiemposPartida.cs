@@ -43,10 +43,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 AutoReset = false 
             };
 
-            _timerRonda.Elapsed += (s, e) =>
-            {
-                TiempoRondaAgotado?.Invoke();
-            };
+            _timerRonda.Elapsed += ManejarTiempoRondaAgotado;
 
             _timerTransicion = new Timer
             {
@@ -54,10 +51,17 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 Interval = duracionTransicionSegundos * 1000
             };
 
-            _timerTransicion.Elapsed += (s, e) =>
-            {
-                TiempoTransicionAgotado?.Invoke();
-            };
+            _timerTransicion.Elapsed += ManejarTiempoTransicionAgotado;
+        }
+
+        private void ManejarTiempoRondaAgotado(object sender, ElapsedEventArgs argumentos)
+        {
+            TiempoRondaAgotado?.Invoke();
+        }
+
+        private void ManejarTiempoTransicionAgotado(object sender, ElapsedEventArgs argumentos)
+        {
+            TiempoTransicionAgotado?.Invoke();
         }
 
         /// <summary>

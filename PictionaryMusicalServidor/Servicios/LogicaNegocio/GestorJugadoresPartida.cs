@@ -65,7 +65,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>La instancia del jugador o null si no se encuentra.</returns>
         public JugadorPartida Obtener(string idConexion)
         {
-            _jugadores.TryGetValue(idConexion, out var jugador);
+            JugadorPartida jugador;
+            _jugadores.TryGetValue(idConexion, out jugador);
             return jugador;
         }
 
@@ -79,7 +80,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public bool Remover(string idConexion, out bool eraDibujante)
         {
             eraDibujante = false;
-            if (_jugadores.TryGetValue(idConexion, out var jugador))
+            JugadorPartida jugador;
+            if (_jugadores.TryGetValue(idConexion, out jugador))
             {
                 eraDibujante = jugador.EsDibujante;
                 _jugadores.Remove(idConexion);
@@ -96,7 +98,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>True si el jugador es Host, False en caso contrario.</returns>
         public bool EsHost(string idConexion)
         {
-            return _jugadores.TryGetValue(idConexion, out var jugador) && jugador.EsHost;
+            JugadorPartida jugador;
+            if (_jugadores.TryGetValue(idConexion, out jugador))
+            {
+                return jugador.EsHost;
+            }
+            return false;
         }
 
         /// <summary>
@@ -106,9 +113,17 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public void PrepararColaDibujantes()
         {
             _colaDibujantes.Clear();
-            var idsAleatorios = _jugadores.Keys.OrderBy(idJugador => _random.Next()).ToList();
+            var listaIds = new List<string>(_jugadores.Keys);
+            
+            for (int i = listaIds.Count - 1; i > 0; i--)
+            {
+                int j = _random.Next(i + 1);
+                var temp = listaIds[i];
+                listaIds[i] = listaIds[j];
+                listaIds[j] = temp;
+            }
 
-            foreach (var id in idsAleatorios)
+            foreach (var id in listaIds)
             {
                 _colaDibujantes.Enqueue(id);
             }
@@ -127,7 +142,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             while (_colaDibujantes.Count > 0)
             {
                 var id = _colaDibujantes.Dequeue();
-                if (_jugadores.TryGetValue(id, out var jugador))
+                JugadorPartida jugador;
+                if (_jugadores.TryGetValue(id, out jugador))
                 {
                     jugador.EsDibujante = true;
                     jugador.YaAdivino = true;
@@ -143,8 +159,28 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>True si todos han adivinado, False si falta alguno.</returns>
         public bool TodosAdivinaron()
         {
-            var adivinadores = _jugadores.Values.Where(jugador => !jugador.EsDibujante).ToList();
-            return adivinadores.Count > 0 && adivinadores.All(jugador => jugador.YaAdivino);
+            var adivinadores = new List<JugadorPartida>();
+            foreach (var jugador in _jugadores.Values)
+            {
+                if (!jugador.EsDibujante)
+                {
+                    adivinadores.Add(jugador);
+                }
+            }
+
+            if (adivinadores.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (var jugador in adivinadores)
+            {
+                if (!jugador.YaAdivino)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -153,14 +189,22 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>Lista de objetos DTO con la clasificacion.</returns>
         public List<ClasificacionUsuarioDTO> GenerarClasificacion()
         {
-            return _jugadores.Values
-                .Select(jugador => new ClasificacionUsuarioDTO
+            var clasificacion = new List<ClasificacionUsuarioDTO>();
+            foreach (var jugador in _jugadores.Values)
+            {
+                clasificacion.Add(new ClasificacionUsuarioDTO
                 {
                     Usuario = jugador.NombreUsuario,
                     Puntos = jugador.PuntajeTotal
-                })
-                .OrderByDescending(jugador => jugador.Puntos)
-                .ToList();
+                });
+            }
+
+            clasificacion.Sort(delegate(ClasificacionUsuarioDTO a, ClasificacionUsuarioDTO b)
+            {
+                return b.Puntos.CompareTo(a.Puntos);
+            });
+
+            return clasificacion;
         }
 
         /// <summary>
@@ -170,7 +214,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>Coleccion de jugadores.</returns>
         public IReadOnlyCollection<JugadorPartida> ObtenerCopiaLista()
         {
-            return _jugadores.Values.Select(jugador => jugador.CopiarDatosBasicos()).ToList();
+            var copia = new List<JugadorPartida>();
+            foreach (var jugador in _jugadores.Values)
+            {
+                copia.Add(jugador.CopiarDatosBasicos());
+            }
+            return copia;
         }
 
         /// <summary>
@@ -198,9 +247,14 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 return;
             }
 
-            var lista = _colaDibujantes
-                .Where(id => id != idExcluido && _jugadores.ContainsKey(id))
-                .ToList();
+            var lista = new List<string>();
+            foreach (var id in _colaDibujantes)
+            {
+                if (id != idExcluido && _jugadores.ContainsKey(id))
+                {
+                    lista.Add(id);
+                }
+            }
 
             _colaDibujantes.Clear();
 

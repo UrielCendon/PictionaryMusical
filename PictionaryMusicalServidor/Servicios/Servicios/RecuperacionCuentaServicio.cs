@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
@@ -113,9 +114,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearFalloReenvio(MensajesError.Cliente.DatosReenvioCodigo);
             }
 
+            SolicitudRecuperacionPendiente pendiente;
             if (!_solicitudesRecuperacion.TryGetValue(
                 solicitud.TokenCodigo,
-                out SolicitudRecuperacionPendiente pendiente))
+                out pendiente))
             {
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
@@ -123,7 +125,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (pendiente.Expira < DateTime.UtcNow)
             {
-                _solicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out _);
+                SolicitudRecuperacionPendiente solicitudDescartada;
+                _solicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out solicitudDescartada);
                 return CrearFalloReenvio(MensajesError.Cliente.CodigoRecuperacionExpirado);
             }
 
@@ -141,9 +144,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 return CrearFalloOperacion(MensajesError.Cliente.DatosConfirmacionInvalidos);
             }
 
+            SolicitudRecuperacionPendiente pendiente;
             if (!_solicitudesRecuperacion.TryGetValue(
                 confirmacion.TokenCodigo,
-                out SolicitudRecuperacionPendiente pendiente))
+                out pendiente))
             {
                 return CrearFalloOperacion(
                     MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
@@ -259,13 +263,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static void LimpiarSolicitudesRecuperacion(int usuarioId)
         {
-            var registros = _solicitudesRecuperacion
-                .Where(solicitud => solicitud.Value.UsuarioId == usuarioId)
-                .ToList();
+            var registros = new List<KeyValuePair<string, SolicitudRecuperacionPendiente>>();
+            foreach (var solicitud in _solicitudesRecuperacion)
+            {
+                if (solicitud.Value.UsuarioId == usuarioId)
+                {
+                    registros.Add(solicitud);
+                }
+            }
 
             foreach (var registro in registros)
             {
-                _solicitudesRecuperacion.TryRemove(registro.Key, out _);
+                SolicitudRecuperacionPendiente solicitudDescartada;
+                _solicitudesRecuperacion.TryRemove(registro.Key, out solicitudDescartada);
             }
         }
 
@@ -338,7 +348,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (pendiente.Expira < DateTime.UtcNow)
             {
-                _solicitudesRecuperacion.TryRemove(token, out _);
+                SolicitudRecuperacionPendiente solicitudDescartada;
+                _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
                 return CrearFalloOperacion(MensajesError.Cliente.CodigoRecuperacionExpirado);
             }
 
@@ -370,16 +381,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private static (bool Exito, SolicitudRecuperacionPendiente Pendiente, string MensajeError)
             VerificarTokenYExpiracion(string token)
         {
+            SolicitudRecuperacionPendiente pendiente;
             if (!_solicitudesRecuperacion.TryGetValue(
                 token,
-                out SolicitudRecuperacionPendiente pendiente))
+                out pendiente))
             {
                 return (false, null, MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
             if (pendiente.Expira < DateTime.UtcNow)
             {
-                _solicitudesRecuperacion.TryRemove(token, out _);
+                SolicitudRecuperacionPendiente solicitudDescartada;
+                _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
                 return (false, null, MensajesError.Cliente.SolicitudRecuperacionInvalida);
             }
 
@@ -402,7 +415,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     repositorio.ActualizarContrasena(usuarioId, hash);
                 }
 
-                _solicitudesRecuperacion.TryRemove(token, out _);
+                SolicitudRecuperacionPendiente solicitudDescartada;
+                _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
                 return new ResultadoOperacionDTO { OperacionExitosa = true };
             }
             catch (EntityException excepcion)

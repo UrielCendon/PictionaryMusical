@@ -136,7 +136,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 RegistrarConfirmacion(pendiente);
-                _solicitudes.TryRemove(confirmacion.TokenCodigo, out _);
+                SolicitudCodigoPendiente solicitudDescartada;
+                _solicitudes.TryRemove(confirmacion.TokenCodigo, out solicitudDescartada);
 
                 _logger.Info("Verificacion confirmada exitosamente.");
 
@@ -185,7 +186,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             string clave = ObtenerClave(nuevaCuenta.Usuario, nuevaCuenta.Correo);
-            _verificacionesConfirmadas.TryRemove(clave, out _);
+            byte valorDescartado;
+            _verificacionesConfirmadas.TryRemove(clave, out valorDescartado);
         }
 
         private static ResultadoOperacionDTO ValidarDatosSolicitud(NuevaCuentaDTO nuevaCuenta)
@@ -202,11 +204,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                bool usuarioRegistrado = contexto.Usuario.Any(
-                    usuario => usuario.Nombre_Usuario == nuevaCuenta.Usuario);
+                bool usuarioRegistrado = false;
+                foreach (var usuario in contexto.Usuario)
+                {
+                    if (usuario.Nombre_Usuario == nuevaCuenta.Usuario)
+                    {
+                        usuarioRegistrado = true;
+                        break;
+                    }
+                }
 
-                bool correoRegistrado = contexto.Jugador.Any(
-                    jugador => jugador.Correo == nuevaCuenta.Correo);
+                bool correoRegistrado = false;
+                foreach (var jugador in contexto.Jugador)
+                {
+                    if (jugador.Correo == nuevaCuenta.Correo)
+                    {
+                        correoRegistrado = true;
+                        break;
+                    }
+                }
 
                 if (usuarioRegistrado || correoRegistrado)
                 {
@@ -277,7 +293,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static SolicitudCodigoPendiente ObtenerSolicitudPendiente(string token)
         {
-            if (!_solicitudes.TryGetValue(token, out SolicitudCodigoPendiente existente))
+            SolicitudCodigoPendiente existente;
+            if (!_solicitudes.TryGetValue(token, out existente))
             {
                 _logger.Warn("Token no encontrado o expirado en cache.");
                 throw new KeyNotFoundException("La solicitud de verificacion no existe.");
@@ -346,7 +363,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (pendiente.Expira < DateTime.UtcNow)
             {
-                _solicitudes.TryRemove(token, out _);
+                SolicitudCodigoPendiente solicitudDescartada;
+                _solicitudes.TryRemove(token, out solicitudDescartada);
                 return (false, MensajesError.Cliente.CodigoVerificacionExpirado);
             }
 

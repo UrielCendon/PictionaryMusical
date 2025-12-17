@@ -112,10 +112,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="amigos">Lista actualizada de amigos.</param>
         public void NotificarLista(string nombreUsuario, List<AmigoDTO> amigos)
         {
-            _manejadorCallback.Notificar(nombreUsuario, callback =>
+            IListaAmigosManejadorCallback callback = _manejadorCallback.ObtenerCallback(nombreUsuario);
+            if (callback != null)
             {
-                callback.NotificarListaAmigosActualizada(amigos);
-            });
+                try
+                {
+                    callback.NotificarListaAmigosActualizada(amigos);
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al notificar lista de amigos actualizada.", excepcion);
+                }
+            }
         }
 
         private List<AmigoDTO> ObtenerAmigosPorNombre(string nombreUsuario)

@@ -34,10 +34,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         public void NotificarSolicitudActualizada(string nombreUsuario, 
             SolicitudAmistadDTO solicitud)
         {
-            _manejadorCallback.Notificar(nombreUsuario, callback =>
+            IAmigosManejadorCallback callback = _manejadorCallback.ObtenerCallback(nombreUsuario);
+            if (callback != null)
             {
-                callback.NotificarSolicitudActualizada(solicitud);
-            });
+                try
+                {
+                    callback.NotificarSolicitudActualizada(solicitud);
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al notificar solicitud actualizada.", excepcion);
+                }
+            }
         }
 
         /// <summary>
@@ -47,10 +55,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="solicitud">Detalles de la relacion eliminada.</param>
         public void NotificarAmistadEliminada(string nombreUsuario, SolicitudAmistadDTO solicitud)
         {
-            _manejadorCallback.Notificar(nombreUsuario, callback =>
+            IAmigosManejadorCallback callback = _manejadorCallback.ObtenerCallback(nombreUsuario);
+            if (callback != null)
             {
-                callback.NotificarAmistadEliminada(solicitud);
-            });
+                try
+                {
+                    callback.NotificarAmistadEliminada(solicitud);
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al notificar amistad eliminada.", excepcion);
+                }
+            }
         }
 
         /// <summary>

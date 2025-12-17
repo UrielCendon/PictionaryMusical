@@ -134,40 +134,62 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return CrearResultadoOperacion(false, MensajesError.Cliente.DatosInvalidos);
             }
 
-            var validaciones = new Func<ResultadoOperacionDTO>[]
+            ResultadoValidacionCampo resultadoUsuario = ValidarCampoObligatorio(
+                nuevaCuenta.Usuario, 
+                EsLongitudValida, 
+                MensajesError.Cliente.UsuarioRegistroInvalido);
+
+            if (!resultadoUsuario.Resultado.OperacionExitosa)
             {
-                () => ValidarYAsignarCampo(
-                    nuevaCuenta.Usuario,
-                    EsLongitudValida,
-                    MensajesError.Cliente.UsuarioRegistroInvalido,
-                    s => nuevaCuenta.Usuario = s),
+                return resultadoUsuario.Resultado;
+            }
+            nuevaCuenta.Usuario = resultadoUsuario.ValorNormalizado;
 
-                () => ValidarYAsignarCampo(
-                    nuevaCuenta.Nombre,
-                    EsLongitudValida,
-                    MensajesError.Cliente.NombreRegistroInvalido,
-                    s => nuevaCuenta.Nombre = s),
+            ResultadoValidacionCampo resultadoNombre = ValidarCampoObligatorio(
+                nuevaCuenta.Nombre, 
+                EsLongitudValida, 
+                MensajesError.Cliente.NombreRegistroInvalido);
 
-                () => ValidarYAsignarCampo(
-                    nuevaCuenta.Apellido,
-                    EsLongitudValida,
-                    MensajesError.Cliente.ApellidoRegistroInvalido,
-                    s => nuevaCuenta.Apellido = s),
+            if (!resultadoNombre.Resultado.OperacionExitosa)
+            {
+                return resultadoNombre.Resultado;
+            }
+            nuevaCuenta.Nombre = resultadoNombre.ValorNormalizado;
 
-                () => ValidarYAsignarCampo(
-                    nuevaCuenta.Correo,
-                    EsCorreoValido,
-                    MensajesError.Cliente.CorreoRegistroInvalido,
-                    s => nuevaCuenta.Correo = s),
+            ResultadoValidacionCampo resultadoApellido = ValidarCampoObligatorio(
+                nuevaCuenta.Apellido, 
+                EsLongitudValida, 
+                MensajesError.Cliente.ApellidoRegistroInvalido);
 
-                () => ValidarYAsignarCampo(
-                    nuevaCuenta.Contrasena,
-                    EsContrasenaValida,
-                    MensajesError.Cliente.ContrasenaRegistroInvalida,
-                    s => nuevaCuenta.Contrasena = s)
-            };
+            if (!resultadoApellido.Resultado.OperacionExitosa)
+            {
+                return resultadoApellido.Resultado;
+            }
+            nuevaCuenta.Apellido = resultadoApellido.ValorNormalizado;
 
-            return EjecutarValidaciones(validaciones);
+            ResultadoValidacionCampo resultadoCorreo = ValidarCampoObligatorio(
+                nuevaCuenta.Correo, 
+                EsCorreoValido, 
+                MensajesError.Cliente.CorreoRegistroInvalido);
+
+            if (!resultadoCorreo.Resultado.OperacionExitosa)
+            {
+                return resultadoCorreo.Resultado;
+            }
+            nuevaCuenta.Correo = resultadoCorreo.ValorNormalizado;
+
+            ResultadoValidacionCampo resultadoContrasena = ValidarCampoObligatorio(
+                nuevaCuenta.Contrasena, 
+                EsContrasenaValida, 
+                MensajesError.Cliente.ContrasenaRegistroInvalida);
+
+            if (!resultadoContrasena.Resultado.OperacionExitosa)
+            {
+                return resultadoContrasena.Resultado;
+            }
+            nuevaCuenta.Contrasena = resultadoContrasena.ValorNormalizado;
+
+            return CrearResultadoOperacion(true);
         }
 
         public static ResultadoOperacionDTO ValidarActualizacionPerfil(
@@ -195,125 +217,136 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         private static ResultadoOperacionDTO ValidarDatosPersonalesPerfil(
             ActualizacionPerfilDTO solicitud)
         {
-            var validaciones = new Func<ResultadoOperacionDTO>[]
+            ResultadoValidacionCampo resultadoNombre = ValidarCampoObligatorio(
+                solicitud.Nombre,
+                EsLongitudValida,
+                MensajesError.Cliente.NombreRegistroInvalido);
+
+            if (!resultadoNombre.Resultado.OperacionExitosa)
             {
-                () => ValidarYAsignarCampo(
-                    solicitud.Nombre,
-                    EsLongitudValida,
-                    MensajesError.Cliente.NombreRegistroInvalido,
-                    s => solicitud.Nombre = s),
+                return resultadoNombre.Resultado;
+            }
+            solicitud.Nombre = resultadoNombre.ValorNormalizado;
 
-                () => ValidarYAsignarCampo(
-                    solicitud.Apellido,
-                    EsLongitudValida,
-                    MensajesError.Cliente.ApellidoRegistroInvalido,
-                    s => solicitud.Apellido = s)
-            };
+            ResultadoValidacionCampo resultadoApellido = ValidarCampoObligatorio(
+                solicitud.Apellido,
+                EsLongitudValida,
+                MensajesError.Cliente.ApellidoRegistroInvalido);
 
-            return EjecutarValidaciones(validaciones);
+            if (!resultadoApellido.Resultado.OperacionExitosa)
+            {
+                return resultadoApellido.Resultado;
+            }
+            solicitud.Apellido = resultadoApellido.ValorNormalizado;
+
+            return CrearResultadoOperacion(true);
         }
 
         private static ResultadoOperacionDTO ValidarRedesSociales(ActualizacionPerfilDTO solicitud)
         {
-            var validaciones = new Func<ResultadoOperacionDTO>[]
-            {
-                () => ValidarYAsignarRed("Instagram", solicitud.Instagram,
-                    s => solicitud.Instagram = s),
-                () => ValidarYAsignarRed("Facebook", solicitud.Facebook,
-                    s => solicitud.Facebook = s),
-                () => ValidarYAsignarRed("X", solicitud.X,
-                    s => solicitud.X = s),
-                () => ValidarYAsignarRed("Discord", solicitud.Discord,
-                    s => solicitud.Discord = s)
-            };
+            ResultadoValidacionRedSocial resultadoInstagram = ValidarRedSocial(
+                "Instagram", 
+                solicitud.Instagram);
 
-            return EjecutarValidaciones(validaciones);
-        }
-
-        /// <summary>
-        /// Itera sobre una lista de funciones de validacion y retorna el primer error encontrado
-        /// o exito si todas pasan.
-        /// </summary>
-        private static ResultadoOperacionDTO EjecutarValidaciones(
-            Func<ResultadoOperacionDTO>[] validaciones)
-        {
-            foreach (var validacion in validaciones)
+            if (!resultadoInstagram.Resultado.OperacionExitosa)
             {
-                var resultado = validacion();
-                if (!resultado.OperacionExitosa)
-                {
-                    return resultado;
-                }
+                return resultadoInstagram.Resultado;
             }
+            solicitud.Instagram = resultadoInstagram.ValorNormalizado;
+
+            ResultadoValidacionRedSocial resultadoFacebook = ValidarRedSocial(
+                "Facebook", 
+                solicitud.Facebook);
+
+            if (!resultadoFacebook.Resultado.OperacionExitosa)
+            {
+                return resultadoFacebook.Resultado;
+            }
+            solicitud.Facebook = resultadoFacebook.ValorNormalizado;
+
+            ResultadoValidacionRedSocial resultadoX = ValidarRedSocial("X", solicitud.X);
+            if (!resultadoX.Resultado.OperacionExitosa)
+            {
+                return resultadoX.Resultado;
+            }
+            solicitud.X = resultadoX.ValorNormalizado;
+
+            ResultadoValidacionRedSocial resultadoDiscord = ValidarRedSocial(
+                "Discord", 
+                solicitud.Discord);
+
+            if (!resultadoDiscord.Resultado.OperacionExitosa)
+            {
+                return resultadoDiscord.Resultado;
+            }
+            solicitud.Discord = resultadoDiscord.ValorNormalizado;
+
             return CrearResultadoOperacion(true);
         }
 
-        private static ResultadoOperacionDTO ValidarYAsignarCampo(
-            string valor,
-            Func<string, bool> reglaValidacion,
-            string mensajeError,
-            Action<string> asignador)
-        {
-            var resultado = ValidarCampoObligatorio(valor, reglaValidacion, mensajeError,
-                out string normalizado);
-
-            if (resultado.OperacionExitosa)
-            {
-                asignador(normalizado);
-            }
-            return resultado;
-        }
-
-        private static ResultadoOperacionDTO ValidarYAsignarRed(
-            string nombreRed,
-            string valor,
-            Action<string> asignador)
-        {
-            var resultado = ValidarRedSocial(nombreRed, valor, out string normalizado);
-            if (resultado.OperacionExitosa)
-            {
-                asignador(normalizado);
-            }
-            return resultado;
-        }
-
-        private static ResultadoOperacionDTO ValidarCampoObligatorio(
+        private static ResultadoValidacionCampo ValidarCampoObligatorio(
             string campo,
             Func<string, bool> regla,
-            string mensajeError,
-            out string campoNormalizado)
+            string mensajeError)
         {
-            campoNormalizado = NormalizarTexto(campo);
+            string campoNormalizado = NormalizarTexto(campo);
             if (!regla(campoNormalizado))
             {
-                campoNormalizado = null;
-                return CrearResultadoOperacion(false, mensajeError);
+                return new ResultadoValidacionCampo
+                {
+                    Resultado = CrearResultadoOperacion(false, mensajeError),
+                    ValorNormalizado = null
+                };
             }
 
-            return CrearResultadoOperacion(true);
+            return new ResultadoValidacionCampo
+            {
+                Resultado = CrearResultadoOperacion(true),
+                ValorNormalizado = campoNormalizado
+            };
         }
 
-        private static ResultadoOperacionDTO ValidarRedSocial(
-            string nombre,
-            string valor,
-            out string valorNormalizado)
+        private static ResultadoValidacionRedSocial ValidarRedSocial(string nombre, string valor)
         {
-            valorNormalizado = NormalizarTexto(valor);
+            string valorNormalizado = NormalizarTexto(valor);
             if (valorNormalizado == null)
             {
-                return CrearResultadoOperacion(true);
+                return new ResultadoValidacionRedSocial
+                {
+                    Resultado = CrearResultadoOperacion(true),
+                    ValorNormalizado = null
+                };
             }
 
             if (valorNormalizado.Length > LongitudMaximaTexto)
             {
-                valorNormalizado = null;
-                return CrearResultadoOperacion(
-                    false,
-                    string.Format("El identificador de {0} no debe exceder {1} caracteres.",
-                        nombre, LongitudMaximaTexto));
+                return new ResultadoValidacionRedSocial
+                {
+                    Resultado = CrearResultadoOperacion(
+                        false,
+                        string.Format("El identificador de {0} no debe exceder {1} caracteres.",
+                            nombre, LongitudMaximaTexto)),
+                    ValorNormalizado = null
+                };
             }
 
-            return CrearResultadoOperacion(true);
+            return new ResultadoValidacionRedSocial
+            {
+                Resultado = CrearResultadoOperacion(true),
+                ValorNormalizado = valorNormalizado
+            };
+        }
+
+        private sealed class ResultadoValidacionCampo
+        {
+            public ResultadoOperacionDTO Resultado { get; set; }
+            public string ValorNormalizado { get; set; }
+        }
+
+        private sealed class ResultadoValidacionRedSocial
+        {
+            public ResultadoOperacionDTO Resultado { get; set; }
+            public string ValorNormalizado { get; set; }
         }
 
         private static ResultadoOperacionDTO CrearResultadoOperacion(bool exitoso,
