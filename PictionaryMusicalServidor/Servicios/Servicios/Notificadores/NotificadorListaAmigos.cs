@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="nombreUsuario">Usuario a notificar.</param>
         public void NotificarCambioAmistad(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            if (!EntradaComunValidador.EsMensajeValido(nombreUsuario))
             {
                 return;
             }

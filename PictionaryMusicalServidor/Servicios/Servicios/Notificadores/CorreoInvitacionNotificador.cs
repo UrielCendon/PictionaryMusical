@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
@@ -30,7 +31,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         public async Task<bool> EnviarInvitacionAsync(string correoDestino, string codigoSala, 
             string creador, string idioma)
         {
-            if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigoSala))
+            if (!EntradaComunValidador.EsMensajeValido(correoDestino) || 
+                !EntradaComunValidador.EsCodigoSalaValido(codigoSala))
             {
                 return false;
             }

@@ -160,12 +160,11 @@
     <Compile Include="Servicios\Notificadores\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\ICodigoVerificacionNotificador.cs" />
-    <Compile Include="Servicios\Utilidades\CodigoVerificacionGenerador.cs" />
+    <Compile Include="Servicios\Utilidades\GeneradorAleatorio.cs" />
     <Compile Include="Servicios\Utilidades\IRepositorioFactoria.cs" />
     <Compile Include="Servicios\Utilidades\IValidadorNombreUsuario.cs" />
     <Compile Include="Servicios\Utilidades\ManejadorCallback.cs" />
     <Compile Include="Servicios\Utilidades\RepositorioFactoria.cs" />
-    <Compile Include="Servicios\Utilidades\TokenGenerador.cs" />
     <Compile Include="Servicios\Utilidades\ValidadorNombreUsuario.cs" />
     <Compile Include="Servicios\VerificacionRegistroServicio.cs" />
   </ItemGroup>

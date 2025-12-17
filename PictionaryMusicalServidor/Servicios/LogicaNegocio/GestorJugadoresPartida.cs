@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
@@ -13,7 +14,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     {
         private readonly Dictionary<string, JugadorPartida> _jugadores;
         private readonly Queue<string> _colaDibujantes;
-        private readonly Random _random;
 
         /// <summary>
         /// Inicializa una nueva instancia del gestor de jugadores.
@@ -22,7 +22,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             _jugadores = new Dictionary<string, JugadorPartida>(StringComparer.Ordinal);
             _colaDibujantes = new Queue<string>();
-            _random = new Random();
         }
 
         /// <summary>
@@ -115,13 +114,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             _colaDibujantes.Clear();
             var listaIds = new List<string>(_jugadores.Keys);
             
-            for (int i = listaIds.Count - 1; i > 0; i--)
-            {
-                int j = _random.Next(i + 1);
-                var temp = listaIds[i];
-                listaIds[i] = listaIds[j];
-                listaIds[j] = temp;
-            }
+            GeneradorAleatorio.MezclarLista(listaIds);
 
             foreach (var id in listaIds)
             {

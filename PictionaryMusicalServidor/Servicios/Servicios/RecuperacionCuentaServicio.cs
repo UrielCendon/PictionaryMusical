@@ -217,8 +217,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private (bool Exito, string Token, SolicitudRecuperacionPendiente Pendiente)
             GenerarYEnviarCodigo(Usuario usuario, string idioma)
         {
-            string token = TokenGenerador.GenerarToken();
-            string codigo = CodigoVerificacionGenerador.GenerarCodigo();
+            string token = GeneradorAleatorio.GenerarToken();
+            string codigo = GeneradorAleatorio.GenerarCodigoVerificacion();
 
             var pendiente = new SolicitudRecuperacionPendiente
             {
@@ -294,7 +294,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             DateTime expiracionAnterior = pendiente.Expira;
             bool confirmadoAnterior = pendiente.Confirmado;
 
-            string nuevoCodigo = CodigoVerificacionGenerador.GenerarCodigo();
+            string nuevoCodigo = GeneradorAleatorio.GenerarCodigoVerificacion();
             pendiente.Codigo = nuevoCodigo;
             pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
             pendiente.Confirmado = false;

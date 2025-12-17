@@ -7,6 +7,7 @@ using log4net;
 using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Datos.Excepciones;
+using PictionaryMusicalServidor.Datos.Utilidades;
 
 namespace PictionaryMusicalServidor.Datos
 {
@@ -64,9 +65,6 @@ namespace PictionaryMusicalServidor.Datos
             { 39, CrearCancion(39, "Starman", "David Bowie", "Glam Rock", IdiomaIngles) },
             { 40, CrearCancion(40, "Time In A Bottle", "Jim Croce", "Folk", IdiomaIngles) }
         };
-
-        private static readonly object _randomLock = new object();
-        private static readonly Random _random = new Random();
 
         /// <summary>
         /// Obtiene una cancion aleatoria segun el idioma solicitado y excluyendo los 
@@ -258,11 +256,7 @@ namespace PictionaryMusicalServidor.Datos
 
         private static Cancion SeleccionarAleatorio(List<Cancion> candidatos)
         {
-            lock (_randomLock)
-            {
-                var indice = _random.Next(candidatos.Count);
-                return candidatos[indice];
-            }
+            return GeneradorAleatorioDatos.SeleccionarAleatorio(candidatos);
         }
 
         private static string NormalizarTexto(string texto)
