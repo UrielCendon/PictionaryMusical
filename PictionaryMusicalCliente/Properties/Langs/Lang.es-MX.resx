@@ -266,43 +266,43 @@
     <value>Se eliminó al amigo de tu lista.</value>
   </data>
   <data name="amigosErrorRecuperarSolicitudes" xml:space="preserve">
-    <value>No fue posible recuperar las solicitudes de amistad.</value>
+    <value>No pudimos cargar tus solicitudes de amistad. Intenta más tarde.</value>
   </data>
   <data name="amigosAvisoSinSolicitudesPendientes" xml:space="preserve">
     <value>No tienes solicitudes de amistad pendientes.</value>
   </data>
   <data name="amigosErrorAutoSolicitud" xml:space="preserve">
-    <value>No es posible enviarse una solicitud de amistad a sí mismo.</value>
+    <value>No puedes enviarte una solicitud de amistad a ti mismo.</value>
   </data>
   <data name="amigosErrorUsuarioNoExiste" xml:space="preserve">
-    <value>El usuario ingresado no se encontró, por favor ingrese otro.</value>
+    <value>No encontramos a ese usuario. Verifica el nombre e intenta de nuevo.</value>
   </data>
   <data name="amigosErrorRelacionExiste" xml:space="preserve">
-    <value>Ya existe una solicitud o relación de amistad entre los usuarios.</value>
+    <value>Ya tienes una solicitud o amistad con este usuario.</value>
   </data>
   <data name="amigosErrorCompletarSolicitud" xml:space="preserve">
-    <value>No fue posible completar la solicitud de amistad.</value>
+    <value>No pudimos enviar la solicitud de amistad. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorAlmacenarSolicitud" xml:space="preserve">
     <value>No fue posible almacenar la solicitud de amistad.</value>
   </data>
   <data name="amigosErrorSolicitudAceptada" xml:space="preserve">
-    <value>La solicitud de amistad ya fue aceptada con anterioridad.</value>
+    <value>Esta solicitud de amistad ya fue aceptada.</value>
   </data>
   <data name="amigosErrorSolicitudNoExiste" xml:space="preserve">
-    <value>No existe una solicitud de amistad entre los usuarios.</value>
+    <value>No existe una solicitud de amistad con este usuario.</value>
   </data>
   <data name="amigosErrorAceptarSolicitud" xml:space="preserve">
-    <value>No fue posible aceptar la solicitud de amistad.</value>
+    <value>No pudimos aceptar la solicitud de amistad. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorActualizarSolicitud" xml:space="preserve">
-    <value>No fue posible actualizar la solicitud de amistad.</value>
+    <value>No pudimos procesar la solicitud de amistad. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorRelacionNoExiste" xml:space="preserve">
-    <value>No existe una relación de amistad entre los usuarios.</value>
+    <value>No tienes una amistad con este usuario.</value>
   </data>
   <data name="amigosErrorEliminarRelacion" xml:space="preserve">
-    <value>No fue posible eliminar la relación de amistad.</value>
+    <value>No pudimos eliminar a este amigo. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorEliminarRelacionBaseDatos" xml:space="preserve">
     <value>No fue posible eliminar la relación de amistad en la base de datos.</value>
@@ -483,10 +483,10 @@ aciertan o cuando se acaba el tiempo.
     <value>Partida en curso</value>
   </data>
   <data name="partidaTextoHostCanceloSala" xml:space="preserve">
-    <value>El anfitrión de la sala abandonó la partida, por lo tanto, esta fue cancelada.</value>
+    <value>La partida se canceló porque el anfitrión abandonó.</value>
   </data>
   <data name="partidaTextoJugadoresInsuficientes" xml:space="preserve">
-    <value>No hay suficientes jugadores para seguir jugando, se canceló la partida.</value>
+    <value>La partida se canceló porque ya no hay suficientes jugadores.</value>
   </data>
   <data name="avisoTextoCodigoDescripcionCambio" xml:space="preserve">
     <value>Ingresa el código que enviamos para confirmar el cambio de contraseña.</value>
@@ -510,7 +510,7 @@ aciertan o cuando se acaba el tiempo.
     <value>La contraseña se actualizó correctamente.</value>
   </data>
   <data name="avisoTextoPerfilActualizado" xml:space="preserve">
-    <value>Los datos del perfil se actualizaron correctamente.</value>
+    <value>Tu perfil se actualizó correctamente.</value>
   </data>
   <data name="avisoTextoReenvioCodigoNoDisponible" xml:space="preserve">
     <value>No es posible reenviar el código todavía.</value>
@@ -525,7 +525,7 @@ aciertan o cuando se acaba el tiempo.
     <value>Ocurrió un problema de comunicación con el servidor. Se mostrarán los datos actuales de la sesión.</value>
   </data>
   <data name="errorTextoActualizarContrasena" xml:space="preserve">
-    <value>No se pudo actualizar la contraseña. Intente nuevamente.</value>
+    <value>No pudimos actualizar tu contraseña. Intenta más tarde.</value>
   </data>
   <data name="errorTextoActualizarPerfil" xml:space="preserve">
     <value>No se pudo actualizar el perfil. Intente nuevamente.</value>
@@ -1083,25 +1083,82 @@ aciertan o cuando se acaba el tiempo.
     <value>REPORTAR</value>
   </data>
   <data name="reportarJugadorTextoMotivoRequerido" xml:space="preserve">
-    <value>El motivo del reporte es obligatorio</value>
+    <value>Por favor, escribe el motivo del reporte.</value>
   </data>
   <data name="reportarJugadorTextoExito" xml:space="preserve">
-    <value>El reporte se envió correctamente</value>
+    <value>Reporte enviado correctamente.</value>
   </data>
   <data name="reportarJugadorTextoDuplicado" xml:space="preserve">
-    <value>Ya has reportado a este jugador</value>
+    <value>Ya reportaste a este jugador anteriormente.</value>
   </data>
   <data name="reportarJugadorTextoAutoReporte" xml:space="preserve">
-    <value>No puedes reportarte a ti mismo</value>
+    <value>No puedes reportarte a ti mismo.</value>
   </data>
   <data name="errorTextoReportarJugador" xml:space="preserve">
-    <value>Ocurrió un error al enviar el reporte</value>
+    <value>No pudimos enviar el reporte. Intenta más tarde.</value>
   </data>
   <data name="reportarJugadorTextoMotivoLongitud" xml:space="preserve">
-    <value>El motivo del reporte no debe exceder 100 caracteres</value>
+    <value>El motivo del reporte es muy largo. Usa máximo 100 caracteres.</value>
   </data>
   <data name="MensajeChatTextoMotivoLongitud" xml:space="preserve">
-    <value>El mensaje supera el limite de caracteres.</value>
+    <value>Tu mensaje es muy largo. Usa menos de 200 caracteres.</value>
+  </data>
+  <data name="errorTextoEnviarMensaje" xml:space="preserve">
+    <value>No pudimos enviar el mensaje. Intenta de nuevo.</value>
+  </data>
+  <data name="errorTextoCuentaNoVerificada" xml:space="preserve">
+    <value>Tu cuenta aún no ha sido verificada. Revisa tu correo electrónico.</value>
+  </data>
+  <data name="errorTextoInvitacionExpirada" xml:space="preserve">
+    <value>La invitación no es válida o ha expirado.</value>
+  </data>
+  <data name="errorTextoEnviarInvitacion" xml:space="preserve">
+    <value>No pudimos enviar la invitación. Intenta más tarde.</value>
+  </data>
+  <data name="errorTextoCrearSala" xml:space="preserve">
+    <value>No pudimos crear la sala. Intenta más tarde.</value>
+  </data>
+  <data name="errorTextoUnirsePartida" xml:space="preserve">
+    <value>No pudimos unirte a la sala. Intenta más tarde.</value>
+  </data>
+  <data name="errorTextoAbandonarPartida" xml:space="preserve">
+    <value>Ocurrió un problema al salir de la sala.</value>
+  </data>
+  <data name="errorTextoExpulsarJugador" xml:space="preserve">
+    <value>No pudimos expulsar al jugador. Intenta más tarde.</value>
+  </data>
+  <data name="errorTextoSoloCreador" xml:space="preserve">
+    <value>Solo el creador de la sala puede expulsar jugadores.</value>
+  </data>
+  <data name="errorTextoCreadorNoExpulsable" xml:space="preserve">
+    <value>El creador de la sala no puede ser expulsado.</value>
+  </data>
+  <data name="errorTextoJugadorNoEnSala" xml:space="preserve">
+    <value>El jugador ya no está en la sala.</value>
+  </data>
+  <data name="errorTextoCodigoSalaRequerido" xml:space="preserve">
+    <value>Ingresa el código de la sala.</value>
+  </data>
+  <data name="errorTextoConfiguracionRequerida" xml:space="preserve">
+    <value>Configura la partida antes de iniciar.</value>
+  </data>
+  <data name="errorTextoRondasInvalidas" xml:space="preserve">
+    <value>El número de rondas debe ser mayor a cero.</value>
+  </data>
+  <data name="errorTextoTiempoInvalido" xml:space="preserve">
+    <value>El tiempo por ronda debe ser mayor a cero.</value>
+  </data>
+  <data name="errorTextoIdiomaRequerido" xml:space="preserve">
+    <value>Selecciona el idioma de las canciones.</value>
+  </data>
+  <data name="errorTextoDificultadRequerida" xml:space="preserve">
+    <value>Selecciona la dificultad.</value>
+  </data>
+  <data name="errorTextoSoloHost" xml:space="preserve">
+    <value>Solo el anfitrión puede iniciar la partida.</value>
+  </data>
+  <data name="avisoTextoOperacionExitosa" xml:space="preserve">
+    <value>Operación completada correctamente.</value>
   </data>
   <data name="errorTextoNoCargaronAvatares" xml:space="preserve">
     <value>No se pudieron cargar los avatares, intente de nuevo más tarde.</value>

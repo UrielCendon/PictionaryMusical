@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!SonCredencialesValidas(credenciales))
             {
-                _logger.Warn("Intento de inicio de sesion con formato de datos invalido.");
+                _logger.Warn(MensajesError.Log.IntentoInicioSesionFormatoInvalido);
                 return CrearRespuestaDatosInvalidos();
             }
 
@@ -77,22 +77,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos durante el inicio de sesion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos durante el inicio de sesion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida durante el inicio de sesion.", excepcion);
+                _logger.Error(MensajesError.Log.OperacionInvalidaInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado durante el inicio de sesion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
         }
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Inicio de sesion fallido. Usuario no encontrado.", excepcion);
+                _logger.Warn(MensajesError.Log.InicioSesionUsuarioNoEncontrado, excepcion);
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = false,
@@ -141,7 +141,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!VerificarContrasena(credenciales.Contrasena, usuario.Contrasena))
             {
-                _logger.Warn("Inicio de sesion fallido. Contrasena incorrecta.");
+                _logger.Warn(MensajesError.Log.InicioSesionContrasenaIncorrecta);
 
                 return new ResultadoInicioSesionDTO
                 {

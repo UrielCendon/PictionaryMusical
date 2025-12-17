@@ -1,4 +1,5 @@
 using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using System;
 using System.Configuration;
@@ -40,7 +41,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var config = ObtenerConfiguracionSmtp();
             if (!config.EsValida)
             {
-                _logger.Error("La configuracion de correo es invalida o esta incompleta.");
+                _logger.Error(MensajesError.Log.ConfiguracionCorreoInvalida);
                 return false;
             }
 
@@ -160,27 +161,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (SmtpException excepcion)
             {
-                _logger.Error("Error SMTP al enviar correo electronico.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorSmtpEnviarCorreo, excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al enviar correo.", excepcion);
+                _logger.Error(MensajesError.Log.OperacionInvalidaEnviarCorreo, excepcion);
                 return false;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Error("Argumentos invalidos para enviar correo.", excepcion);
+                _logger.Error(MensajesError.Log.ArgumentosInvalidosCorreo, excepcion);
                 return false;
             }
             catch (FormatException excepcion)
             {
-                _logger.Error("Formato de correo invalido al enviar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Formato de correo invalido al enviar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
                 return false;
             }
         }

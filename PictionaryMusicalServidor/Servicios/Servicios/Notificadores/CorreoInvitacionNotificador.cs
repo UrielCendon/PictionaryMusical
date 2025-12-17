@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
@@ -40,7 +41,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var configuracion = ObtenerConfiguracionSmtp();
             if (!configuracion.EsValida)
             {
-                _logger.Error("La configuracion de correo es invalida o esta incompleta.");
+                _logger.Error(MensajesError.Log.ConfiguracionCorreoInvalida);
                 return false;
             }
 
@@ -116,27 +117,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (SmtpException excepcion)
             {
-                _logger.Error("Error SMTP al enviar correo electronico.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorSmtpEnviarCorreo, excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al enviar correo.", excepcion);
+                _logger.Error(MensajesError.Log.OperacionInvalidaEnviarCorreo, excepcion);
                 return false;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Error("Argumentos invalidos para enviar correo.", excepcion);
+                _logger.Error(MensajesError.Log.ArgumentosInvalidosCorreo, excepcion);
                 return false;
             }
             catch (FormatException excepcion)
             {
-                _logger.Error("Formato de correo invalido al enviar invitacion.", excepcion);
+                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Formato de correo invalido al enviar invitacion.", excepcion);
+                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
                 return false;
             }
         }

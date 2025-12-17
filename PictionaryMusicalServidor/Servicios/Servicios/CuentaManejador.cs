@@ -97,32 +97,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error("Validacion de entidad fallida durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.ValidacionEntidadFallidaRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error de actualizacion de BD durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizacionBDRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.OperacionInvalidaRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado durante el registro.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
         }
@@ -203,7 +203,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             if (!_verificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
             {
-                _logger.Warn("Intento de registro sin verificacion confirmada.");
+                _logger.Warn(MensajesError.Log.IntentoRegistroSinVerificacion);
                 return false;
             }
             return true;
@@ -221,7 +221,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (usuarioRegistrado || correoRegistrado)
             {
-                _logger.Warn("Registro duplicado detectado (usuario o correo existente).");
+                _logger.Warn(MensajesError.Log.RegistroDuplicadoDetectado);
                 return true;
             }
 

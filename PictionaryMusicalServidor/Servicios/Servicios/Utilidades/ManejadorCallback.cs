@@ -163,11 +163,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Operacion invalida en comunicacion WCF.", excepcion);
+                _logger.Warn(MensajesError.Log.OperacionInvalidaComunicacionWCF, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Operacion invalida en comunicacion WCF.", excepcion);
+                _logger.Warn(MensajesError.Log.OperacionInvalidaComunicacionWCF, excepcion);
             }
         }
     }

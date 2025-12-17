@@ -1,6 +1,7 @@
 using log4net;
 using Datos.Modelo;
 using PictionaryMusicalServidor.Datos.Utilidades;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using System.Data;
 using System;
 
@@ -27,7 +28,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 if (string.IsNullOrWhiteSpace(conexion))
                 {
                     _logger.Warn(
-                        "La cadena de conexion obtenida esta vacia.");
+                        MensajesError.Log.CadenaConexionVacia);
                     return new BaseDatosPruebaEntities();
                 }
 
@@ -35,13 +36,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error al construir el contexto de base de datos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorConstruirContextoBaseDatos, excepcion);
                 throw new DataException(
                     "No se pudo establecer la conexion con la base de datos.", excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al crear el contexto de base de datos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoCrearContexto, excepcion);
                 throw new DataException(
                     "No se pudo establecer la conexion con la base de datos.", excepcion);
             }

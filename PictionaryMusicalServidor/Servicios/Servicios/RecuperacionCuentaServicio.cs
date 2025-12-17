@@ -239,7 +239,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!enviado)
             {
-                _logger.Error("Fallo critico al enviar correo de recuperacion.");
+                _logger.Error(MensajesError.Log.ErrorEnviarCorreoRecuperacion);
                 return (false, null, null);
             }
 
@@ -311,7 +311,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 pendiente.Expira = expiracionAnterior;
                 pendiente.Confirmado = confirmadoAnterior;
 
-                _logger.Error("Fallo critico al reenviar correo de recuperacion.");
+                _logger.Error(MensajesError.Log.ErrorReenviarCorreoRecuperacion);
                 return CrearFalloReenvio(MensajesError.Cliente.ErrorReenviarCodigoRecuperacion);
             }
 
@@ -421,17 +421,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizarContrasena, excepcion);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosActualizarContrasena, excepcion);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al actualizar contrasena.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarContrasena, excepcion);
                 return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
             }
         }

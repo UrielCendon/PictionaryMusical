@@ -23,220 +23,259 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static readonly Dictionary<string, Func<string>> MapaMensajes =
             new Dictionary<string, Func<string>>(StringComparer.Ordinal)
             {
-                ["La partida ya comenzo"]
+                // Estados de partida
+                ["La partida ya comenzo, no puedes unirte."]
                     = () => Recursos.Lang.errorTextoPartidaYaIniciada,
-                ["Partida cancelada por falta de jugadores."]
+                ["La partida ya esta en curso."]
+                    = () => Recursos.Lang.errorTextoPartidaYaIniciada,
+                ["La partida se cancelo porque ya no hay suficientes jugadores."]
                     = () => Recursos.Lang.partidaTextoJugadoresInsuficientes,
-                ["El anfitrion de la sala abandono la partida."]
+                ["La partida se cancelo porque el anfitrion abandono."]
                     = () => Recursos.Lang.partidaTextoHostCanceloSala,
+                ["Espera a que se unan mas jugadores para iniciar."]
+                    = () => Recursos.Lang.partidaTextoJugadoresInsuficientes,
+                ["Solo el anfitrion puede iniciar la partida."]
+                    = () => Recursos.Lang.errorTextoSoloHost,
+
+                // Reportes
                 ["Reporte enviado correctamente."]
                     = () => Recursos.Lang.reportarJugadorTextoExito,
-                ["No fue posible registrar el reporte."]
+                ["No se pudo enviar el reporte. Intente mas tarde."]
                     = () => Recursos.Lang.errorTextoReportarJugador,
-                ["Ya has reportado a este jugador."]
+                ["Ya reportaste a este jugador anteriormente."]
                     = () => Recursos.Lang.reportarJugadorTextoDuplicado,
-                ["El motivo del reporte es obligatorio."]
+                ["Por favor, escribe el motivo del reporte."]
                     = () => Recursos.Lang.reportarJugadorTextoMotivoRequerido,
-                ["El motivo del reporte no debe exceder 100 caracteres."]
+                ["El motivo del reporte es muy largo. Usa maximo 100 caracteres."]
                     = () => Recursos.Lang.reportarJugadorTextoMotivoLongitud,
-                ["El mensaje supera el limite de caracteres."]
-                    = () => Recursos.Lang.MensajeChatTextoMotivoLongitud,
                 ["No puedes reportarte a ti mismo."]
                     = () => Recursos.Lang.reportarJugadorTextoAutoReporte,
-                ["No fue posible procesar la solicitud de verificacion."]
+
+                // Chat y mensajes
+                ["Tu mensaje es muy largo. Usa menos de 200 caracteres."]
+                    = () => Recursos.Lang.MensajeChatTextoMotivoLongitud,
+                ["No pudimos enviar el mensaje. Intenta de nuevo."]
+                    = () => Recursos.Lang.errorTextoEnviarMensaje,
+
+                // Verificacion de cuenta
+                ["No pudimos procesar tu solicitud de verificacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoProcesarSolicitudVerificacion,
-                ["No fue posible reenviar el codigo de verificacion."]
+                ["No pudimos reenviar el codigo de verificacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorReenviarCodigo,
-                ["No se encontro una solicitud de verificacion activa."]
+                ["No tienes una solicitud de verificacion activa. Registrate de nuevo."]
                     = () => Recursos.Lang.errorTextoSolicitudVerificacionActiva,
-                ["El codigo de verificacion ha expirado. Inicie el proceso nuevamente."]
+                ["El codigo de verificacion ha expirado. Registrate de nuevo."]
                     = () => Recursos.Lang.avisoTextoCodigoExpirado,
-                ["El codigo ingresado no es correcto."]
+                ["El codigo ingresado no es correcto. Verifica e intenta de nuevo."]
                     = () => Recursos.Lang.errorTextoCodigoIncorrecto,
-                ["El correo o usuario ya esta registrado."]
+                ["El correo o usuario ya esta en uso. Intenta con otro."]
                     = () => Recursos.Lang.errorTextoCorreoEnUso,
-                ["No fue posible procesar la recuperacion de cuenta."]
+
+                // Recuperacion de cuenta
+                ["No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible reenviar el codigo de recuperacion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible confirmar el codigo de recuperacion."]
+                ["No pudimos reenviar el codigo. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoServidorReenviarCodigo,
+                ["No pudimos confirmar el codigo de recuperacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorValidarCodigo,
-                ["No fue posible actualizar la contrasena."]
+                ["No pudimos actualizar tu contrasena. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoActualizarContrasena,
-                ["Los datos de recuperacion no son validos."]
+                ["Los datos ingresados no son correctos. Por favor, revisalos."]
                     = () => Recursos.Lang.errorTextoServidorSolicitudCambioContrasena,
-                ["Los datos para reenviar el codigo no son validos."]
+                ["Los datos ingresados no son correctos para reenviar el codigo."]
                     = () => Recursos.Lang.errorTextoServidorSolicitudCambioContrasena,
-                ["Los datos de confirmacion no son validos."]
+                ["Los datos de confirmacion no son correctos. Revisalos."]
                     = () => Recursos.Lang.errorTextoSolicitudVerificacionInvalida,
-                ["Los datos de actualizacion no son validos."]
+                ["Los datos para actualizar la contrasena no son correctos."]
                     = () => Recursos.Lang.errorTextoPrepararSolicitudCambioContrasena,
-                ["Los datos proporcionados no son validos para solicitar el codigo."]
+                ["Los datos ingresados no son correctos para solicitar el codigo."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Debe proporcionar el usuario o correo registrado y no debe exceder 50 caracteres."]
+                ["Ingresa tu usuario o correo (maximo 50 caracteres)."]
                     = () => Recursos.Lang.errorTextoIdentificadorRecuperacionRequerido,
-                ["No se encontro una cuenta con el usuario o correo proporcionado."]
+                ["No encontramos una cuenta con ese usuario o correo."]
                     = () => Recursos.Lang.errorTextoCuentaNoRegistrada,
-                ["No se encontro una solicitud de recuperacion activa."]
+                ["No tienes una solicitud de recuperacion activa. Inicia el proceso de nuevo."]
                     = () => Recursos.Lang.errorTextoSolicitudRecuperacionActiva,
-                ["El codigo de verificacion ha expirado. Solicite uno nuevo."]
+                ["El codigo ha expirado. Solicita uno nuevo."]
                     = () => Recursos.Lang.errorTextoCodigoExpiradoSolicitarNuevo,
-                ["No hay una solicitud de recuperacion vigente."]
+                ["El codigo ingresado no es correcto. Verifica e intenta de nuevo."]
+                    = () => Recursos.Lang.errorTextoCodigoIncorrecto,
+                ["No tienes una solicitud de recuperacion activa."]
                     = () => Recursos.Lang.errorTextoSolicitudRecuperacionVigente,
-                ["La solicitud de recuperacion no es valida."]
+                ["La solicitud de recuperacion ya no es valida. Inicia el proceso de nuevo."]
                     = () => Recursos.Lang.errorTextoSolicitudRecuperacionInvalida,
-                ["No fue posible completar el registro. Por favor, intente nuevamente."]
+
+                // Registro e inicio de sesion
+                ["No pudimos completar tu registro. Por favor, intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoRegistrarCuentaMasTarde,
-                ["No fue posible iniciar sesion. Por favor, intente nuevamente."]
+                ["No pudimos iniciar sesion. Por favor, intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorInicioSesion,
-                ["Has sido baneado del juego por mala conducta."]
+                ["Tu cuenta ha sido suspendida por mala conducta."]
                     = () => Recursos.Lang.errorTextoUsuarioBaneado,
                 ["Usuario o contrasena incorrectos."]
                     = () => Recursos.Lang.errorTextoCredencialesIncorrectas,
-                ["Las credenciales proporcionadas no son validas."]
-                    = () => Recursos.Lang.errorTextoCredencialesIncorrectas,
-                ["El correo electronico es obligatorio, debe tener un formato valido y no debe exceder 50 caracteres."]
+                ["Algunos datos no son correctos. Por favor, revisa la informacion ingresada."]
+                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
+
+                // Validaciones de registro
+                ["Ingresa un correo electronico valido (maximo 50 caracteres)."]
                     = () => Recursos.Lang.errorTextoCorreoInvalido,
-                ["El nombre de usuario es obligatorio y no debe exceder 50 caracteres."]
+                ["El nombre de usuario es obligatorio y debe tener maximo 50 caracteres."]
                     = () => Recursos.Lang.errorTextoIdentificadorUsuarioInvalido,
-                ["El nombre es obligatorio y no debe exceder 50 caracteres."]
+                ["El nombre es obligatorio y debe tener maximo 50 caracteres."]
                     = () => Recursos.Lang.errorTextoNombreObligatorioLongitud,
-                ["El apellido es obligatorio y no debe exceder 50 caracteres."]
+                ["El apellido es obligatorio y debe tener maximo 50 caracteres."]
                     = () => Recursos.Lang.errorTextoApellidoObligatorioLongitud,
-                ["No se encontro el usuario especificado."]
+                ["La contrasena debe tener entre 8 y 15 caracteres, incluir una mayuscula, un numero y un caracter especial."]
+                    = () => Recursos.Lang.globalTextoEspecificaContrasena,
+
+                // Usuario y jugador
+                ["No encontramos al usuario. Verifica que el nombre sea correcto."]
                     = () => Recursos.Lang.errorTextoUsuarioNoEncontrado,
-                ["No se encontro la informacion del jugador."]
-                    = () => Recursos.Lang.errorTextoJugadorNoExiste,
-                ["No existe un jugador asociado al usuario especificado."]
-                    = () => Recursos.Lang.errorTextoJugadorNoExiste,
-                ["El avatar seleccionado no es valido."]
-                    = () => Recursos.Lang.errorTextoSeleccionAvatarValido,
-                ["No fue posible obtener la informacion del perfil."]
-                    = () => Recursos.Lang.errorTextoServidorObtenerPerfil,
-                ["No fue posible actualizar el perfil. Por favor, intente nuevamente."]
-                    = () => Recursos.Lang.errorTextoActualizarPerfil,
-                ["Perfil actualizado correctamente."]
-                    = () => Recursos.Lang.avisoTextoPerfilActualizado,
-                ["No fue posible recuperar las solicitudes de amistad."]
-                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
-                ["No es posible enviarse una solicitud de amistad a si mismo."]
-                    = () => Recursos.Lang.amigosErrorAutoSolicitud,
-                ["Alguno de los usuarios especificados no existe."]
+                ["No encontramos a uno o mas usuarios especificados."]
                     = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
-                ["Ya existe una solicitud o relacion de amistad entre los usuarios."]
-                    = () => Recursos.Lang.amigosErrorRelacionExiste,
-                ["No fue posible enviar la solicitud de amistad."]
-                    = () => Recursos.Lang.amigosErrorCompletarSolicitud,
-                ["No fue posible actualizar la solicitud de amistad."]
-                    = () => Recursos.Lang.amigosErrorActualizarSolicitud,
-                ["No existe una solicitud de amistad entre los usuarios."]
-                    = () => Recursos.Lang.amigosErrorSolicitudNoExiste,
-                ["No fue posible aceptar la solicitud de amistad."]
-                    = () => Recursos.Lang.amigosErrorAceptarSolicitud,
-                ["La solicitud de amistad ya fue aceptada con anterioridad."]
-                    = () => Recursos.Lang.amigosErrorSolicitudAceptada,
-                ["No existe una relacion de amistad entre los usuarios."]
-                    = () => Recursos.Lang.amigosErrorRelacionNoExiste,
-                ["No fue posible eliminar la relacion de amistad."]
-                    = () => Recursos.Lang.amigosErrorEliminarRelacion,
-                ["No fue posible recuperar la lista de amigos."]
+                ["No encontramos la informacion del jugador."]
+                    = () => Recursos.Lang.errorTextoJugadorNoExiste,
+                ["El usuario que buscas no existe. Verifica el nombre e intenta de nuevo."]
+                    = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
+                ["No encontramos un jugador asociado a este usuario."]
+                    = () => Recursos.Lang.errorTextoJugadorNoExiste,
+                ["Tu cuenta aun no ha sido verificada. Revisa tu correo electronico."]
+                    = () => Recursos.Lang.errorTextoCuentaNoVerificada,
+                ["No encontramos una cuenta con estos datos. Verifica la informacion."]
+                    = () => Recursos.Lang.errorTextoCuentaNoRegistrada,
+                ["Por favor, selecciona un avatar valido."]
+                    = () => Recursos.Lang.errorTextoSeleccionAvatarValido,
+
+                // Perfil
+                ["No pudimos cargar tu perfil. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoServidorObtenerPerfil,
+                ["No pudimos guardar los cambios de tu perfil. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoActualizarPerfil,
+                ["Tu perfil se actualizo correctamente."]
+                    = () => Recursos.Lang.avisoTextoPerfilActualizado,
+
+                // Amistades
+                ["No pudimos cargar tus solicitudes de amistad. Intenta mas tarde."]
                     = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
-                ["La invitacion no es valida."]
+                ["No puedes enviarte una solicitud de amistad a ti mismo."]
+                    = () => Recursos.Lang.amigosErrorAutoSolicitud,
+                ["Ya tienes una solicitud o amistad con este usuario."]
+                    = () => Recursos.Lang.amigosErrorRelacionExiste,
+                ["No pudimos enviar la solicitud de amistad. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorCompletarSolicitud,
+                ["No pudimos procesar la solicitud de amistad. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorActualizarSolicitud,
+                ["No existe una solicitud de amistad con este usuario."]
+                    = () => Recursos.Lang.amigosErrorSolicitudNoExiste,
+                ["No pudimos aceptar la solicitud de amistad. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorAceptarSolicitud,
+                ["Esta solicitud de amistad ya fue aceptada."]
+                    = () => Recursos.Lang.amigosErrorSolicitudAceptada,
+                ["No tienes una amistad con este usuario."]
+                    = () => Recursos.Lang.amigosErrorRelacionNoExiste,
+                ["No pudimos eliminar a este amigo. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorEliminarRelacion,
+                ["No pudimos cargar tu lista de amigos. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
+                ["No pudimos cargar tus amigos debido a un problema del servidor."]
+                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
+                ["No pudimos enviar la notificacion de amistad. Intenta mas tarde."]
+                    = () => Recursos.Lang.amigosErrorActualizarSolicitud,
+                ["No pudimos notificar la eliminacion de amistad."]
+                    = () => Recursos.Lang.amigosErrorEliminarRelacion,
+
+                // Invitaciones
+                ["La invitacion no es valida o ha expirado."]
+                    = () => Recursos.Lang.errorTextoInvitacionExpirada,
+                ["Los datos de la invitacion no son correctos."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Los datos de la invitacion no son validos."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El correo electronico no es valido."]
+                ["Ingresa un correo electronico valido."]
                     = () => Recursos.Lang.errorTextoCorreoInvalido,
-                ["No fue posible enviar la invitacion."]
+                ["No pudimos enviar la invitacion. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoEnviarInvitacion,
+                ["Hubo un problema al procesar la invitacion."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un problema al procesar la invitacion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error al enviar la invitacion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
+                ["Este jugador ya esta en la sala."]
+                    = () => Recursos.Lang.invitarCorreoTextoJugadorYaEnSala,
                 ["Invitacion enviada correctamente."]
                     = () => Recursos.Lang.invitarCorreoTextoEnviado,
-                ["El jugador con el correo ingresado ya esta en la sala."]
+                ["La invitacion no es valida."]
+                    = () => Recursos.Lang.errorTextoInvitacionExpirada,
+                ["El jugador con este correo ya esta en la sala."]
                     = () => Recursos.Lang.invitarCorreoTextoJugadorYaEnSala,
-                ["No fue posible enviar la invitacion por correo electronico."]
+                ["No pudimos enviar la invitacion al correo. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoEnviarCorreo,
-                ["No se encontro la sala especificada."]
+
+                // Salas
+                ["No pudimos crear la sala. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoCrearSala,
+                ["Ocurrio un problema al crear la sala. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoCrearSala,
+                ["No pudimos unirte a la sala. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoUnirsePartida,
+                ["Ocurrio un problema al salir de la sala."]
+                    = () => Recursos.Lang.errorTextoAbandonarPartida,
+                ["No pudimos expulsar al jugador. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoExpulsarJugador,
+                ["No pudimos conectarte a las salas. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
+                ["La sala ya no existe o el codigo es incorrecto."]
                     = () => Recursos.Lang.errorTextoNoEncuentraPartida,
-                ["La sala esta llena."]
+                ["No pudimos generar el codigo de la sala. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoCrearSala,
+                ["La sala esta llena. Intenta con otra sala."]
                     = () => Recursos.Lang.errorTextoSalaLlena,
-                ["No fue posible crear la sala."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error al unirse a la sala."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error al abandonar la sala."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error al expulsar al jugador."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error al suscribirse a las salas."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible generar un codigo para la sala."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["Solo el creador de la sala puede expulsar jugadores."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
+                    = () => Recursos.Lang.errorTextoSoloCreador,
                 ["El creador de la sala no puede ser expulsado."]
+                    = () => Recursos.Lang.errorTextoCreadorNoExpulsable,
+                ["El jugador ya no esta en la sala."]
+                    = () => Recursos.Lang.errorTextoJugadorNoEnSala,
+
+                // Conexion y callbacks
+                ["No pudimos conectarte al servidor. Verifica tu conexion e intenta de nuevo."]
+                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
+                ["No pudimos conectarte al servicio de amigos. Intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
+                ["Ocurrio un problema de conexion. Intenta de nuevo."]
+                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
+                ["Ocurrio un problema de conexion con el servicio de amigos."]
+                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
+
+                // Parametros obligatorios
+                ["Ingresa tu nombre de usuario."]
+                    = () => Recursos.Lang.errorTextoIdentificadorUsuarioInvalido,
+                ["Se requiere el nombre de usuario para cancelar."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El jugador especificado no esta en la sala."]
+                ["Se requiere el nombre de usuario para conectarte."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El jugador ya esta en la sala."]
+                ["Ingresa el codigo de la sala."]
+                    = () => Recursos.Lang.errorTextoCodigoSalaRequerido,
+                ["No se pudo identificar al jugador."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Los datos proporcionados no son validos. Por favor, verifique la informacion."]
+                ["No se pudo identificar la sala."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["Ocurrio un error inesperado. Por favor, intente nuevamente."]
+
+                // Configuracion de partida
+                ["Configura la partida antes de iniciar."]
+                    = () => Recursos.Lang.errorTextoConfiguracionRequerida,
+                ["El numero de rondas debe ser mayor a cero."]
+                    = () => Recursos.Lang.errorTextoRondasInvalidas,
+                ["El tiempo por ronda debe ser mayor a cero."]
+                    = () => Recursos.Lang.errorTextoTiempoInvalido,
+                ["Selecciona el idioma de las canciones."]
+                    = () => Recursos.Lang.errorTextoIdiomaRequerido,
+                ["Selecciona la dificultad."]
+                    = () => Recursos.Lang.errorTextoDificultadRequerida,
+
+                // Errores generales
+                ["Ocurrio un error inesperado. Por favor, intente mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No se encontro una cuenta con los datos proporcionados."]
-                    = () => Recursos.Lang.errorTextoCuentaNoRegistrada,
-                ["La cuenta no ha sido verificada. Por favor, verifique su correo."]
+                ["No se puede realizar esta accion en este momento. Intente mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["La operacion se completo correctamente."]
-                    = () => Recursos.Lang.avisoTextoPerfilActualizado,
-                ["La solicitud de invitacion no es valida."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible confirmar el codigo de verificacion."]
-                    = () => Recursos.Lang.errorTextoServidorValidarCodigo,
-                ["No fue posible establecer el contexto de la operacion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible establecer el contexto para amigos."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["No fue posible establecer la conexion con el servidor."]
-                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
-                ["No fue posible establecer la conexion para amigos."]
-                    = () => Recursos.Lang.errorTextoServidorNoDisponible,
-                ["No fue posible notificar la actualizacion de la solicitud de amistad."]
-                    = () => Recursos.Lang.amigosErrorActualizarSolicitud,
-                ["No fue posible notificar la eliminacion de la relacion de amistad."]
-                    = () => Recursos.Lang.amigosErrorEliminarRelacion,
-                ["No fue posible suscribirse a las actualizaciones de amigos."]
-                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
-                ["No se encontraron todos los usuarios especificados."]
-                    = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
-                ["Ocurrio un error al crear la sala."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El codigo de sala es obligatorio."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El idioma de las canciones es obligatorio."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El nombre de usuario es obligatorio para cancelar la suscripcion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El nombre de usuario es obligatorio para suscribirse a las notificaciones."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El nombre de usuario es obligatorio."]
-                    = () => Recursos.Lang.errorTextoIdentificadorUsuarioInvalido,
-                ["El numero de rondas debe ser mayor a cero."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El parametro {0} es obligatorio."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["El tiempo por ronda debe ser mayor a cero."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["La configuracion de la partida es obligatoria."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["La contrasena debe tener entre 8 y 15 caracteres, incluir una letra mayuscula, un numero y un caracter especial."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
-                ["La dificultad es obligatoria."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud
+                    = () => Recursos.Lang.avisoTextoOperacionExitosa
             };
 
         /// <summary>

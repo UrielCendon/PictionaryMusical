@@ -220,7 +220,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             _jugadores.Clear();
             _gestorNotificaciones.Limpiar();
             DebeEliminarse = true;
-            _logger.Info("Sala cancelada por salida del anfitrion.");
+            _logger.Info(MensajesError.Log.SalaCanceladaSalidaAnfitrion);
         }
     }
 }

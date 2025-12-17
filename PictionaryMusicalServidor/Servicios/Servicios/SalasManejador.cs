@@ -106,13 +106,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 if (!_salas.TryAdd(codigo, sala))
                 {
                     _logger.WarnFormat(
-                        "Error de concurrencia al intentar agregar la sala con código {0}.",
+                        MensajesError.Log.ErrorConcurrenciaCrearSala,
                         codigo);
                     throw new FaultException(MensajesError.Cliente.ErrorCrearSala);
                 }
 
                 _logger.InfoFormat(
-                    "Sala creada exitosamente con codigo {0}.",
+                    MensajesError.Log.SalaCreadaExito,
                     codigo);
 
                 _notificador.NotificarListaSalasATodos();
@@ -121,27 +121,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al crear sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionCrearSala, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion WCF al crear sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Timeout al crear sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Canal WCF cerrado al crear sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCanalCerradoCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al crear sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
         }
@@ -184,7 +184,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     notificar: true);
 
                 _logger.InfoFormat(
-                    "Usuario unido exitosamente a sala con codigo {0}.",
+                    MensajesError.Log.UsuarioUnidoSala,
                     codigoSala.Trim());
 
                 _notificador.NotificarListaSalasATodos();
@@ -193,32 +193,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al unirse a sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionUnirse, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al unirse a sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorOperacionUnirse, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion WCF al unirse a sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Timeout al unirse a la sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Canal WCF cerrado al unirse a la sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCanalCerradoUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al unirse a la sala.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
         }
@@ -237,12 +237,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al obtener lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorOperacionInvalidaObtenerSalas, excepcion);
                 return new List<SalaDTO>();
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al obtener lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerSalas, excepcion);
                 return new List<SalaDTO>();
             }
         }
@@ -275,23 +275,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al abandonar sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionAbandonar, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al abandonar sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorOperacionAbandonar, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Operacion invalida al abandonar sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorOperacionAbandonar, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorOperacionInvalida);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Error inesperado al abandonar sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorInesperadoAbandonar, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoAbandonar);
             }
         }
 
@@ -330,22 +330,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al suscribirse a lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorSuscripcionListaSalas, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion WCF al suscribirse a lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Timeout al suscribirse a la lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al suscribirse a la lista de salas.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
         }
@@ -363,19 +363,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida al cancelar suscripcion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion WCF al cancelar suscripcion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Timeout al cancelar la suscripcion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al cancelar la suscripcion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
             }
         }
 
@@ -410,14 +410,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 _logger.InfoFormat(
-                    "Expulsando jugador '{0}' de la sala '{1}' por solicitud del anfitrion '{2}'.",
-                    nombreJugadorAExpulsar.Trim(), codigoSala.Trim(), nombreHost.Trim());
+                    MensajesError.Log.ExpulsandoJugador,
+                    codigoSala.Trim());
 
                 sala.ExpulsarJugador(nombreHost.Trim(), nombreJugadorAExpulsar.Trim());
 
                 _logger.InfoFormat(
-                    "Jugador '{0}' expulsado exitosamente de la sala '{1}'.",
-                    nombreJugadorAExpulsar.Trim(), codigoSala.Trim());
+                    MensajesError.Log.JugadorExpulsadoExito,
+                    codigoSala.Trim());
 
                 if (sala.DebeEliminarse)
                 {
@@ -429,23 +429,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al expulsar jugador de sala.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionExpulsar, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Operacion invalida al expulsar jugador.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorOperacionExpulsar, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Operacion invalida al expulsar jugador.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorOperacionExpulsar, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Error inesperado al expulsar jugador.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorInesperadoExpulsar, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
         }
 
@@ -505,7 +505,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
             }
 
-            _logger.Error("No se pudo generar codigo unico de sala.");
+            _logger.Error(MensajesError.Log.ErrorGenerarCodigoSala);
             throw new FaultException(MensajesError.Cliente.ErrorGenerarCodigo);
         }
 

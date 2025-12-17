@@ -1,3 +1,4 @@
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using log4net;
 using System;
@@ -70,17 +71,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (AggregateException excepcion)
             {
-                _logger.Error("Error critico al enviar notificacion de codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error critico al enviar notificacion de codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error critico al enviar notificacion de codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
                 return false;
             }
         }

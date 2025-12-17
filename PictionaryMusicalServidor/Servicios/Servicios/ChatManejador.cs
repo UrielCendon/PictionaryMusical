@@ -74,32 +74,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al unirse al chat.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al unirse al chat.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion al unirse al chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo de espera agotado al unirse al chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Canal WCF cerrado al unirse al chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al unirse al chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }
@@ -138,32 +138,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al enviar mensaje de chat.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al enviar mensaje.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion al enviar mensaje de chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo de espera agotado al enviar mensaje de chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Canal WCF cerrado al enviar mensaje de chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al enviar mensaje de chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }
@@ -192,32 +192,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al salir del chat.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al salir del chat.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error de comunicacion al salir del chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Tiempo de espera agotado al salir del chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error("Canal WCF cerrado al salir del chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al salir del chat.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperado);
             }
         }

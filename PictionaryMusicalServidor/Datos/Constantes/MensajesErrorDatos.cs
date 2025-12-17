@@ -2,6 +2,7 @@ namespace PictionaryMusicalServidor.Datos.Constantes
 {
     /// <summary>
     /// Clase estatica que contiene los mensajes de error utilizados en la capa de datos.
+    /// Los mensajes de log solo deben incluir IDs, nunca datos personales como nombres o correos.
     /// </summary>
     public static class MensajesErrorDatos
     {
@@ -11,17 +12,17 @@ namespace PictionaryMusicalServidor.Datos.Constantes
         public static class Amigo
         {
             public const string ErrorVerificarRelacion = 
-                "Error al verificar existencia de relacion de amistad en la base de datos.";
+                "Error al verificar existencia de relacion de amistad.";
             public const string ErrorObtenerRelacion = 
-                "Error al obtener la relacion de amistad de la base de datos.";
+                "Error al obtener la relacion de amistad.";
             public const string ErrorObtenerSolicitudesPendientes = 
-                "Error al obtener solicitudes pendientes para el usuario ID: {0}.";
+                "Error al obtener solicitudes pendientes para el usuario con id {0}.";
             public const string ErrorActualizarEstado = 
-                "Error al actualizar el estado de la relacion entre {0} y {1}.";
+                "Error al actualizar el estado de la relacion entre usuarios con ids {0} y {1}.";
             public const string ErrorEliminarRelacion = 
-                "Error al eliminar la relacion de amistad entre {0} y {1}.";
+                "Error al eliminar la relacion de amistad entre usuarios con ids {0} y {1}.";
             public const string ErrorObtenerAmigos = 
-                "Error de base de datos al obtener amigos para el usuario ID: {0}.";
+                "Error al obtener amigos para el usuario con id {0}.";
             public const string IntentarActualizarRelacionNula = 
                 "Se intento actualizar una relacion nula.";
             public const string IntentarEliminarRelacionNula = 
@@ -40,25 +41,25 @@ namespace PictionaryMusicalServidor.Datos.Constantes
         public static class Usuario
         {
             public const string ErrorVerificarExistencia = 
-                "Error al verificar existencia del usuario '{0}'.";
+                "Error al verificar existencia del usuario.";
             public const string ErrorGuardarUsuario = 
-                "Error al guardar el nuevo usuario '{0}' en la base de datos.";
+                "Error al guardar el nuevo usuario.";
             public const string ErrorObtenerUsuario = 
-                "Error al obtener el usuario '{0}' de la base de datos.";
+                "Error al obtener el usuario.";
             public const string ErrorObtenerPorCorreo = 
-                "Error al obtener usuario por correo '{0}'.";
+                "Error al obtener usuario por correo.";
             public const string ErrorAsincronoObtenerPorCorreo = 
-                "Error asincrono al obtener usuario por correo '{0}'.";
+                "Error asincrono al obtener usuario por correo.";
             public const string ErrorObtenerConRedesSociales = 
-                "Error al obtener usuario con redes sociales ID: {0}";
+                "Error al obtener usuario con redes sociales con id {0}.";
             public const string ErrorActualizarContrasena = 
-                "Error al actualizar contrasena del usuario ID {0}.";
+                "Error al actualizar contrasena del usuario con id {0}.";
             public const string ErrorObtenerConJugadorPorNombre = 
-                "Error al obtener usuario con jugador por nombre '{0}'.";
+                "Error al obtener usuario con jugador.";
             public const string UsuarioNoEncontrado = 
-                "El usuario '{0}' no fue encontrado en la base de datos.";
+                "El usuario no fue encontrado.";
             public const string UsuarioNoExiste = 
-                "El usuario '{0}' no existe en la base de datos.";
+                "El usuario no existe.";
             public const string IntentarCrearUsuarioNulo = 
                 "Intento de crear un usuario nulo.";
             public const string IntentoBusquedaNombreVacio = 
@@ -83,11 +84,11 @@ namespace PictionaryMusicalServidor.Datos.Constantes
         public static class Reporte
         {
             public const string ErrorVerificarExistencia = 
-                "Error al verificar existencia del reporte entre {0} y {1}.";
+                "Error al verificar existencia del reporte entre usuarios con ids {0} y {1}.";
             public const string ErrorGuardarReporte = 
-                "Error al guardar el reporte en la base de datos.";
+                "Error al guardar el reporte.";
             public const string ErrorContarReportes = 
-                "Error al contar reportes del usuario {0}.";
+                "Error al contar reportes del usuario con id {0}.";
             public const string IntentarCrearReporteNulo = 
                 "Se intento crear un reporte nulo.";
             public const string IdReportadoMayorCero = 
@@ -100,9 +101,9 @@ namespace PictionaryMusicalServidor.Datos.Constantes
         public static class Jugador
         {
             public const string ErrorVerificarExistenciaCorreo = 
-                "Error al verificar existencia del correo '{0}'.";
+                "Error al verificar existencia del correo.";
             public const string ErrorGuardarJugador = 
-                "Error al guardar el jugador con correo '{0}'.";
+                "Error al guardar el jugador.";
             public const string IntentarCrearJugadorNulo = 
                 "Intento de crear un jugador nulo.";
         }
@@ -115,11 +116,11 @@ namespace PictionaryMusicalServidor.Datos.Constantes
             public const string ErrorCrearInicial = 
                 "Error al crear la clasificacion inicial.";
             public const string ErrorActualizarClasificacion = 
-                "Error al actualizar la clasificacion del jugador con ID {0}.";
+                "Error al actualizar la clasificacion del jugador con id {0}.";
             public const string ErrorConsultarMejores = 
                 "Error al consultar los mejores jugadores.";
             public const string ClasificacionNoEncontrada = 
-                "No se encontro clasificacion para el jugador con ID {0}.";
+                "No se encontro clasificacion para el jugador con id {0}.";
         }
 
         /// <summary>

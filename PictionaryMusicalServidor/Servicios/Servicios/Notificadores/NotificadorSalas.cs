@@ -6,6 +6,7 @@ using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
@@ -81,22 +82,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             catch (CommunicationException excepcion)
             {
                 _logger.Warn(
-                    "Error de comunicacion al notificar la lista de salas a los suscriptores.", 
+                    MensajesError.Log.ErrorComunicacionNotificarSalas, 
                     excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al notificar la lista de salas a los suscriptores.", excepcion);
+                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarSalas, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(
-                    "Canal cerrado al notificar la lista de salas a los suscriptores.", excepcion);
+                    MensajesError.Log.ErrorCanalCerradoNotificarSalas, excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al notificar la lista de salas a los suscriptores.", excepcion);
+                    MensajesError.Log.ErrorInesperadoNotificarSalas, excepcion);
             }
         }
 
@@ -117,7 +118,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (CommunicationException excepcion)
                 {
                     _logger.Warn(
-                        "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.",
+                        MensajesError.Log.ErrorComunicacionMasivaNotificarSalas,
                         excepcion);
                     ISalasManejadorCallback valorDescartado;
                     _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
@@ -125,7 +126,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (TimeoutException excepcion)
                 {
                     _logger.Warn(
-                        "Timeout al notificar masivamente lista de salas. Eliminando suscripcion defectuosa.",
+                        MensajesError.Log.ErrorTimeoutMasivoNotificarSalas,
                         excepcion);
                     ISalasManejadorCallback valorDescartado;
                     _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
@@ -133,12 +134,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (ObjectDisposedException excepcion)
                 {
                     _logger.Error(
-                        "Canal cerrado al notificar masivamente lista de salas.", excepcion);
+                        MensajesError.Log.ErrorCanalCerradoMasivoNotificarSalas, excepcion);
                 }
                 catch (Exception excepcion)
                 {
                     _logger.Error(
-                        "Error inesperado al notificar masivamente lista de salas.", excepcion);
+                        MensajesError.Log.ErrorInesperadoMasivoNotificarSalas, excepcion);
                 }
             }
         }

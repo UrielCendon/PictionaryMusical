@@ -102,12 +102,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentOutOfRangeException excepcion)
             {
-                _logger.Warn("Identificador invalido al suscribirse a la lista de amigos.", excepcion);
+                _logger.Warn(MensajesError.Log.IdentificadorInvalidoSuscripcionListaAmigos, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al suscribirse a la lista de amigos.", excepcion);
+                _logger.Warn(MensajesError.Log.DatosInvalidosSuscripcionListaAmigos, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (DbUpdateException excepcion)
@@ -154,12 +154,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al cancelar suscripcion.", excepcion);
+                _logger.Warn(MensajesError.Log.DatosInvalidosCancelarSuscripcion, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Error inesperado al cancelar suscripcion.", excepcion);
+                _logger.Warn(MensajesError.Log.ErrorInesperadoCancelarSuscripcion, excepcion);
                 throw new FaultException(excepcion.Message);
             }
         }
@@ -179,27 +179,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al obtener la lista de amigos.", excepcion);
+                _logger.Warn(MensajesError.Log.DatosInvalidosObtenerListaAmigos, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error de actualizacion de BD al obtener lista de amigos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizacionBDObtenerListaAmigos, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al obtener lista de amigos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosObtenerListaAmigos, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al obtener lista de amigos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosObtenerListaAmigos, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al obtener lista de amigos.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerListaAmigos, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarListaAmigos);
             }
         }

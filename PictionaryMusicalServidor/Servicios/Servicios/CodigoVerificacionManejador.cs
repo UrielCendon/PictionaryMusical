@@ -76,7 +76,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al solicitar codigo de verificacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloSolicitarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -86,7 +86,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error de base de datos al solicitar codigo de verificacion.",
+                    MensajesError.Log.ErrorDatosSolicitarCodigo,
                     excepcion);
 
                 return new ResultadoSolicitudCodigoDTO
@@ -97,7 +97,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al solicitar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosSolicitarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -106,7 +106,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al solicitar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosSolicitarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -139,7 +139,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al reenviar codigo de verificacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloReenviarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -149,7 +149,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error de base de datos al reenviar codigo de verificacion.",
+                    MensajesError.Log.ErrorDatosReenviarCodigo,
                     excepcion);
 
                 return new ResultadoSolicitudCodigoDTO
@@ -160,7 +160,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al reenviar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosReenviarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -169,7 +169,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al reenviar codigo de verificacion.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosReenviarCodigo, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -203,7 +203,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al confirmar codigo de verificacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -212,7 +212,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error("Validacion de entidad fallida al confirmar codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ValidacionEntidadFallidaConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -221,7 +221,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error de actualizacion de BD al confirmar codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorActualizacionBDConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -230,7 +230,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error de base de datos al confirmar codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -239,7 +239,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al confirmar codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -248,7 +248,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error de datos al confirmar codigo.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosConfirmarCodigo, excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -281,7 +281,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn("Argumento nulo al solicitar codigo de recuperacion.", excepcion);
+                _logger.Warn(MensajesError.Log.ArgumentoNuloSolicitarCodigoRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,

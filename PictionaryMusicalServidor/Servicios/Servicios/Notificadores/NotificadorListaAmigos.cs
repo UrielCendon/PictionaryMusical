@@ -76,32 +76,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("No se pudo obtener la lista de amigos del usuario para notificar.", 
+                _logger.Warn(MensajesError.Log.ErrorObtenerListaAmigosNotificacion, 
                     excepcion);
             }
             catch (ArgumentOutOfRangeException excepcion)
             {
                 _logger.Warn(
-                    "Identificador invalido al actualizar la lista de amigos del usuario.", excepcion);
+                    MensajesError.Log.IdentificadorInvalidoListaAmigos, excepcion);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al actualizar la lista de amigos del usuario.", 
+                _logger.Warn(MensajesError.Log.DatosInvalidosActualizarListaAmigos, 
                     excepcion);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.", 
+                    MensajesError.Log.ErrorDatosObtenerAmigos, 
                     excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Operacion invalida al obtener la lista de amigos del usuario.", excepcion);
+                _logger.Warn(MensajesError.Log.OperacionInvalidaListaAmigos, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn("Error inesperado al obtener la lista de amigos del usuario.", excepcion);
+                _logger.Warn(MensajesError.Log.ErrorInesperadoListaAmigos, excepcion);
             }
         }
 
@@ -121,7 +121,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn("Error al notificar lista de amigos actualizada.", excepcion);
+                    _logger.Warn(MensajesError.Log.ErrorNotificarListaAmigosActualizada, excepcion);
                 }
             }
         }

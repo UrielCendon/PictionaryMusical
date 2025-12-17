@@ -170,18 +170,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de validacion al enviar solicitud de amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ValidacionFallidaEnvioSolicitud, excepcion);
+                throw;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Regla de negocio violada al enviar solicitud de amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaSolicitud, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al enviar solicitud de amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.DatosInvalidosSolicitud, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
@@ -227,13 +227,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Regla de negocio violada al aceptar solicitud de amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaAceptar, excepcion);
+                throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn("Datos invalidos al aceptar solicitud de amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.DatosInvalidosAceptar, excepcion);
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
@@ -277,8 +277,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("Regla de negocio violada al eliminar amistad.", excepcion);
-                throw new FaultException(excepcion.Message);
+                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaEliminar, excepcion);
+                throw new FaultException(MensajesError.Cliente.RelacionAmistadNoExiste);
             }
             catch (DbUpdateException excepcion)
             {

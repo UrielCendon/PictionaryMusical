@@ -98,7 +98,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (string.IsNullOrWhiteSpace(idJugador))
             {
-                throw new FaultException("El identificador de jugador es obligatorio.");
+                throw new FaultException(MensajesError.Cliente.IdJugadorObligatorio);
             }
 
             var callback = ObtenerCallbackActual();
@@ -112,7 +112,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             RegistrarCallback(idSala.Trim(), idJugador.Trim(), callback);
 
             _logger.InfoFormat(
-                "Jugador id {0} suscrito para partida en sala {1}.",
+                MensajesError.Log.JugadorSuscritoPartida,
                 idJugador.Trim(),
                 idSala.Trim());
         }
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             _logger.InfoFormat(
-                "Inicio de partida solicitado para sala {0} por jugador id {1}.",
+                MensajesError.Log.InicioPartidaSolicitado,
                 idSala.Trim(),
                 idJugadorSolicitante?.Trim());
 
@@ -155,7 +155,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (SuperaLimiteCaracteres(mensaje))
             {
-                throw new FaultException("El mensaje supera el limite de caracteres.");
+                throw new FaultException(MensajesError.Cliente.MensajeSuperaLimiteCaracteres);
             }
 
             var controlador = ObtenerOCrearControlador(idSala.Trim());
@@ -429,7 +429,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
             {
-                _logger.Info("Partida finalizada sin clasificacion por mensaje de error.");
+                _logger.Info(MensajesError.Log.PartidaFinalizadaSinClasificacion);
                 return;
             }
 
@@ -468,11 +468,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al actualizar clasificaciones de partida.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorDatosActualizarClasificaciones, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al actualizar clasificaciones de partida.", excepcion);
+                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarClasificaciones, excepcion);
             }
         }
 
@@ -504,14 +504,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al obtener jugadores para clasificacion.",
+                    MensajesError.Log.ErrorDatosObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al obtener jugadores para clasificacion.",
+                    MensajesError.Log.ErrorInesperadoObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
