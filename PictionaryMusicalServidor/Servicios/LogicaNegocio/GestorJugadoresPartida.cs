@@ -240,18 +240,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 return;
             }
 
-            var lista = new List<string>();
-            foreach (var id in _colaDibujantes)
-            {
-                if (id != idExcluido && _jugadores.ContainsKey(id))
-                {
-                    lista.Add(id);
-                }
-            }
+            var listaFiltrada = _colaDibujantes
+                .Where(id => id != idExcluido && _jugadores.ContainsKey(id))
+                .ToList();
 
             _colaDibujantes.Clear();
 
-            foreach (var id in lista)
+            foreach (var id in listaFiltrada)
             {
                 _colaDibujantes.Enqueue(id);
             }

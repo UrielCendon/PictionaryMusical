@@ -239,48 +239,51 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             lock (_sincronizacion)
             {
-                List<ClienteChat> clientesSala;
-                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
-                {
-                    clientesSala = new List<ClienteChat>();
-                    _clientesPorSala[idSala] = clientesSala;
-                }
-
-                ClienteChat clienteExistente = null;
-                foreach (var clienteChat in clientesSala)
-                {
-                    if (string.Equals(
-                        clienteChat.NombreJugador,
-                        nombreJugador,
-                        StringComparison.OrdinalIgnoreCase))
-                    {
-                        clienteExistente = clienteChat;
-                        break;
-                    }
-                }
-
-                if (clienteExistente != null)
-                {
-                    clienteExistente.Callback = callback;
-                }
-                else
-                {
-                    clientesSala.Add(new ClienteChat(nombreJugador, callback));
-                }
-
-                var clientesFiltrados = new List<ClienteChat>();
-                foreach (var clienteChat in clientesSala)
-                {
-                    if (!string.Equals(
-                        clienteChat.NombreJugador,
-                        nombreJugador,
-                        StringComparison.OrdinalIgnoreCase))
-                    {
-                        clientesFiltrados.Add(clienteChat);
-                    }
-                }
-                return clientesFiltrados;
+                var clientesSala = ObtenerOCrearListaClientes(idSala);
+                RegistrarOActualizarCliente(clientesSala, nombreJugador, callback);
+                return ObtenerClientesExcluyendo(clientesSala, nombreJugador);
             }
+        }
+
+        private static List<ClienteChat> ObtenerOCrearListaClientes(string idSala)
+        {
+            List<ClienteChat> clientesSala;
+            if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
+            {
+                clientesSala = new List<ClienteChat>();
+                _clientesPorSala[idSala] = clientesSala;
+            }
+            return clientesSala;
+        }
+
+        private static void RegistrarOActualizarCliente(
+            List<ClienteChat> clientesSala,
+            string nombreJugador,
+            IChatManejadorCallback callback)
+        {
+            var clienteExistente = clientesSala.FirstOrDefault(c =>
+                string.Equals(c.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase));
+
+            if (clienteExistente != null)
+            {
+                clienteExistente.Callback = callback;
+            }
+            else
+            {
+                clientesSala.Add(new ClienteChat(nombreJugador, callback));
+            }
+        }
+
+        private static List<ClienteChat> ObtenerClientesExcluyendo(
+            List<ClienteChat> clientesSala,
+            string nombreJugador)
+        {
+            return clientesSala
+                .Where(c => !string.Equals(
+                    c.NombreJugador, 
+                    nombreJugador, 
+                    StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         private static void NotificarIngresoMasivo(

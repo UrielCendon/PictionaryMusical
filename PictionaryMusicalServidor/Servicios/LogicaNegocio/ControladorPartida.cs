@@ -168,42 +168,86 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="id">Identificador de conexion del jugador.</param>
         public void RemoverJugador(string id)
         {
-            bool eraDibujante;
-            bool debeCancelar = false;
-            bool debeAvanzar = false;
-            bool eraAnfitrion;
-            string mensajeCancelacion = null;
+            var resultado = ProcesarRemocionJugador(id);
+            EjecutarAccionPostRemocion(resultado);
+        }
 
+        private ResultadoRemocionJugador ProcesarRemocionJugador(string id)
+        {
             lock (_sincronizacion)
             {
-                eraAnfitrion = _gestorJugadores.EsHost(id);
+                bool eraAnfitrion = _gestorJugadores.EsHost(id);
+                bool eraDibujante;
+
                 if (!_gestorJugadores.Remover(id, out eraDibujante))
                 {
-                    return;
+                    return ResultadoRemocionJugador.SinAccion();
                 }
-                if (_estadoActual == EstadoPartida.Jugando)
-                {
-                    if (!_gestorJugadores.HaySuficientesJugadores)
-                    {
-                        debeCancelar = true;
-                        mensajeCancelacion = eraAnfitrion
-                            ? MensajesError.Cliente.PartidaCanceladaHostSalio
-                            : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
-                    }
-                    else if (eraDibujante)
-                    {
-                        debeAvanzar = true;
-                    }
-                }
+
+                return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
+            }
+        }
+
+        private ResultadoRemocionJugador DeterminarAccionPostRemocion(
+            bool eraAnfitrion, 
+            bool eraDibujante)
+        {
+            if (_estadoActual != EstadoPartida.Jugando)
+            {
+                return ResultadoRemocionJugador.SinAccion();
             }
 
-            if (debeCancelar)
+            if (!_gestorJugadores.HaySuficientesJugadores)
             {
-                CancelarPartida(mensajeCancelacion);
+                string mensaje = eraAnfitrion
+                    ? MensajesError.Cliente.PartidaCanceladaHostSalio
+                    : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
+                return ResultadoRemocionJugador.Cancelar(mensaje);
             }
-            else if (debeAvanzar)
+
+            if (eraDibujante)
+            {
+                return ResultadoRemocionJugador.AvanzarRonda();
+            }
+
+            return ResultadoRemocionJugador.SinAccion();
+        }
+
+        private void EjecutarAccionPostRemocion(ResultadoRemocionJugador resultado)
+        {
+            if (resultado.DebeCancelar)
+            {
+                CancelarPartida(resultado.MensajeCancelacion);
+            }
+            else if (resultado.DebeAvanzar)
             {
                 FinalizarRondaActual();
+            }
+        }
+
+        private sealed class ResultadoRemocionJugador
+        {
+            public bool DebeCancelar { get; private set; }
+            public bool DebeAvanzar { get; private set; }
+            public string MensajeCancelacion { get; private set; }
+
+            public static ResultadoRemocionJugador SinAccion()
+            {
+                return new ResultadoRemocionJugador();
+            }
+
+            public static ResultadoRemocionJugador Cancelar(string mensaje)
+            {
+                return new ResultadoRemocionJugador
+                {
+                    DebeCancelar = true,
+                    MensajeCancelacion = mensaje
+                };
+            }
+
+            public static ResultadoRemocionJugador AvanzarRonda()
+            {
+                return new ResultadoRemocionJugador { DebeAvanzar = true };
             }
         }
 

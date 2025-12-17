@@ -162,47 +162,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return new List<AmigoDTO>();
                 }
 
-                var resultado = new List<AmigoDTO>();
-                foreach (var amigo in amigos)
-                {
-                    if (amigo != null)
+                return amigos
+                    .Where(a => a != null)
+                    .Select(a => new AmigoDTO
                     {
-                        resultado.Add(new AmigoDTO
-                        {
-                            UsuarioId = amigo.idUsuario,
-                            NombreUsuario = amigo.Nombre_Usuario
-                        });
-                    }
-                }
-                return resultado;
+                        UsuarioId = a.idUsuario,
+                        NombreUsuario = a.Nombre_Usuario
+                    })
+                    .ToList();
             }
         }
 
-       private List<SolicitudAmistadDTO> MapearSolicitudes(IList<Amigo> solicitudes,
+       private static List<SolicitudAmistadDTO> MapearSolicitudes(IList<Amigo> solicitudes,
             int usuarioId)
         {
-            var resultadoDTOs = new List<SolicitudAmistadDTO>();
-            foreach (var solicitud in solicitudes)
-            {
-                if (solicitud.UsuarioReceptor != usuarioId)
+            return solicitudes
+                .Where(s => s.UsuarioReceptor == usuarioId)
+                .Where(s => !string.IsNullOrWhiteSpace(s.Usuario?.Nombre_Usuario) &&
+                            !string.IsNullOrWhiteSpace(s.Usuario1?.Nombre_Usuario))
+                .Select(s => new SolicitudAmistadDTO
                 {
-                    continue;
-                }
-
-                string emisor = solicitud.Usuario?.Nombre_Usuario;
-                string receptor = solicitud.Usuario1?.Nombre_Usuario;
-
-                if (!string.IsNullOrWhiteSpace(emisor) && !string.IsNullOrWhiteSpace(receptor))
-                {
-                    resultadoDTOs.Add(new SolicitudAmistadDTO
-                    {
-                        UsuarioEmisor = emisor,
-                        UsuarioReceptor = receptor,
-                        SolicitudAceptada = solicitud.Estado
-                    });
-                }
-            }
-            return resultadoDTOs;
+                    UsuarioEmisor = s.Usuario.Nombre_Usuario,
+                    UsuarioReceptor = s.Usuario1.Nombre_Usuario,
+                    SolicitudAceptada = s.Estado
+                })
+                .ToList();
         }
 
         private static void ValidarSolicitudParaAceptar(Amigo relacion, int usuarioReceptorId)

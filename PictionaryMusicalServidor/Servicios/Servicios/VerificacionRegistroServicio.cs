@@ -204,25 +204,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                bool usuarioRegistrado = false;
-                foreach (var usuario in contexto.Usuario)
-                {
-                    if (usuario.Nombre_Usuario == nuevaCuenta.Usuario)
-                    {
-                        usuarioRegistrado = true;
-                        break;
-                    }
-                }
+                bool usuarioRegistrado = contexto.Usuario
+                    .Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
 
-                bool correoRegistrado = false;
-                foreach (var jugador in contexto.Jugador)
-                {
-                    if (jugador.Correo == nuevaCuenta.Correo)
-                    {
-                        correoRegistrado = true;
-                        break;
-                    }
-                }
+                bool correoRegistrado = contexto.Jugador
+                    .Any(j => j.Correo == nuevaCuenta.Correo);
 
                 if (usuarioRegistrado || correoRegistrado)
                 {

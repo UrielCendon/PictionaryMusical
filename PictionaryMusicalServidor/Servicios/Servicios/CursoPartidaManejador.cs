@@ -268,16 +268,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             ControladorPartida controlador)
         {
             var jugadoresEstado = controlador.ObtenerJugadores();
-            JugadorPartida dibujante = null;
-            foreach (var jugador in jugadoresEstado)
-            {
-                if (jugador.EsDibujante)
-                {
-                    dibujante = jugador;
-                    break;
-                }
-            }
-            string nombreDibujante = dibujante != null ? dibujante.NombreUsuario : string.Empty;
+            var dibujante = jugadoresEstado.FirstOrDefault(j => j.EsDibujante);
+            string nombreDibujante = dibujante?.NombreUsuario ?? string.Empty;
 
             List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
 
@@ -307,7 +299,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private void NotificarInicioRondaIndividual(
+        private static void NotificarInicioRondaIndividual(
             string idSala,
             string idJugador,
             ICursoPartidaManejadorCallback callback,
@@ -316,18 +308,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string nombreDibujante,
             Datos.Entidades.Cancion cancionActual)
         {
-            JugadorPartida datosJugador = null;
-            foreach (var jugador in jugadoresEstado)
-            {
-                if (string.Equals(jugador.IdConexion, idJugador, StringComparison.OrdinalIgnoreCase))
-                {
-                    datosJugador = jugador;
-                    break;
-                }
-            }
+            var datosJugador = jugadoresEstado.FirstOrDefault(j =>
+                string.Equals(j.IdConexion, idJugador, StringComparison.OrdinalIgnoreCase));
 
-            bool esDibujante = datosJugador != null && datosJugador.EsDibujante;
+            bool esDibujante = datosJugador?.EsDibujante ?? false;
 
+            var rondaPersonalizada = CrearRondaPersonalizada(
+                rondaBase, 
+                cancionActual, 
+                esDibujante, 
+                nombreDibujante);
+
+            NotificarInicioRondaSeguro(callback, rondaPersonalizada, idSala, idJugador);
+        }
+
+        private static RondaDTO CrearRondaPersonalizada(
+            RondaDTO rondaBase,
+            Datos.Entidades.Cancion cancionActual,
+            bool esDibujante,
+            string nombreDibujante)
+        {
             string pistaArtista = rondaBase.PistaArtista;
             string pistaGenero = rondaBase.PistaGenero;
 
@@ -337,7 +337,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 pistaGenero = cancionActual.Genero;
             }
 
-            var rondaPersonalizada = new RondaDTO
+            return new RondaDTO
             {
                 IdCancion = rondaBase.IdCancion,
                 PistaArtista = pistaArtista,
@@ -346,8 +346,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 Rol = esDibujante ? "Dibujante" : "Adivinador",
                 NombreDibujante = nombreDibujante
             };
-
-            NotificarInicioRondaSeguro(callback, rondaPersonalizada, idSala, idJugador);
         }
 
         private static void NotificarInicioRondaSeguro(
@@ -521,24 +519,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
         private static HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
         {
-            int puntajeMaximo = 0;
-            foreach (var jugador in jugadores)
-            {
-                if (jugador.PuntajeTotal > puntajeMaximo)
-                {
-                    puntajeMaximo = jugador.PuntajeTotal;
-                }
-            }
+            int puntajeMaximo = jugadores.Max(j => j.PuntajeTotal);
 
-            var ganadores = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var jugador in jugadores)
-            {
-                if (jugador.PuntajeTotal == puntajeMaximo)
-                {
-                    ganadores.Add(jugador.IdConexion);
-                }
-            }
-            return ganadores;
+            return new HashSet<string>(
+                jugadores
+                    .Where(j => j.PuntajeTotal == puntajeMaximo)
+                    .Select(j => j.IdConexion),
+                StringComparer.OrdinalIgnoreCase);
         }
 
         private static void PersistirEstadisticasJugador(

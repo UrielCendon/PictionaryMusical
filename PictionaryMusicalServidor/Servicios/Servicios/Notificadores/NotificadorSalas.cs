@@ -54,15 +54,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="callback">Callback a desuscribir.</param>
         public void DesuscribirPorCallback(ISalasManejadorCallback callback)
         {
-            var clavesSuscripciones = new List<Guid>();
-
-            foreach (var suscripcion in _suscripciones)
-            {
-                if (ReferenceEquals(suscripcion.Value, callback))
-                {
-                    clavesSuscripciones.Add(suscripcion.Key);
-                }
-            }
+            var clavesSuscripciones = _suscripciones
+                .Where(s => ReferenceEquals(s.Value, callback))
+                .Select(s => s.Key)
+                .ToList();
 
             foreach (var claveSuscripcion in clavesSuscripciones)
             {

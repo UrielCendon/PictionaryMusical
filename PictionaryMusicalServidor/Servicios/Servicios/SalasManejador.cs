@@ -227,16 +227,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Obtiene la lista de todas las salas de juego disponibles.
         /// </summary>
         /// <returns> Lista de salas disponibles.</returns>
-        public IList<SalaDTO> ObtenerListaSalas()
+        public static IList<SalaDTO> ObtenerListaSalas()
         {
             try
             {
-                var listaSalas = new List<SalaDTO>();
-                foreach (var sala in _salas.Values)
-                {
-                    listaSalas.Add(sala.ConvertirADto());
-                }
-                return listaSalas;
+                return _salas.Values
+                    .Select(sala => sala.ConvertirADto())
+                    .ToList();
             }
             catch (InvalidOperationException excepcion)
             {
