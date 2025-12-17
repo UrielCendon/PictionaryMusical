@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
@@ -117,45 +117,98 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             string nombreAmigo = NombreUsuarioBusqueda?.Trim();
             string usuarioActual = _usuarioSesion.NombreUsuario;
 
+            if (!ValidarNombreAmigo(nombreAmigo))
+            {
+                return;
+            }
+
+            if (!ValidarUsuarioActual(usuarioActual))
+            {
+                return;
+            }
+
+            await EjecutarEnvioSolicitudAsync(usuarioActual, nombreAmigo);
+        }
+
+        private bool ValidarNombreAmigo(string nombreAmigo)
+        {
             if (string.IsNullOrWhiteSpace(nombreAmigo))
             {
                 _avisoServicio.Mostrar(Lang.buscarAmigoTextoIngreseUsuario);
-                return;
+                return false;
             }
 
+            return true;
+        }
+
+        private bool ValidarUsuarioActual(string usuarioActual)
+        {
             if (string.IsNullOrWhiteSpace(usuarioActual))
             {
-                _logger.Warn("Intento de enviar solicitud sin usuario actual en sesion.");
+                _logger.Warn(
+                    "Intento de enviar solicitud sin usuario actual en sesion.");
                 _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
-                return;
+                return false;
             }
 
+            return true;
+        }
+
+        private async Task EjecutarEnvioSolicitudAsync(
+            string usuarioActual,
+            string nombreAmigo)
+        {
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                _logger.InfoFormat("Enviando solicitud de amistad de {0} a {1}",
-                    usuarioActual, nombreAmigo);
-                await _amigosServicio.EnviarSolicitudAsync(
-                    usuarioActual,
-                    nombreAmigo).ConfigureAwait(true);
-
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
-                _ventana.CerrarVentana(this);
-            },
-            excepcion =>
-            {
-                _logger.ErrorFormat("Error al enviar solicitud a {0}.", nombreAmigo, excepcion);
-                _sonidoManejador.ReproducirError();
-
-                string mensajeError = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
-                _avisoServicio.Mostrar(mensajeError);
-                
-                EstaProcesando = false;
-            });
+            await EjecutarOperacionAsync(
+                async () => await EnviarYNotificarExitoAsync(
+                    usuarioActual, 
+                    nombreAmigo),
+                excepcion => ManejarErrorEnvio(excepcion, nombreAmigo));
 
             EstaProcesando = false;
+        }
+
+        private async Task EnviarYNotificarExitoAsync(
+            string usuarioActual,
+            string nombreAmigo)
+        {
+            _logger.InfoFormat(
+                "Enviando solicitud de amistad de {0} a {1}",
+                usuarioActual,
+                nombreAmigo);
+
+            await _amigosServicio.EnviarSolicitudAsync(
+                usuarioActual,
+                nombreAmigo).ConfigureAwait(true);
+
+            NotificarExito();
+        }
+
+        private void NotificarExito()
+        {
+            _sonidoManejador.ReproducirNotificacion();
+            _avisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
+            _ventana.CerrarVentana(this);
+        }
+
+        private void ManejarErrorEnvio(Exception excepcion, string nombreAmigo)
+        {
+            _logger.ErrorFormat(
+                "Error al enviar solicitud a {0}.",
+                nombreAmigo,
+                excepcion);
+            _sonidoManejador.ReproducirError();
+
+            string mensajeError = ObtenerMensajeError(excepcion);
+            _avisoServicio.Mostrar(mensajeError);
+
+            EstaProcesando = false;
+        }
+
+        private static string ObtenerMensajeError(Exception excepcion)
+        {
+            return excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
         }
     }
 }

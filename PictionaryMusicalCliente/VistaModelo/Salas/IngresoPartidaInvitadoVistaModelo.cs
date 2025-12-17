@@ -5,9 +5,11 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.Utilidades.Resultados;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -34,6 +36,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool _estaProcesando;
         private string _codigoSala;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de 
+        /// <see cref="IngresoPartidaInvitadoVistaModelo"/>.
+        /// </summary>
+        /// <param name="ventana">Servicio de ventanas.</param>
+        /// <param name="localizador">Servicio de localizacion.</param>
+        /// <param name="localizacionServicio">Servicio de localizacion cultural.</param>
+        /// <param name="salasServicio">Servicio de salas.</param>
+        /// <param name="avisoServicio">Servicio de avisos.</param>
+        /// <param name="sonidoManejador">Manejador de sonidos.</param>
+        /// <param name="nombreInvitadoGenerador">
+        /// Generador de nombres para invitados.
+        /// </param>
         public IngresoPartidaInvitadoVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -68,12 +83,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }, () => !EstaProcesando);
         }
 
+        /// <summary>
+        /// Obtiene o establece el codigo de la sala a unirse.
+        /// </summary>
         public string CodigoSala
         {
             get => _codigoSala;
             set => EstablecerPropiedad(ref _codigoSala, value);
         }
 
+        /// <summary>
+        /// Obtiene un valor que indica si hay una operacion en proceso.
+        /// </summary>
         public bool EstaProcesando
         {
             get => _estaProcesando;
@@ -87,14 +108,29 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
+        /// <summary>
+        /// Obtiene un valor que indica si el invitado se unio exitosamente.
+        /// </summary>
         public bool SeUnioSala { get; private set; }
 
+        /// <summary>
+        /// Obtiene el comando para unirse a la sala.
+        /// </summary>
         public IComandoAsincrono UnirseSalaComando { get; }
 
+        /// <summary>
+        /// Obtiene el comando para cancelar la operacion.
+        /// </summary>
         public ICommand CancelarComando { get; }
 
+        /// <summary>
+        /// Obtiene la sala a la que se unio el invitado.
+        /// </summary>
         public DTOs.SalaDTO SalaUnida { get; private set; }
 
+        /// <summary>
+        /// Obtiene el nombre generado para el invitado.
+        /// </summary>
         public string NombreInvitadoGenerado { get; private set; }
 
         private async Task UnirseSalaComoInvitadoAsync()
@@ -110,14 +146,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool ValidarCodigoSala()
         {
             string codigo = CodigoSala?.Trim();
-            if (string.IsNullOrWhiteSpace(codigo))
+            
+            if (!string.IsNullOrWhiteSpace(codigo))
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.unirseSalaTextoVacio);
-                return false;
+                return true;
             }
 
-            return true;
+            NotificarCodigoSalaVacio();
+            return false;
+        }
+
+        private void NotificarCodigoSalaVacio()
+        {
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(Lang.unirseSalaTextoVacio);
         }
 
         private async Task IntentarUnirseSalaAsync(string codigo)
@@ -128,9 +170,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 await BuscarNombreUnicoYUnirseAsync(codigo).ConfigureAwait(true);
             },
-            ex =>
+            excepcion =>
             {
-                _logger.Error("Error al intentar unirse a la sala.", ex);
+                _logger.Error("Error al intentar unirse a la sala.", excepcion);
                 EstaProcesando = false;
             });
 
@@ -146,15 +188,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             for (int intento = 0; intento < maxIntentos; intento++)
             {
-                string nombreInvitado = GenerarNombreInvitado(
+                ResultadoGeneracion resultadoGeneracion = GenerarNombreInvitado(
                     culturaActual, 
                     nombresReservados);
 
-                if (string.IsNullOrWhiteSpace(nombreInvitado))
+                if (!resultadoGeneracion.Exitoso)
                 {
-                    _logger.Warn("Generador de nombres retorno vacio/nulo.");
+                    RegistrarFalloGeneracion(resultadoGeneracion.Motivo);
                     break;
                 }
+
+                string nombreInvitado = resultadoGeneracion.NombreGenerado;
 
                 ResultadoUnionInvitado resultado = await IntentarUnirseAsync(
                     codigo,
@@ -172,7 +216,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             MostrarErrorIntentosAgotados();
         }
 
-        private string GenerarNombreInvitado(
+        private static void RegistrarFalloGeneracion(MotivoFalloGeneracion motivo)
+        {
+            _logger.WarnFormat("Generador de nombres fallo con motivo: {0}", motivo);
+        }
+
+        private ResultadoGeneracion GenerarNombreInvitado(
             System.Globalization.CultureInfo cultura,
             HashSet<string> nombresReservados)
         {
@@ -215,12 +264,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void MarcarUnionExitosa(DTOs.SalaDTO sala, string nombreInvitado)
         {
-            _logger.InfoFormat("Invitado unido exitosamente: {0}", nombreInvitado);
             _sonidoManejador.ReproducirNotificacion();
+            EstablecerResultadoUnion(sala, nombreInvitado);
+            _ventana.CerrarVentana(this);
+        }
+
+        private void EstablecerResultadoUnion(DTOs.SalaDTO sala, string nombreInvitado)
+        {
             SeUnioSala = true;
             SalaUnida = sala;
             NombreInvitadoGenerado = nombreInvitado;
-            _ventana.CerrarVentana(this);
         }
 
         private static void AgregarNombresReservados(
@@ -228,45 +281,73 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             IReadOnlyCollection<string> jugadoresActuales,
             HashSet<string> nombresReservados)
         {
-            _logger.InfoFormat("Nombre duplicado '{0}', reintentando...", 
-                nombreInvitado);
             nombresReservados.Add(nombreInvitado);
-            
-            if (jugadoresActuales != null)
+            AgregarJugadoresAReservados(jugadoresActuales, nombresReservados);
+        }
+
+        private static void AgregarJugadoresAReservados(
+            IReadOnlyCollection<string> jugadoresActuales,
+            HashSet<string> nombresReservados)
+        {
+            if (jugadoresActuales == null)
             {
-                foreach (string jugador in jugadoresActuales)
-                {
-                    nombresReservados.Add(jugador);
-                }
+                return;
+            }
+
+            foreach (string jugador in jugadoresActuales)
+            {
+                nombresReservados.Add(jugador);
             }
         }
 
         private void MostrarErrorSalaLlena()
         {
+            RegistrarErrorSalaLlena();
+            NotificarError(Lang.errorTextoSalaLlena);
+        }
+
+        private static void RegistrarErrorSalaLlena()
+        {
             _logger.Warn("Intento de unirse a sala llena.");
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.errorTextoSalaLlena);
         }
 
         private void MostrarErrorSalaNoEncontrada()
         {
+            RegistrarErrorSalaNoEncontrada();
+            NotificarError(Lang.errorTextoNoEncuentraPartida);
+        }
+
+        private void RegistrarErrorSalaNoEncontrada()
+        {
             _logger.WarnFormat("Sala no encontrada: {0}", CodigoSala);
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.errorTextoNoEncuentraPartida);
         }
 
         private void MostrarError(string mensaje)
         {
+            RegistrarError(mensaje);
+            NotificarError(mensaje ?? Lang.errorTextoNoEncuentraPartida);
+        }
+
+        private static void RegistrarError(string mensaje)
+        {
             _logger.ErrorFormat("Error al unirse: {0}", mensaje);
+        }
+
+        private void NotificarError(string mensaje)
+        {
             _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(mensaje ?? Lang.errorTextoNoEncuentraPartida);
+            _avisoServicio.Mostrar(mensaje);
         }
 
         private void MostrarErrorIntentosAgotados()
         {
+            RegistrarErrorIntentosAgotados();
+            NotificarError(Lang.errorTextoNombresInvitadoAgotados);
+        }
+
+        private static void RegistrarErrorIntentosAgotados()
+        {
             _logger.Error("Se agotaron los intentos de generar nombre unico.");
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.errorTextoNombresInvitadoAgotados);
         }
 
         private async Task<ResultadoUnionInvitado> IntentarUnirseAsync(
@@ -302,17 +383,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 return ResultadoUnionInvitado.Exito(sala);
             }
-            catch (ServicioExcepcion ex)
+            catch (ServicioExcepcion excepcion)
             {
-                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", ex);
+                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", excepcion);
                 string mensaje;
-                if (string.IsNullOrWhiteSpace(ex?.Message))
+                if (string.IsNullOrWhiteSpace(excepcion?.Message))
                 {
                     mensaje = Lang.errorTextoNoEncuentraPartida;
                 }
                 else
                 {
-                    mensaje = ex.Message;
+                    mensaje = excepcion.Message;
                 }
 
                 _sonidoManejador.ReproducirError();
@@ -348,7 +429,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             return coincidencias > 1;
         }
 
-        private async Task IntentarAbandonarSalaAsync(string codigoSala, string nombreInvitado)
+        private async Task IntentarAbandonarSalaAsync(
+            string codigoSala, 
+            string nombreInvitado)
         {
             try
             {
@@ -356,12 +439,29 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     codigoSala,
                     nombreInvitado).ConfigureAwait(true);
             }
-            catch (Exception ex)
+            catch (ServicioExcepcion excepcion)
             {
-                // Se captura Exception general porque es un cleanup "best effort"
-                _logger.Warn("Error en cleanup al abandonar sala (ignorado intencionalmente).",
-                    ex);
+                RegistrarErrorCleanup(excepcion);
             }
+            catch (FaultException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
+            catch (CommunicationException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                RegistrarErrorCleanup(excepcion);
+            }
+        }
+
+        private static void RegistrarErrorCleanup(Exception excepcion)
+        {
+            _logger.Warn(
+                "Error en cleanup al abandonar sala (ignorado intencionalmente).",
+                excepcion);
         }
 
         private enum EstadoUnionInvitado

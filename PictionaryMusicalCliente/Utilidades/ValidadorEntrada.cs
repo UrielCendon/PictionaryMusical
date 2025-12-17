@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Properties.Langs;
+﻿using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.Text.RegularExpressions;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -73,7 +73,7 @@ namespace PictionaryMusicalCliente.Utilidades
         }
 
         /// <summary>
-        /// Valida que la contrase�a cumpla con los requisitos de seguridad.
+        /// Valida que la contrasena cumpla con los requisitos de seguridad.
         /// </summary>
         public static DTOs.ResultadoOperacionDTO ValidarContrasena(string contrasena)
         {

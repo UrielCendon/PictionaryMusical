@@ -1,4 +1,4 @@
-<Window x:Class="PictionaryMusicalCliente.Vista.IngresoPartidaInvitado"
+﻿<Window x:Class="PictionaryMusicalCliente.Vista.IngresoPartidaInvitado"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:convertidores="clr-namespace:PictionaryMusicalCliente.Convertidores"
@@ -26,10 +26,11 @@
                 <TextBox x:Name="campoTextoCodigoPartida"
                          Height="30" Margin="0,12,0,16"
                          FontFamily="Comic Sans MS" HorizontalAlignment="Center" Width="186"
-                         MaxLength="6"
+                         MaxLength="6" TextAlignment="Center"
                          Text="{Binding CodigoSala, UpdateSourceTrigger=PropertyChanged}"
                          IsEnabled="{Binding EstaProcesando, Converter={StaticResource BooleanoInverso}}"
-                         utilidades:EntradaNumerica.SoloNumeros="True"/>
+                         utilidades:EntradaNumerica.SoloNumeros="True"
+                         utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"/>
 
                 <Button x:Name="botonUnirsePartida"
                         Content="{x:Static language:Lang.globalTextoUnirse}"

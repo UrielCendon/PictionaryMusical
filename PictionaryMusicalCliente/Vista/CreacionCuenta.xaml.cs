@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Utilidades;
+﻿using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using System.Collections.Generic;
 using System.Windows;
@@ -33,8 +33,7 @@ namespace PictionaryMusicalCliente.Vista
                 {
                     if (!string.IsNullOrWhiteSpace(mensaje))
                     {
-                        MessageBox.Show(mensaje, Title, MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+                        App.AvisoServicio.Mostrar(mensaje);
                     }
                 };
             }

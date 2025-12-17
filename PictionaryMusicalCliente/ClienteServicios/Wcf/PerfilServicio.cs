@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Properties.Langs;
+﻿using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.ServiceModel;
@@ -45,7 +45,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     cliente => cliente.ObtenerPerfilAsync(usuarioId)
                 ).ConfigureAwait(false);
 
-                _logger.InfoFormat("Perfil obtenido para ID: {0}", usuarioId);
                 return perfil;
             }
             catch (FaultException excepcion)
@@ -72,7 +71,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.avisoTextoServidorTiempoSesion,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Error inesperado en perfil.", excepcion);
                 throw new ServicioExcepcion(
@@ -132,7 +131,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Error inesperado al actualizar perfil.", excepcion);
                 throw new ServicioExcepcion(

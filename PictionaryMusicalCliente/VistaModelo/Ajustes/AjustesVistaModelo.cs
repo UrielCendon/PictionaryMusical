@@ -1,6 +1,7 @@
 ﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Sesion;
 using System;
 using System.Linq;
@@ -110,18 +111,24 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
 
         private InicioSesion.InicioSesionVistaModelo CrearInicioSesionVistaModelo()
         {
-            return new InicioSesion.InicioSesionVistaModelo(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
+                App.SonidoManejador,
+                App.AvisoServicio);
+
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 App.InicioSesionServicio,
                 App.CambioContrasenaServicio,
                 App.RecuperacionCuentaServicio,
                 App.ServicioIdioma,
-                App.SonidoManejador,
-                App.AvisoServicio,
                 App.GeneradorNombres,
                 App.UsuarioGlobal,
                 App.FabricaSalas);
+
+            return new InicioSesion.InicioSesionVistaModelo(
+                dependenciasBase,
+                dependenciasInicioSesion);
         }
 
         private void MostrarVentanaInicioSesion(

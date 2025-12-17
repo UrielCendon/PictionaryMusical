@@ -1,9 +1,9 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
-using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +17,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
     /// <summary>
     /// Controla la logica para invitar amigos conectados a una sala de juego.
     /// </summary>
+    /// <remarks>
+    /// Gestiona la lista de amigos disponibles y el envio de invitaciones
+    /// mediante correo electronico.
+    /// </remarks>
     public class InvitarAmigosVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -29,40 +33,50 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private readonly string _codigoSala;
         private readonly Action<int> _registrarAmigoInvitado;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="dependenciasBase">
+        /// Dependencias comunes de UI del ViewModel.
+        /// </param>
+        /// <param name="dependencias">
+        /// Dependencias especificas de invitacion de amigos.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public InvitarAmigosVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            IEnumerable<DTOs.AmigoDTO> amigos,
-            IInvitacionesServicio invitacionesServicio,
-            IPerfilServicio perfilServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            string codigoSala,
-            Func<int, bool> amigoInvitado,
-            Action<int> registrarAmigoInvitado)
-            : base(ventana, localizador)
+            VistaModeloBaseDependencias dependenciasBase,
+            InvitarAmigosDependencias dependencias)
+            : base(dependenciasBase?.Ventana, dependenciasBase?.Localizador)
         {
-            _invitacionesServicio = invitacionesServicio ??
-                throw new ArgumentNullException(nameof(invitacionesServicio));
-            _perfilServicio = perfilServicio ??
-                throw new ArgumentNullException(nameof(perfilServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
+            ValidarDependencias(dependenciasBase, dependencias);
 
-            if (string.IsNullOrWhiteSpace(codigoSala))
-            {
-                throw new ArgumentException(
-                    "El codigo de la sala es obligatorio.",
-                    nameof(codigoSala));
-            }
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+            _avisoServicio = dependenciasBase.AvisoServicio;
 
-            _codigoSala = codigoSala;
-            _registrarAmigoInvitado = registrarAmigoInvitado;
+            _invitacionesServicio = dependencias.InvitacionesServicio;
+            _perfilServicio = dependencias.PerfilServicio;
+            _codigoSala = dependencias.CodigoSala;
+            _registrarAmigoInvitado = dependencias.RegistrarAmigoInvitado;
 
             Amigos = new ObservableCollection<AmigoInvitacionItemVistaModelo>(
-                CrearElementos(amigos, amigoInvitado));
+                CrearElementos(dependencias.Amigos, dependencias.AmigoInvitado));
+        }
+
+        private static void ValidarDependencias(
+            VistaModeloBaseDependencias dependenciasBase,
+            InvitarAmigosDependencias dependencias)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
         }
 
         /// <summary>
@@ -70,6 +84,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         /// </summary>
         public ObservableCollection<AmigoInvitacionItemVistaModelo> Amigos { get; }
 
+        /// <summary>
+        /// Envia una invitacion al amigo especificado.
+        /// </summary>
+        /// <param name="amigo">Amigo al que se enviara la invitacion.</param>
         internal async Task InvitarAsync(AmigoInvitacionItemVistaModelo amigo)
         {
             ResultadoValidacionAmigo validacion = ValidarAmigo(amigo);
@@ -141,9 +159,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private async Task<DTOs.UsuarioDTO> ObtenerPerfilAmigoAsync(int usuarioId)
         {
-            _logger.InfoFormat("Obteniendo perfil para invitar amigo ID: {0}",
-                usuarioId);
-            
             return await _perfilServicio
                 .ObtenerPerfilAsync(usuarioId)
                 .ConfigureAwait(true);
@@ -168,8 +183,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             string correo,
             AmigoInvitacionItemVistaModelo amigo)
         {
-            _logger.InfoFormat("Enviando invitacion por correo a: {0}", correo);
-            
             DTOs.ResultadoOperacionDTO resultado = await _invitacionesServicio
                 .EnviarInvitacionAsync(_codigoSala, correo)
                 .ConfigureAwait(true);
@@ -236,6 +249,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
     /// <summary>
     /// Representa un item individual en la lista de amigos para invitar.
     /// </summary>
+    /// <remarks>
+    /// Encapsula los datos del amigo y el estado de la invitacion.
+    /// </remarks>
     public class AmigoInvitacionItemVistaModelo : INotifyPropertyChanged
     {
         private readonly InvitarAmigosVistaModelo _padre;
@@ -245,6 +261,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="amigo">Datos del amigo.</param>
+        /// <param name="padre">ViewModel padre que gestiona las invitaciones.</param>
+        /// <param name="sonidoManejador">Manejador para reproducir sonidos.</param>
+        /// <param name="invitacionEnviada">
+        /// Indica si ya se envio previamente una invitacion.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si amigo, padre o sonidoManejador son nulos.
+        /// </exception>
         public AmigoInvitacionItemVistaModelo(
             DTOs.AmigoDTO amigo,
             InvitarAmigosVistaModelo padre,
@@ -338,6 +366,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 new PropertyChangedEventArgs(nombrePropiedad));
         }
 
+        /// <summary>
+        /// Marca la invitacion como enviada para este amigo.
+        /// </summary>
         internal void MarcarInvitacionEnviada()
         {
             InvitacionEnviada = true;

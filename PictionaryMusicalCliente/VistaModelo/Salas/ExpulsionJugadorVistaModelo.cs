@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -75,7 +75,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void EjecutarConfirmar()
         {
             _sonidoManejador.ReproducirClick();
-            _logger.Info("Usuario confirmo la expulsion del jugador.");
             DialogResult = true;
             _ventana.CerrarVentana(this);
         }
@@ -83,7 +82,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void EjecutarCancelar()
         {
             _sonidoManejador.ReproducirClick();
-            _logger.Info("Usuario cancelo la expulsion del jugador.");
             DialogResult = false;
             _ventana.CerrarVentana(this);
         }

@@ -122,7 +122,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void ConfirmarReporte()
         {
-            _logger.InfoFormat("Usuario confirmo reporte contra: {0}", _nombreJugador);
             MensajeError = string.Empty;
             DialogResult = true;
             _ventana.CerrarVentana(this);
@@ -131,7 +130,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void EjecutarCancelar()
         {
             _sonidoManejador.ReproducirClick();
-            _logger.Info("Usuario cancelo el reporte de jugador.");
             DialogResult = false;
             _ventana.CerrarVentana(this);
         }

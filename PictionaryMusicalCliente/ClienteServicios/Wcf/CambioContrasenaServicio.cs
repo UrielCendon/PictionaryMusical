@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.ServiceModel;
@@ -19,23 +19,26 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IWcfClienteEjecutor _ejecutor;
         private readonly IWcfClienteFabrica _fabricaClientes;
         private readonly IManejadorErrorServicio _manejadorError;
-        private readonly ILocalizadorServicio _localizador;
 
         /// <summary>
         /// Inicializa el servicio con las dependencias necesarias.
         /// </summary>
+        /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public CambioContrasenaServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
-            IManejadorErrorServicio manejadorError,
-            ILocalizadorServicio localizador)
+            IManejadorErrorServicio manejadorError)
         {
             _ejecutor = ejecutor ?? throw new ArgumentNullException(nameof(ejecutor));
             _fabricaClientes = fabricaClientes ??
                 throw new ArgumentNullException(nameof(fabricaClientes));
             _manejadorError = manejadorError ??
                 throw new ArgumentNullException(nameof(manejadorError));
-            _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -180,9 +183,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado en servicio.", excepcion);
+                _logger.Error("Operacion invalida en servicio.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
@@ -226,7 +229,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             };
         }
 
-        private string ObtenerIdiomaActual()
+        private static string ObtenerIdiomaActual()
         {
             var culturaActual = Lang.Culture;
             if (culturaActual != null)
@@ -240,7 +243,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static DTOs.ResultadoSolicitudRecuperacionDTO MapearResultadoSolicitudRecuperacion(
             DTOs.ResultadoSolicitudRecuperacionDTO dto)
         {
-            if (dto == null) return null;
+            if (dto == null)
+            {
+                return CrearResultadoSolicitudRecuperacionVacio();
+            }
+
             return new DTOs.ResultadoSolicitudRecuperacionDTO
             {
                 CuentaEncontrada = dto.CuentaEncontrada,
@@ -251,10 +258,27 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             };
         }
 
+        private static DTOs.ResultadoSolicitudRecuperacionDTO 
+            CrearResultadoSolicitudRecuperacionVacio()
+        {
+            return new DTOs.ResultadoSolicitudRecuperacionDTO
+            {
+                CuentaEncontrada = false,
+                CodigoEnviado = false,
+                CorreoDestino = string.Empty,
+                Mensaje = string.Empty,
+                TokenCodigo = string.Empty
+            };
+        }
+
         private static DTOs.ResultadoSolicitudCodigoDTO MapearResultadoSolicitudCodigo(
             DTOs.ResultadoSolicitudCodigoDTO dto)
         {
-            if (dto == null) return null;
+            if (dto == null)
+            {
+                return CrearResultadoSolicitudCodigoVacio();
+            }
+
             return new DTOs.ResultadoSolicitudCodigoDTO
             {
                 CodigoEnviado = dto.CodigoEnviado,
@@ -263,10 +287,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             };
         }
 
+        private static DTOs.ResultadoSolicitudCodigoDTO CrearResultadoSolicitudCodigoVacio()
+        {
+            return new DTOs.ResultadoSolicitudCodigoDTO
+            {
+                CodigoEnviado = false,
+                Mensaje = string.Empty,
+                TokenCodigo = string.Empty
+            };
+        }
+
         private static DTOs.ResultadoOperacionDTO MapearResultadoOperacion(
             DTOs.ResultadoOperacionDTO dto)
         {
-            if (dto == null) return null;
+            if (dto == null)
+            {
+                return CrearResultadoOperacionVacio();
+            }
+
             return new DTOs.ResultadoOperacionDTO
             {
                 OperacionExitosa = dto.OperacionExitosa,
@@ -274,7 +312,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             };
         }
 
-        private void RegistrarActualizacionExitosa(DTOs.ResultadoOperacionDTO resultado)
+        private static DTOs.ResultadoOperacionDTO CrearResultadoOperacionVacio()
+        {
+            return new DTOs.ResultadoOperacionDTO
+            {
+                OperacionExitosa = false,
+                Mensaje = string.Empty
+            };
+        }
+
+        private static void RegistrarActualizacionExitosa(DTOs.ResultadoOperacionDTO resultado)
         {
             if (resultado?.OperacionExitosa == true)
             {

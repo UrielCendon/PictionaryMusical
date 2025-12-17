@@ -1,8 +1,10 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Salas;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,6 +25,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
     /// <summary>
     /// Gestiona la logica de autenticacion y navegacion desde la pantalla de inicio.
     /// </summary>
+    /// <remarks>
+    /// Permite iniciar sesion con credenciales, como invitado,
+    /// crear cuenta y recuperar contrasena.
+    /// </remarks>
     public class InicioSesionVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -37,7 +43,12 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly INombreInvitadoGenerador _generadorNombres;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly Func<ISalasServicio> _salasServicioFactory;
+        private readonly InicioSesionNavegacion _navegacion;
+        private readonly ValidadorCuenta _validadorCuenta;
 
+        /// <summary>
+        /// Nombre del campo contrasena para validacion.
+        /// </summary>
         public const string CampoContrasena = "Contrasena";
 
         private string _identificador;
@@ -47,38 +58,46 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private IdiomaOpcion _idiomaSeleccionado;
         private bool _sesionIniciada;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="dependenciasBase">
+        /// Dependencias comunes de UI del ViewModel.
+        /// </param>
+        /// <param name="dependencias">
+        /// Dependencias especificas de inicio de sesion.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public InicioSesionVistaModelo(
-            IVentanaServicio ventana,
-            ILocalizadorServicio localizador,
-            IInicioSesionServicio inicioSesionServicio,
-            ICambioContrasenaServicio cambioContrasenaServicio,
-            IRecuperacionCuentaServicio recuperacionCuentaDialogoServicio,
-            ILocalizacionServicio localizacionServicio,
-            SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio,
-            INombreInvitadoGenerador generadorNombres,
-            IUsuarioAutenticado usuarioSesion,
-            Func<ISalasServicio> salasServicioFactory)
-            : base(ventana, localizador)
+            VistaModeloBaseDependencias dependenciasBase,
+            InicioSesionDependencias dependencias)
+            : base(
+                dependenciasBase?.Ventana, 
+                dependenciasBase?.Localizador)
         {
-            _inicioSesionServicio = inicioSesionServicio ??
-                throw new ArgumentNullException(nameof(inicioSesionServicio));
-            _cambioContrasenaServicio = cambioContrasenaServicio ??
-                throw new ArgumentNullException(nameof(cambioContrasenaServicio));
-            _recuperacionCuentaDialogoServicio = recuperacionCuentaDialogoServicio ??
-                throw new ArgumentNullException(nameof(recuperacionCuentaDialogoServicio));
-            _localizacionServicio = localizacionServicio ??
-                throw new ArgumentNullException(nameof(localizacionServicio));
-            _salasServicioFactory = salasServicioFactory ??
-                throw new ArgumentNullException(nameof(salasServicioFactory));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _usuarioSesion = usuarioSesion ??
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            _generadorNombres = generadorNombres ??
-                throw new ArgumentNullException(nameof(generadorNombres));
+            ValidarDependenciasBase(dependenciasBase);
+            ValidarDependenciasInicioSesion(dependencias);
+
+            _sonidoManejador = dependenciasBase.SonidoManejador;
+            _avisoServicio = dependenciasBase.AvisoServicio;
+
+            _inicioSesionServicio = dependencias.InicioSesionServicio;
+            _cambioContrasenaServicio = dependencias.CambioContrasenaServicio;
+            _recuperacionCuentaDialogoServicio = dependencias.RecuperacionCuentaServicio;
+            _localizacionServicio = dependencias.LocalizacionServicio;
+            _generadorNombres = dependencias.GeneradorNombres;
+            _usuarioSesion = dependencias.UsuarioSesion;
+            _salasServicioFactory = dependencias.SalasServicioFactory;
+            _validadorCuenta = new ValidadorCuenta();
+            _navegacion = new InicioSesionNavegacion(
+                _ventana,
+                _localizador,
+                _localizacionServicio,
+                _sonidoManejador,
+                _avisoServicio,
+                _usuarioSesion);
 
             IniciarSesionComando = new ComandoAsincrono(async _ =>
             {
@@ -107,18 +126,45 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             CargarIdiomas();
         }
 
+        private static void ValidarDependenciasBase(
+            VistaModeloBaseDependencias dependenciasBase)
+        {
+            if (dependenciasBase == null)
+            {
+                throw new ArgumentNullException(nameof(dependenciasBase));
+            }
+        }
+
+        private static void ValidarDependenciasInicioSesion(
+            InicioSesionDependencias dependencias)
+        {
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
+        }
+
+        /// <summary>
+        /// Identificador del usuario (nombre de usuario o correo).
+        /// </summary>
         public string Identificador
         {
             get => _identificador;
             set => EstablecerPropiedad(ref _identificador, value);
         }
 
+        /// <summary>
+        /// Coleccion de idiomas disponibles para seleccionar.
+        /// </summary>
         public ObservableCollection<IdiomaOpcion> IdiomasDisponibles
         {
             get => _idiomasDisponibles;
             private set => EstablecerPropiedad(ref _idiomasDisponibles, value);
         }
 
+        /// <summary>
+        /// Idioma actualmente seleccionado.
+        /// </summary>
         public IdiomaOpcion IdiomaSeleccionado
         {
             get => _idiomaSeleccionado;
@@ -131,6 +177,9 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
         }
 
+        /// <summary>
+        /// Indica si hay una operacion en curso.
+        /// </summary>
         public bool EstaProcesando
         {
             get => _estaProcesando;
@@ -145,19 +194,44 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
         }
 
+        /// <summary>
+        /// Indica si la sesion se inicio exitosamente.
+        /// </summary>
         public bool SesionIniciada
         {
             get => _sesionIniciada;
             private set => EstablecerPropiedad(ref _sesionIniciada, value);
         }
 
+        /// <summary>
+        /// Comando para iniciar sesion con credenciales.
+        /// </summary>
         public IComandoAsincrono IniciarSesionComando { get; }
+
+        /// <summary>
+        /// Comando para iniciar recuperacion de cuenta.
+        /// </summary>
         public IComandoAsincrono RecuperarCuentaComando { get; }
+
+        /// <summary>
+        /// Comando para abrir ventana de creacion de cuenta.
+        /// </summary>
         public ICommand AbrirCrearCuentaComando { get; }
+
+        /// <summary>
+        /// Comando para iniciar sesion como invitado.
+        /// </summary>
         public IComandoAsincrono IniciarSesionInvitadoComando { get; }
 
+        /// <summary>
+        /// Accion para notificar campos invalidos a la vista.
+        /// </summary>
         public Action<IList<string>> MostrarCamposInvalidos { get; set; }
 
+        /// <summary>
+        /// Establece la contrasena ingresada por el usuario.
+        /// </summary>
+        /// <param name="contrasena">Contrasena a establecer.</param>
         public void EstablecerContrasena(string contrasena)
         {
             _contrasena = contrasena;
@@ -166,75 +240,46 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private void AbrirVentanaCrearCuenta()
         {
             var codigoServ = new VerificacionCodigoServicio(
-                App.WcfEjecutor, App.WcfFabrica, _localizador, App.ManejadorError);
+                App.WcfEjecutor, App.WcfFabrica, App.ManejadorError);
             var cuentaServ = new CuentaServicio(
                 App.WcfEjecutor, App.WcfFabrica, App.ManejadorError);
             var selectAvatar = new SeleccionAvatarDialogoServicio(
                 _avisoServicio, App.CatalogoAvatares, _sonidoManejador);
             var verifCodigo = new VerificacionCodigoDialogoServicio();
 
-            var crearCuentaVistaModelo = new CreacionCuentaVistaModelo(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,
                 _localizador,
+                _sonidoManejador,
+                _avisoServicio);
+
+            var dependenciasCreacion = new CreacionCuentaDependencias(
                 codigoServ,
                 cuentaServ,
                 selectAvatar,
                 verifCodigo,
-                _sonidoManejador,
                 App.CatalogoAvatares,
-                _avisoServicio,
                 _localizacionServicio);
+
+            var crearCuentaVistaModelo = new CreacionCuentaVistaModelo(
+                dependenciasBase,
+                dependenciasCreacion);
 
             _ventana.MostrarVentanaDialogo(crearCuentaVistaModelo);
         }
 
         private void NavegarAVentanaPrincipal()
         {
-            App.MusicaManejador.Detener();
-
-            var principalVistaModelo = new VentanaPrincipal.VentanaPrincipalVistaModelo(
-                _ventana,
-                _localizador,
-                _localizacionServicio,
-                App.ListaAmigosServicio,
-                App.AmigosServicio,
-                App.SalasServicio,
-                _sonidoManejador,
-                _usuarioSesion);
-
-            _ventana.MostrarVentana(principalVistaModelo);
-            _ventana.CerrarVentana(this);
+            _navegacion.NavegarAVentanaPrincipal(this);
         }
 
-        private void NavegarAVentanaSala(DTOs.SalaDTO sala, ISalasServicio servicio, string nombre, bool esInvitado)
+        private void NavegarAVentanaSala(
+            DTOs.SalaDTO sala,
+            ISalasServicio servicio,
+            string nombre,
+            bool esInvitado)
         {
-            App.MusicaManejador.Detener();
-
-            var salaVistaModelo = new Salas.SalaVistaModelo(
-                _ventana,
-                _localizador,
-                sala,
-                servicio,
-                App.InvitacionesServicio,
-                App.ListaAmigosServicio,
-                App.PerfilServicio,
-                App.ReportesServicio,
-                _sonidoManejador,
-                _avisoServicio,
-                _usuarioSesion,
-                new InvitacionSalaServicio(
-                    App.InvitacionesServicio,
-                    App.ListaAmigosServicio,
-                    App.PerfilServicio,
-                    _sonidoManejador,
-                    _avisoServicio),
-                App.WcfFabrica,
-                new CancionManejador(),
-                nombre,
-                esInvitado);
-
-            _ventana.MostrarVentana(salaVistaModelo);
-            _ventana.CerrarVentana(this);
+            _navegacion.NavegarAVentanaSala(sala, servicio, nombre, esInvitado, this);
         }
 
         private async Task IniciarSesionInvitadoAsync()
@@ -333,58 +378,53 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private async Task IniciarSesionAsync()
         {
+            LimpiarErroresVisuales();
             var camposInvalidos = ValidarCamposInicioSesion();
 
             if (camposInvalidos.Any())
             {
-                _sonidoManejador.ReproducirError();
-                _logger.Warn("Intento de inicio de sesion con campos vacios.");
+                ManejarValidacionFallida(camposInvalidos);
                 return;
             }
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                var solicitud = CrearCredenciales();
-                _logger.InfoFormat("Intentando iniciar sesion para: {0}", solicitud.Identificador);
-
-                DTOs.ResultadoInicioSesionDTO resultado = await EnviarCredencialesAlServidorAsync(
-                    solicitud);
-
-                ProcesarResultadoInicioSesion(resultado);
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarInicioSesionAsync(),
+                ManejarErrorInicioSesion);
 
             EstaProcesando = false;
+        }
+
+        private void ManejarValidacionFallida(List<string> camposInvalidos)
+        {
+            MarcarCamposInvalidosEnUI(camposInvalidos);
+            _avisoServicio.Mostrar(Lang.errorTextoCamposInvalidosGenerico);
+            _sonidoManejador.ReproducirError();
+            _logger.Warn("Intento de inicio de sesion con campos vacios.");
+        }
+
+        private async Task EjecutarInicioSesionAsync()
+        {
+            var solicitud = CrearCredenciales();
+            
+            DTOs.ResultadoInicioSesionDTO resultado = 
+                await EnviarCredencialesAlServidorAsync(solicitud);
+
+            ProcesarResultadoInicioSesion(resultado);
+        }
+
+        private void ManejarErrorInicioSesion(Exception excepcion)
+        {
+            _logger.Error("Error durante inicio de sesion.", excepcion);
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(Lang.errorTextoServidorInicioSesion);
         }
 
         private List<string> ValidarCamposInicioSesion()
         {
             string identificador = Identificador?.Trim();
-            bool identificadorIngresado = !string.IsNullOrWhiteSpace(identificador);
-            bool contrasenaIngresada = !string.IsNullOrWhiteSpace(_contrasena);
-
-            LimpiarErroresVisuales();
-
-            var camposInvalidos = new List<string>();
-
-            if (!identificadorIngresado)
-            {
-                camposInvalidos.Add(nameof(Identificador));
-            }
-
-            if (!contrasenaIngresada)
-            {
-                camposInvalidos.Add(CampoContrasena);
-            }
-
-            if (camposInvalidos.Any())
-            {
-                MarcarCamposInvalidosEnUI(camposInvalidos);
-                _avisoServicio.Mostrar(Lang.errorTextoCamposInvalidosGenerico);
-            }
-
-            return camposInvalidos;
+            return _validadorCuenta.ValidarCamposInicioSesion(identificador, _contrasena);
         }
 
         private void LimpiarErroresVisuales()
@@ -413,36 +453,63 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 .ConfigureAwait(true);
         }
 
-        private void ProcesarResultadoInicioSesion(DTOs.ResultadoInicioSesionDTO resultado)
+        private void ProcesarResultadoInicioSesion(
+            DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            if (!ValidarResultadoInicioSesion(resultado))
+            {
+                return;
+            }
+
+            if (!resultado.InicioSesionExitoso)
+            {
+                ManejarInicioSesionFallido(resultado);
+                return;
+            }
+
+            CompletarInicioSesionExitoso(resultado);
+        }
+
+        private bool ValidarResultadoInicioSesion(
+            DTOs.ResultadoInicioSesionDTO resultado)
         {
             if (resultado == null)
             {
                 _logger.Error("El servicio de inicio de sesion retorno null.");
                 _sonidoManejador.ReproducirError();
                 _avisoServicio.Mostrar(Lang.errorTextoServidorInicioSesion);
-                return;
+                return false;
             }
 
-            if (!resultado.InicioSesionExitoso)
-            {
-                _logger.WarnFormat("Inicio de sesion fallido. Mensaje servidor: {0}",
-                    resultado.Mensaje);
-                _sonidoManejador.ReproducirError();
-                MostrarErrorInicioSesion(resultado);
-                return;
-            }
+            return true;
+        }
 
-            ValidarYCargarUsuarioAutenticado(resultado);
+        private void ManejarInicioSesionFallido(
+            DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            _logger.WarnFormat(
+                "Inicio de sesion fallido. Mensaje servidor: {0}",
+                resultado.Mensaje);
+            _sonidoManejador.ReproducirError();
+            MostrarErrorInicioSesion(resultado);
+        }
+
+        private void CompletarInicioSesionExitoso(
+            DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            CargarUsuarioAutenticado(resultado);
             _sonidoManejador.ReproducirNotificacion();
             SesionIniciada = true;
             NavegarAVentanaPrincipal();
         }
 
-        private void ValidarYCargarUsuarioAutenticado(DTOs.ResultadoInicioSesionDTO resultado)
+        private void CargarUsuarioAutenticado(
+            DTOs.ResultadoInicioSesionDTO resultado)
         {
             if (resultado.Usuario != null)
             {
-                _logger.InfoFormat("Sesion establecida exitosamente para ID: {0}",
+                _logger.InfoFormat(
+                    "Sesion establecida exitosamente para ID: {0}",
                     resultado.Usuario.UsuarioId);
                 _usuarioSesion.CargarDesdeDTO(resultado.Usuario);
             }
@@ -472,19 +539,31 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                string identificador = Identificador?.Trim();
-                _logger.InfoFormat("Solicitando recuperacion de cuenta para: {0}",
-                    identificador);
-
-                DTOs.ResultadoOperacionDTO resultado = await SolicitarRecuperacionCuentaAsync(
-                    identificador);
-
-                ProcesarResultadoRecuperacion(resultado);
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarRecuperacionAsync(),
+                ManejarErrorRecuperacion);
 
             EstaProcesando = false;
+        }
+
+        private async Task EjecutarRecuperacionAsync()
+        {
+            string identificador = Identificador?.Trim();
+            _logger.InfoFormat(
+                "Solicitando recuperacion de cuenta para: {0}",
+                identificador);
+
+            DTOs.ResultadoOperacionDTO resultado = 
+                await SolicitarRecuperacionCuentaAsync(identificador);
+
+            ProcesarResultadoRecuperacion(resultado);
+        }
+
+        private void ManejarErrorRecuperacion(Exception excepcion)
+        {
+            _logger.Error("Error durante recuperacion de cuenta.", excepcion);
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(Lang.errorTextoCuentaNoRegistrada);
         }
 
         private bool ValidarIdentificadorRecuperacion()
@@ -493,12 +572,17 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             if (string.IsNullOrWhiteSpace(identificador))
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.errorTextoIdentificadorRecuperacionRequerido);
+                MostrarErrorIdentificadorRequerido();
                 return false;
             }
 
             return true;
+        }
+
+        private void MostrarErrorIdentificadorRequerido()
+        {
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(Lang.errorTextoIdentificadorRecuperacionRequerido);
         }
 
         private async Task<DTOs.ResultadoOperacionDTO> SolicitarRecuperacionCuentaAsync(
@@ -508,15 +592,19 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 identificador, _cambioContrasenaServicio).ConfigureAwait(true);
         }
 
-        private void ProcesarResultadoRecuperacion(DTOs.ResultadoOperacionDTO resultado)
+        private void ProcesarResultadoRecuperacion(
+            DTOs.ResultadoOperacionDTO resultado)
         {
             if (resultado?.OperacionExitosa == false &&
                 !string.IsNullOrWhiteSpace(resultado.Mensaje))
             {
-                _logger.WarnFormat("Recuperacion fallida o cancelada: {0}", resultado.Mensaje);
+                _logger.WarnFormat(
+                    "Recuperacion fallida o cancelada: {0}",
+                    resultado.Mensaje);
                 _sonidoManejador.ReproducirError();
 
-                string mensajeLocalizado = LocalizarMensajeRecuperacion(resultado.Mensaje);
+                string mensajeLocalizado = LocalizarMensajeRecuperacion(
+                    resultado.Mensaje);
                 _avisoServicio.Mostrar(mensajeLocalizado);
             }
         }
@@ -537,19 +625,31 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 ?? CultureInfo.CurrentUICulture?.Name);
         }
 
-        private void LocalizacionServicioEnIdiomaActualizado(object remitente, EventArgs argumentosEvento)
+        private void LocalizacionServicioEnIdiomaActualizado(
+            object remitente,
+            EventArgs argumentosEvento)
         {
             ActualizarIdiomasDisponibles(_localizacionServicio.CulturaActual?.Name);
         }
 
         private void ActualizarIdiomasDisponibles(string culturaActual)
         {
-            var opciones = new[]
+            var opciones = CrearOpcionesIdioma();
+            EstablecerOpcionesIdioma(opciones);
+            SeleccionarIdiomaActual(culturaActual);
+        }
+
+        private static IdiomaOpcion[] CrearOpcionesIdioma()
+        {
+            return new[]
             {
                 new IdiomaOpcion("es-MX", Lang.idiomaTextoEspanol),
                 new IdiomaOpcion("en-US", Lang.idiomaTextoIngles)
             };
+        }
 
+        private void EstablecerOpcionesIdioma(IdiomaOpcion[] opciones)
+        {
             if (IdiomasDisponibles == null)
             {
                 IdiomasDisponibles = new ObservableCollection<IdiomaOpcion>(opciones);
@@ -563,7 +663,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                     IdiomasDisponibles.Add(opcion);
                 }
             }
+        }
 
+        private void SeleccionarIdiomaActual(string culturaActual)
+        {
             if (string.IsNullOrWhiteSpace(culturaActual))
             {
                 IdiomaSeleccionado = IdiomasDisponibles.FirstOrDefault();
@@ -571,8 +674,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
 
             IdiomaSeleccionado = IdiomasDisponibles
-                .FirstOrDefault(i => string.Equals(i.Codigo, culturaActual,
-                StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault(i => string.Equals(
+                    i.Codigo,
+                    culturaActual,
+                    StringComparison.OrdinalIgnoreCase))
                 ?? IdiomasDisponibles.FirstOrDefault();
         }
     }

@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
 using System;
 using System.ServiceModel;
@@ -17,23 +17,26 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IWcfClienteEjecutor _ejecutor;
         private readonly IWcfClienteFabrica _fabricaClientes;
         private readonly IManejadorErrorServicio _manejadorError;
-        private readonly ILocalizadorServicio _localizador;
 
         /// <summary>
         /// Inicializa el servicio de invitaciones.
         /// </summary>
+        /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public InvitacionesServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
-            IManejadorErrorServicio manejadorError,
-            ILocalizadorServicio localizador)
+            IManejadorErrorServicio manejadorError)
         {
             _ejecutor = ejecutor ?? throw new ArgumentNullException(nameof(ejecutor));
             _fabricaClientes = fabricaClientes ??
                 throw new ArgumentNullException(nameof(fabricaClientes));
             _manejadorError = manejadorError ??
                 throw new ArgumentNullException(nameof(manejadorError));
-            _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -59,8 +62,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     c => c.EnviarInvitacionAsync(solicitud)
                 ).ConfigureAwait(false);
 
-                _logger.InfoFormat("Invitacion enviada a '{0}' para sala '{1}'.",
-                    correoDestino, codigoSala);
                 return resultado;
             }
             catch (FaultException excepcion)
@@ -86,9 +87,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado en invitaciones.", excepcion);
+                _logger.Error("Operacion invalida en invitaciones.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
@@ -105,7 +106,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 throw new ArgumentException("Correo destino obligatorio.", nameof(correo));
         }
 
-        private string ObtenerCodigoIdiomaActual()
+        private static string ObtenerCodigoIdiomaActual()
         {
             var culturaActual = Lang.Culture;
             if (culturaActual != null)

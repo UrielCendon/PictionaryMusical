@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Comandos;
+﻿using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using log4net;
 using System;
@@ -38,14 +38,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
 
         private void EjecutarAceptar()
         {
-            _logger.Info("Usuario confirmo la salida de la partida.");
             EjecutarSalidaPartidaYNavegacion?.Invoke();
             _ventana.CerrarVentana(this);
         }
 
         private void EjecutarCancelar()
         {
-            _logger.Info("Usuario cancelo la salida de la partida.");
             _ventana.CerrarVentana(this);
         }
     }

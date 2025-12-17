@@ -11,6 +11,7 @@ using PictionaryMusicalCliente.Properties;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Utilidades.Idiomas;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using System;
 using System.Globalization;
@@ -40,6 +41,7 @@ namespace PictionaryMusicalCliente
         public static IUsuarioAutenticado UsuarioGlobal { get; private set; }
         public static ICatalogoAvatares CatalogoAvatares { get; private set; }
         public static ICatalogoImagenesPerfil CatalogoImagenes { get; private set; }
+        public static ICatalogoCanciones CatalogoCanciones { get; private set; }
 
         public static IInicioSesionServicio InicioSesionServicio { get; private set; }
         public static ICambioContrasenaServicio CambioContrasenaServicio { get; private set; }
@@ -66,19 +68,24 @@ namespace PictionaryMusicalCliente
             InicializarServicios();
             ConfigurarIdioma();
 
-            var inicioSesionVistaModelo = new InicioSesionVistaModelo(
+            var dependenciasBase = new VistaModeloBaseDependencias(
                 VentanaServicio,
                 Localizador,
+                SonidoManejador,
+                AvisoServicio);
+
+            var dependenciasInicioSesion = new InicioSesionDependencias(
                 InicioSesionServicio,
                 CambioContrasenaServicio,
                 RecuperacionCuentaServicio,
                 ServicioIdioma,
-                SonidoManejador,
-                AvisoServicio,
                 GeneradorNombres,
                 UsuarioGlobal,
-                FabricaSalas
-            );
+                FabricaSalas);
+
+            var inicioSesionVistaModelo = new InicioSesionVistaModelo(
+                dependenciasBase,
+                dependenciasInicioSesion);
 
             VentanaServicio.MostrarVentana(inicioSesionVistaModelo);
         }
@@ -93,7 +100,7 @@ namespace PictionaryMusicalCliente
             base.OnExit(e);
         }
 
-        private void InicializarServicios()
+        private static void InicializarServicios()
         {
             WcfFabrica = new WcfClienteFabrica();
             WcfEjecutor = new WcfClienteEjecutor();
@@ -110,13 +117,14 @@ namespace PictionaryMusicalCliente
             UsuarioGlobal = new UsuarioAutenticado();
             CatalogoAvatares = new CatalogoAvataresLocales();
             CatalogoImagenes = new CatalogoImagenesPerfilLocales();
+            CatalogoCanciones = new CatalogoCancionesLocales();
             UsuarioMapeador = new UsuarioMapeador(UsuarioGlobal);
 
             InicioSesionServicio = new InicioSesionServicio(
                 WcfEjecutor, WcfFabrica, ManejadorError, UsuarioMapeador, Localizador);
 
             CambioContrasenaServicio = new CambioContrasenaServicio(
-                WcfEjecutor, WcfFabrica, ManejadorError, Localizador);
+                WcfEjecutor, WcfFabrica, ManejadorError);
 
             PerfilServicio = new PerfilServicio(
                 WcfEjecutor, WcfFabrica, ManejadorError);
@@ -125,7 +133,7 @@ namespace PictionaryMusicalCliente
                 WcfEjecutor, WcfFabrica, ManejadorError);
 
             InvitacionesServicio = new InvitacionesServicio(
-                WcfEjecutor, WcfFabrica, ManejadorError, Localizador);
+                WcfEjecutor, WcfFabrica, ManejadorError);
 
             ReportesServicio = new ReportesServicio(
                 WcfEjecutor, WcfFabrica, ManejadorError, Localizador);

@@ -27,6 +27,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private string _usuarioSuscrito;
         private bool _recursosLiberados;
 
+        /// <summary>
+        /// Inicializa una nueva instancia del servicio de amigos.
+        /// </summary>
+        /// <param name="administradorSolicitudes">Administrador de solicitudes de amistad.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public AmigosServicio(
             ISolicitudesAmistadAdministrador administradorSolicitudes,
             IManejadorErrorServicio manejadorError, 
@@ -97,20 +106,20 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Envia una nueva peticion de amistad al servidor.
         /// </summary>
-        public Task EnviarSolicitudAsync(string emisor, string receptor) =>
-            EjecutarOperacionAsync(c => c.EnviarSolicitudAmistadAsync(emisor, receptor));
+        public Task EnviarSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
+            EjecutarOperacionAsync(c => c.EnviarSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Responde a una peticion existente (aceptar/rechazar).
         /// </summary>
-        public Task ResponderSolicitudAsync(string emisor, string receptor) =>
-            EjecutarOperacionAsync(c => c.ResponderSolicitudAmistadAsync(emisor, receptor));
+        public Task ResponderSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
+            EjecutarOperacionAsync(c => c.ResponderSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Elimina a un amigo de la lista de contactos.
         /// </summary>
-        public Task EliminarAmigoAsync(string usuarioA, string usuarioB) =>
-            EjecutarOperacionAsync(c => c.EliminarAmigoAsync(usuarioA, usuarioB));
+        public Task EliminarAmigoAsync(string nombreUsuarioA, string nombreUsuarioB) =>
+            EjecutarOperacionAsync(c => c.EliminarAmigoAsync(nombreUsuarioA, nombreUsuarioB));
 
         /// <summary>
         /// Callback del servidor: Notifica que una solicitud cambio de estado.
@@ -133,9 +142,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Libera los recursos del cliente WCF y semaforos.
         /// </summary>
+        /// <param name="liberando">
+        /// True si se llama desde Dispose, false desde el finalizador.
+        /// </param>
         protected virtual void Dispose(bool liberando)
         {
-            if (_recursosLiberados) return;
+            if (_recursosLiberados)
+            {
+                return;
+            }
 
             if (liberando)
             {
@@ -143,6 +158,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 LimpiarEstadoLocal();
                 _semaforo?.Dispose();
             }
+
             _recursosLiberados = true;
         }
 
@@ -196,9 +212,20 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 await operacion(cliente).ConfigureAwait(false);
-                if (esTemporal) CerrarClienteSeguro(cliente);
+                if (esTemporal)
+                {
+                    CerrarClienteSeguro(cliente);
+                }
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
+            }
+            catch (CommunicationException excepcion)
+            {
+                await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
+            }
+            catch (TimeoutException excepcion)
             {
                 await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
             }
@@ -225,7 +252,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task IntentarReconexionAsync()
         {
             string usuario = _usuarioSuscrito;
-            if (string.IsNullOrWhiteSpace(usuario)) return;
+            if (string.IsNullOrWhiteSpace(usuario))
+            {
+                return;
+            }
 
             await CancelarSuscripcionInternaAsync();
 
@@ -233,9 +263,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 await SuscribirNuevoClienteAsync(usuario);
             }
-            catch (Exception excepcion)
+            catch (CommunicationException excepcion)
             {
                 _logger.Error("Fallo critico al reconectar suscripcion.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Error("Timeout al reconectar suscripcion.", excepcion);
+            }
+            catch (ServicioExcepcion excepcion)
+            {
+                _logger.Error("Error de servicio al reconectar suscripcion.", excepcion);
             }
         }
 
@@ -253,12 +291,27 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
                 NotificarSolicitudesActualizadas();
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
             {
-                cliente.Abort();
-                LimpiarEstadoLocal();
+                AbortarYLimpiar(cliente);
                 LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
+            catch (CommunicationException excepcion)
+            {
+                AbortarYLimpiar(cliente);
+                LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (TimeoutException excepcion)
+            {
+                AbortarYLimpiar(cliente);
+                LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+        }
+
+        private void AbortarYLimpiar(ICommunicationObject cliente)
+        {
+            cliente.Abort();
+            LimpiarEstadoLocal();
         }
 
         private async Task CancelarSuscripcionInternaAsync()
@@ -279,17 +332,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             PictionaryServidorServicioAmigos.AmigosManejadorClient cliente,
             string usuario)
         {
+            if (string.IsNullOrWhiteSpace(usuario) ||
+                cliente.State != CommunicationState.Opened)
+            {
+                return;
+            }
+
             try
             {
-                if (!string.IsNullOrWhiteSpace(usuario) &&
-                    cliente.State == CommunicationState.Opened)
-                {
-                    await cliente.CancelarSuscripcionAsync(usuario).ConfigureAwait(false);
-                }
+                await cliente.CancelarSuscripcionAsync(usuario).ConfigureAwait(false);
             }
-            catch (Exception excepcion)
+            catch (CommunicationException excepcion)
             {
                 _logger.Warn("No se pudo cancelar suscripcion en servidor.", excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn("Timeout al cancelar suscripcion en servidor.", excepcion);
             }
         }
 
@@ -335,13 +394,27 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private static void CerrarClienteSeguro(ICommunicationObject cliente)
         {
-            if (cliente == null) return;
+            if (cliente == null)
+            {
+                return;
+            }
+
             try
             {
-                if (cliente.State == CommunicationState.Opened) cliente.Close();
-                else cliente.Abort();
+                if (cliente.State == CommunicationState.Opened)
+                {
+                    cliente.Close();
+                }
+                else
+                {
+                    cliente.Abort();
+                }
             }
-            catch (Exception)
+            catch (CommunicationException)
+            {
+                cliente.Abort();
+            }
+            catch (TimeoutException)
             {
                 cliente.Abort();
             }

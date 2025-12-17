@@ -165,7 +165,6 @@ namespace PictionaryMusicalServidor.Pruebas
 
             notificador.NotificarListaSalasATodos();
 
-            Assert.IsNotNull(callback.UltimasSalas);
             Assert.AreEqual(2, callback.UltimasSalas.Length);
             Assert.IsTrue(callback.UltimasSalas.Any(s => s.Codigo == "SALA1"));
             Assert.IsTrue(callback.UltimasSalas.Any(s => s.Codigo == "SALA2"));

@@ -15,6 +15,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
     /// <summary>
     /// Administra la logica para el cambio de contrasena mediante un token de recuperacion.
     /// </summary>
+    /// <remarks>
+    /// Requiere un token de verificacion previamente validado para poder
+    /// actualizar la contrasena del usuario.
+    /// </remarks>
     public class CambioContrasenaVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -30,14 +34,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private bool _estaProcesando;
 
         /// <summary>
-        /// Inicializa el ViewModel con el token y el servicio necesario para realizar el cambio.
+        /// Inicializa una nueva instancia de la clase.
         /// </summary>
         /// <param name="ventana">Servicio para gestionar ventanas.</param>
         /// <param name="localizador">Servicio de localizacion.</param>
-        /// <param name="tokenCodigo">El codigo de verificacion validado previamente.</param>
-        /// <param name="cambioContrasenaServicio">Servicio para ejecutar la actualizacion.</param>
+        /// <param name="tokenCodigo">
+        /// Codigo de verificacion validado previamente.
+        /// </param>
+        /// <param name="cambioContrasenaServicio">
+        /// Servicio para ejecutar la actualizacion.
+        /// </param>
         /// <param name="avisoServicio">Servicio de avisos.</param>
-        /// <param name="sonidoManejador">Servicio de sonido.</param>
+        /// <param name="sonidoManejador">Manejador de sonidos.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public CambioContrasenaVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -47,7 +58,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             SonidoManejador sonidoManejador)
             : base(ventana, localizador)
         {
-            _tokenCodigo = tokenCodigo ?? throw new ArgumentNullException(nameof(tokenCodigo));
+            _tokenCodigo = tokenCodigo ?? 
+                throw new ArgumentNullException(nameof(tokenCodigo));
             _cambioContrasenaServicio = cambioContrasenaServicio ??
                 throw new ArgumentNullException(nameof(cambioContrasenaServicio));
             _avisoServicio = avisoServicio ??
@@ -123,76 +135,130 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private async Task ConfirmarAsync()
         {
-            MostrarCamposInvalidos?.Invoke(Array.Empty<string>());
+            LimpiarErroresVisuales();
 
             var camposInvalidos = ValidarEntradas();
-            if (camposInvalidos != null && camposInvalidos.Count > 0)
+
+            if (TieneErroresValidacion(camposInvalidos))
             {
-				_logger.Warn("Validacion de contrasena fallida en cliente.");
-                _sonidoManejador.ReproducirError();
-                MostrarCamposInvalidos?.Invoke(camposInvalidos);
+                MostrarErroresValidacion(camposInvalidos);
                 return;
             }
 
-            MostrarCamposInvalidos?.Invoke(Array.Empty<string>());
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                DTOs.ResultadoOperacionDTO resultado = await _cambioContrasenaServicio
-                    .ActualizarContrasenaAsync(_tokenCodigo, NuevaContrasena).ConfigureAwait(true);
-
-                if (resultado == null)
-                {
-                    _logger.Error("Servicio de cambio de contrasena devolvio null.");
-                    _sonidoManejador.ReproducirError();
-                    _avisoServicio.Mostrar(Lang.errorTextoActualizarContrasena);
-                    return;
-                }
-
-                string mensaje = resultado.Mensaje ??
-                    (resultado.OperacionExitosa
-                        ? Lang.avisoTextoContrasenaActualizada
-                        : Lang.errorTextoActualizarContrasena);
-
-                if (resultado.OperacionExitosa)
-                {
-                    _logger.Info("Contrasena actualizada exitosamente.");
-                    _sonidoManejador.ReproducirNotificacion();
-                    _avisoServicio.Mostrar(mensaje);
-                    CambioContrasenaFinalizada?.Invoke(resultado);
-                    _ventana.CerrarVentana(this);
-                }
-                else
-                {
-                    _logger.WarnFormat("Fallo al actualizar contrasena en servidor: {0}",
-                        resultado.Mensaje);
-                    _sonidoManejador.ReproducirError();
-                    _avisoServicio.Mostrar(mensaje);
-                }
-            },
-            excepcion =>
-            {
-                _logger.Error("Excepcion de servicio al actualizar contrasena.", excepcion);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoActualizarContrasena);
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarCambioContrasenaAsync(),
+                ManejarErrorCambioContrasena);
 
             EstaProcesando = false;
         }
 
+        private void LimpiarErroresVisuales()
+        {
+            MostrarCamposInvalidos?.Invoke(Array.Empty<string>());
+        }
+
+        private static bool TieneErroresValidacion(List<string> camposInvalidos)
+        {
+            return camposInvalidos != null && camposInvalidos.Count > 0;
+        }
+
+        private void MostrarErroresValidacion(List<string> camposInvalidos)
+        {
+            _logger.Warn("Validacion de contrasena fallida en cliente.");
+            _sonidoManejador.ReproducirError();
+            MostrarCamposInvalidos?.Invoke(camposInvalidos);
+        }
+
+        private async Task EjecutarCambioContrasenaAsync()
+        {
+            DTOs.ResultadoOperacionDTO resultado = await _cambioContrasenaServicio
+                .ActualizarContrasenaAsync(_tokenCodigo, NuevaContrasena)
+                .ConfigureAwait(true);
+
+            if (!ValidarResultadoServicio(resultado))
+            {
+                return;
+            }
+
+            ProcesarResultadoCambio(resultado);
+        }
+
+        private bool ValidarResultadoServicio(DTOs.ResultadoOperacionDTO resultado)
+        {
+            if (resultado == null)
+            {
+                _logger.Error("Servicio de cambio de contrasena devolvio null.");
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(Lang.errorTextoActualizarContrasena);
+                return false;
+            }
+
+            return true;
+        }
+
+        private void ProcesarResultadoCambio(DTOs.ResultadoOperacionDTO resultado)
+        {
+            string mensaje = ObtenerMensajeResultado(resultado);
+
+            if (resultado.OperacionExitosa)
+            {
+                CompletarCambioExitoso(resultado, mensaje);
+            }
+            else
+            {
+                ManejarCambioFallido(resultado, mensaje);
+            }
+        }
+
+        private static string ObtenerMensajeResultado(DTOs.ResultadoOperacionDTO resultado)
+        {
+            if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
+            {
+                return resultado.Mensaje;
+            }
+
+            return resultado.OperacionExitosa
+                ? Lang.avisoTextoContrasenaActualizada
+                : Lang.errorTextoActualizarContrasena;
+        }
+
+        private void CompletarCambioExitoso(
+            DTOs.ResultadoOperacionDTO resultado,
+            string mensaje)
+        {
+            _logger.Info("Contrasena actualizada exitosamente.");
+            _sonidoManejador.ReproducirNotificacion();
+            _avisoServicio.Mostrar(mensaje);
+            CambioContrasenaFinalizada?.Invoke(resultado);
+            _ventana.CerrarVentana(this);
+        }
+
+        private void ManejarCambioFallido(
+            DTOs.ResultadoOperacionDTO resultado,
+            string mensaje)
+        {
+            _logger.WarnFormat(
+                "Fallo al actualizar contrasena en servidor: {0}",
+                resultado.Mensaje);
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(mensaje);
+        }
+
+        private void ManejarErrorCambioContrasena(Exception excepcion)
+        {
+            _logger.Error(
+                "Excepcion de servicio al actualizar contrasena.",
+                excepcion);
+            _sonidoManejador.ReproducirError();
+            string mensaje = excepcion.Message ?? Lang.errorTextoActualizarContrasena;
+            _avisoServicio.Mostrar(mensaje);
+        }
+
         private List<string> ValidarEntradas()
         {
-            var camposInvalidos = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(NuevaContrasena))
-            {
-                camposInvalidos.Add(nameof(NuevaContrasena));
-            }
-            if (string.IsNullOrWhiteSpace(ConfirmacionContrasena))
-            {
-                camposInvalidos.Add(nameof(ConfirmacionContrasena));
-            }
+            var camposInvalidos = ValidarCamposRequeridos();
 
             if (camposInvalidos.Count > 0)
             {
@@ -200,16 +266,63 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 return camposInvalidos;
             }
 
+            var errorFormato = ValidarFormatoContrasena();
+
+            if (errorFormato.Count > 0)
+            {
+                return errorFormato;
+            }
+
+            var errorCoincidencia = ValidarCoincidenciaContrasenas();
+
+            if (errorCoincidencia.Count > 0)
+            {
+                return errorCoincidencia;
+            }
+
+            return new List<string>();
+        }
+
+        private List<string> ValidarCamposRequeridos()
+        {
+            var camposInvalidos = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(NuevaContrasena))
+            {
+                camposInvalidos.Add(nameof(NuevaContrasena));
+            }
+
+            if (string.IsNullOrWhiteSpace(ConfirmacionContrasena))
+            {
+                camposInvalidos.Add(nameof(ConfirmacionContrasena));
+            }
+
+            return camposInvalidos;
+        }
+
+        private List<string> ValidarFormatoContrasena()
+        {
             DTOs.ResultadoOperacionDTO validacion = ValidadorEntrada.ValidarContrasena(
                 NuevaContrasena);
 
             if (validacion?.OperacionExitosa != true)
             {
-                _avisoServicio.Mostrar(validacion?.Mensaje ?? Lang.errorTextoContrasenaFormato);
+                string mensaje = validacion?.Mensaje ?? Lang.errorTextoContrasenaFormato;
+                _avisoServicio.Mostrar(mensaje);
                 return new List<string> { nameof(NuevaContrasena) };
             }
 
-            if (!string.Equals(NuevaContrasena, ConfirmacionContrasena, StringComparison.Ordinal))
+            return new List<string>();
+        }
+
+        private List<string> ValidarCoincidenciaContrasenas()
+        {
+            bool coinciden = string.Equals(
+                NuevaContrasena,
+                ConfirmacionContrasena,
+                StringComparison.Ordinal);
+
+            if (!coinciden)
             {
                 _avisoServicio.Mostrar(Lang.errorTextoContrasenasNoCoinciden);
                 return new List<string>
@@ -219,7 +332,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 };
             }
 
-            return camposInvalidos;
+            return new List<string>();
         }
 
         private void Cancelar()

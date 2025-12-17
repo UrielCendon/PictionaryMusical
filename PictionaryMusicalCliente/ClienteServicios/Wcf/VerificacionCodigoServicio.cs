@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -18,7 +18,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private readonly IWcfClienteEjecutor _ejecutor;
         private readonly IWcfClienteFabrica _fabricaClientes;
-        private readonly ILocalizadorServicio _localizador;
         private readonly IManejadorErrorServicio _errorServicio;
 
         /// <summary>
@@ -26,17 +25,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         /// <param name="ejecutor">Manejador seguro de llamadas WCF.</param>
         /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
-        /// <param name="localizador">Servicio para obtener la cultura actual.</param>
+        /// <param name="errorServicio">Servicio para manejar errores de WCF.</param>
         public VerificacionCodigoServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
-            ILocalizadorServicio localizador,
             IManejadorErrorServicio errorServicio)
         {
             _ejecutor = ejecutor ?? throw new ArgumentNullException(nameof(ejecutor));
             _fabricaClientes = fabricaClientes ??
                 throw new ArgumentNullException(nameof(fabricaClientes));
-            _localizador = localizador ?? throw new ArgumentNullException(nameof(localizador));
             _errorServicio = errorServicio ?? 
                 throw new ArgumentNullException(nameof(errorServicio));
         }
@@ -171,7 +168,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Error inesperado.", excepcion);
                 throw new ServicioExcepcion(
@@ -181,7 +178,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private string ObtenerIdiomaActual()
+        private static string ObtenerIdiomaActual()
         {
             var culturaActual = Lang.Culture;
             if (culturaActual != null)

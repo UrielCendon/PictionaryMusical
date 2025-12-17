@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -161,9 +161,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             SeleccionAvatarVistaModelo vistaModelo,
             int idAvatar)
         {
-            if (idAvatar > 0)
+            if (idAvatar > 0 &&
+                _catalogoAvatares.IntentarObtenerPorId(idAvatar, out var avatar))
             {
-                vistaModelo.AvatarSeleccionado = _catalogoAvatares.ObtenerPorId(idAvatar);
+                vistaModelo.AvatarSeleccionado = avatar;
             }
         }
 

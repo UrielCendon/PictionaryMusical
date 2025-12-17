@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.ServiceModel;
@@ -37,6 +37,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 IntentarCerrarCliente(cliente);
                 return resultado;
             }
+            catch (ObjectDisposedException)
+            {
+                ForzarAbortoCliente(cliente);
+                throw;
+            }
+            catch (FaultException)
+            {
+                ForzarAbortoCliente(cliente);
+                throw;
+            }
             catch (CommunicationException)
             {
                 ForzarAbortoCliente(cliente);
@@ -52,16 +62,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 ForzarAbortoCliente(cliente);
                 throw;
             }
-            catch (Exception)
-            {
-                ForzarAbortoCliente(cliente);
-                throw;
-            }
         }
 
-        private void ValidarParametrosEntrada<TClient, TResult>(
+        private static void ValidarParametrosEntrada<TClient, TResult>(
             TClient cliente,
             Func<TClient, Task<TResult>> operacion)
+            where TClient : class
         {
             if (cliente == null)
             {
@@ -74,7 +80,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             }
         }
 
-        private void IntentarCerrarCliente(object cliente)
+        private static void IntentarCerrarCliente(object cliente)
         {
             if (cliente == null)
             {
@@ -94,25 +100,31 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                         canal.Abort();
                     }
                 }
-                catch (CommunicationException ex)
+                catch (CommunicationException excepcion)
                 {
-                    _logger.Error("Excepcion de comunicacion al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error(
+                        "Excepcion de comunicacion al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
-                catch (TimeoutException ex)
+                catch (TimeoutException excepcion)
                 {
-                    _logger.Error("Tiempo de espera agotado al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error(
+                        "Tiempo agotado al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException excepcion)
                 {
-                    _logger.Error("Operacion invalida al intentar cerrar el cliente WCF.", ex);
+                    _logger.Error(
+                        "Operacion invalida al cerrar cliente WCF.",
+                        excepcion);
                     canal.Abort();
                 }
             }
         }
 
-        private void ForzarAbortoCliente(object cliente)
+        private static void ForzarAbortoCliente(object cliente)
         {
             if (cliente == null)
             {
@@ -125,11 +137,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 {
                     canal.Abort();
                 }
-                catch (Exception ex)
+                catch (Exception excepcion)
                 {
                     // Ignorado de manera intencional: No se puede hacer nada para manejar
                     // una excepcion al abortar, pero se registra como error.
-                    _logger.Error("Error critico inesperado al abortar cliente WCF.", ex);
+                    _logger.Error("Error critico inesperado al abortar cliente WCF.", excepcion);
                 }
             }
         }

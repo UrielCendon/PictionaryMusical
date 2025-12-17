@@ -83,7 +83,13 @@
     <Compile Include="ClienteServicios\Wcf\Administrador\ISolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Administrador\SolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
-    <Compile Include="ClienteServicios\Wcf\ChatServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatDecision.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatMensajeria.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatAciertosServicio.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\IChatReglasPartida.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatMensajeriaDelegado.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatAciertosDelegado.cs" />
+    <Compile Include="ClienteServicios\Wcf\Chat\ChatReglasPartida.cs" />
     <Compile Include="ClienteServicios\Wcf\InvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\ReportesServicio.cs" />
     <Compile Include="ClienteServicios\Wcf\SalasServicio.cs" />
@@ -153,12 +159,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Modelo\Cancion.cs" />
+    <Compile Include="Modelo\Catalogos\CatalogoCancionesLocales.cs" />
     <Compile Include="Modelo\Catalogos\ICatalogos.cs" />
     <Compile Include="Modelo\IUsuarioAutenticado.cs" />
     <Compile Include="Modelo\JugadorElemento.cs" />
     <Compile Include="Modelo\ResultadoReporteJugador.cs" />
     <Compile Include="Utilidades\Abstracciones\INombreInvitadoGenerador.cs" />
     <Compile Include="Utilidades\Abstracciones\IVentanaServicio.cs" />
+    <Compile Include="Utilidades\LimiteCaracteresEntrada.cs" />
+    <Compile Include="Utilidades\Resultados\ResultadoGeneracion.cs" />
     <Compile Include="Utilidades\CancionManejador.cs" />
     <Compile Include="Utilidades\MusicaManejador.cs" />
     <Compile Include="Utilidades\EntradaNumerica.cs" />
@@ -226,7 +236,14 @@
     <Compile Include="VistaModelo\Amigos\EliminacionAmigoVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\InvitarAmigosVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\SolicitudesVistaModelo.cs" />
+    <Compile Include="VistaModelo\Dependencias\CreacionCuentaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\InicioSesionDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\InvitarAmigosDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\PerfilDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\SalaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\VistaModeloBaseDependencias.cs" />
     <Compile Include="VistaModelo\Perfil\CambioContrasenaVistaModelo.cs" />
+    <Compile Include="VistaModelo\Perfil\RedSocialItemVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />
     <Compile Include="VistaModelo\VentanaPrincipal\ClasificacionVistaModelo.cs" />
     <Compile Include="VistaModelo\Ajustes\AjustesVistaModelo.cs" />
@@ -237,6 +254,17 @@
     <Compile Include="VistaModelo\Perfil\SeleccionAvatarVistaModelo.cs" />
     <Compile Include="VistaModelo\InicioSesion\CreacionCuentaVistaModelo.cs" />
     <Compile Include="VistaModelo\Sesion\TerminacionSesionVistaModelo.cs" />
+    <Compile Include="VistaModelo\InicioSesion\Auxiliares\ValidadorCuenta.cs" />
+    <Compile Include="VistaModelo\InicioSesion\Auxiliares\InicioSesionNavegacion.cs" />
+    <Compile Include="VistaModelo\Perfil\Auxiliares\RedesSocialesManejador.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\SalaNavegacionManejador.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\SalaJugadoresManejador.cs" />
+    <Compile Include="VistaModelo\Dependencias\SalaJugadoresManejadorDependencias.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\ContextoSalaJugador.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\SalaEventosManejador.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\SalaInvitacionesManejador.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\PartidaTemporizadores.cs" />
+    <Compile Include="VistaModelo\VentanaPrincipal\Auxiliares\OpcionesPartidaManejador.cs" />
     <Compile Include="VistaModelo\Salas\SalaVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\PartidaVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ChatVistaModelo.cs" />

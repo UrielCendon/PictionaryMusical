@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.VistaModelo.Salas;
+﻿using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using System;
 using System.Collections.Generic;
@@ -65,8 +65,10 @@ namespace PictionaryMusicalCliente.Vista
                 return;
             }
 
-            var trazo = ConvertirLineaATrazo(argumentosEvento.Stroke, false);
-            vistaModelo.EnviarTrazoAlServidor?.Invoke(trazo);
+            if (IntentarConvertirLineaATrazo(argumentosEvento.Stroke, false, out var trazo))
+            {
+                vistaModelo.EnviarTrazoAlServidor?.Invoke(trazo);
+            }
         }
 
         private void AlPresionarBotonIzquierdoEnLienzo(object sender,
@@ -96,8 +98,10 @@ namespace PictionaryMusicalCliente.Vista
             {
                 _borradoEnProgreso = false;
 
-                var trazo = ConvertirPuntosATrazoBorrador(_puntosBorrador, vistaModelo.Grosor);
-                if (trazo != null)
+                if (IntentarConvertirPuntosATrazoBorrador(
+                    _puntosBorrador, 
+                    vistaModelo.Grosor, 
+                    out var trazo))
                 {
                     vistaModelo.EnviarTrazoAlServidor?.Invoke(trazo);
                 }
@@ -106,21 +110,25 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private static TrazoDTO ConvertirPuntosATrazoBorrador(IEnumerable<Point> puntos, 
-            double grosor)
+        private static bool IntentarConvertirPuntosATrazoBorrador(
+            IEnumerable<Point> puntos, 
+            double grosor,
+            out TrazoDTO trazo)
         {
+            trazo = null;
+
             if (puntos == null)
             {
-                return null;
+                return false;
             }
 
             var listaPuntos = puntos.ToList();
             if (listaPuntos.Count == 0)
             {
-                return null;
+                return false;
             }
 
-            return new TrazoDTO
+            trazo = new TrazoDTO
             {
                 PuntosX = listaPuntos.Select(puntos => puntos.X).ToArray(),
                 PuntosY = listaPuntos.Select(puntos => puntos.Y).ToArray(),
@@ -128,18 +136,25 @@ namespace PictionaryMusicalCliente.Vista
                 Grosor = grosor,
                 EsBorrado = true
             };
+
+            return true;
         }
 
-        private static TrazoDTO ConvertirLineaATrazo(Stroke linea, bool esBorrado)
+        private static bool IntentarConvertirLineaATrazo(
+            Stroke linea, 
+            bool esBorrado,
+            out TrazoDTO trazo)
         {
+            trazo = null;
+
             if (linea == null)
             {
-                return null;
+                return false;
             }
 
             var puntos = linea.StylusPoints;
 
-            return new TrazoDTO
+            trazo = new TrazoDTO
             {
                 PuntosX = puntos.Select(puntos => puntos.X).ToArray(),
                 PuntosY = puntos.Select(puntos => puntos.Y).ToArray(),
@@ -147,6 +162,8 @@ namespace PictionaryMusicalCliente.Vista
                 Grosor = linea.DrawingAttributes.Width,
                 EsBorrado = esBorrado
             };
+
+            return true;
         }
 
         private void AlRecibirTrazoDelServidor(TrazoDTO trazo)

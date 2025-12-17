@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.Properties.Langs;
+﻿using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.Collections.Generic;
@@ -103,11 +103,20 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 var sala = await cliente.CrearSalaAsync(nombreCreador, configuracion)
                     .ConfigureAwait(false);
 
-                _logger.InfoFormat("Sala creada por '{0}'. Codigo: {1}", nombreCreador, 
-                    sala.Codigo);
+                _logger.InfoFormat("Sala creada. Codigo: {1}", sala.Codigo);
                 return sala;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -133,7 +142,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     .ConfigureAwait(false);
                 return sala;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -161,7 +180,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 await _cliente.AbandonarSalaAsync(codigoSala, nombreUsuario).ConfigureAwait(false);
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
@@ -190,7 +217,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     nombreHost,
                     nombreJugadorAExpulsar).ConfigureAwait(false);
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+                throw;
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
                 throw;
@@ -216,7 +253,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 _suscrito = true;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (CommunicationException excepcion)
+            {
+                ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
+            }
+            catch (TimeoutException excepcion)
             {
                 ManejarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
@@ -239,7 +284,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 await _cliente.CancelarSuscripcionListaSalasAsync().ConfigureAwait(false);
                 _suscrito = false;
             }
-            catch (Exception excepcion)
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
+            }
+            catch (TimeoutException excepcion)
             {
                 _logger.Warn("Error al cancelar suscripcion de salas.", excepcion);
             }
@@ -254,8 +307,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorSeUnio(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' se unio a la sala '{1}'.", 
-                nombreJugador, codigoSala);
             JugadorSeUnio?.Invoke(this, nombreJugador);
         }
 
@@ -264,8 +315,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorSalio(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' salio de la sala '{1}'.",
-                nombreJugador, codigoSala);
             JugadorSalio?.Invoke(this, nombreJugador);
         }
 
@@ -274,8 +323,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarJugadorExpulsado(string codigoSala, string nombreJugador)
         {
-            _logger.InfoFormat("Callback recibido: '{0}' fue expulsado de la sala '{1}'.",
-                nombreJugador, codigoSala);
             JugadorExpulsado?.Invoke(this, nombreJugador);
         }
 
@@ -284,7 +331,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarSalaCancelada(string codigoSala)
         {
-            _logger.InfoFormat("Callback recibido: la sala '{0}' fue cancelada por el anfitrion.",
+            _logger.InfoFormat("La sala '{0}' fue cancelada por el anfitrion.",
                 codigoSala);
             SalaCancelada?.Invoke(this, codigoSala);
         }
@@ -348,9 +395,21 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Task.Run(async () =>
                         await _cliente.CancelarSuscripcionListaSalasAsync()).Wait(2000);
                 }
-                catch (Exception excepcion)
+                catch (AggregateException excepcion)
                 {
                     _logger.Warn("Error al cerrar suscripcion de salas en Dispose.", excepcion);
+                }
+                catch (FaultException excepcion)
+                {
+                    _logger.Warn("Fallo del servicio al cerrar suscripcion.", excepcion);
+                }
+                catch (CommunicationException excepcion)
+                {
+                    _logger.Warn("Error de comunicacion al cerrar suscripcion.", excepcion);
+                }
+                catch (TimeoutException excepcion)
+                {
+                    _logger.Warn("Timeout al cerrar suscripcion de salas.", excepcion);
                 }
             }
         }
@@ -377,7 +436,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     if (canal.State == CommunicationState.Faulted) canal.Abort();
                     else canal.Close();
                 }
-                catch (Exception)
+                catch (FaultException)
+                {
+                    canal.Abort();
+                }
+                catch (CommunicationException)
+                {
+                    canal.Abort();
+                }
+                catch (TimeoutException)
                 {
                     canal.Abort();
                 }

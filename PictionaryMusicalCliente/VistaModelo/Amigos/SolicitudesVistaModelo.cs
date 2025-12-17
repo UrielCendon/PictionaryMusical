@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -18,6 +18,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
     /// <summary>
     /// Gestiona la visualizacion y respuesta a las solicitudes de amistad pendientes.
     /// </summary>
+    /// <remarks>
+    /// Permite aceptar o rechazar solicitudes de amistad recibidas
+    /// y cancelar solicitudes enviadas.
+    /// </remarks>
     public sealed class SolicitudesVistaModelo : BaseVistaModelo, IDisposable
     {
         private static readonly ILog _logger = LogManager.GetLogger(
@@ -26,10 +30,21 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private readonly IAmigosServicio _amigosServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
-        private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly string _usuarioActual;
         private bool _estaProcesando;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de la clase.
+        /// </summary>
+        /// <param name="ventana">Servicio para gestionar ventanas.</param>
+        /// <param name="localizador">Servicio de localizacion de mensajes.</param>
+        /// <param name="amigosServicio">Servicio para operaciones de amigos.</param>
+        /// <param name="sonidoManejador">Manejador de sonidos.</param>
+        /// <param name="avisoServicio">Servicio para mostrar avisos.</param>
+        /// <param name="usuarioSesion">Datos del usuario autenticado.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si algun parametro requerido es nulo.
+        /// </exception>
         public SolicitudesVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -39,15 +54,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             IUsuarioAutenticado usuarioSesion)
             : base(ventana, localizador)
         {
+            if (usuarioSesion == null)
+            {
+                throw new ArgumentNullException(nameof(usuarioSesion));
+            }
             _amigosServicio = amigosServicio ??
                 throw new ArgumentNullException(nameof(amigosServicio));
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _avisoServicio = avisoServicio ??
                 throw new ArgumentNullException(nameof(avisoServicio));
-            _usuarioSesion = usuarioSesion ?? 
-                throw new ArgumentNullException(nameof(usuarioSesion));
-            _usuarioActual = _usuarioSesion.NombreUsuario ?? string.Empty;
+            _usuarioActual = usuarioSesion.NombreUsuario;
 
             Solicitudes = new ObservableCollection<SolicitudAmistadEntrada>();
 
@@ -165,9 +182,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     continue;
                 }
 
-                SolicitudAmistadEntrada entrada = CrearEntradaSolicitud(solicitud);
-                
-                if (entrada != null)
+                if (IntentarCrearEntradaSolicitud(solicitud, out var entrada))
                 {
                     Solicitudes.Add(entrada);
                 }
@@ -179,15 +194,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             return solicitud != null && !solicitud.SolicitudAceptada;
         }
 
-        private SolicitudAmistadEntrada CrearEntradaSolicitud(
-            DTOs.SolicitudAmistadDTO solicitud)
+        private bool IntentarCrearEntradaSolicitud(
+            DTOs.SolicitudAmistadDTO solicitud,
+            out SolicitudAmistadEntrada entrada)
         {
+            entrada = null;
+
             bool esEmisorActual = EsUsuarioActual(solicitud.UsuarioEmisor);
             bool esReceptorActual = EsUsuarioActual(solicitud.UsuarioReceptor);
 
             if (!esEmisorActual && !esReceptorActual)
             {
-                return null;
+                return false;
             }
 
             string nombreMostrado = ObtenerNombreMostrado(
@@ -196,15 +214,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(nombreMostrado))
             {
-                return null;
+                return false;
             }
 
             bool puedeAceptar = esReceptorActual;
 
-            return new SolicitudAmistadEntrada(
+            entrada = new SolicitudAmistadEntrada(
                 solicitud,
                 nombreMostrado,
                 puedeAceptar);
+
+            return true;
         }
 
         private bool EsUsuarioActual(string nombreUsuario)
@@ -228,64 +248,103 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private async Task ResponderSolicitudAsync(SolicitudAmistadEntrada entrada)
         {
-            if (entrada == null)
+            if (!ValidarEntrada(entrada, "responder"))
             {
-				_logger.Warn("Intento de responder solicitud con entrada nula.");
                 return;
             }
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                _logger.InfoFormat("Aceptando solicitud de amistad de: {0}",
-                    entrada.Solicitud.UsuarioEmisor);
-                await _amigosServicio.ResponderSolicitudAsync(
-                    entrada.Solicitud.UsuarioEmisor,
-                    entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
-
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(Lang.amigosTextoSolicitudAceptada);
-            },
-            ex =>
-            {
-                _logger.Error("Error al aceptar solicitud de amistad.", ex);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarAceptacionAsync(entrada),
+                excepcion => ManejarErrorAceptacion(excepcion));
 
             EstaProcesando = false;
         }
 
+        private async Task EjecutarAceptacionAsync(SolicitudAmistadEntrada entrada)
+        {
+            _logger.InfoFormat(
+                "Se aceptó una solicitud de amistad del usuario: {0}",
+                entrada.Solicitud.UsuarioEmisor);
+
+            await _amigosServicio.ResponderSolicitudAsync(
+                entrada.Solicitud.UsuarioEmisor,
+                entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
+
+            NotificarExitoAceptacion();
+        }
+
+        private void NotificarExitoAceptacion()
+        {
+            _sonidoManejador.ReproducirNotificacion();
+            _avisoServicio.Mostrar(Lang.amigosTextoSolicitudAceptada);
+        }
+
+        private void ManejarErrorAceptacion(Exception excepcion)
+        {
+            _logger.Error("Error al aceptar solicitud de amistad.", excepcion);
+            _sonidoManejador.ReproducirError();
+            string mensaje = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            _avisoServicio.Mostrar(mensaje);
+        }
+
         private async Task RechazarSolicitudAsync(SolicitudAmistadEntrada entrada)
         {
-            if (entrada == null)
+            if (!ValidarEntrada(entrada, "rechazar"))
             {
-                _logger.Warn("Intento de rechazar solicitud con entrada nula.");
                 return;
             }
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
-            {
-                _logger.InfoFormat("Rechazando/Cancelando solicitud con: {0}",
-                    entrada.NombreUsuario);
-                await _amigosServicio.EliminarAmigoAsync(
-                    entrada.Solicitud.UsuarioEmisor,
-                    entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
-
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(Lang.amigosTextoSolicitudCancelada);
-            },
-            ex =>
-            {
-                _logger.Error("Error al rechazar/cancelar solicitud de amistad.", ex);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(ex.Message ?? Lang.errorTextoErrorProcesarSolicitud);
-            });
+            await EjecutarOperacionAsync(
+                async () => await EjecutarRechazoAsync(entrada),
+                excepcion => ManejarErrorRechazo(excepcion));
 
             EstaProcesando = false;
+        }
+
+        private async Task EjecutarRechazoAsync(SolicitudAmistadEntrada entrada)
+        {
+            _logger.InfoFormat(
+                "Se rechazó una solicitud de amistad con: {0}",
+                entrada.NombreUsuario);
+
+            await _amigosServicio.EliminarAmigoAsync(
+                entrada.Solicitud.UsuarioEmisor,
+                entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
+
+            NotificarExitoRechazo();
+        }
+
+        private void NotificarExitoRechazo()
+        {
+            _sonidoManejador.ReproducirNotificacion();
+            _avisoServicio.Mostrar(Lang.amigosTextoSolicitudCancelada);
+        }
+
+        private void ManejarErrorRechazo(Exception excepcion)
+        {
+            _logger.Error(
+                "Error al rechazar/cancelar solicitud de amistad.",
+                excepcion);
+            _sonidoManejador.ReproducirError();
+            string mensaje = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            _avisoServicio.Mostrar(mensaje);
+        }
+
+        private static bool ValidarEntrada(SolicitudAmistadEntrada entrada, string operacion)
+        {
+            if (entrada == null)
+            {
+                _logger.WarnFormat(
+                    "Intento de {0} solicitud con entrada nula.",
+                    operacion);
+                return false;
+            }
+
+            return true;
         }
 
         private static void EjecutarEnDispatcher(Action accion)

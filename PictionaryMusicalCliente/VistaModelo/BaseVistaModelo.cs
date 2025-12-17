@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios;
+﻿using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using System;
@@ -50,8 +50,13 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (EndpointNotFoundException excepcion)
             {
-                ManejarError(excepcion, "No se pudo conectar con el servidor. Verifique su conexion.",
+                ManejarError(excepcion, 
+                    "No se pudo conectar con el servidor. Verifique su conexion.",
                     accionError);
+            }
+            catch (FaultException excepcion)
+            {
+                ManejarError(excepcion, "El servicio reporto un error.", accionError);
             }
             catch (CommunicationException excepcion)
             {

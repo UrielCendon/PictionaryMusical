@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -21,6 +21,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Inicializa el servicio de cuentas con sus dependencias.
         /// </summary>
+        /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public CuentaServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
@@ -78,9 +84,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado al registrar cuenta.", excepcion);
+                _logger.Error("Operacion invalida al registrar cuenta.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
@@ -92,11 +98,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.ResultadoRegistroCuentaDTO resultado,
             string correo)
         {
-            if (resultado?.RegistroExitoso == true)
-            {
-                _logger.InfoFormat("Registro de cuenta exitoso para: {0}", correo);
-            }
-            else
+            if (!resultado?.RegistroExitoso == true)
             {
                 _logger.WarnFormat("Registro fallido para: {0}. Razon: {1}",
                     correo, resultado?.Mensaje);

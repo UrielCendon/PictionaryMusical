@@ -75,13 +75,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             if (resultado == null)
             {
                 _logger.Warn("La confirmacion de codigo retorno null.");
-                return null;
+                return CrearResultadoRegistroVacio();
             }
 
             return new DTOs.ResultadoRegistroCuentaDTO
             {
                 RegistroExitoso = resultado.OperacionExitosa,
                 Mensaje = resultado.Mensaje
+            };
+        }
+
+        private static DTOs.ResultadoRegistroCuentaDTO CrearResultadoRegistroVacio()
+        {
+            return new DTOs.ResultadoRegistroCuentaDTO
+            {
+                RegistroExitoso = false,
+                Mensaje = string.Empty
             };
         }
     }

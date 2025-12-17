@@ -1,4 +1,4 @@
-<Window x:Class="PictionaryMusicalCliente.Vista.VerificacionCodigo"
+﻿<Window x:Class="PictionaryMusicalCliente.Vista.VerificacionCodigo"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:language="clr-namespace:PictionaryMusicalCliente.Properties.Langs"
@@ -26,8 +26,9 @@
                 <TextBox x:Name="campoTextoCodigoVerificacion"
                          Height="30" Margin="0,12,0,16" FontFamily="Comic Sans MS"
                          HorizontalAlignment="Center" Width="237"
-                         MaxLength="6"
+                         MaxLength="6" TextAlignment="Center"
                          utilidades:EntradaNumerica.SoloNumeros="True"
+                         utilidades:LimiteCaracteresEntrada.HabilitarAvisoLimite="True"
                          Text="{Binding CodigoVerificacion, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Button Content="{x:Static language:Lang.cambiarContrasenaTextoVerificar}"

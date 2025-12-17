@@ -1,4 +1,4 @@
-using System.Windows;
+﻿using System.Windows;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 
 namespace PictionaryMusicalCliente.Vista

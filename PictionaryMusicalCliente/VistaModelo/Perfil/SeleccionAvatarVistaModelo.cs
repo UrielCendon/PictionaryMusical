@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
@@ -82,8 +82,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 return;
             }
 
-            _logger.InfoFormat("Avatar seleccionado: ID {0}",
-                AvatarSeleccionado.Id);
             SeleccionConfirmada?.Invoke(AvatarSeleccionado);
         }
     }

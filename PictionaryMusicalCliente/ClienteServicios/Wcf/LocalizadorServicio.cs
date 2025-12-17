@@ -1,4 +1,4 @@
-using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -267,7 +267,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return ObtenerMensajePredeterminado(mensajePredeterminado);
         }
 
-        private bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)
+        private static bool TryLocalizarMensajeDinamico(string mensaje, out string traducido)
         {
             if (IntentarCoincidenciaEsperaCodigo(mensaje, out traducido))
             {
@@ -283,7 +283,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return false;
         }
 
-        private bool IntentarCoincidenciaEsperaCodigo(string mensaje, out string traducido)
+        private static bool IntentarCoincidenciaEsperaCodigo(string mensaje, out string traducido)
         {
             Match espera = EsperaCodigoRegex.Match(mensaje);
             if (espera.Success)
@@ -299,7 +299,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return false;
         }
 
-        private bool IntentarCoincidenciaRedSocial(string mensaje, out string traducido)
+        private static bool IntentarCoincidenciaRedSocial(string mensaje, out string traducido)
         {
             Match identificador = IdentificadorRedSocialRegex.Match(mensaje);
             if (identificador.Success)
@@ -316,7 +316,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return false;
         }
 
-        private bool TryLocalizarMensajeEstatico(string mensaje, out string traducido)
+        private static bool TryLocalizarMensajeEstatico(string mensaje, out string traducido)
         {
             if (MapaMensajes.TryGetValue(mensaje, out Func<string> traductor))
             {
@@ -328,7 +328,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return false;
         }
 
-        private string ObtenerMensajePredeterminado(string mensajePredeterminado)
+        private static string ObtenerMensajePredeterminado(string mensajePredeterminado)
         {
             if (!string.IsNullOrWhiteSpace(mensajePredeterminado))
             {

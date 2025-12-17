@@ -1,6 +1,6 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.ClienteServicios.Wcf;
+using PictionaryMusicalCliente.ClienteServicios.Wcf.Chat;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +26,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _nombreCancionCorrecta;
         private int _tiempoRestante;
 
+        /// <summary>
+        /// Inicializa una nueva instancia de <see cref="ChatVistaModelo"/>.
+        /// </summary>
+        /// <param name="ventana">Servicio de ventanas.</param>
+        /// <param name="localizador">Servicio de localizacion.</param>
+        /// <param name="chatMensajeria">Servicio de mensajeria del chat.</param>
+        /// <param name="chatReglasPartida">Servicio de reglas del chat.</param>
         public ChatVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
@@ -153,9 +160,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 case ChatDecision.IntentoFallido:
                     EnviarMensajeIntentoFallido(mensaje);
                     break;
-                case ChatDecision.MensajeBloqueado:
-                    RegistrarMensajeBloqueado();
-                    break;
                 case ChatDecision.AciertoRegistrado:
                     MarcarAciertoRegistrado();
                     break;
@@ -164,19 +168,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void EnviarMensajeCanalLibre(string mensaje)
         {
-            _logger.InfoFormat("Enviando mensaje de chat (partida no iniciada): {0}", mensaje);
             _chatMensajeria.Enviar(mensaje);
         }
 
         private void EnviarMensajeIntentoFallido(string mensaje)
         {
-            _logger.InfoFormat("Enviando mensaje de chat (intento fallido): {0}", mensaje);
+            RegistrarEnvioIntentoFallido(mensaje);
             _chatMensajeria.Enviar(mensaje);
         }
 
-        private static void RegistrarMensajeBloqueado()
+        private static void RegistrarEnvioIntentoFallido(string mensaje)
         {
-            _logger.Info("El dibujante no puede enviar mensajes durante su turno.");
+            _logger.WarnFormat(
+                "Enviando mensaje de chat (intento fallido): {0}",
+                mensaje);
         }
 
         private void MarcarAciertoRegistrado()

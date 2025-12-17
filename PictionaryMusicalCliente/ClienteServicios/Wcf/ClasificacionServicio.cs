@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
 using System;
@@ -23,6 +23,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Inicializa el servicio con las dependencias necesarias.
         /// </summary>
+        /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
+        /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
+        /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Si alguna dependencia es nula.
+        /// </exception>
         public ClasificacionServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
@@ -74,9 +80,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
-            catch (Exception excepcion)
+            catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Error inesperado en clasificacion.", excepcion);
+                _logger.Error("Operacion invalida en clasificacion.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,
