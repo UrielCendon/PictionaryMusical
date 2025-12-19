@@ -27,14 +27,18 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         }
 
         /// <summary>
-        /// Intenta obtener un avatar especifico por su identificador unico.
+        /// Obtiene un avatar especifico por su identificador unico.
         /// </summary>
         /// <param name="id">Identificador del avatar.</param>
-        /// <param name="avatar">El objeto avatar si existe.</param>
-        /// <returns>True si se encontro el avatar, false en caso contrario.</returns>
-        public bool IntentarObtenerPorId(int id, out ObjetoAvatar avatar)
+        /// <returns>Resultado con el avatar si existe, o fallo si no se encuentra.</returns>
+        public ResultadoOperacion<ObjetoAvatar> ObtenerPorId(int id)
         {
-            return _diccionarioAvatares.TryGetValue(id, out avatar);
+            if (_diccionarioAvatares.TryGetValue(id, out ObjetoAvatar avatar))
+            {
+                return ResultadoOperacion<ObjetoAvatar>.Exito(avatar);
+            }
+
+            return ResultadoOperacion<ObjetoAvatar>.Fallo();
         }
 
         private static List<ObjetoAvatar> InicializarAvatares()

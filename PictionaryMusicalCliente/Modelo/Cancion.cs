@@ -6,6 +6,12 @@
     public sealed class Cancion
     {
         /// <summary>
+        /// Instancia que representa una cancion vacia o no encontrada.
+        /// </summary>
+        public static readonly Cancion Vacia = 
+            new Cancion(0, string.Empty, string.Empty, string.Empty);
+
+        /// <summary>
         /// Inicializa una nueva instancia de la clase <see cref="Cancion"/>.
         /// </summary>
         /// <param name="id">Identificador unico de la cancion.</param>

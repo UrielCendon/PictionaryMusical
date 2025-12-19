@@ -1,4 +1,5 @@
-﻿using PictionaryMusicalCliente.VistaModelo.Salas;
+﻿using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace PictionaryMusicalCliente.Vista
             Loaded += AlCargarPartida;
         }
 
-        private void AlCargarPartida(object sender, RoutedEventArgs e)
+        private void AlCargarPartida(object remitente, RoutedEventArgs argumentosEvento)
         {
             if (DataContext is PartidaVistaModelo vistaModelo)
             {
@@ -56,7 +57,7 @@ namespace PictionaryMusicalCliente.Vista
             inkLienzoDibujo.PreviewMouseLeftButtonUp += AlSoltarBotonIzquierdoEnLienzo;
         }
 
-        private void AlRecolectarTrazoEnLienzo(object sender,
+        private void AlRecolectarTrazoEnLienzo(object remitente,
             InkCanvasStrokeCollectedEventArgs argumentosEvento)
         {
             if (argumentosEvento.Stroke == null || !(DataContext is PartidaVistaModelo vistaModelo)
@@ -65,13 +66,15 @@ namespace PictionaryMusicalCliente.Vista
                 return;
             }
 
-            if (IntentarConvertirLineaATrazo(argumentosEvento.Stroke, false, out var trazo))
+            ResultadoOperacion<TrazoDTO> resultadoTrazo = 
+                ConvertirLineaATrazo(argumentosEvento.Stroke, false);
+            if (resultadoTrazo.Exitoso)
             {
-                vistaModelo.EnviarTrazoAlServidor?.Invoke(trazo);
+                vistaModelo.EnviarTrazoAlServidor?.Invoke(resultadoTrazo.Valor);
             }
         }
 
-        private void AlPresionarBotonIzquierdoEnLienzo(object sender,
+        private void AlPresionarBotonIzquierdoEnLienzo(object remitente,
             MouseButtonEventArgs argumentosEvento)
         {
             if (DataContext is PartidaVistaModelo vistaModelo && vistaModelo.EsDibujante
@@ -83,7 +86,7 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private void AlMoverRatonEnLienzo(object sender, MouseEventArgs argumentosEvento)
+        private void AlMoverRatonEnLienzo(object remitente, MouseEventArgs argumentosEvento)
         {
             if (_borradoEnProgreso)
             {
@@ -91,79 +94,74 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private void AlSoltarBotonIzquierdoEnLienzo(object sender, 
+        private void AlSoltarBotonIzquierdoEnLienzo(object remitente, 
             MouseButtonEventArgs argumentosEvento)
         {
             if (_borradoEnProgreso && DataContext is PartidaVistaModelo vistaModelo)
             {
                 _borradoEnProgreso = false;
 
-                if (IntentarConvertirPuntosATrazoBorrador(
+                ResultadoOperacion<TrazoDTO> resultadoTrazo = ConvertirPuntosATrazoBorrador(
                     _puntosBorrador, 
-                    vistaModelo.Grosor, 
-                    out var trazo))
+                    vistaModelo.Grosor);
+                
+                if (resultadoTrazo.Exitoso)
                 {
-                    vistaModelo.EnviarTrazoAlServidor?.Invoke(trazo);
+                    vistaModelo.EnviarTrazoAlServidor?.Invoke(resultadoTrazo.Valor);
                 }
 
                 _puntosBorrador.Clear();
             }
         }
 
-        private static bool IntentarConvertirPuntosATrazoBorrador(
+        private static ResultadoOperacion<TrazoDTO> ConvertirPuntosATrazoBorrador(
             IEnumerable<Point> puntos, 
-            double grosor,
-            out TrazoDTO trazo)
+            double grosor)
         {
-            trazo = null;
-
             if (puntos == null)
             {
-                return false;
+                return ResultadoOperacion<TrazoDTO>.Fallo();
             }
 
             var listaPuntos = puntos.ToList();
             if (listaPuntos.Count == 0)
             {
-                return false;
+                return ResultadoOperacion<TrazoDTO>.Fallo();
             }
 
-            trazo = new TrazoDTO
+            TrazoDTO trazo = new TrazoDTO
             {
-                PuntosX = listaPuntos.Select(puntos => puntos.X).ToArray(),
-                PuntosY = listaPuntos.Select(puntos => puntos.Y).ToArray(),
+                PuntosX = listaPuntos.Select(punto => punto.X).ToArray(),
+                PuntosY = listaPuntos.Select(punto => punto.Y).ToArray(),
                 ColorHex = Colors.Transparent.ToString(),
                 Grosor = grosor,
                 EsBorrado = true
             };
 
-            return true;
+            return ResultadoOperacion<TrazoDTO>.Exito(trazo);
         }
 
-        private static bool IntentarConvertirLineaATrazo(
+        private static ResultadoOperacion<TrazoDTO> ConvertirLineaATrazo(
             Stroke linea, 
-            bool esBorrado,
-            out TrazoDTO trazo)
+            bool esBorrado)
         {
-            trazo = null;
-
             if (linea == null)
             {
-                return false;
+                return ResultadoOperacion<TrazoDTO>.Fallo();
             }
 
             var puntos = linea.StylusPoints;
 
-            trazo = new TrazoDTO
+            TrazoDTO trazo = new TrazoDTO
             {
-                PuntosX = puntos.Select(puntos => puntos.X).ToArray(),
-                PuntosY = puntos.Select(puntos => puntos.Y).ToArray(),
+                PuntosX = puntos.Select(punto => punto.X).ToArray(),
+                PuntosY = puntos.Select(punto => punto.Y).ToArray(),
                 ColorHex = ColorAHex(linea.DrawingAttributes.Color),
                 Grosor = linea.DrawingAttributes.Width,
                 EsBorrado = esBorrado
             };
 
-            return true;
+            return ResultadoOperacion<TrazoDTO>.Exito(trazo);
         }
 
         private void AlRecibirTrazoDelServidor(TrazoDTO trazo)

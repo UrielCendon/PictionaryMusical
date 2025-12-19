@@ -23,7 +23,7 @@ namespace PictionaryMusicalCliente.Vista
             Closed += AlCerrarInicioSesion;
         }
 
-        private void AlCargarInicioSesion(object sender, RoutedEventArgs e)
+        private void AlCargarInicioSesion(object remitente, RoutedEventArgs argumentosEventos)
         {
             if (DataContext is InicioSesionVistaModelo vistaModelo)
             {
@@ -32,9 +32,9 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private void AlCambiarContrasena(object sender, RoutedEventArgs e)
+        private void AlCambiarContrasena(object remitente, RoutedEventArgs argumentosEventos)
         {
-            if (DataContext is InicioSesionVistaModelo vistaModelo && sender is 
+            if (DataContext is InicioSesionVistaModelo vistaModelo && remitente is 
                 PasswordBox cajaContrasena)
             {
                 vistaModelo.EstablecerContrasena(cajaContrasena.Password);
@@ -74,13 +74,13 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private void AlCerrarInicioSesion(object sender, EventArgs e)
+        private void AlCerrarInicioSesion(object remitente, EventArgs argumentosEvento)
         {
             Loaded -= AlCargarInicioSesion;
             Closed -= AlCerrarInicioSesion;
         }
 
-        private void AlHacerClicEnBotonAudio(object sender, RoutedEventArgs e)
+        private void AlHacerClicEnBotonAudio(object remitente, RoutedEventArgs argumentosEventos)
         {
             bool estaSilenciado = App.MusicaManejador.AlternarSilencio();
             ActualizarImagenBotonAudio(estaSilenciado);

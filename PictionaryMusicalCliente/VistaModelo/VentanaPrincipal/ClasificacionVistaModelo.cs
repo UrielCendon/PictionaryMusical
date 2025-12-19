@@ -55,23 +55,32 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _clasificacionOriginal = Array.Empty<DTOs.ClasificacionUsuarioDTO>();
             _clasificacion = new ObservableCollection<DTOs.ClasificacionUsuarioDTO>();
 
-            OrdenarPorRondasComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                OrdenarPorRondas();
-            }, _ => PuedeOrdenar());
+            OrdenarPorRondasComando = new ComandoDelegado(EjecutarComandoOrdenarPorRondas, ValidarPuedeOrdenar);
+            OrdenarPorPuntosComando = new ComandoDelegado(EjecutarComandoOrdenarPorPuntos, ValidarPuedeOrdenar);
+            CerrarComando = new ComandoDelegado(EjecutarComandoCerrar);
+        }
 
-            OrdenarPorPuntosComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                OrdenarPorPuntos();
-            }, _ => PuedeOrdenar());
+        private void EjecutarComandoOrdenarPorRondas(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            OrdenarPorRondas();
+        }
 
-            CerrarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                _ventana.CerrarVentana(this);
-            });
+        private void EjecutarComandoOrdenarPorPuntos(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            OrdenarPorPuntos();
+        }
+
+        private bool ValidarPuedeOrdenar(object parametro)
+        {
+            return PuedeOrdenar();
+        }
+
+        private void EjecutarComandoCerrar(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            _ventana.CerrarVentana(this);
         }
 
         /// <summary>

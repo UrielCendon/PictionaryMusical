@@ -38,8 +38,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
             _usuarioSesion = usuarioSesion 
                 ?? throw new ArgumentNullException(nameof(usuarioSesion));
 
-            AceptarComando = new ComandoDelegado(_ => EjecutarAceptar());
-            CancelarComando = new ComandoDelegado(_ => EjecutarCancelar());
+            AceptarComando = new ComandoDelegado(EjecutarComandoAceptar);
+            CancelarComando = new ComandoDelegado(EjecutarComandoCancelar);
         }
 
         /// <summary>
@@ -51,6 +51,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         /// Comando para cancelar la operacion y mantener la sesion activa.
         /// </summary>
         public ICommand CancelarComando { get; }
+
+        private void EjecutarComandoAceptar(object parametro)
+        {
+            EjecutarAceptar();
+        }
+
+        private void EjecutarComandoCancelar(object parametro)
+        {
+            EjecutarCancelar();
+        }
 
         private void EjecutarAceptar()
         {

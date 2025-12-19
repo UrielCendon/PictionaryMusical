@@ -143,10 +143,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         }
 
         private void SolicitudesActualizadas(
-            object sender,
+            object remitente,
             IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
         {
-            EjecutarEnDispatcher(() => ActualizarSolicitudes(solicitudes));
+            EjecutarEnDispatcherLocal(() => ActualizarSolicitudes(solicitudes));
         }
 
         private void ActualizarSolicitudes(
@@ -182,9 +182,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     continue;
                 }
 
-                if (IntentarCrearEntradaSolicitud(solicitud, out var entrada))
+                ResultadoOperacion<SolicitudAmistadEntrada> resultadoEntrada = CrearEntradaSolicitud(solicitud);
+                if (resultadoEntrada.Exitoso)
                 {
-                    Solicitudes.Add(entrada);
+                    Solicitudes.Add(resultadoEntrada.Valor);
                 }
             }
         }
@@ -194,18 +195,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             return solicitud != null && !solicitud.SolicitudAceptada;
         }
 
-        private bool IntentarCrearEntradaSolicitud(
-            DTOs.SolicitudAmistadDTO solicitud,
-            out SolicitudAmistadEntrada entrada)
+        private ResultadoOperacion<SolicitudAmistadEntrada> CrearEntradaSolicitud(
+            DTOs.SolicitudAmistadDTO solicitud)
         {
-            entrada = null;
-
             bool esEmisorActual = EsUsuarioActual(solicitud.UsuarioEmisor);
             bool esReceptorActual = EsUsuarioActual(solicitud.UsuarioReceptor);
 
             if (!esEmisorActual && !esReceptorActual)
             {
-                return false;
+                return ResultadoOperacion<SolicitudAmistadEntrada>.Fallo();
             }
 
             string nombreMostrado = ObtenerNombreMostrado(
@@ -214,17 +212,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             if (string.IsNullOrWhiteSpace(nombreMostrado))
             {
-                return false;
+                return ResultadoOperacion<SolicitudAmistadEntrada>.Fallo();
             }
 
             bool puedeAceptar = esReceptorActual;
 
-            entrada = new SolicitudAmistadEntrada(
+            SolicitudAmistadEntrada entrada = new SolicitudAmistadEntrada(
                 solicitud,
                 nombreMostrado,
                 puedeAceptar);
 
-            return true;
+            return ResultadoOperacion<SolicitudAmistadEntrada>.Exito(entrada);
         }
 
         private bool EsUsuarioActual(string nombreUsuario)
@@ -257,7 +255,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             await EjecutarOperacionAsync(
                 async () => await EjecutarAceptacionAsync(entrada),
-                excepcion => ManejarErrorAceptacion(excepcion));
+                ManejarErrorAceptacion);
 
             EstaProcesando = false;
         }
@@ -300,7 +298,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             await EjecutarOperacionAsync(
                 async () => await EjecutarRechazoAsync(entrada),
-                excepcion => ManejarErrorRechazo(excepcion));
+                ManejarErrorRechazo);
 
             EstaProcesando = false;
         }
@@ -347,7 +345,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             return true;
         }
 
-        private static void EjecutarEnDispatcher(Action accion)
+        private static void EjecutarEnDispatcherLocal(Action accion)
         {
             if (accion == null)
             {

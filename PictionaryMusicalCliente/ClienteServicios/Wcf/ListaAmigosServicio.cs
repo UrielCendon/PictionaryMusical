@@ -300,7 +300,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private void Canal_Faulted(object sender, EventArgs e)
+        private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("El canal de lista de amigos entro en estado Faulted.");
             CanalDesconectado?.Invoke(this, EventArgs.Empty);

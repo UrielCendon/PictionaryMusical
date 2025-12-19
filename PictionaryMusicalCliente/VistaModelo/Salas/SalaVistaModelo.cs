@@ -237,9 +237,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             _jugadoresManejador.MostrarConfirmacion = MostrarConfirmacion;
             _jugadoresManejador.SolicitarDatosReporte = SolicitarDatosReporte;
-            _jugadoresManejador.EstablecerObtenerJuegoIniciado(() => JuegoIniciado);
-            _jugadoresManejador.ProgresoRondaCambiado += conteo =>
-                _partidaVistaModelo.AjustarProgresoRondaTrasCambioJugadores(conteo);
+            _jugadoresManejador.EstablecerObtenerJuegoIniciado(ObtenerJuegoIniciado);
+            _jugadoresManejador.ProgresoRondaCambiado += ManejarProgresoRondaCambiado;
+        }
+
+        private bool ObtenerJuegoIniciado()
+        {
+            return JuegoIniciado;
+        }
+
+        private void ManejarProgresoRondaCambiado(int conteo)
+        {
+            _partidaVistaModelo.AjustarProgresoRondaTrasCambioJugadores(conteo);
         }
 
         private void ConfigurarEventosManejador()
@@ -271,15 +280,31 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void ConfigurarPartidaVistaModelo()
         {
             _partidaVistaModelo.JuegoIniciadoCambiado += OnJuegoIniciadoCambiado;
-            _partidaVistaModelo.PuedeEscribirCambiado += valor =>
-                _chatVistaModelo.PuedeEscribir = valor;
-            _partidaVistaModelo.EsDibujanteCambiado += valor =>
-                _chatVistaModelo.EsDibujante = valor;
-            _partidaVistaModelo.NombreCancionCambiado += valor =>
-                _chatVistaModelo.NombreCancionCorrecta = valor;
-            _partidaVistaModelo.TiempoRestanteCambiado += valor =>
-                _chatVistaModelo.TiempoRestante = valor;
+            _partidaVistaModelo.PuedeEscribirCambiado += ManejarPuedeEscribirCambiado;
+            _partidaVistaModelo.EsDibujanteCambiado += ManejarEsDibujanteCambiado;
+            _partidaVistaModelo.NombreCancionCambiado += ManejarNombreCancionCambiado;
+            _partidaVistaModelo.TiempoRestanteCambiado += ManejarTiempoRestanteCambiado;
             _partidaVistaModelo.EnviarTrazoAlServidor = EnviarTrazoAlServidor;
+        }
+
+        private void ManejarPuedeEscribirCambiado(bool valor)
+        {
+            _chatVistaModelo.PuedeEscribir = valor;
+        }
+
+        private void ManejarEsDibujanteCambiado(bool valor)
+        {
+            _chatVistaModelo.EsDibujante = valor;
+        }
+
+        private void ManejarNombreCancionCambiado(string valor)
+        {
+            _chatVistaModelo.NombreCancionCorrecta = valor;
+        }
+
+        private void ManejarTiempoRestanteCambiado(int valor)
+        {
+            _chatVistaModelo.TiempoRestante = valor;
         }
 
         private ChatVistaModelo CrearChatVistaModelo()
@@ -560,16 +585,55 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void InicializarComandos()
         {
             InvitarCorreoComando = new ComandoAsincrono(
-                async _ => await EjecutarInvitarCorreoAsync(),
-                _ => PuedeInvitarPorCorreo);
+                EjecutarComandoInvitarCorreoAsync,
+                ValidarPuedeInvitarPorCorreo);
             InvitarAmigosComando = new ComandoAsincrono(
-                async () => await EjecutarInvitarAmigosAsync(),
-                () => PuedeInvitarAmigos);
-            AbrirAjustesComando = new ComandoDelegado(_ => EjecutarAbrirAjustes());
-            IniciarPartidaComando = new ComandoAsincrono(async _ => 
-                await EjecutarIniciarPartidaAsync());
-            CerrarVentanaComando = new ComandoDelegado(_ => EjecutarCerrarVentana());
-            EnviarMensajeChatComando = new ComandoDelegado(_ => EjecutarEnviarMensajeChat());
+                EjecutarComandoInvitarAmigosAsync,
+                ValidarPuedeInvitarAmigos);
+            AbrirAjustesComando = new ComandoDelegado(EjecutarComandoAbrirAjustes);
+            IniciarPartidaComando = new ComandoAsincrono(EjecutarComandoIniciarPartidaAsync);
+            CerrarVentanaComando = new ComandoDelegado(EjecutarComandoCerrarVentana);
+            EnviarMensajeChatComando = new ComandoDelegado(EjecutarComandoEnviarMensajeChat);
+        }
+
+        private async Task EjecutarComandoInvitarCorreoAsync(object parametro)
+        {
+            await EjecutarInvitarCorreoAsync();
+        }
+
+        private bool ValidarPuedeInvitarPorCorreo(object parametro)
+        {
+            return PuedeInvitarPorCorreo;
+        }
+
+        private async Task EjecutarComandoInvitarAmigosAsync()
+        {
+            await EjecutarInvitarAmigosAsync();
+        }
+
+        private bool ValidarPuedeInvitarAmigos()
+        {
+            return PuedeInvitarAmigos;
+        }
+
+        private void EjecutarComandoAbrirAjustes(object parametro)
+        {
+            EjecutarAbrirAjustes();
+        }
+
+        private async Task EjecutarComandoIniciarPartidaAsync(object parametro)
+        {
+            await EjecutarIniciarPartidaAsync();
+        }
+
+        private void EjecutarComandoCerrarVentana(object parametro)
+        {
+            EjecutarCerrarVentana();
+        }
+
+        private void EjecutarComandoEnviarMensajeChat(object parametro)
+        {
+            EjecutarEnviarMensajeChat();
         }
 
         private void InicializarProxyPartida()
@@ -649,7 +713,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
-        private void CanalPartida_Faulted(object sender, EventArgs e)
+        private void CanalPartida_Faulted(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("El canal de comunicacion con el servidor entro en estado Faulted.");
             EjecutarEnDispatcher(() =>
@@ -661,7 +725,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             });
         }
 
-        private void CanalPartida_Closed(object sender, EventArgs e)
+        private void CanalPartida_Closed(object remitente, EventArgs argumentosEvento)
         {
             _logger.Info("El canal de comunicacion con el servidor fue cerrado.");
         }
@@ -714,7 +778,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _codigoSala,
                     _nombreUsuarioSesion,
                     _invitacionesManejador.AmigosInvitados,
-                    mensaje => _avisoServicio.Mostrar(mensaje))
+                    MostrarMensajeAviso)
                 .ConfigureAwait(true);
 
             if (!resultado.Exitoso)
@@ -728,6 +792,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 await MostrarInvitarAmigos(resultado.VistaModelo).ConfigureAwait(true);
             }
+        }
+
+        private void MostrarMensajeAviso(string mensaje)
+        {
+            _avisoServicio.Mostrar(mensaje);
         }
 
         private void EjecutarAbrirAjustes()
@@ -1531,17 +1600,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _localizador,
                 _cancionManejador,
                 _sonidoManejador);
-            ajustesVistaModelo.SalirPartidaConfirmado = () =>
-            {
-                var destino = ObtenerDestinoSegunSesion();
-                if (destino == DestinoNavegacion.InicioSesion)
-                {
-                    _aplicacionCerrando = true;
-                }
-                Navegar(destino);
-            };
+            ajustesVistaModelo.SalirPartidaConfirmado = EjecutarSalidaPartidaConfirmada;
 
             _ventana.MostrarVentanaDialogo(ajustesVistaModelo);
+        }
+
+        private void EjecutarSalidaPartidaConfirmada()
+        {
+            var destino = ObtenerDestinoSegunSesion();
+            if (destino == DestinoNavegacion.InicioSesion)
+            {
+                _aplicacionCerrando = true;
+            }
+            Navegar(destino);
         }
     }
 }

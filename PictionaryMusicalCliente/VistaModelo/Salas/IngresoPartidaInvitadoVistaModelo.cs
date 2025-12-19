@@ -70,17 +70,35 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _nombreInvitadoGenerador = nombreInvitadoGenerador ??
                 throw new ArgumentNullException(nameof(nombreInvitadoGenerador));
 
-            UnirseSalaComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await UnirseSalaComoInvitadoAsync().ConfigureAwait(true);
-            }, _ => !EstaProcesando);
+            UnirseSalaComando = new ComandoAsincrono(
+                EjecutarComandoUnirseSalaAsync,
+                ValidarNoEstaProcesando);
 
-            CancelarComando = new ComandoDelegado(() =>
-            {
-                _sonidoManejador.ReproducirClick();
-                _ventana.CerrarVentana(this);
-            }, () => !EstaProcesando);
+            CancelarComando = new ComandoDelegado(
+                EjecutarComandoCancelar,
+                ValidarNoEstaProcesandoSinParametro);
+        }
+
+        private async Task EjecutarComandoUnirseSalaAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await UnirseSalaComoInvitadoAsync().ConfigureAwait(true);
+        }
+
+        private bool ValidarNoEstaProcesando(object parametro)
+        {
+            return !EstaProcesando;
+        }
+
+        private void EjecutarComandoCancelar()
+        {
+            _sonidoManejador.ReproducirClick();
+            _ventana.CerrarVentana(this);
+        }
+
+        private bool ValidarNoEstaProcesandoSinParametro()
+        {
+            return !EstaProcesando;
         }
 
         /// <summary>

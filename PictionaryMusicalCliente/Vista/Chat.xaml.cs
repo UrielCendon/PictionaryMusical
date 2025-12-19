@@ -20,7 +20,7 @@ namespace PictionaryMusicalCliente.Vista
             Loaded += AlCargarChat;
         }
 
-        private void AlCargarChat(object sender, RoutedEventArgs e)
+        private void AlCargarChat(object remitente, RoutedEventArgs argumentosEventos)
         {
             if (DataContext is ChatVistaModelo vistaModelo)
             {

@@ -115,7 +115,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             {
                 Interval = TimeSpan.FromSeconds(5)
             };
-            _capaMinutero.Tick += (s, e) => OverlayTick?.Invoke(s, e);
+            _capaMinutero.Tick += ManejarOverlayTick;
 
             _temporizadorAlarma = new DispatcherTimer(
                 DispatcherPriority.Normal, 
@@ -123,7 +123,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             {
                 Interval = TimeSpan.FromSeconds(5)
             };
-            _temporizadorAlarma.Tick += (s, e) => AlarmaTick?.Invoke(s, e);
+            _temporizadorAlarma.Tick += ManejarAlarmaTick;
 
             _temporizador = new DispatcherTimer(
                 DispatcherPriority.Normal, 
@@ -131,7 +131,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             {
                 Interval = TimeSpan.FromSeconds(1)
             };
-            _temporizador.Tick += (s, e) => TemporizadorTick?.Invoke(s, e);
+            _temporizador.Tick += ManejarTemporizadorTick;
+        }
+
+        private void ManejarOverlayTick(object remitente, EventArgs argumentosEvento)
+        {
+            OverlayTick?.Invoke(remitente, argumentosEvento);
+        }
+
+        private void ManejarAlarmaTick(object remitente, EventArgs argumentosEvento)
+        {
+            AlarmaTick?.Invoke(remitente, argumentosEvento);
+        }
+
+        private void ManejarTemporizadorTick(object remitente, EventArgs argumentosEvento)
+        {
+            TemporizadorTick?.Invoke(remitente, argumentosEvento);
         }
     }
 }

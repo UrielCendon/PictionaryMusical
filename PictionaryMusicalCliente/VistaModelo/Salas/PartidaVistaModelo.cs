@@ -455,12 +455,42 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void InicializarComandos()
         {
-            SeleccionarLapizComando = new ComandoDelegado(_ => EjecutarSeleccionarLapiz());
-            SeleccionarBorradorComando = new ComandoDelegado(_ => EjecutarSeleccionarBorrador());
-            CambiarGrosorComando = new ComandoDelegado(p => EjecutarCambiarGrosor(p));
-            CambiarColorComando = new ComandoDelegado(p => EjecutarCambiarColor(p));
-            LimpiarDibujoComando = new ComandoDelegado(_ => EjecutarLimpiarDibujo());
-            OcultarOverlayAlarmaComando = new ComandoDelegado(_ => OcultarOverlayAlarma());
+            SeleccionarLapizComando = new ComandoDelegado(EjecutarComandoSeleccionarLapiz);
+            SeleccionarBorradorComando = new ComandoDelegado(EjecutarComandoSeleccionarBorrador);
+            CambiarGrosorComando = new ComandoDelegado(EjecutarComandoCambiarGrosor);
+            CambiarColorComando = new ComandoDelegado(EjecutarComandoCambiarColor);
+            LimpiarDibujoComando = new ComandoDelegado(EjecutarComandoLimpiarDibujo);
+            OcultarOverlayAlarmaComando = new ComandoDelegado(EjecutarComandoOcultarOverlayAlarma);
+        }
+
+        private void EjecutarComandoSeleccionarLapiz(object parametro)
+        {
+            EjecutarSeleccionarLapiz();
+        }
+
+        private void EjecutarComandoSeleccionarBorrador(object parametro)
+        {
+            EjecutarSeleccionarBorrador();
+        }
+
+        private void EjecutarComandoCambiarGrosor(object parametro)
+        {
+            EjecutarCambiarGrosor(parametro);
+        }
+
+        private void EjecutarComandoCambiarColor(object parametro)
+        {
+            EjecutarCambiarColor(parametro);
+        }
+
+        private void EjecutarComandoLimpiarDibujo(object parametro)
+        {
+            EjecutarLimpiarDibujo();
+        }
+
+        private void EjecutarComandoOcultarOverlayAlarma(object parametro)
+        {
+            OcultarOverlayAlarma();
         }
 
         private static Visibility DeterminarVisibilidadPista(string textoPista)
@@ -752,7 +782,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ConfigurarTiempoRonda(ronda.TiempoSegundos);
             ActualizarContadorRondas(_totalJugadoresPendiente);
 
-            _catalogoCanciones.IntentarObtenerPorId(ronda.IdCancion, out var cancion);
+            ResultadoOperacion<Cancion> resultadoCancion = _catalogoCanciones.ObtenerPorId(ronda.IdCancion);
+            Cancion cancion = resultadoCancion.Exitoso ? resultadoCancion.Valor : Cancion.Vacia;
             AlmacenarDatosCancionActual(cancion);
             NotificarCambiosCancionYTiempo();
             ConfigurarTextoDibujante(ronda.NombreDibujante);

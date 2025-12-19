@@ -164,6 +164,7 @@
     <Compile Include="Modelo\Catalogos\ICatalogos.cs" />
     <Compile Include="Modelo\IUsuarioAutenticado.cs" />
     <Compile Include="Modelo\JugadorElemento.cs" />
+    <Compile Include="Modelo\ResultadoOperacion.cs" />
     <Compile Include="Modelo\ResultadoReporteJugador.cs" />
     <Compile Include="Utilidades\Abstracciones\INombreInvitadoGenerador.cs" />
     <Compile Include="Utilidades\Abstracciones\IVentanaServicio.cs" />

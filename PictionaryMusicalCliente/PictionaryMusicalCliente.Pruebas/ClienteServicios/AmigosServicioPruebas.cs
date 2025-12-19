@@ -180,7 +180,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public void Prueba_SolicitudesActualizadas_EventoNotificable()
         {
             bool eventoInvocado = false;
-            _servicio.SolicitudesActualizadas += (sender, args) => eventoInvocado = true;
+            _servicio.SolicitudesActualizadas += (remitente, argumentos) => eventoInvocado = true;
 
             Assert.IsFalse(eventoInvocado, "El evento no deberia haberse invocado aun");
             Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));

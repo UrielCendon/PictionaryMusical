@@ -82,25 +82,38 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             _localizacionServicio = dependencias.LocalizacionServicio;
             _validadorCuenta = new ValidadorCuenta();
 
-            CrearCuentaComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await CrearCuentaAsync();
-            }, _ => !EstaProcesando);
+            CrearCuentaComando = new ComandoAsincrono(
+                EjecutarComandoCrearCuentaAsync, 
+                ValidarPuedeCrearCuenta);
 
-            CancelarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                _ventana.CerrarVentana(this);
-            });
+            CancelarComando = new ComandoDelegado(EjecutarComandoCancelarCreacion);
 
-            SeleccionarAvatarComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await SeleccionarAvatarAsync();
-            });
+            SeleccionarAvatarComando = new ComandoAsincrono(EjecutarComandoSeleccionarAvatarAsync);
 
             EstablecerAvatarPredeterminado();
+        }
+
+        private async Task EjecutarComandoCrearCuentaAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await CrearCuentaAsync();
+        }
+
+        private bool ValidarPuedeCrearCuenta(object parametro)
+        {
+            return !EstaProcesando;
+        }
+
+        private void EjecutarComandoCancelarCreacion(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            _ventana.CerrarVentana(this);
+        }
+
+        private async Task EjecutarComandoSeleccionarAvatarAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await SeleccionarAvatarAsync();
         }
 
         private static void ValidarDependencias(
@@ -266,7 +279,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             await EjecutarOperacionAsync(
                 async () => await EjecutarFlujoDeRegistroAsync(
                     resultadoValidacion.Solicitud),
-                excepcion => ManejarErrorCreacion(excepcion));
+                ManejarErrorCreacion);
 
             EstaProcesando = false;
         }

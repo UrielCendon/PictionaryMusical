@@ -40,8 +40,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
 
-            ReportarComando = new ComandoDelegado(_ => EjecutarReportar());
-            CancelarComando = new ComandoDelegado(_ => EjecutarCancelar());
+            ReportarComando = new ComandoDelegado(EjecutarComandoReportar);
+            CancelarComando = new ComandoDelegado(EjecutarComandoCancelar);
+        }
+
+        private void EjecutarComandoReportar(object parametro)
+        {
+            EjecutarReportar();
+        }
+
+        private void EjecutarComandoCancelar(object parametro)
+        {
+            EjecutarCancelar();
         }
 
         /// <summary>

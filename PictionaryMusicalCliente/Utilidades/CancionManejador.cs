@@ -29,7 +29,12 @@ namespace PictionaryMusicalCliente.Utilidades
 
         private void SuscribirEventoFinalizacion()
         {
-            _reproductor.MediaEnded += (remitente, argumentosEvento) => EstaReproduciendo = false;
+            _reproductor.MediaEnded += ManejarFinalizacionReproduccion;
+        }
+
+        private void ManejarFinalizacionReproduccion(object remitente, EventArgs argumentosEvento)
+        {
+            EstaReproduciendo = false;
         }
 
         /// <summary>

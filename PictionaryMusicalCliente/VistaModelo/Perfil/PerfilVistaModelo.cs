@@ -87,31 +87,55 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             var catalogoPerfil = dependencias.CatalogoPerfil;
             _redesSocialesManejador = new RedesSocialesManejador(catalogoPerfil);
 
-            GuardarCambiosComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await GuardarCambiosAsync();
-            }, _ => !EstaProcesando);
+            GuardarCambiosComando = new ComandoAsincrono(
+                EjecutarComandoGuardarCambiosAsync, 
+                ValidarPuedeProcesar);
 
-            SeleccionarAvatarComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await SeleccionarAvatarAsync();
-            }, _ => !EstaProcesando);
+            SeleccionarAvatarComando = new ComandoAsincrono(
+                EjecutarComandoSeleccionarAvatarAsync, 
+                ValidarPuedeProcesar);
 
-            CambiarContrasenaComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await CambiarContrasenaAsync();
-            }, _ => !EstaProcesando && !EstaCambiandoContrasena);
+            CambiarContrasenaComando = new ComandoAsincrono(
+                EjecutarComandoCambiarContrasenaAsync, 
+                ValidarPuedeCambiarContrasena);
 
-            CerrarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                _ventana.CerrarVentana(this);
-            });
+            CerrarComando = new ComandoDelegado(EjecutarComandoCerrar);
 
             ConfigurarEventoDesconexion();
+        }
+
+        private async Task EjecutarComandoGuardarCambiosAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await GuardarCambiosAsync();
+        }
+
+        private async Task EjecutarComandoSeleccionarAvatarAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await SeleccionarAvatarAsync();
+        }
+
+        private async Task EjecutarComandoCambiarContrasenaAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await CambiarContrasenaAsync();
+        }
+
+        private bool ValidarPuedeProcesar(object parametro)
+        {
+            return !EstaProcesando;
+        }
+
+        private bool ValidarPuedeCambiarContrasena(object parametro)
+        {
+            return !EstaProcesando && !EstaCambiandoContrasena;
+        }
+
+        private void EjecutarComandoCerrar(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            _ventana.CerrarVentana(this);
         }
 
         private void ConfigurarEventoDesconexion()
@@ -393,9 +417,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         {
             LimpiarEstadosValidacion();
 
-            if (!ValidarDatosFormulario(out var camposInvalidos))
+            ResultadoValidacionFormulario resultadoValidacion = ValidarDatosFormulario();
+            if (!resultadoValidacion.EsValido)
             {
-                MostrarErroresValidacion(camposInvalidos);
+                MostrarErroresValidacion(resultadoValidacion.CamposInvalidos);
                 return;
             }
 
@@ -419,20 +444,36 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             _redesSocialesManejador.LimpiarErrores();
         }
 
-        private bool ValidarDatosFormulario(out List<string> camposInvalidos)
+        private ResultadoValidacionFormulario ValidarDatosFormulario()
         {
             var (sonCamposValidos, _, invalidos) = 
                 ValidarCamposPrincipales();
             var (sonRedesValidas, _) = _redesSocialesManejador.ValidarRedesSociales();
 
-            camposInvalidos = invalidos ?? new List<string>();
+            List<string> camposInvalidos = invalidos ?? new List<string>();
             
             if (!sonRedesValidas)
             {
                 camposInvalidos.Add("RedesSociales");
             }
 
-            return sonCamposValidos && sonRedesValidas;
+            bool esValido = sonCamposValidos && sonRedesValidas;
+            return new ResultadoValidacionFormulario(esValido, camposInvalidos);
+        }
+
+        /// <summary>
+        /// Representa el resultado de la validacion de un formulario.
+        /// </summary>
+        private sealed class ResultadoValidacionFormulario
+        {
+            public bool EsValido { get; }
+            public List<string> CamposInvalidos { get; }
+
+            public ResultadoValidacionFormulario(bool esValido, List<string> camposInvalidos)
+            {
+                EsValido = esValido;
+                CamposInvalidos = camposInvalidos ?? new List<string>();
+            }
         }
 
         private void MostrarErroresValidacion(List<string> camposInvalidos)
@@ -723,9 +764,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         {
             var avatares = _catalogoAvatares.ObtenerAvatares();
 
-            if (_catalogoAvatares.IntentarObtenerPorId(avatarId, out var avatar))
+            ResultadoOperacion<ObjetoAvatar> resultadoAvatar = 
+                _catalogoAvatares.ObtenerPorId(avatarId);
+            if (resultadoAvatar.Exitoso)
             {
-                EstablecerAvatar(avatar);
+                EstablecerAvatar(resultadoAvatar.Valor);
                 return;
             }
 

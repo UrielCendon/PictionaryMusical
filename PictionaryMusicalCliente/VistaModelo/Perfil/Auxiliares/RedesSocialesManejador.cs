@@ -1,4 +1,5 @@
-﻿using PictionaryMusicalCliente.Modelo.Catalogos;
+﻿using PictionaryMusicalCliente.Modelo;
+using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -50,12 +51,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares
         /// <param name="valor">Identificador a establecer.</param>
         public void EstablecerIdentificador(string redSocial, string valor)
         {
-            if (_redesPorNombre.TryGetValue(
-                redSocial, 
-                out RedSocialItemVistaModelo item))
+            ResultadoOperacion<RedSocialItemVistaModelo> resultadoItem = 
+                ObtenerItemRedSocial(redSocial);
+            if (resultadoItem.Exitoso)
             {
-                item.Identificador = valor;
-                item.TieneError = false;
+                resultadoItem.Valor.Identificador = valor;
+                resultadoItem.Valor.TieneError = false;
             }
         }
 
@@ -63,17 +64,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares
         /// Obtiene el identificador de una red social.
         /// </summary>
         /// <param name="redSocial">Nombre de la red social.</param>
-        /// <returns>El identificador o null si no existe.</returns>
+        /// <returns>El identificador o cadena vacia si no existe.</returns>
         public string ObtenerIdentificador(string redSocial)
         {
-            if (_redesPorNombre.TryGetValue(
-                redSocial, 
-                out RedSocialItemVistaModelo item))
+            ResultadoOperacion<RedSocialItemVistaModelo> resultadoItem = 
+                ObtenerItemRedSocial(redSocial);
+            if (resultadoItem.Exitoso)
             {
-                string valor = item.Identificador?.Trim();
-                return string.IsNullOrWhiteSpace(valor) ? null : valor;
+                string valor = resultadoItem.Valor.Identificador?.Trim();
+                return string.IsNullOrWhiteSpace(valor) ? string.Empty : valor;
             }
-            return null;
+
+            return string.Empty;
+        }
+
+        private ResultadoOperacion<RedSocialItemVistaModelo> ObtenerItemRedSocial(string redSocial)
+        {
+            if (_redesPorNombre.TryGetValue(redSocial, out RedSocialItemVistaModelo item))
+            {
+                return ResultadoOperacion<RedSocialItemVistaModelo>.Exito(item);
+            }
+
+            return ResultadoOperacion<RedSocialItemVistaModelo>.Fallo();
         }
 
         /// <summary>

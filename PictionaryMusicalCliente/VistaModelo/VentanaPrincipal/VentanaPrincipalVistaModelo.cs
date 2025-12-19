@@ -83,55 +83,86 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             CargarDatosUsuario();
             InicializarOpcionesSeleccionadas();
+            InicializarComandos();
+        }
 
-            AbrirPerfilComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirPerfil();
-            });
-            AbrirAjustesComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirAjustes();
-            });
-            AbrirComoJugarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirComoJugar();
-            });
-            AbrirClasificacionComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirClasificacion();
-            });
-            AbrirBuscarAmigoComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirBuscarAmigo();
-            });
-            AbrirSolicitudesComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                EjecutarAbrirSolicitudes();
-            });
+        private void InicializarComandos()
+        {
+            AbrirPerfilComando = new ComandoDelegado(EjecutarComandoAbrirPerfil);
+            AbrirAjustesComando = new ComandoDelegado(EjecutarComandoAbrirAjustes);
+            AbrirComoJugarComando = new ComandoDelegado(EjecutarComandoAbrirComoJugar);
+            AbrirClasificacionComando = new ComandoDelegado(EjecutarComandoAbrirClasificacion);
+            AbrirBuscarAmigoComando = new ComandoDelegado(EjecutarComandoAbrirBuscarAmigo);
+            AbrirSolicitudesComando = new ComandoDelegado(EjecutarComandoAbrirSolicitudes);
+            EliminarAmigoComando = new ComandoAsincrono(EjecutarComandoEliminarAmigoAsync, 
+                ValidarParametroAmigoDTO);
+            UnirseSalaComando = new ComandoAsincrono(EjecutarComandoUnirseSalaAsync);
+            IniciarJuegoComando = new ComandoAsincrono(EjecutarComandoIniciarJuegoAsync, 
+                ValidarPuedeIniciarJuego);
+        }
 
-            EliminarAmigoComando = new ComandoAsincrono(async param =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await EjecutarEliminarAmigoAsync(param as DTOs.AmigoDTO);
-            }, param => param is DTOs.AmigoDTO);
+        private void EjecutarComandoAbrirPerfil(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirPerfil();
+        }
 
-            UnirseSalaComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await UnirseSalaInternoAsync();
-            });
+        private void EjecutarComandoAbrirAjustes(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirAjustes();
+        }
 
-            IniciarJuegoComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await IniciarJuegoInternoAsync();
-            }, _ => PuedeIniciarJuego());
+        private void EjecutarComandoAbrirComoJugar(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirComoJugar();
+        }
+
+        private void EjecutarComandoAbrirClasificacion(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirClasificacion();
+        }
+
+        private void EjecutarComandoAbrirBuscarAmigo(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirBuscarAmigo();
+        }
+
+        private void EjecutarComandoAbrirSolicitudes(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            EjecutarAbrirSolicitudes();
+        }
+
+        private async Task EjecutarComandoEliminarAmigoAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await EjecutarEliminarAmigoAsync(parametro as DTOs.AmigoDTO);
+        }
+
+        private bool ValidarParametroAmigoDTO(object parametro)
+        {
+            return parametro is DTOs.AmigoDTO;
+        }
+
+        private async Task EjecutarComandoUnirseSalaAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await UnirseSalaInternoAsync();
+        }
+
+        private async Task EjecutarComandoIniciarJuegoAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await IniciarJuegoInternoAsync();
+        }
+
+        private bool ValidarPuedeIniciarJuego(object parametro)
+        {
+            return PuedeIniciarJuego();
         }
 
         /// <summary>
@@ -260,47 +291,47 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene el comando para abrir la ventana del perfil del usuario.
         /// </summary>
-        public ICommand AbrirPerfilComando { get; }
+        public ICommand AbrirPerfilComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando para abrir la ventana de ajustes.
         /// </summary>
-        public ICommand AbrirAjustesComando { get; }
+        public ICommand AbrirAjustesComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando para abrir la ventana de instrucciones del juego.
         /// </summary>
-        public ICommand AbrirComoJugarComando { get; }
+        public ICommand AbrirComoJugarComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando para abrir la ventana de clasificacion.
         /// </summary>
-        public ICommand AbrirClasificacionComando { get; }
+        public ICommand AbrirClasificacionComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando para abrir la ventana de busqueda de amigos.
         /// </summary>
-        public ICommand AbrirBuscarAmigoComando { get; }
+        public ICommand AbrirBuscarAmigoComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando para abrir la ventana de solicitudes de amistad.
         /// </summary>
-        public ICommand AbrirSolicitudesComando { get; }
+        public ICommand AbrirSolicitudesComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando asincrono para eliminar un amigo de la lista.
         /// </summary>
-        public IComandoAsincrono EliminarAmigoComando { get; }
+        public IComandoAsincrono EliminarAmigoComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando asincrono para unirse a una sala existente.
         /// </summary>
-        public IComandoAsincrono UnirseSalaComando { get; }
+        public IComandoAsincrono UnirseSalaComando { get; private set; }
 
         /// <summary>
         /// Obtiene el comando asincrono para iniciar una nueva partida.
         /// </summary>
-        public IComandoAsincrono IniciarJuegoComando { get; }
+        public IComandoAsincrono IniciarJuegoComando { get; private set; }
 
         /// <summary>
         /// Inicializa las suscripciones a servicios y carga la lista de amigos.
@@ -341,8 +372,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private async Task CargarListaAmigosInicialAsync()
         {
             IReadOnlyList<DTOs.AmigoDTO> listaActual = _listaAmigosServicio.ListaActual;
-            EjecutarEnDispatcher(() => ActualizarAmigos(listaActual));
+            EjecutarEnDispatcher(ActualizarAmigosConListaActual);
             await Task.CompletedTask;
+        }
+
+        private void ActualizarAmigosConListaActual()
+        {
+            ActualizarAmigos(_listaAmigosServicio.ListaActual);
         }
 
         /// <summary>
@@ -373,13 +409,15 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
         }
 
-        private void CanalAmigos_Desconectado(object sender, EventArgs e)
+        private void CanalAmigos_Desconectado(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("Se detecto desconexion del canal de amigos.");
-            EjecutarEnDispatcher(() =>
-            {
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
-            });
+            EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
+        }
+
+        private void ManejarDesconexionCanalAmigos()
+        {
+            ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
         }
 
         private async Task CancelarSuscripcionesAsync()
@@ -591,8 +629,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 dependenciasBase,
                 dependenciasPerfil);
 
-            perfilVistaModelo.SolicitarReinicioSesion = () => ReiniciarAplicacion();
+            perfilVistaModelo.SolicitarReinicioSesion = EjecutarReinicioAplicacion;
             _ventana.MostrarVentanaDialogo(perfilVistaModelo);
+        }
+
+        private void EjecutarReinicioAplicacion()
+        {
+            ReiniciarAplicacion();
         }
 
         private void ReiniciarAplicacion()

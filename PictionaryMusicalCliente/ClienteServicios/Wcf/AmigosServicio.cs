@@ -114,14 +114,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Envia una nueva peticion de amistad al servidor.
         /// </summary>
-        public Task EnviarSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
-            EjecutarOperacionAsync(c => c.EnviarSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
+        public Task EnviarSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) 
+            => EjecutarOperacionAsync(c => 
+            c.EnviarSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Responde a una peticion existente (aceptar/rechazar).
         /// </summary>
-        public Task ResponderSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
-            EjecutarOperacionAsync(c => c.ResponderSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
+        public Task ResponderSolicitudAsync
+            (string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
+            EjecutarOperacionAsync(c => 
+            c.ResponderSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Elimina a un amigo de la lista de contactos.
@@ -134,8 +137,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarSolicitudActualizada(DTOs.SolicitudAmistadDTO solicitud)
         {
-            ProcesarNotificacion(solicitud, (solicita, usuario) => 
-                _administradorSolicitudes.ActualizarSolicitud(solicita, usuario));
+            ProcesarNotificacion(solicitud, EjecutarActualizacionSolicitud);
         }
 
         /// <summary>
@@ -143,8 +145,21 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void NotificarAmistadEliminada(DTOs.SolicitudAmistadDTO solicitud)
         {
-            ProcesarNotificacion(solicitud, (solicita, usuario) =>
-                _administradorSolicitudes.EliminaAmistadParaUsuario(solicita, usuario));
+            ProcesarNotificacion(solicitud, EjecutarEliminacionAmistad);
+        }
+
+        private bool EjecutarActualizacionSolicitud(
+            DTOs.SolicitudAmistadDTO solicitud, 
+            string usuario)
+        {
+            return _administradorSolicitudes.ActualizarSolicitud(solicitud, usuario);
+        }
+
+        private bool EjecutarEliminacionAmistad(
+            DTOs.SolicitudAmistadDTO solicitud, 
+            string usuario)
+        {
+            return _administradorSolicitudes.EliminaAmistadParaUsuario(solicitud, usuario);
         }
 
         /// <summary>
@@ -456,7 +471,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private void Canal_Faulted(object sender, EventArgs e)
+        private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("El canal de amigos entro en estado Faulted.");
             CanalDesconectado?.Invoke(this, EventArgs.Empty);

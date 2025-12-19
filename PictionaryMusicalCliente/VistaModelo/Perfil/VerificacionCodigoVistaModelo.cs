@@ -73,23 +73,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
 
-            VerificarCodigoComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await VerificarCodigoAsync();
-            });
+            VerificarCodigoComando = new ComandoAsincrono(EjecutarComandoVerificarCodigoAsync);
 
-            ReenviarCodigoComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await ReenviarCodigoAsync();
-            }, _ => PuedeReenviar);
+            ReenviarCodigoComando = new ComandoAsincrono(
+                EjecutarComandoReenviarCodigoAsync, 
+                ValidarPuedeReenviar);
 
-            CancelarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                Cancelar();
-            });
+            CancelarComando = new ComandoDelegado(EjecutarComandoCancelar);
 
             _temporizadorReenvio = new DispatcherTimer
             {
@@ -105,6 +95,29 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             IniciarTemporizadorReenvio();
             IniciarTemporizadorExpiracion();
+        }
+
+        private async Task EjecutarComandoVerificarCodigoAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await VerificarCodigoAsync();
+        }
+
+        private async Task EjecutarComandoReenviarCodigoAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await ReenviarCodigoAsync();
+        }
+
+        private bool ValidarPuedeReenviar(object parametro)
+        {
+            return PuedeReenviar;
+        }
+
+        private void EjecutarComandoCancelar(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            Cancelar();
         }
 
         /// <summary>

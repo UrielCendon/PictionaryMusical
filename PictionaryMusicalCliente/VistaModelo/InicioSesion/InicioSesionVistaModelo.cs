@@ -99,31 +99,50 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 _avisoServicio,
                 _usuarioSesion);
 
-            IniciarSesionComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await IniciarSesionAsync();
-            }, _ => !EstaProcesando);
+            IniciarSesionComando = new ComandoAsincrono(
+                EjecutarComandoIniciarSesionAsync, 
+                ValidarPuedeProcesarSesion);
 
-            RecuperarCuentaComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await RecuperarCuentaAsync();
-            }, _ => !EstaProcesando);
+            RecuperarCuentaComando = new ComandoAsincrono(
+                EjecutarComandoRecuperarCuentaAsync, 
+                ValidarPuedeProcesarSesion);
 
-            AbrirCrearCuentaComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                AbrirVentanaCrearCuenta();
-            });
+            AbrirCrearCuentaComando = new ComandoDelegado(EjecutarComandoAbrirCrearCuenta);
 
-            IniciarSesionInvitadoComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await IniciarSesionInvitadoAsync().ConfigureAwait(true);
-            }, _ => !EstaProcesando);
+            IniciarSesionInvitadoComando = new ComandoAsincrono(
+                EjecutarComandoIniciarSesionInvitadoAsync, 
+                ValidarPuedeProcesarSesion);
 
             CargarIdiomas();
+        }
+
+        private async Task EjecutarComandoIniciarSesionAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await IniciarSesionAsync();
+        }
+
+        private async Task EjecutarComandoRecuperarCuentaAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await RecuperarCuentaAsync();
+        }
+
+        private void EjecutarComandoAbrirCrearCuenta(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            AbrirVentanaCrearCuenta();
+        }
+
+        private async Task EjecutarComandoIniciarSesionInvitadoAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await IniciarSesionInvitadoAsync().ConfigureAwait(true);
+        }
+
+        private bool ValidarPuedeProcesarSesion(object parametro)
+        {
+            return !EstaProcesando;
         }
 
         private static void ValidarDependenciasBase(
@@ -390,7 +409,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             EstaProcesando = true;
 
             await EjecutarOperacionAsync(
-                async () => await EjecutarInicioSesionAsync(),
+                EjecutarInicioSesionAsync,
                 ManejarErrorInicioSesion);
 
             EstaProcesando = false;
@@ -540,7 +559,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             EstaProcesando = true;
 
             await EjecutarOperacionAsync(
-                async () => await EjecutarRecuperacionAsync(),
+                EjecutarRecuperacionAsync,
                 ManejarErrorRecuperacion);
 
             EstaProcesando = false;

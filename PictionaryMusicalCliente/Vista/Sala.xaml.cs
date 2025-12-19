@@ -27,20 +27,25 @@ namespace PictionaryMusicalCliente.Vista
             Closed += AlCerrarSala;
         }
 
-        private void AlCargarSala(object sender, RoutedEventArgs e)
+        private void AlCargarSala(object remitente, RoutedEventArgs e)
         {
             if (DataContext is SalaVistaModelo vistaModelo)
             {
                 vistaModelo.MostrarConfirmacion = MostrarConfirmacion;
                 vistaModelo.SolicitarDatosReporte = SolicitarDatosReporte;
                 vistaModelo.MostrarInvitarAmigos = MostrarInvitarAmigosAsync;
-                vistaModelo.CerrarVentana = () => Close();
+                vistaModelo.CerrarVentana = CerrarEstaVentana;
                 vistaModelo.ChequearCierreAplicacionGlobal = 
                     DebeCerrarAplicacionPorCierreDeVentana;
             }
         }
 
-        private void AlCerrarSeSala(object sender, CancelEventArgs argumentosEvento)
+        private void CerrarEstaVentana()
+        {
+            Close();
+        }
+
+        private void AlCerrarSeSala(object remitente, CancelEventArgs argumentosEvento)
         {
             if (DataContext is SalaVistaModelo vistaModelo && 
                 vistaModelo.DebeEjecutarAccionAlCerrar() &&
@@ -50,7 +55,7 @@ namespace PictionaryMusicalCliente.Vista
             }
         }
 
-        private async void AlCerrarSala(object sender, EventArgs argumentosEvento)
+        private async void AlCerrarSala(object remitente, EventArgs argumentosEvento)
         {
             Loaded -= AlCargarSala;
             Closed -= AlCerrarSala;

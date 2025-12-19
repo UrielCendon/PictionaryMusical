@@ -292,8 +292,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 throw new ArgumentNullException(nameof(sonidoManejador));
 
             InvitarComando = new ComandoAsincrono(
-                async () => await EjecutarInvitarAsync(),
-                () => !EstaProcesando);
+                EjecutarInvitarAsync,
+                ValidarPuedeInvitar);
+        }
+
+        private bool ValidarPuedeInvitar()
+        {
+            return !EstaProcesando;
         }
 
         /// <summary>

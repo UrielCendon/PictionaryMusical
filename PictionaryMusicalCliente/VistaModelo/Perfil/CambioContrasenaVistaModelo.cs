@@ -67,17 +67,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
 
-            ConfirmarComando = new ComandoAsincrono(async _ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                await ConfirmarAsync();
-            }, _ => !EstaProcesando);
+            ConfirmarComando = new ComandoAsincrono(
+                EjecutarComandoConfirmarAsync, 
+                ValidarPuedeConfirmar);
 
-            CancelarComando = new ComandoDelegado(_ =>
-            {
-                _sonidoManejador.ReproducirClick();
-                Cancelar();
-            });
+            CancelarComando = new ComandoDelegado(EjecutarComandoCancelar);
+        }
+
+        private async Task EjecutarComandoConfirmarAsync(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            await ConfirmarAsync();
+        }
+
+        private bool ValidarPuedeConfirmar(object parametro)
+        {
+            return !EstaProcesando;
+        }
+
+        private void EjecutarComandoCancelar(object parametro)
+        {
+            _sonidoManejador.ReproducirClick();
+            Cancelar();
         }
 
         /// <summary>
@@ -148,7 +159,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             EstaProcesando = true;
 
             await EjecutarOperacionAsync(
-                async () => await EjecutarCambioContrasenaAsync(),
+                EjecutarCambioContrasenaAsync,
                 ManejarErrorCambioContrasena);
 
             EstaProcesando = false;

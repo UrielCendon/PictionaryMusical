@@ -161,10 +161,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             SeleccionAvatarVistaModelo vistaModelo,
             int idAvatar)
         {
-            if (idAvatar > 0 &&
-                _catalogoAvatares.IntentarObtenerPorId(idAvatar, out var avatar))
+            ResultadoOperacion<ObjetoAvatar> resultadoAvatar = 
+                _catalogoAvatares.ObtenerPorId(idAvatar);
+            if (idAvatar > 0 && resultadoAvatar.Exitoso)
             {
-                vistaModelo.AvatarSeleccionado = avatar;
+                vistaModelo.AvatarSeleccionado = resultadoAvatar.Valor;
             }
         }
 

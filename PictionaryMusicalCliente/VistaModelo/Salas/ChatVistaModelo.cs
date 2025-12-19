@@ -196,7 +196,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <param name="mensaje">Contenido del mensaje.</param>
         public void NotificarMensajeChat(string nombreJugador, string mensaje)
         {
-            EjecutarEnDispatcher(
+            EjecutarEnDispatcherLocal(
                 () => MensajeChatRecibido?.Invoke(nombreJugador, mensaje));
         }
 
@@ -207,7 +207,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         public void NotificarJugadorAdivinoEnChat(string nombreJugador)
         {
             string mensajeDorado = CrearMensajeAdivinacion(nombreJugador);
-            EjecutarEnDispatcher(
+            EjecutarEnDispatcherLocal(
                 () => MensajeDoradoRecibido?.Invoke(string.Empty, mensajeDorado));
         }
 
@@ -216,7 +216,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             return string.Format(Lang.chatTextoJugadorAdivino, nombreJugador);
         }
 
-        private static void EjecutarEnDispatcher(Action accion)
+        private static void EjecutarEnDispatcherLocal(Action accion)
         {
             var dispatcher = Application.Current?.Dispatcher;
             if (dispatcher == null)
