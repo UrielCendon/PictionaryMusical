@@ -1303,6 +1303,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El dominio del correo electrónico no es válido..
+        /// </summary>
+        public static string errorTextoCorreoDominioInvalido {
+            get {
+                return ResourceManager.GetString("errorTextoCorreoDominioInvalido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Es necesario ingresar el correo para su recuperación.
         /// </summary>
         public static string errorTextoCorreoRecuperacion {
@@ -1911,6 +1920,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoTiempoInvalido {
             get {
                 return ResourceManager.GetString("errorTextoTiempoInvalido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El trazo es demasiado grande. Intenta con uno más pequeño y corto..
+        /// </summary>
+        public static string errorTextoTrazoDemasiadoGrande {
+            get {
+                return ResourceManager.GetString("errorTextoTrazoDemasiadoGrande", resourceCulture);
             }
         }
         

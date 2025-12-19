@@ -150,10 +150,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_Localizar_MensajeAutoSolicitudAmistad_RetornaTraducido()
         {
-            string mensaje = "No es posible enviarse una solicitud de amistad a si mismo.";
+            string mensaje = "No puedes enviarte una solicitud de amistad a ti mismo.";
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
+            Assert.AreNotEqual("default", resultado);
             Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 

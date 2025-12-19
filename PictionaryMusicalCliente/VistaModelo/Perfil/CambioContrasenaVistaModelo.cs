@@ -259,11 +259,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private void ManejarErrorCambioContrasena(Exception excepcion)
         {
-            _logger.Error(
-                "Excepcion de servicio al actualizar contrasena.",
-                excepcion);
+            _logger.WarnFormat(
+                "Excepcion de servicio al actualizar contrasena: {0}",
+                excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = excepcion.Message ?? Lang.errorTextoActualizarContrasena;
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoActualizarContrasena;
             _avisoServicio.Mostrar(mensaje);
         }
 

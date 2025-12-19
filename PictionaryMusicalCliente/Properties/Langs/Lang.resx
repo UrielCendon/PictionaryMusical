@@ -1179,4 +1179,10 @@
   <data name="errorTextoSesionExpirada" xml:space="preserve">
     <value>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</value>
   </data>
+  <data name="errorTextoTrazoDemasiadoGrande" xml:space="preserve">
+    <value>El trazo es demasiado grande. Intenta con uno más pequeño y corto.</value>
+  </data>
+  <data name="errorTextoCorreoDominioInvalido" xml:space="preserve">
+    <value>El dominio del correo no es válido. Verifica la dirección e intenta de nuevo.</value>
+  </data>
 </root>

@@ -285,6 +285,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _partidaVistaModelo.NombreCancionCambiado += ManejarNombreCancionCambiado;
             _partidaVistaModelo.TiempoRestanteCambiado += ManejarTiempoRestanteCambiado;
             _partidaVistaModelo.EnviarTrazoAlServidor = EnviarTrazoAlServidor;
+            _partidaVistaModelo.NotificarTrazoDemasiadoGrande = ManejarTrazoDemasiadoGrande;
+        }
+
+        private void ManejarTrazoDemasiadoGrande()
+        {
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(Lang.errorTextoTrazoDemasiadoGrande);
         }
 
         private void ManejarPuedeEscribirCambiado(bool valor)
@@ -1241,19 +1248,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             string mensajeOriginal = resultado?.Mensaje;
 
-            bool esCancelacionPorFaltaDeJugadores = string.Equals(
-                mensajeOriginal,
-                "Partida cancelada por falta de jugadores.",
-                StringComparison.OrdinalIgnoreCase);
+            _logger.InfoFormat(
+                "CrearContextoFinPartida - Mensaje recibido del servidor: '{0}'",
+                mensajeOriginal ?? "(nulo)");
 
-            bool esCancelacionPorHost = string.Equals(
-                mensajeOriginal,
-                "El anfitrion de la sala abandono la partida.",
-                StringComparison.OrdinalIgnoreCase);
+            bool esCancelacionPorFaltaDeJugadores = EsMensajeCancelacionPorFaltaJugadores(mensajeOriginal);
+            bool esCancelacionPorHost = EsMensajeCancelacionPorHost(mensajeOriginal);
 
-            string mensajeLocalizado = !string.IsNullOrWhiteSpace(mensajeOriginal)
-                ? _localizador.Localizar(mensajeOriginal, mensajeOriginal)
-                : mensajeOriginal;
+            _logger.InfoFormat(
+                "CrearContextoFinPartida - EsCancelacionPorFaltaJugadores: {0}, EsCancelacionPorHost: {1}",
+                esCancelacionPorFaltaDeJugadores,
+                esCancelacionPorHost);
+
+            string mensajeLocalizado = ObtenerMensajeLocalizadoSegunTipo(
+                mensajeOriginal,
+                esCancelacionPorFaltaDeJugadores,
+                esCancelacionPorHost);
 
             return new ContextoFinPartida
             {
@@ -1261,6 +1271,55 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 EsCancelacionPorHost = esCancelacionPorHost,
                 MensajeLocalizado = mensajeLocalizado
             };
+        }
+
+        private static bool EsMensajeCancelacionPorFaltaJugadores(string mensaje)
+        {
+            if (string.IsNullOrWhiteSpace(mensaje))
+            {
+                return false;
+            }
+
+            bool tieneJugadores = mensaje.IndexOf("jugador", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneFalta = mensaje.IndexOf("falta", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneSuficientes = mensaje.IndexOf("suficientes", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneInsuficientes = mensaje.IndexOf("insuficientes", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            return tieneJugadores && (tieneFalta || tieneSuficientes || tieneInsuficientes);
+        }
+
+        private static bool EsMensajeCancelacionPorHost(string mensaje)
+        {
+            if (string.IsNullOrWhiteSpace(mensaje))
+            {
+                return false;
+            }
+
+            return mensaje.IndexOf("anfitrion", StringComparison.OrdinalIgnoreCase) >= 0
+                && mensaje.IndexOf("abandon", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private string ObtenerMensajeLocalizadoSegunTipo(
+            string mensajeOriginal,
+            bool esCancelacionPorFaltaJugadores,
+            bool esCancelacionPorHost)
+        {
+            if (esCancelacionPorHost)
+            {
+                return Lang.partidaTextoHostCanceloSala;
+            }
+
+            if (esCancelacionPorFaltaJugadores)
+            {
+                return Lang.partidaTextoJugadoresInsuficientes;
+            }
+
+            if (!string.IsNullOrWhiteSpace(mensajeOriginal))
+            {
+                return _localizador.Localizar(mensajeOriginal, mensajeOriginal);
+            }
+
+            return mensajeOriginal;
         }
 
         private void ProcesarFinPartidaEnDispatcher(

@@ -1,11 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Security;
-using System.Threading.Tasks;
+using log4net;
 using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using System;
+using System.Collections.Generic;
+using System.Security;
+using System.Threading.Tasks;
 
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
@@ -16,6 +17,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     /// </summary>
     public class ControladorPartida
     {
+        private static readonly ILog _logger =
+            LogManager.GetLogger(typeof(ControladorPartida));
+
         private const string RolDibujante = "Dibujante";
         private const int LimitePalabrasMensaje = 150;
         private const int TiempoOverlayClienteSegundos = 5;
@@ -543,6 +547,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 if (_estadoActual == EstadoPartida.Finalizada)
                 {
+                    _logger.WarnFormat(
+                        "CancelarPartida ignorada - partida ya finalizada. Mensaje: '{0}'",
+                        mensajeCancelacion);
                     return;
                 }
 
@@ -553,11 +560,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (debeNotificar)
             {
+                string mensajeFinal = mensajeCancelacion
+                    ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
+
                 FinPartida?.Invoke(new ResultadoPartidaDTO
                 {
                     Clasificacion = _gestorJugadores.GenerarClasificacion(),
-                    Mensaje = mensajeCancelacion
-                        ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores
+                    Mensaje = mensajeFinal
                 });
             }
         }

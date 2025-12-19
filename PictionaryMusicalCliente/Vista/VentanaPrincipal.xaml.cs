@@ -39,8 +39,6 @@ namespace PictionaryMusicalCliente.Vista
             {
                 await vistaModelo.FinalizarAsync().ConfigureAwait(false);
             }
-
-            App.MusicaManejador.Detener();
         }
     }
 }

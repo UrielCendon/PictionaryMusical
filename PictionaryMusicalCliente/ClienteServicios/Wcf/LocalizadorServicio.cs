@@ -136,6 +136,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
                 ["No encontramos la informacion del jugador."]
                     = () => Recursos.Lang.errorTextoJugadorNoExiste,
+                ["El usuario no fue encontrado."]
+                    = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
                 ["El usuario que buscas no existe. Verifica el nombre e intenta de nuevo."]
                     = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
                 ["No encontramos un jugador asociado a este usuario."]

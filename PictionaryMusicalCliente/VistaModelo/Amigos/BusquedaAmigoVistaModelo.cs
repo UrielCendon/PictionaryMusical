@@ -194,10 +194,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private void ManejarErrorEnvio(Exception excepcion, string nombreAmigo)
         {
-            _logger.ErrorFormat(
-                "Error al enviar solicitud a {0}.",
+            _logger.WarnFormat(
+                "Error al enviar solicitud de amistad a '{0}': {1}",
                 nombreAmigo,
-                excepcion);
+                excepcion.Message);
             _sonidoManejador.ReproducirError();
 
             string mensajeError = ObtenerMensajeError(excepcion);
@@ -206,9 +206,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             EstaProcesando = false;
         }
 
-        private static string ObtenerMensajeError(Exception excepcion)
+        private string ObtenerMensajeError(Exception excepcion)
         {
-            return excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            string mensajeOriginal = excepcion.Message;
+            
+            if (string.IsNullOrWhiteSpace(mensajeOriginal))
+            {
+                return Lang.errorTextoErrorProcesarSolicitud;
+            }
+
+            return mensajeOriginal;
         }
     }
 }

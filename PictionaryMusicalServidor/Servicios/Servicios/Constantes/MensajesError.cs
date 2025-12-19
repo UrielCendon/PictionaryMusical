@@ -19,7 +19,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorOperacionInvalida = 
                 "No se puede realizar esta accion en este momento. Intente mas tarde.";
 
-            // Reportes
             public const string ErrorCrearReporte = 
                 "No se pudo enviar el reporte. Intente mas tarde.";
             public const string ReporteRegistrado = 
@@ -33,7 +32,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ReporteMotivoLongitud = 
                 "El motivo del reporte es muy largo. Usa maximo 100 caracteres.";
 
-            // Validaciones generales
             public const string DatosInvalidos = 
                 "Algunos datos no son correctos. Por favor, revisa la informacion ingresada.";
             public const string CredencialesInvalidas = 
@@ -41,7 +39,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string CredencialesIncorrectas = 
                 "Usuario o contrasena incorrectos.";
 
-            // Usuario y jugador
             public const string UsuarioNoEncontrado = 
                 "No encontramos al usuario. Verifica que el nombre sea correcto.";
             public const string UsuariosNoEncontrados = 
@@ -59,7 +56,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string AvatarInvalido = 
                 "Por favor, selecciona un avatar valido.";
 
-            // Registro e inicio de sesion
             public const string ErrorRegistrarCuenta = 
                 "No pudimos completar tu registro. Por favor, intenta mas tarde.";
             public const string ErrorInicioSesion = 
@@ -75,7 +71,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ContrasenaRegistroInvalida = 
                 "La contrasena debe tener entre 8 y 15 caracteres, incluir una mayuscula, un numero y un caracter especial.";
 
-            // Perfil
             public const string ErrorObtenerPerfil = 
                 "No pudimos cargar tu perfil. Intenta mas tarde.";
             public const string ErrorActualizarPerfil = 
@@ -83,7 +78,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string PerfilActualizadoExito = 
                 "Tu perfil se actualizo correctamente.";
 
-            // Amistades
             public const string ErrorRecuperarSolicitudes = 
                 "No pudimos cargar tus solicitudes de amistad. Intenta mas tarde.";
             public const string ErrorAlmacenarSolicitud = 
@@ -113,7 +107,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string RelacionAmistadNoExiste = 
                 "No tienes una amistad con este usuario.";
 
-            // Recuperacion de cuenta
             public const string ErrorRecuperarCuenta = 
                 "No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde.";
             public const string ErrorReenviarCodigo = 
@@ -151,7 +144,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string SolicitudRecuperacionInvalida = 
                 "La solicitud de recuperacion ya no es valida. Inicia el proceso de nuevo.";
 
-            // Verificacion de cuenta
             public const string ErrorSolicitudVerificacion = 
                 "No pudimos procesar tu solicitud de verificacion. Intenta mas tarde.";
             public const string ErrorReenviarCodigoVerificacion = 
@@ -165,11 +157,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string UsuarioOCorreoRegistrado = 
                 "El correo o usuario ya esta en uso. Intenta con otro.";
 
-            // Baneo
             public const string UsuarioBaneadoPorReportes = 
                 "Tu cuenta ha sido suspendida por mala conducta.";
 
-            // Salas
             public const string ErrorCrearSala = 
                 "No pudimos crear la sala. Intenta mas tarde.";
             public const string ErrorInesperadoCrearSala = 
@@ -195,7 +185,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string SalaJugadorNoExiste = 
                 "El jugador ya no esta en la sala.";
 
-            // Invitaciones
             public const string InvitacionInvalida = 
                 "La invitacion no es valida o ha expirado.";
             public const string DatosInvitacionInvalidos = 
@@ -219,7 +208,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorEnviarInvitacionCorreo = 
                 "No pudimos enviar la invitacion al correo. Intenta mas tarde.";
 
-            // Callbacks y conexion
             public const string ErrorObtenerCallback = 
                 "No pudimos conectarte al servidor. Verifica tu conexion e intenta de nuevo.";
             public const string ErrorObtenerCallbackAmigos = 
@@ -229,7 +217,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorContextoOperacionAmigos = 
                 "Ocurrio un problema de conexion con el servicio de amigos.";
 
-            // Parametros obligatorios
             public const string ParametroObligatorio = 
                 "Falta informacion requerida: {0}.";
             public const string NombreUsuarioObligatorio = 
@@ -245,7 +232,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string IdSalaObligatorio = 
                 "No se pudo identificar la sala.";
 
-            // Configuracion de partida
             public const string ConfiguracionObligatoria = 
                 "Configura la partida antes de iniciar.";
             public const string NumeroRondasInvalido = 
@@ -257,7 +243,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string DificultadObligatoria = 
                 "Selecciona la dificultad.";
 
-            // Estados de partida
             public const string PartidaCanceladaFaltaJugadores = 
                 "La partida se cancelo porque ya no hay suficientes jugadores.";
             public const string PartidaCanceladaHostSalio = 
@@ -271,7 +256,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string SoloHost = 
                 "Solo el anfitrion puede iniciar la partida.";
 
-            // Chat y mensajes
             public const string MensajeSuperaLimiteCaracteres = 
                 "Tu mensaje es muy largo. Usa menos de 200 caracteres.";
             public const string ErrorEnviarMensaje = 
@@ -289,7 +273,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
         /// </summary>
         public static class Log
         {
-            // Partidas y clasificacion
             public const string ErrorNotificandoInicioRonda = 
                 "Error notificando inicio de ronda al jugador con id {0}.";
             public const string ErrorActualizarClasificaciones = 
@@ -309,7 +292,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string SalaCanceladaSalidaAnfitrion = 
                 "Sala cancelada por salida del anfitrion.";
 
-            // Amigos
             public const string ErrorSuscripcionAmigos = 
                 "Error al suscribir a notificaciones de amistad.";
             public const string ErrorEnviarSolicitudAmistad = 
@@ -347,7 +329,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorNotificarSolicitudActualizada = 
                 "Error al notificar solicitud actualizada.";
 
-            // Salas
             public const string ErrorConcurrenciaCrearSala = 
                 "Error de concurrencia al crear sala con codigo {0}.";
             public const string SalaCreadaExito = 
@@ -409,7 +390,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoObtenerSalas = 
                 "Error inesperado al obtener lista de salas.";
 
-            // Notificador salas
             public const string ErrorComunicacionNotificarSalas = 
                 "Error de comunicacion al notificar la lista de salas a los suscriptores.";
             public const string ErrorTimeoutNotificarSalas = 
@@ -435,7 +415,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoNotificarSuscriptor = 
                 "Error inesperado al notificar al suscriptor.";
 
-            // Invitaciones
             public const string ErrorValidacionInvitacion = 
                 "Error de validacion al enviar invitacion.";
             public const string DatosInvalidosInvitacion = 
@@ -451,7 +430,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoInvitacion = 
                 "Error inesperado al enviar invitacion.";
 
-            // Chat
             public const string ErrorValidacionChat = 
                 "Error de validacion en operacion de chat.";
             public const string DatosInvalidosChat = 
@@ -465,13 +443,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoChat = 
                 "Error inesperado en chat.";
 
-            // Partida curso
             public const string JugadorSuscritoPartida = 
                 "Jugador con id {0} suscrito para partida en sala {1}.";
             public const string InicioPartidaSolicitado = 
                 "Inicio de partida solicitado para sala {0} por jugador con id {1}.";
 
-            // Verificacion de registro
             public const string CodigoVerificacionGenerado = 
                 "Codigo de verificacion de registro generado correctamente.";
             public const string VerificacionConfirmadaExitosamente = 
@@ -485,7 +461,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorReenviarCodigoVerificacion = 
                 "Error al reenviar codigo de verificacion.";
 
-            // Recuperacion de cuenta
             public const string ErrorEnviarCorreoRecuperacion = 
                 "Fallo critico al enviar correo de recuperacion.";
             public const string ErrorReenviarCorreoRecuperacion = 
@@ -497,7 +472,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoActualizarContrasena = 
                 "Error inesperado al actualizar contrasena.";
 
-            // Perfil
             public const string ArgumentoInvalidoObtenerPerfil = 
                 "Argumento invalido al obtener perfil.";
             public const string OperacionInvalidaObtenerPerfil = 
@@ -529,7 +503,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoActualizarPerfil = 
                 "Error inesperado al actualizar perfil.";
 
-            // Reportes
             public const string ValidacionFallidaReporte = 
                 "Validacion fallida al registrar reporte.";
             public const string DatosInvalidosReporte = 
@@ -549,7 +522,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorObtenerIdUsuariosReporte = 
                 "Error inesperado al obtener identificadores de usuarios para reporte.";
 
-            // Utilidades
             public const string OperacionInvalidaComunicacionWCF = 
                 "Operacion invalida en comunicacion WCF.";
             public const string ErrorConstruirContextoBaseDatos = 
@@ -567,11 +539,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorDatosObtenerAmigos = 
                 "Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.";
 
-            // Gestor callbacks partida
             public const string ErrorNotificarCallback = 
                 "Error al notificar callback de partida.";
 
-            // Notificadores internos de sala
             public const string ErrorComunicacionNotificarClienteSala = 
                 "Error de comunicacion al notificar cliente en sala.";
             public const string ErrorTimeoutNotificarClienteSala = 
@@ -581,11 +551,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoNotificarClienteSala = 
                 "Error inesperado al ejecutar notificacion WCF en sala.";
 
-            // Notificador amigos
             public const string ErrorNotificarAmistadEliminada = 
                 "Error al notificar amistad eliminada.";
 
-            // Genericos
             public const string ErrorBaseDatos = 
                 "Error de base de datos.";
             public const string ErrorDatos = 
@@ -593,7 +561,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperado = 
                 "Error inesperado.";
 
-            // Correo electronico
             public const string ConfiguracionCorreoInvalida = 
                 "La configuracion de correo es invalida o esta incompleta.";
             public const string ErrorSmtpEnviarCorreo = 
@@ -607,7 +574,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorCriticoEnviarNotificacionCodigo = 
                 "Error critico al enviar notificacion de codigo.";
 
-            // Lista de amigos manejador
             public const string IdentificadorInvalidoSuscripcionListaAmigos = 
                 "Identificador invalido al suscribirse a la lista de amigos.";
             public const string DatosInvalidosSuscripcionListaAmigos = 
@@ -627,7 +593,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoObtenerListaAmigos = 
                 "Error inesperado al obtener lista de amigos.";
 
-            // Inicio de sesion
             public const string IntentoInicioSesionFormatoInvalido = 
                 "Intento de inicio de sesion con formato de datos invalido.";
             public const string ErrorBaseDatosInicioSesion = 
@@ -643,7 +608,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string InicioSesionContrasenaIncorrecta = 
                 "Inicio de sesion fallido. Contrasena incorrecta.";
 
-            // Registro de cuenta
             public const string ValidacionEntidadFallidaRegistro = 
                 "Validacion de entidad fallida durante el registro.";
             public const string ErrorActualizacionBDRegistro = 
@@ -661,7 +625,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string RegistroDuplicadoDetectado = 
                 "Registro duplicado detectado (usuario o correo existente).";
 
-            // Codigo verificacion manejador
             public const string ArgumentoNuloSolicitarCodigo = 
                 "Argumento nulo al solicitar codigo de verificacion.";
             public const string ErrorDatosSolicitarCodigo = 
@@ -683,7 +646,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ArgumentoNuloSolicitarCodigoRecuperacion = 
                 "Argumento nulo al solicitar codigo de recuperacion.";
 
-            // Clasificacion
             public const string ErrorBaseDatosObtenerClasificacion = 
                 "Error de base de datos al obtener la clasificacion.";
             public const string ErrorDatosObtenerClasificacion = 
@@ -693,7 +655,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoObtenerClasificacion = 
                 "Error inesperado al obtener la clasificacion.";
 
-            // Cambio de contrasena
             public const string ErrorBaseDatosSolicitarRecuperacion = 
                 "Error de base de datos al solicitar codigo de recuperacion.";
             public const string ErrorDatosSolicitarRecuperacion = 
@@ -729,7 +690,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ArgumentoNuloActualizarContrasena = 
                 "Argumento nulo al actualizar contrasena.";
 
-            // Lista amigos suscripcion
             public const string ErrorDatosSuscripcionListaAmigos = 
                 "Error de datos al suscribirse. Fallo recuperar lista de amigos.";
             public const string ErrorInesperadoSuscripcionListaAmigos = 

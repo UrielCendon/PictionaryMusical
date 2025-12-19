@@ -429,6 +429,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         public Action<DTOs.TrazoDTO> EnviarTrazoAlServidor { get; set; }
 
         /// <summary>
+        /// Accion para notificar que el trazo es demasiado grande.
+        /// </summary>
+        public Action NotificarTrazoDemasiadoGrande { get; set; }
+
+        /// <summary>
         /// Evento que notifica cuando cambia el estado de poder escribir.
         /// </summary>
         public event Action<bool> PuedeEscribirCambiado;

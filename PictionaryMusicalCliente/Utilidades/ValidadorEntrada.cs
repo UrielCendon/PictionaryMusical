@@ -11,7 +11,7 @@ namespace PictionaryMusicalCliente.Utilidades
     public static class ValidadorEntrada
     {
         private static readonly Regex CorreoRegex = new Regex(
-            @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
             TimeSpan.FromSeconds(1));
 

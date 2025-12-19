@@ -20,6 +20,8 @@ namespace PictionaryMusicalCliente.Vista
         private readonly List<Point> _puntosBorrador = new();
         private bool _borradoEnProgreso;
 
+        private const int MaximoPuntosTrazo = 2000;
+
         /// <summary>
         /// Constructor por defecto.
         /// </summary>
@@ -66,6 +68,13 @@ namespace PictionaryMusicalCliente.Vista
                 return;
             }
 
+            if (argumentosEvento.Stroke.StylusPoints.Count > MaximoPuntosTrazo)
+            {
+                inkLienzoDibujo.Strokes.Remove(argumentosEvento.Stroke);
+                vistaModelo.NotificarTrazoDemasiadoGrande?.Invoke();
+                return;
+            }
+
             ResultadoOperacion<TrazoDTO> resultadoTrazo = 
                 ConvertirLineaATrazo(argumentosEvento.Stroke, false);
             if (resultadoTrazo.Exitoso)
@@ -100,6 +109,13 @@ namespace PictionaryMusicalCliente.Vista
             if (_borradoEnProgreso && DataContext is PartidaVistaModelo vistaModelo)
             {
                 _borradoEnProgreso = false;
+
+                if (_puntosBorrador.Count > MaximoPuntosTrazo)
+                {
+                    vistaModelo.NotificarTrazoDemasiadoGrande?.Invoke();
+                    _puntosBorrador.Clear();
+                    return;
+                }
 
                 ResultadoOperacion<TrazoDTO> resultadoTrazo = ConvertirPuntosATrazoBorrador(
                     _puntosBorrador, 

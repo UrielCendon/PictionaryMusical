@@ -242,12 +242,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             },
             excepcion =>
             {
-                _logger.Error(
-                    "Error de servicio durante la verificacion del codigo.", excepcion);
+                _logger.WarnFormat(
+                    "Error de servicio durante la verificacion del codigo: {0}",
+                    excepcion.Message);
                 _sonidoManejador.ReproducirError();
                 MarcarCodigoInvalido?.Invoke(true);
-                _avisoServicio.Mostrar(excepcion.Message ?? 
-                    Lang.errorTextoVerificarCodigo);
+                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                    ? excepcion.Message
+                    : Lang.errorTextoVerificarCodigo;
+                _avisoServicio.Mostrar(mensaje);
                 EstaVerificando = false;
             });
 
@@ -344,9 +347,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private string LocalizarMensajeError(string mensajeOriginal)
         {
-            return _localizador.Localizar(
-                mensajeOriginal,
-                Lang.errorTextoCodigoIncorrecto);
+            return !string.IsNullOrWhiteSpace(mensajeOriginal)
+                ? mensajeOriginal
+                : Lang.errorTextoCodigoIncorrecto;
         }
 
         private static bool EsCodigoExpirado(
@@ -428,10 +431,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             },
             excepcion =>
             {
-                _logger.Error("Excepcion de servicio al reenviar codigo.", excepcion);
+                _logger.WarnFormat(
+                    "Excepcion de servicio al reenviar codigo: {0}",
+                    excepcion.Message);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(excepcion.Message ?? 
-                    Lang.errorTextoSolicitarNuevoCodigo);
+                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                    ? excepcion.Message
+                    : Lang.errorTextoSolicitarNuevoCodigo;
+                _avisoServicio.Mostrar(mensaje);
             });
         }
 

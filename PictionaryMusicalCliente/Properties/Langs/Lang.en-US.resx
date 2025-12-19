@@ -1188,4 +1188,10 @@
   <data name="errorTextoSesionExpirada" xml:space="preserve">
     <value>Your session has expired. Please sign in again.</value>
   </data>
+  <data name="errorTextoTrazoDemasiadoGrande" xml:space="preserve">
+    <value>The stroke is too large. Try with a smaller and shorter one.</value>
+  </data>
+  <data name="errorTextoCorreoDominioInvalido" xml:space="preserve">
+    <value>The email domain is not valid. Check the address and try again.</value>
+  </data>
 </root>

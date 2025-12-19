@@ -281,9 +281,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private void ManejarErrorAceptacion(Exception excepcion)
         {
-            _logger.Error("Error al aceptar solicitud de amistad.", excepcion);
+            _logger.WarnFormat(
+                "Error al aceptar solicitud de amistad: {0}",
+                excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoErrorProcesarSolicitud;
             _avisoServicio.Mostrar(mensaje);
         }
 
@@ -324,11 +328,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private void ManejarErrorRechazo(Exception excepcion)
         {
-            _logger.Error(
-                "Error al rechazar/cancelar solicitud de amistad.",
-                excepcion);
+            _logger.WarnFormat(
+                "Error al rechazar/cancelar solicitud de amistad: {0}",
+                excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoErrorProcesarSolicitud;
             _avisoServicio.Mostrar(mensaje);
         }
 

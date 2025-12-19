@@ -114,9 +114,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             },
             excepcion =>
             {
-                _logger.Error("Error al enviar invitacion.", excepcion);
+                _logger.WarnFormat(
+                    "Error al enviar invitacion: {0}",
+                    excepcion.Message);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(excepcion.Message ?? Lang.errorTextoEnviarCorreo);
+                string mensajeLocalizado = !string.IsNullOrWhiteSpace(excepcion.Message)
+                    ? excepcion.Message
+                    : Lang.errorTextoEnviarCorreo;
+                _avisoServicio.Mostrar(mensajeLocalizado);
                 amigo.EstaProcesando = false;
             });
 

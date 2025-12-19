@@ -286,12 +286,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void ManejarErrorCreacion(Exception excepcion)
         {
-            _logger.Error(
-                "Error de servicio durante la creacion de cuenta.",
-                excepcion);
+            _logger.WarnFormat(
+                "Error de servicio durante la creacion de cuenta: {0}",
+                excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = excepcion.Message 
-                ?? Lang.errorTextoRegistrarCuentaMasTarde;
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoRegistrarCuentaMasTarde;
             MostrarMensaje?.Invoke(mensaje);
             EstaProcesando = false;
         }

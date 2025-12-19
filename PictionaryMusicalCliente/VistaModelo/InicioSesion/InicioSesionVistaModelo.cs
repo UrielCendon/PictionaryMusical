@@ -437,7 +437,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.Error("Error durante inicio de sesion.", excepcion);
             _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.errorTextoServidorInicioSesion);
+            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoServidorInicioSesion;
+            _avisoServicio.Mostrar(mensaje);
         }
 
         private List<string> ValidarCamposInicioSesion()

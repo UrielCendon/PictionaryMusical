@@ -157,6 +157,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     usuarios.Receptor,
                     nombreUsuarioReceptor);
             }
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
+            {
+                _logger.Warn("Usuario no encontrado en base de datos.", excepcion);
+                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+            }
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn("Intento de enviar solicitud a usuario inexistente.", excepcion);

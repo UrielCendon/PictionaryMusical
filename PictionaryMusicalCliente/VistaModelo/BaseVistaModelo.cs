@@ -133,7 +133,10 @@ namespace PictionaryMusicalCliente.VistaModelo
             catch (FaultException excepcion)
             {
                 _logger.Warn("Falla controlada del servicio.", excepcion);
-                MostrarErrorEnUI(excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud);
+                string mensajeLocalizado = _localizador.Localizar(
+                    excepcion.Message, 
+                    Lang.errorTextoErrorProcesarSolicitud);
+                MostrarErrorEnUI(mensajeLocalizado);
             }
             catch (CommunicationException excepcion)
             {
@@ -182,11 +185,17 @@ namespace PictionaryMusicalCliente.VistaModelo
             _logger.Warn("Excepcion de servicio controlada.", excepcion);
             if (EsExcepcionDeDesconexion(excepcion) && redirigirEnDesconexion)
             {
-                ManejarDesconexionCritica(excepcion.Message);
+                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                    ? excepcion.Message
+                    : Lang.errorTextoDesconexionServidor;
+                ManejarDesconexionCritica(mensaje);
             }
             else
             {
-                MostrarErrorEnUI(excepcion.Message);
+                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
+                    ? excepcion.Message
+                    : Lang.errorTextoErrorProcesarSolicitud;
+                MostrarErrorEnUI(mensaje);
             }
         }
 
