@@ -129,9 +129,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
             }
-            catch (Exception excepcion)
+            catch (Datos.Excepciones.BaseDatosExcepcion ex)
             {
-                _logger.Warn(MensajesError.Log.InicioSesionUsuarioNoEncontrado, excepcion);
+                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, ex);
+                return CrearErrorGenerico();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.Warn(MensajesError.Log.InicioSesionUsuarioNoEncontrado, ex);
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = false,
@@ -200,6 +205,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             return new ResultadoInicioSesionDTO
             {
                 InicioSesionExitoso = false,
+                CuentaEncontrada = true,
                 Mensaje = MensajesError.Cliente.ErrorInicioSesion
             };
         }
@@ -211,6 +217,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             try
             {
                 return BuscarPorNombreUsuario(contexto, identificador);
+            }
+            catch (Datos.Excepciones.BaseDatosExcepcion)
+            {
+                throw;
             }
             catch (KeyNotFoundException excepcion)
             {

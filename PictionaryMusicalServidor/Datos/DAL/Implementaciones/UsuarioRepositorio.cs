@@ -191,7 +191,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado,
                     nombreUsuario,
                     excepcion);
-                throw new BaseDatosExcepcion(excepcion.Message, excepcion);
+                throw;
             }
             catch (DbUpdateException excepcion)
             {
