@@ -160,7 +160,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
                 _logger.Warn("Usuario no encontrado en base de datos.", excepcion);
-                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+                throw new FaultException(excepcion.Message);
             }
             catch (KeyNotFoundException excepcion)
             {
