@@ -1205,4 +1205,7 @@ aciertan o cuando se acaba el tiempo.
   <data name="clasificacionErrorObtener" xml:space="preserve">
     <value>No se pudo obtener la clasificación en este momento.</value>
   </data>
+  <data name="inicioSesionErrorServicio" xml:space="preserve">
+    <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
+  </data>
 </root>

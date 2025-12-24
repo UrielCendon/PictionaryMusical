@@ -2446,6 +2446,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde..
+        /// </summary>
+        public static string inicioSesionErrorServicio {
+            get {
+                return ResourceManager.GetString("inicioSesionErrorServicio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Correo electrónico / Usuario.
         /// </summary>
         public static string inicioSesionTextoCorreoUsuario {

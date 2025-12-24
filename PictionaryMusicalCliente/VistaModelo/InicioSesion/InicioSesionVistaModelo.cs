@@ -437,10 +437,11 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.Error("Error durante inicio de sesion.", excepcion);
             _sonidoManejador.ReproducirError();
-            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoServidorInicioSesion;
-            _avisoServicio.Mostrar(mensaje);
+            string localizado = _localizador.Localizar(
+                excepcion.Message,
+                Lang.inicioSesionErrorServicio);
+
+            _avisoServicio.Mostrar(localizado);
         }
 
         private List<string> ValidarCamposInicioSesion()
@@ -539,11 +540,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void MostrarErrorInicioSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
-            string mensaje = resultado?.Mensaje;
+            string mensaje = _localizador.Localizar(
+                resultado?.Mensaje,
+                Lang.inicioSesionErrorServicio);
 
-            if (string.IsNullOrWhiteSpace(mensaje))
+            if (!string.IsNullOrWhiteSpace(mensaje))
             {
-                mensaje = Lang.errorTextoCredencialesIncorrectas;
+                _avisoServicio.Mostrar(mensaje);
             }
 
             if (!string.IsNullOrWhiteSpace(mensaje))
