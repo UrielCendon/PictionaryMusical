@@ -77,6 +77,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _nombreDibujanteActual;
         private bool _rondaTerminadaTemprano;
         private string _mensajeChat;
+        private DTOs.ResultadoPartidaDTO _resultadoPartidaPendiente;
+        private ContextoFinPartida _contextoFinPartidaPendiente;
 
         private const int LimiteCaracteresChat = 150;
         private const double PorcentajePuntosDibujante = 0.2;
@@ -286,6 +288,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _partidaVistaModelo.TiempoRestanteCambiado += ManejarTiempoRestanteCambiado;
             _partidaVistaModelo.EnviarTrazoAlServidor = EnviarTrazoAlServidor;
             _partidaVistaModelo.NotificarTrazoDemasiadoGrande = ManejarTrazoDemasiadoGrande;
+            _partidaVistaModelo.FinPartidaListoParaMostrar += ManejarFinPartidaListoParaMostrar;
         }
 
         private void ManejarTrazoDemasiadoGrande()
@@ -1240,7 +1243,31 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.BeginInvoke(new Action(() =>
             {
-                ProcesarFinPartidaEnDispatcher(resultado, contextoFinPartida);
+                _resultadoPartidaPendiente = resultado;
+                _contextoFinPartidaPendiente = contextoFinPartida;
+                _partidaVistaModelo.NotificarFinPartida();
+            }));
+        }
+
+        private void ManejarFinPartidaListoParaMostrar()
+        {
+            var dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
+            {
+                return;
+            }
+
+            dispatcher.BeginInvoke(new Action(() =>
+            {
+                var resultado = _resultadoPartidaPendiente;
+                var contexto = _contextoFinPartidaPendiente;
+                _resultadoPartidaPendiente = null;
+                _contextoFinPartidaPendiente = null;
+
+                if (resultado != null && contexto != null)
+                {
+                    ProcesarFinPartidaEnDispatcher(resultado, contexto);
+                }
             }));
         }
 

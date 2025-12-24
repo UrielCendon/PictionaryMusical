@@ -214,6 +214,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 return ResultadoRemocionJugador.AvanzarRonda();
             }
 
+            if (_gestorJugadores.TodosAdivinaron())
+            {
+                return ResultadoRemocionJugador.AvanzarRonda();
+            }
+
             return ResultadoRemocionJugador.SinAccion();
         }
 

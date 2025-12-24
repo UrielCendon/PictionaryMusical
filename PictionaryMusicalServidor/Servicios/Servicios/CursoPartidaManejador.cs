@@ -410,10 +410,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             ControladorPartida controlador)
         {
             _salasManejador.MarcarPartidaComoFinalizada(idSala);
-            Task.Run(delegate()
-            {
-                ActualizarClasificacionPartida(controlador, resultado);
-            });
+            ActualizarClasificacionPartida(controlador, resultado);
             NotificarCallbacksFinPartida(idSala, resultado);
         }
 

@@ -60,6 +60,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private string _archivoCancionActual;
         private Brush _colorPalabraAdivinar;
         private string _textoDibujoDe;
+        private bool _finPartidaPendiente;
 
         /// <summary>
         /// Inicializa una nueva instancia de <see cref="PartidaVistaModelo"/>.
@@ -116,6 +117,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _nombreCancionActual = string.Empty;
             _archivoCancionActual = string.Empty;
             _textoDibujoDe = string.Empty;
+            _finPartidaPendiente = false;
         }
 
         private void InicializarTemporizadores()
@@ -458,6 +460,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// </summary>
         public event Action CelebracionFinRondaTerminada;
 
+        /// <summary>
+        /// Evento que notifica que el fin de partida esta listo para mostrarse al usuario.
+        /// </summary>
+        public event Action FinPartidaListoParaMostrar;
+
         private void InicializarComandos()
         {
             SeleccionarLapizComando = new ComandoDelegado(EjecutarComandoSeleccionarLapiz);
@@ -702,6 +709,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _alarmaActiva = false;
 
             RestablecerPalabraTrasAlarma();
+
+            if (_finPartidaPendiente)
+            {
+                _finPartidaPendiente = false;
+                EjecutarLimpiezaFinPartida();
+                FinPartidaListoParaMostrar?.Invoke();
+                return;
+            }
 
             if (_rondaPendiente != null)
             {
@@ -1064,22 +1079,67 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.BeginInvoke(new Action(() =>
             {
-                _temporizadores.DetenerTodos();
-                _cancionManejador.Detener();
-                JuegoIniciado = false;
-                MostrarEstadoRonda = false;
-                TextoContador = string.Empty;
-                NumeroRondaActual = 0;
-                PuedeEscribirCambiado?.Invoke(false);
-                _alarmaActiva = false;
-                _rondaPendiente = null;
-                _nombreCancionActual = string.Empty;
-                _archivoCancionActual = string.Empty;
-                VisibilidadOverlayAlarma = Visibility.Collapsed;
-                VisibilidadOverlayDibujante = Visibility.Collapsed;
-                VisibilidadOverlayAdivinador = Visibility.Collapsed;
-                RestablecerPalabraTrasAlarma();
+                ProcesarFinPartida();
             }));
+        }
+
+        private void ProcesarFinPartida()
+        {
+            _temporizadores.DetenerTemporizador();
+            _temporizadores.DetenerOverlay();
+            LimpiarTrazos?.Invoke();
+            PuedeEscribirCambiado?.Invoke(false);
+            MostrarEstadoRonda = false;
+            TextoContador = string.Empty;
+
+            bool hayCancionPorReproducir = !string.IsNullOrWhiteSpace(_nombreCancionActual)
+                && !string.IsNullOrWhiteSpace(_archivoCancionActual);
+
+            if (hayCancionPorReproducir && !_alarmaActiva)
+            {
+                _finPartidaPendiente = true;
+                MostrarCancionFinalPartida();
+                return;
+            }
+
+            if (_alarmaActiva)
+            {
+                _finPartidaPendiente = true;
+                return;
+            }
+
+            EjecutarLimpiezaFinPartida();
+            FinPartidaListoParaMostrar?.Invoke();
+        }
+
+        private void MostrarCancionFinalPartida()
+        {
+            PalabraAdivinar = _nombreCancionActual;
+            VisibilidadPalabraAdivinar = Visibility.Visible;
+            ColorPalabraAdivinar = Brushes.Blue;
+            _cancionManejador.Reproducir(_archivoCancionActual);
+            _alarmaActiva = true;
+            _temporizadores.DetenerAlarma();
+            _temporizadores.IniciarAlarma();
+        }
+
+        private void EjecutarLimpiezaFinPartida()
+        {
+            _temporizadores.DetenerTodos();
+            _cancionManejador.Detener();
+            JuegoIniciado = false;
+            MostrarEstadoRonda = false;
+            TextoContador = string.Empty;
+            NumeroRondaActual = 0;
+            PuedeEscribirCambiado?.Invoke(false);
+            _alarmaActiva = false;
+            _rondaPendiente = null;
+            _nombreCancionActual = string.Empty;
+            _archivoCancionActual = string.Empty;
+            VisibilidadOverlayAlarma = Visibility.Collapsed;
+            VisibilidadOverlayDibujante = Visibility.Collapsed;
+            VisibilidadOverlayAdivinador = Visibility.Collapsed;
+            RestablecerPalabraTrasAlarma();
         }
 
         /// <summary>
@@ -1145,6 +1205,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             VisibilidadOverlayAdivinador = Visibility.Collapsed;
             VisibilidadOverlayDibujante = Visibility.Collapsed;
             VisibilidadOverlayAlarma = Visibility.Collapsed;
+            _finPartidaPendiente = false;
+            _alarmaActiva = false;
         }
     }
 }
