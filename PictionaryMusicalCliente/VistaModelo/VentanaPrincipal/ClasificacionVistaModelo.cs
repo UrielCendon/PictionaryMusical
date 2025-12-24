@@ -186,7 +186,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             _sonidoManejador.ReproducirError();
             _avisoServicio.Mostrar(localizado);
-            
             _ventana.CerrarVentana(this);
         }
 

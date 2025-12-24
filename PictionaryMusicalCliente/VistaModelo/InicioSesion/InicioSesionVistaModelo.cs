@@ -540,18 +540,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void MostrarErrorInicioSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
-            string mensaje = _localizador.Localizar(
+            string localizado = _localizador.Localizar(
                 resultado?.Mensaje,
-                Lang.inicioSesionErrorServicio);
+                Lang.errorTextoCredencialesIncorrectas);
 
-            if (!string.IsNullOrWhiteSpace(mensaje))
+            if (!string.IsNullOrWhiteSpace(localizado))
             {
-                _avisoServicio.Mostrar(mensaje);
-            }
-
-            if (!string.IsNullOrWhiteSpace(mensaje))
-            {
-                _avisoServicio.Mostrar(mensaje);
+                _avisoServicio.Mostrar(localizado);
             }
         }
 

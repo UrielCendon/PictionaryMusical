@@ -102,8 +102,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 ["No pudimos completar tu registro. Por favor, intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoRegistrarCuentaMasTarde,
-                ["No pudimos iniciar sesion. Por favor, intenta mas tarde."]
-                    = () => Recursos.Lang.errorTextoServidorInicioSesion,
                 ["Tu cuenta ha sido suspendida por mala conducta."]
                     = () => Recursos.Lang.errorTextoUsuarioBaneado,
                 ["Usuario o contrasena incorrectos."]
