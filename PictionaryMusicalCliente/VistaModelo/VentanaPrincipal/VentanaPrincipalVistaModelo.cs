@@ -47,6 +47,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private readonly OpcionesPartidaManejador _opcionesPartida;
 
         private bool _suscripcionActiva;
+        private bool _canalAmigosDisponible;
 
         public VentanaPrincipalVistaModelo(
             IVentanaServicio ventana,
@@ -362,6 +363,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
                 ConfigureAwait(false);
             await _amigosServicio.SuscribirAsync(_nombreUsuarioSesion).ConfigureAwait(false);
+            _canalAmigosDisponible = true;
         }
 
         private void MarcarSuscripcionActiva()
@@ -412,6 +414,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void CanalAmigos_Desconectado(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("Se detecto desconexion del canal de amigos.");
+            _canalAmigosDisponible = false;
             EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
         }
 
@@ -704,6 +707,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarAbrirSolicitudes()
         {
+            if (!_canalAmigosDisponible)
+            {
+                App.AvisoServicio.Mostrar(Lang.amigosErrorObtenerSolicitudes);
+                return;
+            }
+
             var solicitudesPendientes = _amigosServicio?.SolicitudesPendientes;
 
             if (solicitudesPendientes == null || solicitudesPendientes.Count == 0)

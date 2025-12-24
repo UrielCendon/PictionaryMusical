@@ -1347,6 +1347,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
+            if (!string.IsNullOrWhiteSpace(resultado?.Mensaje))
+            {
+                var mensaje = _localizador.Localizar(
+                    resultado.Mensaje,
+                    Lang.clasificacionErrorActualizar);
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+            }
+
             MostrarResultadoFinalPartida(resultado);
         }
 

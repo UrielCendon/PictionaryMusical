@@ -116,7 +116,7 @@ namespace PictionaryMusicalServidor.Datos.Constantes
             public const string ErrorCrearInicial = 
                 "Error al crear la clasificacion inicial.";
             public const string ErrorActualizarClasificacion = 
-                "Error al actualizar la clasificacion del jugador con id {0}.";
+                "Error al actualizar la clasificacion.";
             public const string ErrorConsultarMejores = 
                 "Error al consultar los mejores jugadores.";
             public const string ClasificacionNoEncontrada = 

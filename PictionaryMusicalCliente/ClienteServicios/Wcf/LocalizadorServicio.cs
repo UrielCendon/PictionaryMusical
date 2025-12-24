@@ -258,6 +258,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Selecciona la dificultad."]
                     = () => Recursos.Lang.errorTextoDificultadRequerida,
 
+                ["Error al actualizar la clasificacion."]
+                    = () => Recursos.Lang.clasificacionErrorActualizar,
+
                 ["Ocurrio un error inesperado. Por favor, intente mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["No se puede realizar esta accion en este momento. Intente mas tarde."]

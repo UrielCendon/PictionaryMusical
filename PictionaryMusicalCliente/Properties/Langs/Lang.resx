@@ -1185,4 +1185,10 @@
   <data name="amigosErrorBuscarBase" xml:space="preserve">
     <value>No se puede agregar el amigo porque hubo un error con el servicio de amigos.</value>
   </data>
+  <data name="amigosErrorObtenerSolicitudes" xml:space="preserve">
+    <value>No se pueden obtener las solicitudes en este momento.</value>
+  </data>
+  <data name="clasificacionErrorActualizar" xml:space="preserve">
+    <value>No se pudo actualizar la clasificación por un error del servicio.</value>
+  </data>
 </root>

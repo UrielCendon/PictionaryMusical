@@ -1,5 +1,6 @@
 using log4net;
 using PictionaryMusicalServidor.Datos;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -461,18 +462,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (DataException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorDatosActualizarClasificaciones, excepcion);
+                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoActualizarClasificaciones, excepcion);
+                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
         }
 

@@ -119,32 +119,28 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             catch (DbUpdateException excepcion)
             {
                 string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
-                    jugadorId);
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
                 _logger.Error(mensaje, excepcion);
                 throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (EntityException excepcion)
             {
                 string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
-                    jugadorId);
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
                 _logger.Error(mensaje, excepcion);
                 throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (DataException excepcion)
             {
                 string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
-                    jugadorId);
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
                 _logger.Error(mensaje, excepcion);
                 throw new BaseDatosExcepcion(mensaje, excepcion);
             }
             catch (Exception excepcion)
             {
                 string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion,
-                    jugadorId);
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
                 _logger.Error(mensaje, excepcion);
                 throw new BaseDatosExcepcion(mensaje, excepcion);
             }

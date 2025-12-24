@@ -196,6 +196,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pueden obtener las solicitudes en este momento..
+        /// </summary>
+        public static string amigosErrorObtenerSolicitudes {
+            get {
+                return ResourceManager.GetString("amigosErrorObtenerSolicitudes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos cargar tus solicitudes de amistad. Intenta más tarde..
         /// </summary>
         public static string amigosErrorRecuperarSolicitudes {
@@ -552,6 +561,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string chatTextoJugadorAdivino {
             get {
                 return ResourceManager.GetString("chatTextoJugadorAdivino", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo actualizar la clasificación por un error del servicio..
+        /// </summary>
+        public static string clasificacionErrorActualizar {
+            get {
+                return ResourceManager.GetString("clasificacionErrorActualizar", resourceCulture);
             }
         }
         

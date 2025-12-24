@@ -1194,4 +1194,10 @@
   <data name="amigosErrorBuscarBase" xml:space="preserve">
     <value>The friend could not be added because there was an error with the friends service.</value>
   </data>
+  <data name="amigosErrorObtenerSolicitudes" xml:space="preserve">
+    <value>Friend requests cannot be retrieved right now.</value>
+  </data>
+  <data name="clasificacionErrorActualizar" xml:space="preserve">
+    <value>Could not update the leaderboard due to a service error.</value>
+  </data>
 </root>
