@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using System.Threading;
 
 namespace PictionaryMusicalServidor.HostServidor
 {
@@ -15,6 +16,7 @@ namespace PictionaryMusicalServidor.HostServidor
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(Principal));
         private static readonly List<ServiceHost> _listaHosts = new List<ServiceHost>();
+        private static int _cerrando = 0;
 
         /// <summary>
         /// Punto de entrada principal de la aplicacion.
@@ -24,6 +26,7 @@ namespace PictionaryMusicalServidor.HostServidor
             ConfigurarLogging();
 
             AppDomain.CurrentDomain.UnhandledException += ManejarExcepcionNoControlada;
+            Console.CancelKeyPress += AlCancelarConsola;
 
             try
             {
@@ -64,7 +67,7 @@ namespace PictionaryMusicalServidor.HostServidor
         private static void ConfigurarLogging()
         {
             XmlConfigurator.ConfigureAndWatch(new FileInfo("log4net.config"));
-            Directory.CreateDirectory("Logs");
+            Directory.CreateDirectory("Bitacora");
         }
 
         private static void InicializarHosts()
@@ -155,6 +158,33 @@ namespace PictionaryMusicalServidor.HostServidor
         {
             _logger.Fatal("Excepcion no controlada en el dominio de la aplicacion.", 
                 (Exception)argumentos.ExceptionObject);
+        }
+
+        private static void AlCancelarConsola(object remitente, 
+            ConsoleCancelEventArgs eventosCancelacion)
+        {
+            _logger.Info("Se detecto una interrupcion. Cerrando el servidor...");
+            IniciarCierreOrdenado();
+
+            eventosCancelacion.Cancel = false;
+        }
+
+        private static void IniciarCierreOrdenado()
+        {
+            if (Interlocked.Exchange(ref _cerrando, 1) == 1)
+            {
+                return;
+            }
+
+            try
+            {
+                CerrarServicios();
+                _logger.Info("Servicios detenidos correctamente.");
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error("Error al detener servicios durante el cierre.", excepcion);
+            }
         }
     }
 }
