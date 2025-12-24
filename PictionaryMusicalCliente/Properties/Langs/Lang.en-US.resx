@@ -1198,12 +1198,13 @@
     <value>Friend requests cannot be retrieved right now.</value>
   </data>
   <data name="clasificacionErrorActualizar" xml:space="preserve">
-    <value>Could not update the leaderboard due to a service error.</value>
+    <value>The leaderboard could not be updated after the match ended due to a service error.</value>
   </data>
   <data name="clasificacionErrorObtener" xml:space="preserve">
     <value>The leaderboard could not be retrieved at this time.</value>
   </data>
-  <data name="inicioSesionErrorServicio" xml:space="preserve">
-    <value>Log-in is unavailable due to a service issue. Please try again later.</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="inicioSesionErrorServicio" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

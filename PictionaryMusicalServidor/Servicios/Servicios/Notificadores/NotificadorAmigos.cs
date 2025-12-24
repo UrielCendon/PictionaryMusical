@@ -74,6 +74,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// </summary>
         /// <param name="nombreNormalizado">Nombre normalizado del usuario.</param>
         /// <param name="usuarioId">ID del usuario.</param>
+        /// <exception cref="DataException">Si hay error al recuperar las solicitudes.</exception>
         public void NotificarSolicitudesPendientesAlSuscribir(string nombreNormalizado, 
             int usuarioId)
         {
@@ -95,12 +96,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    "Error de datos al recuperar las solicitudes pendientes de amistad.", excepcion);
+                    "Error de datos al recuperar las solicitudes pendientes de amistad.", 
+                    excepcion);
+                throw;
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al recuperar las solicitudes pendientes de amistad.", excepcion);
+                    "Error inesperado al recuperar las solicitudes pendientes de amistad.", 
+                    excepcion);
+                throw new DataException(
+                    "Error al recuperar solicitudes pendientes de amistad.", 
+                    excepcion);
             }
         }
     }

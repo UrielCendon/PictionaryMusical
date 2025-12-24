@@ -1,5 +1,6 @@
 using Datos.Modelo;
 using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
 using System.Linq;
+using System.ServiceModel;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios
 {
@@ -54,8 +56,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Retorna los 10 primeros jugadores ordenados por puntos ganados, rondas ganadas y nombre
         /// de usuario.
         /// </summary>
-        /// <returns>Lista de clasificaciones de los mejores jugadores, o lista vacia si hay 
-        /// errores.</returns>
+        /// <returns>Lista de clasificaciones de los mejores jugadores.</returns>
+        /// <exception cref="FaultException">Si hay errores al consultar la base de datos.</exception>
         public IList<ClasificacionUsuarioDTO> ObtenerTopJugadores()
         {
             try
@@ -84,22 +86,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             catch (EntityException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorBaseDatosObtenerClasificacion, excepcion);
-                return new List<ClasificacionUsuarioDTO>();
+                throw new FaultException(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorDatosObtenerClasificacion, excepcion);
-                return new List<ClasificacionUsuarioDTO>();
+                throw new FaultException(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Error(MensajesError.Log.OperacionInvalidaObtenerClasificacion, excepcion);
-                return new List<ClasificacionUsuarioDTO>();
+                throw new FaultException(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoObtenerClasificacion, excepcion);
-                return new List<ClasificacionUsuarioDTO>();
+                throw new FaultException(
+                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
         }
     }

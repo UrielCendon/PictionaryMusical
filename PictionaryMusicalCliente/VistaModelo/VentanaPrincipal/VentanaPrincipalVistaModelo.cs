@@ -707,7 +707,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarAbrirSolicitudes()
         {
-            if (!_canalAmigosDisponible)
+            if (!_canalAmigosDisponible || _amigosServicio.HuboErrorCargaSolicitudes)
             {
                 App.AvisoServicio.Mostrar(Lang.amigosErrorObtenerSolicitudes);
                 return;

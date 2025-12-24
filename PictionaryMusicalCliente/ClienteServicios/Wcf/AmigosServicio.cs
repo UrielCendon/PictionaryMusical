@@ -29,6 +29,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
         private string _usuarioSuscrito;
         private bool _recursosLiberados;
+        private bool _huboErrorCargaSolicitudes;
 
         /// <summary>
         /// Inicializa una nueva instancia del servicio de amigos.
@@ -73,6 +74,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return _administradorSolicitudes.ObtenerSolicitudes();
             }
         }
+
+        /// <summary>
+        /// Indica si hubo un error al cargar las solicitudes desde el servidor.
+        /// </summary>
+        public bool HuboErrorCargaSolicitudes => _huboErrorCargaSolicitudes;
 
         /// <summary>
         /// Conecta al usuario al servicio de notificaciones de amistad.
@@ -312,20 +318,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
+                _huboErrorCargaSolicitudes = false;
                 NotificarSolicitudesActualizadas();
             }
             catch (FaultException excepcion)
             {
+                _huboErrorCargaSolicitudes = true;
                 AbortarYLimpiar(cliente);
                 LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
             catch (CommunicationException excepcion)
             {
+                _huboErrorCargaSolicitudes = true;
                 AbortarYLimpiar(cliente);
                 LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }
             catch (TimeoutException excepcion)
             {
+                _huboErrorCargaSolicitudes = true;
                 AbortarYLimpiar(cliente);
                 LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
             }

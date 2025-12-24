@@ -1374,7 +1374,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(resultado?.Mensaje))
+            MostrarAvisoResultadoPartida(resultado);
+
+            if (!_esInvitado && !string.IsNullOrWhiteSpace(resultado?.Mensaje))
             {
                 var mensaje = _localizador.Localizar(
                     resultado.Mensaje,
@@ -1383,7 +1385,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _avisoServicio.Mostrar(mensaje);
             }
 
-            MostrarResultadoFinalPartida(resultado);
+            NavegarSegunSesion();
         }
 
         private void ProcesarCancelacionPartida(string mensaje)
@@ -1408,7 +1410,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             Navegar(destino);
         }
 
-        private void MostrarResultadoFinalPartida(DTOs.ResultadoPartidaDTO resultado)
+        private void MostrarAvisoResultadoPartida(DTOs.ResultadoPartidaDTO resultado)
         {
             bool esGanador = DeterminarSiEsGanador(resultado);
             string titulo = esGanador
@@ -1420,8 +1422,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             string mensajeFinal = $"{titulo}\n{mensajeResultado}";
             _avisoServicio.Mostrar(mensajeFinal);
-
-            NavegarSegunSesion();
         }
 
         private bool DeterminarSiEsGanador(DTOs.ResultadoPartidaDTO resultado)

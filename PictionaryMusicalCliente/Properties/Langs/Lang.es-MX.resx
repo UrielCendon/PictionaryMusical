@@ -1200,12 +1200,13 @@ aciertan o cuando se acaba el tiempo.
     <value>No se pueden obtener las solicitudes en este momento.</value>
   </data>
   <data name="clasificacionErrorActualizar" xml:space="preserve">
-    <value>No se pudo actualizar la clasificación por un error del servicio.</value>
+    <value>No se pudo actualizar la clasificación al terminar la partida por un error del servicio.</value>
   </data>
   <data name="clasificacionErrorObtener" xml:space="preserve">
     <value>No se pudo obtener la clasificación en este momento.</value>
   </data>
-  <data name="inicioSesionErrorServicio" xml:space="preserve">
-    <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="inicioSesionErrorServicio" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

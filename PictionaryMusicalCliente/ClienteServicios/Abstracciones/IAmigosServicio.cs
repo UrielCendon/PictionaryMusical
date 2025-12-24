@@ -27,6 +27,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         IReadOnlyCollection<DTOs.SolicitudAmistadDTO> SolicitudesPendientes { get; }
 
         /// <summary>
+        /// Indica si hubo un error al cargar las solicitudes desde el servidor.
+        /// </summary>
+        bool HuboErrorCargaSolicitudes { get; }
+
+        /// <summary>
         /// Inicia la escucha de eventos de amistad para el usuario conectado.
         /// </summary>
         /// <param name="nombreUsuario">Usuario local.</param>

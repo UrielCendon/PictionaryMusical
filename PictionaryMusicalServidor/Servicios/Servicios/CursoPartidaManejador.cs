@@ -456,6 +456,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     }
                 }
             }
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
+            {
+                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
+            }
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
@@ -543,41 +548,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             bool ganoPartida = ganadores.Contains(jugador.IdConexion);
 
-            try
-            {
-                repositorio.ActualizarEstadisticas(
-                    jugadorId,
-                    jugador.PuntajeTotal,
-                    ganoPartida);
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador,
-                    jugadorId,
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador,
-                    jugadorId,
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    "Error de datos al actualizar clasificacion del jugador id {0}.",
-                    jugadorId,
-                    excepcion);
-            }
-            catch (Exception excepcion)
-            {
-                _logger.ErrorFormat(
-                    "Error inesperado al actualizar clasificacion del jugador id {0}.",
-                    jugadorId,
-                    excepcion);
-            }
+            repositorio.ActualizarEstadisticas(
+                jugadorId,
+                jugador.PuntajeTotal,
+                ganoPartida);
         }
 
         private static void NotificarCallbacksPartidaIniciada(string idSala)
