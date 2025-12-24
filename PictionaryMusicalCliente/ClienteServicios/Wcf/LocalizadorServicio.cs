@@ -261,6 +261,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Error al actualizar la clasificacion."]
                     = () => Recursos.Lang.clasificacionErrorActualizar,
 
+                ["Error al consultar los mejores jugadores."]
+                    = () => Recursos.Lang.clasificacionErrorObtener,
+
                 ["Ocurrio un error inesperado. Por favor, intente mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["No se puede realizar esta accion en este momento. Intente mas tarde."]

@@ -574,6 +574,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo obtener la clasificación en este momento..
+        /// </summary>
+        public static string clasificacionErrorObtener {
+            get {
+                return ResourceManager.GetString("clasificacionErrorObtener", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ordenar por puntos.
         /// </summary>
         public static string clasificacionTextoOrdenarPuntos {

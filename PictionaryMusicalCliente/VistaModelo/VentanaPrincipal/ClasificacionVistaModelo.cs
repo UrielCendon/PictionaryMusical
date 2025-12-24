@@ -180,7 +180,14 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void NotificarErrorClasificacion(string mensaje)
         {
-            _avisoServicio.Mostrar(mensaje ?? Lang.errorTextoErrorProcesarSolicitud);
+            string localizado = _localizador.Localizar(
+                mensaje,
+                Lang.clasificacionErrorObtener);
+
+            _sonidoManejador.ReproducirError();
+            _avisoServicio.Mostrar(localizado);
+            
+            _ventana.CerrarVentana(this);
         }
 
         private void ActualizarClasificacion(

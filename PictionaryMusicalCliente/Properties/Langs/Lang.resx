@@ -1191,4 +1191,7 @@
   <data name="clasificacionErrorActualizar" xml:space="preserve">
     <value>No se pudo actualizar la clasificación por un error del servicio.</value>
   </data>
+  <data name="clasificacionErrorObtener" xml:space="preserve">
+    <value>No se pudo obtener la clasificación en este momento.</value>
+  </data>
 </root>

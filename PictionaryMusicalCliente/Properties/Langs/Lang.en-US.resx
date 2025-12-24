@@ -1200,4 +1200,7 @@
   <data name="clasificacionErrorActualizar" xml:space="preserve">
     <value>Could not update the leaderboard due to a service error.</value>
   </data>
+  <data name="clasificacionErrorObtener" xml:space="preserve">
+    <value>The leaderboard could not be retrieved at this time.</value>
+  </data>
 </root>
