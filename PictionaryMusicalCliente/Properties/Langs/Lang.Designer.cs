@@ -19,7 +19,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
     // a través de una herramienta como ResGen o Visual Studio.
     // Para agregar o quitar un miembro, edite el archivo .ResX y, a continuación, vuelva a ejecutar ResGen
     // con la opción /str o recompile su proyecto de VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Lang {
@@ -156,6 +156,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string amigosErrorAutoSolicitud {
             get {
                 return ResourceManager.GetString("amigosErrorAutoSolicitud", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se puede agregar el amigo porque hubo un error con el servicio de amigos..
+        /// </summary>
+        public static string amigosErrorBuscarBase {
+            get {
+                return ResourceManager.GetString("amigosErrorBuscarBase", resourceCulture);
             }
         }
         
@@ -1249,6 +1258,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a La conexión fue interrumpida inesperadamente. Intenta iniciar sesión de nuevo..
+        /// </summary>
+        public static string errorTextoConexionInterrumpida {
+            get {
+                return ResourceManager.GetString("errorTextoConexionInterrumpida", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Configura la partida antes de iniciar..
         /// </summary>
         public static string errorTextoConfiguracionRequerida {
@@ -1285,6 +1303,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El dominio del correo no es válido. Verifica la dirección e intenta de nuevo..
+        /// </summary>
+        public static string errorTextoCorreoDominioInvalido {
+            get {
+                return ResourceManager.GetString("errorTextoCorreoDominioInvalido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Correo electrónico en uso.
         /// </summary>
         public static string errorTextoCorreoEnUso {
@@ -1299,15 +1326,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoCorreoInvalido {
             get {
                 return ResourceManager.GetString("errorTextoCorreoInvalido", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a El dominio del correo electrónico no es válido..
-        /// </summary>
-        public static string errorTextoCorreoDominioInvalido {
-            get {
-                return ResourceManager.GetString("errorTextoCorreoDominioInvalido", resourceCulture);
             }
         }
         
@@ -1402,6 +1420,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión con el servidor. Por favor, inicia sesión nuevamente..
+        /// </summary>
+        public static string errorTextoDesconexionServidor {
+            get {
+                return ResourceManager.GetString("errorTextoDesconexionServidor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se pudo determinar el usuario actual para cambiar la contrasena..
         /// </summary>
         public static string errorTextoDeterminarUsuarioCambioContrasena {
@@ -1461,6 +1488,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoEnvioCodigoVerificacionMasTarde {
             get {
                 return ResourceManager.GetString("errorTextoEnvioCodigoVerificacionMasTarde", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Ocurrió un error de comunicación. Verifica tu conexión e intenta de nuevo..
+        /// </summary>
+        public static string errorTextoErrorComunicacionGeneral {
+            get {
+                return ResourceManager.GetString("errorTextoErrorComunicacionGeneral", resourceCulture);
             }
         }
         
@@ -1726,6 +1762,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a El servidor no está disponible. Serás redirigido al inicio de sesión..
+        /// </summary>
+        public static string errorTextoServidorDesconectado {
+            get {
+                return ResourceManager.GetString("errorTextoServidorDesconectado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se pudo obtener la información del avatar seleccionado..
         /// </summary>
         public static string errorTextoServidorInformacionAvatar {
@@ -1812,6 +1857,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorValidarCodigo {
             get {
                 return ResourceManager.GetString("errorTextoServidorValidarCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tu sesión ha expirado. Por favor, inicia sesión nuevamente..
+        /// </summary>
+        public static string errorTextoSesionExpirada {
+            get {
+                return ResourceManager.GetString("errorTextoSesionExpirada", resourceCulture);
             }
         }
         
@@ -1906,6 +1960,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se agotó el tiempo de espera con el servidor. Serás redirigido al inicio de sesión..
+        /// </summary>
+        public static string errorTextoTiempoAgotadoConexion {
+            get {
+                return ResourceManager.GetString("errorTextoTiempoAgotadoConexion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Debe esperar {0} segundos para solicitar un nuevo código..
         /// </summary>
         public static string errorTextoTiempoEsperaCodigo {
@@ -1924,20 +1987,20 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El trazo es demasiado grande. Intenta con uno más pequeño y corto..
-        /// </summary>
-        public static string errorTextoTrazoDemasiadoGrande {
-            get {
-                return ResourceManager.GetString("errorTextoTrazoDemasiadoGrande", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a El token del código es obligatorio..
         /// </summary>
         public static string errorTextoTokenCodigoObligatorio {
             get {
                 return ResourceManager.GetString("errorTextoTokenCodigoObligatorio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a El trazo es demasiado grande. Intenta con uno más pequeño y corto..
+        /// </summary>
+        public static string errorTextoTrazoDemasiadoGrande {
+            get {
+                return ResourceManager.GetString("errorTextoTrazoDemasiadoGrande", resourceCulture);
             }
         }
         
@@ -3198,42 +3261,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string usuariosEspecificadosNoExisten {
             get {
                 return ResourceManager.GetString("usuariosEspecificadosNoExisten", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Se ha perdido la conexión con el servidor..
-        /// </summary>
-        public static string errorTextoDesconexionServidor {
-            get {
-                return ResourceManager.GetString("errorTextoDesconexionServidor", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a El servidor no está disponible. Intente más tarde..
-        /// </summary>
-        public static string errorTextoServidorDesconectado {
-            get {
-                return ResourceManager.GetString("errorTextoServidorDesconectado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a La conexión con el servidor fue interrumpida..
-        /// </summary>
-        public static string errorTextoConexionInterrumpida {
-            get {
-                return ResourceManager.GetString("errorTextoConexionInterrumpida", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Se agotó el tiempo de espera al conectar con el servidor..
-        /// </summary>
-        public static string errorTextoTiempoAgotadoConexion {
-            get {
-                return ResourceManager.GetString("errorTextoTiempoAgotadoConexion", resourceCulture);
             }
         }
     }

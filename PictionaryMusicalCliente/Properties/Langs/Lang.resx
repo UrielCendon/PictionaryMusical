@@ -757,7 +757,7 @@
     <value>Jugador expulsado de la sala.</value>
   </data>
   <data name="errorTextoExpulsarJugador" xml:space="preserve">
-    <value>Error al expulsar al jugador de la sala.</value>
+    <value>No pudimos expulsar al jugador. Intenta más tarde.</value>
   </data>
   <data name="expulsarJugadorTextoFuisteExpulsado" xml:space="preserve">
     <value>Has sido expulsado de la sala.</value>
@@ -1113,9 +1113,6 @@
   <data name="errorTextoAbandonarPartida" xml:space="preserve">
     <value>Ocurrió un problema al salir de la sala.</value>
   </data>
-  <data name="errorTextoExpulsarJugador" xml:space="preserve">
-    <value>No pudimos expulsar al jugador. Intenta más tarde.</value>
-  </data>
   <data name="errorTextoSoloCreador" xml:space="preserve">
     <value>Solo el creador de la sala puede expulsar jugadores.</value>
   </data>
@@ -1184,5 +1181,8 @@
   </data>
   <data name="errorTextoCorreoDominioInvalido" xml:space="preserve">
     <value>El dominio del correo no es válido. Verifica la dirección e intenta de nuevo.</value>
+  </data>
+  <data name="amigosErrorBuscarBase" xml:space="preserve">
+    <value>No se puede agregar el amigo porque hubo un error con el servicio de amigos.</value>
   </data>
 </root>

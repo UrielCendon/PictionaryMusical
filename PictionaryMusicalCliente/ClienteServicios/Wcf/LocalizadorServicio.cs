@@ -23,7 +23,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static readonly Dictionary<string, Func<string>> MapaMensajes =
             new Dictionary<string, Func<string>>(StringComparer.Ordinal)
             {
-                // Estados de partida
                 ["La partida ya comenzo, no puedes unirte."]
                     = () => Recursos.Lang.errorTextoPartidaYaIniciada,
                 ["La partida ya esta en curso."]
@@ -37,7 +36,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Solo el anfitrion puede iniciar la partida."]
                     = () => Recursos.Lang.errorTextoSoloHost,
 
-                // Reportes
                 ["Reporte enviado correctamente."]
                     = () => Recursos.Lang.reportarJugadorTextoExito,
                 ["No se pudo enviar el reporte. Intente mas tarde."]
@@ -51,13 +49,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No puedes reportarte a ti mismo."]
                     = () => Recursos.Lang.reportarJugadorTextoAutoReporte,
 
-                // Chat y mensajes
                 ["Tu mensaje es muy largo. Usa menos de 200 caracteres."]
                     = () => Recursos.Lang.MensajeChatTextoMotivoLongitud,
                 ["No pudimos enviar el mensaje. Intenta de nuevo."]
                     = () => Recursos.Lang.errorTextoEnviarMensaje,
 
-                // Verificacion de cuenta
                 ["No pudimos procesar tu solicitud de verificacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoProcesarSolicitudVerificacion,
                 ["No pudimos reenviar el codigo de verificacion. Intenta mas tarde."]
@@ -71,7 +67,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["El correo o usuario ya esta en uso. Intenta con otro."]
                     = () => Recursos.Lang.errorTextoCorreoEnUso,
 
-                // Recuperacion de cuenta
                 ["No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["No pudimos reenviar el codigo. Intenta mas tarde."]
@@ -105,7 +100,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["La solicitud de recuperacion ya no es valida. Inicia el proceso de nuevo."]
                     = () => Recursos.Lang.errorTextoSolicitudRecuperacionInvalida,
 
-                // Registro e inicio de sesion
                 ["No pudimos completar tu registro. Por favor, intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoRegistrarCuentaMasTarde,
                 ["No pudimos iniciar sesion. Por favor, intenta mas tarde."]
@@ -117,7 +111,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Algunos datos no son correctos. Por favor, revisa la informacion ingresada."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
 
-                // Validaciones de registro
                 ["Ingresa un correo electronico valido (maximo 50 caracteres)."]
                     = () => Recursos.Lang.errorTextoCorreoInvalido,
                 ["El nombre de usuario es obligatorio y debe tener maximo 50 caracteres."]
@@ -129,9 +122,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["La contrasena debe tener entre 8 y 15 caracteres, incluir una mayuscula, un numero y un caracter especial."]
                     = () => Recursos.Lang.globalTextoEspecificaContrasena,
 
-                // Usuario y jugador
                 ["No encontramos al usuario. Verifica que el nombre sea correcto."]
                     = () => Recursos.Lang.errorTextoUsuarioNoEncontrado,
+                ["Error al obtener el usuario."]
+                    = () => Recursos.Lang.amigosErrorBuscarBase,
                 ["No encontramos a uno o mas usuarios especificados."]
                     = () => Recursos.Lang.amigosErrorUsuarioNoExiste,
                 ["No encontramos la informacion del jugador."]
@@ -149,7 +143,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Por favor, selecciona un avatar valido."]
                     = () => Recursos.Lang.errorTextoSeleccionAvatarValido,
 
-                // Perfil
                 ["No pudimos cargar tu perfil. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorObtenerPerfil,
                 ["No pudimos guardar los cambios de tu perfil. Intenta mas tarde."]
@@ -157,7 +150,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Tu perfil se actualizo correctamente."]
                     = () => Recursos.Lang.avisoTextoPerfilActualizado,
 
-                // Amistades
                 ["No pudimos cargar tus solicitudes de amistad. Intenta mas tarde."]
                     = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
                 ["No puedes enviarte una solicitud de amistad a ti mismo."]
@@ -187,7 +179,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos notificar la eliminacion de amistad."]
                     = () => Recursos.Lang.amigosErrorEliminarRelacion,
 
-                // Invitaciones
                 ["La invitacion no es valida o ha expirado."]
                     = () => Recursos.Lang.errorTextoInvitacionExpirada,
                 ["Los datos de la invitacion no son correctos."]
@@ -209,7 +200,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos enviar la invitacion al correo. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoEnviarCorreo,
 
-                // Salas
                 ["No pudimos crear la sala. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoCrearSala,
                 ["Ocurrio un problema al crear la sala. Intenta mas tarde."]
@@ -235,7 +225,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["El jugador ya no esta en la sala."]
                     = () => Recursos.Lang.errorTextoJugadorNoEnSala,
 
-                // Conexion y callbacks
                 ["No pudimos conectarte al servidor. Verifica tu conexion e intenta de nuevo."]
                     = () => Recursos.Lang.errorTextoServidorNoDisponible,
                 ["No pudimos conectarte al servicio de amigos. Intenta mas tarde."]
@@ -245,7 +234,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Ocurrio un problema de conexion con el servicio de amigos."]
                     = () => Recursos.Lang.errorTextoServidorNoDisponible,
 
-                // Parametros obligatorios
                 ["Ingresa tu nombre de usuario."]
                     = () => Recursos.Lang.errorTextoIdentificadorUsuarioInvalido,
                 ["Se requiere el nombre de usuario para cancelar."]
@@ -259,7 +247,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No se pudo identificar la sala."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
 
-                // Configuracion de partida
                 ["Configura la partida antes de iniciar."]
                     = () => Recursos.Lang.errorTextoConfiguracionRequerida,
                 ["El numero de rondas debe ser mayor a cero."]
@@ -271,7 +258,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["Selecciona la dificultad."]
                     = () => Recursos.Lang.errorTextoDificultadRequerida,
 
-                // Errores generales
                 ["Ocurrio un error inesperado. Por favor, intente mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["No se puede realizar esta accion en este momento. Intente mas tarde."]

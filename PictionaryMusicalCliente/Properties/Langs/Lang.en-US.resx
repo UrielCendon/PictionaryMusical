@@ -766,7 +766,7 @@
     <value>Player removed from the room.</value>
   </data>
   <data name="errorTextoExpulsarJugador" xml:space="preserve">
-    <value>Error ejecting the player from the room.</value>
+    <value>We couldn't remove the player. Please try again later.</value>
   </data>
   <data name="expulsarJugadorTextoFuisteExpulsado" xml:space="preserve">
     <value>You have been removed from the room.</value>
@@ -1122,9 +1122,6 @@
   <data name="errorTextoAbandonarPartida" xml:space="preserve">
     <value>There was a problem leaving the room.</value>
   </data>
-  <data name="errorTextoExpulsarJugador" xml:space="preserve">
-    <value>We couldn't remove the player. Please try again later.</value>
-  </data>
   <data name="errorTextoSoloCreador" xml:space="preserve">
     <value>Only the room creator can remove players.</value>
   </data>
@@ -1193,5 +1190,8 @@
   </data>
   <data name="errorTextoCorreoDominioInvalido" xml:space="preserve">
     <value>The email domain is not valid. Check the address and try again.</value>
+  </data>
+  <data name="amigosErrorBuscarBase" xml:space="preserve">
+    <value>The friend could not be added because there was an error with the friends service.</value>
   </data>
 </root>
