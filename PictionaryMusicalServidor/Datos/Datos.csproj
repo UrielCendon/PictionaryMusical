@@ -70,6 +70,7 @@
     <Compile Include="DAL\Interfaces\IReporteRepositorio.cs" />
     <Compile Include="DAL\Interfaces\IUsuarioRepositorio.cs" />
     <Compile Include="Entidades\Cancion.cs" />
+    <Compile Include="Entidades\CancionCreacionParametros.cs" />
     <Compile Include="Excepciones\BaseDatosExcepcion.cs" />
     <Compile Include="Excepciones\CancionNoDisponibleExcepcion.cs" />
     <Compile Include="ICatalogoCanciones.cs" />

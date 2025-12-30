@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="h5G9DpeSEKGYF97sdv6oSIsApakLxEE4D2+1h3NeX2U=">
+<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="ejIjKiTBJtoODPlfiJpVVzT6Aa+Txp7YkEZTsIvflhQ=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="netTcpBinding" name="NetTcpBinding_ISalasManejador1">
       <properties>
@@ -215,10 +215,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="WSDualHttpBinding_ISalasManejador" contract="PictionaryServidorServicioSalas.ISalasManejador" bindingType="wsDualHttpBinding" address="http://localhost:8519/Pictionary/Salas/Salas" bindingConfiguration="WSDualHttpBinding_ISalasManejador1">
+    <endpoint name="WSDualHttpBinding_ISalasManejador" contract="PictionaryServidorServicioSalas.ISalasManejador" bindingType="wsDualHttpBinding" address="http://192.168.1.71:8519/Pictionary/Salas/Salas" bindingConfiguration="WSDualHttpBinding_ISalasManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://localhost:8519/Pictionary/Salas/Salas</serializedValue>
+          <serializedValue>http://192.168.1.71:8519/Pictionary/Salas/Salas</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -300,10 +300,10 @@
         </property>
       </properties>
     </endpoint>
-    <endpoint name="NetTcpBinding_ISalasManejador" contract="PictionaryServidorServicioSalas.ISalasManejador" bindingType="netTcpBinding" address="net.tcp://localhost:8520/Pictionary/Salas/Salas" bindingConfiguration="NetTcpBinding_ISalasManejador1">
+    <endpoint name="NetTcpBinding_ISalasManejador" contract="PictionaryServidorServicioSalas.ISalasManejador" bindingType="netTcpBinding" address="net.tcp://192.168.1.71:8520/Pictionary/Salas/Salas" bindingConfiguration="NetTcpBinding_ISalasManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>net.tcp://localhost:8520/Pictionary/Salas/Salas</serializedValue>
+          <serializedValue>net.tcp://192.168.1.71:8520/Pictionary/Salas/Salas</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

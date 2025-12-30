@@ -1,3 +1,4 @@
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using log4net;
@@ -38,29 +39,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// Envia un codigo de verificacion por correo electronico a un usuario.
         /// Valida que el correo y codigo no esten vacios antes de enviar.
         /// </summary>
-        /// <param name="correoDestino">Direccion de correo electronico del destinatario.</param>
-        /// <param name="codigo">Codigo de verificacion a enviar.</param>
-        /// <param name="usuarioDestino">Nombre del usuario destinatario.</param>
-        /// <param name="idioma">Idioma para el correo.</param>
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
         /// <returns>True si el codigo fue enviado exitosamente, false en caso contrario.</returns>
-        public bool EnviarNotificacion(
-            string correoDestino,
-            string codigo,
-            string usuarioDestino,
-            string idioma)
+        public bool EnviarNotificacion(NotificacionCodigoParametros parametros)
         {
-            if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigo))
+            if (parametros == null ||
+                string.IsNullOrWhiteSpace(parametros.CorreoDestino) || 
+                string.IsNullOrWhiteSpace(parametros.Codigo))
             {
                 return false;
             }
 
             try
             {
-                var tarea = _notificador?.NotificarAsync(
-                    correoDestino,
-                    codigo,
-                    usuarioDestino,
-                    idioma);
+                var tarea = _notificador?.NotificarAsync(parametros);
 
                 if (tarea == null)
                 {

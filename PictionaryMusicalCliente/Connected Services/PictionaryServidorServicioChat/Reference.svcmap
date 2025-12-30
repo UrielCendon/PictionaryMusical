@@ -24,10 +24,10 @@
     <MetadataSource Address="http://localhost:8525/Pictionary/Chat" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Chat.xsd" MetadataType="Schema" ID="765f8058-d011-42e6-9ebc-c4cb16436863" SourceId="1" SourceUrl="http://localhost:8525/Pictionary/Chat?xsd=xsd1" />
-    <MetadataFile FileName="Chat.disco" MetadataType="Disco" ID="6915080a-bb64-43cf-a281-8defa28bb3c8" SourceId="1" SourceUrl="http://localhost:8525/Pictionary/Chat?disco" />
-    <MetadataFile FileName="Chat1.xsd" MetadataType="Schema" ID="08691928-c9e4-45c4-ada0-e77e632c9c18" SourceId="1" SourceUrl="http://localhost:8525/Pictionary/Chat?xsd=xsd0" />
-    <MetadataFile FileName="ChatManejador.wsdl" MetadataType="Wsdl" ID="265e413d-7680-4b35-8212-8b17b571cdcc" SourceId="1" SourceUrl="http://localhost:8525/Pictionary/Chat?wsdl" />
+    <MetadataFile FileName="Chat2.xsd" MetadataType="Schema" ID="6e03a7f6-37e9-4fee-88c1-53a6ffabd9df" SourceId="1" SourceUrl="http://192.168.1.71:8525/Pictionary/Chat?xsd=xsd0" />
+    <MetadataFile FileName="Chat21.xsd" MetadataType="Schema" ID="c3c2f14b-8849-4937-bb16-5ef33bc95d84" SourceId="1" SourceUrl="http://192.168.1.71:8525/Pictionary/Chat?xsd=xsd1" />
+    <MetadataFile FileName="ChatManejador1.wsdl" MetadataType="Wsdl" ID="6a7a1be9-8914-4841-895f-ef1db49a818d" SourceId="1" SourceUrl="http://192.168.1.71:8525/Pictionary/Chat?wsdl" />
+    <MetadataFile FileName="Chat1.disco" MetadataType="Disco" ID="6d59dd25-ebe8-45d7-8991-28c3e3e2d9e4" SourceId="1" SourceUrl="http://192.168.1.71:8525/Pictionary/Chat?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

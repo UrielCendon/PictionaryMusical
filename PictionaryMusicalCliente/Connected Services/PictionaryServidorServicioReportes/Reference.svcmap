@@ -22,11 +22,11 @@
     <MetadataSource Address="http://localhost:8527/Pictionary/Reportes" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Reportes.xsd" MetadataType="Schema" ID="34b92ddb-a197-49f1-8b62-54eae519f080" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd2" />
-    <MetadataFile FileName="Reportes1.xsd" MetadataType="Schema" ID="09b525d9-e899-4f49-95c0-8293ea67af73" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd1" />
-    <MetadataFile FileName="ReportesManejador.wsdl" MetadataType="Wsdl" ID="8a05e0e9-1834-4ab9-9776-9a00ffe2d3a2" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?wsdl" />
-    <MetadataFile FileName="Reportes.disco" MetadataType="Disco" ID="62065f23-ac07-4cd2-aced-73f48f6a0b57" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?disco" />
-    <MetadataFile FileName="Reportes2.xsd" MetadataType="Schema" ID="48ae742f-7a30-441d-b7b0-f88c60e3bcc9" SourceId="1" SourceUrl="http://localhost:8527/Pictionary/Reportes?xsd=xsd0" />
+    <MetadataFile FileName="Reportes3.xsd" MetadataType="Schema" ID="89f166de-2cfa-4df2-be2d-4038052e84e0" SourceId="1" SourceUrl="http://192.168.1.71:8527/Pictionary/Reportes?xsd=xsd2" />
+    <MetadataFile FileName="Reportes1.disco" MetadataType="Disco" ID="32e991c5-2f05-4725-ae88-8f907dab61c5" SourceId="1" SourceUrl="http://192.168.1.71:8527/Pictionary/Reportes?disco" />
+    <MetadataFile FileName="Reportes31.xsd" MetadataType="Schema" ID="e78bb7a5-05ce-451a-99e3-5105d9cee2ce" SourceId="1" SourceUrl="http://192.168.1.71:8527/Pictionary/Reportes?xsd=xsd1" />
+    <MetadataFile FileName="Reportes32.xsd" MetadataType="Schema" ID="eb1765bf-34f8-49de-b3dd-d651cce9cfe9" SourceId="1" SourceUrl="http://192.168.1.71:8527/Pictionary/Reportes?xsd=xsd0" />
+    <MetadataFile FileName="ReportesManejador1.wsdl" MetadataType="Wsdl" ID="877f860b-81cd-4250-b122-b8a6c4415e76" SourceId="1" SourceUrl="http://192.168.1.71:8527/Pictionary/Reportes?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

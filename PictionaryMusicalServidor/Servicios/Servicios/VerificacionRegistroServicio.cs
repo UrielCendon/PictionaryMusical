@@ -234,11 +234,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             string codigo = GeneradorAleatorio.GenerarCodigoVerificacion();
             NuevaCuentaDTO datosCuenta = CopiarCuenta(nuevaCuenta);
 
-            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
-                datosCuenta.Correo,
-                codigo,
-                datosCuenta.Usuario,
-                datosCuenta.Idioma);
+            var parametrosNotificacion = new NotificacionCodigoParametros
+            {
+                CorreoDestino = datosCuenta.Correo,
+                Codigo = codigo,
+                UsuarioDestino = datosCuenta.Usuario,
+                Idioma = datosCuenta.Idioma
+            };
+
+            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(parametrosNotificacion);
 
             if (!enviado)
             {
@@ -299,11 +303,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             existente.Codigo = nuevoCodigo;
             existente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
 
-            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(
-                existente.DatosCuenta.Correo,
-                nuevoCodigo,
-                existente.DatosCuenta.Usuario,
-                existente.DatosCuenta.Idioma);
+            var parametrosNotificacion = new NotificacionCodigoParametros
+            {
+                CorreoDestino = existente.DatosCuenta.Correo,
+                Codigo = nuevoCodigo,
+                UsuarioDestino = existente.DatosCuenta.Usuario,
+                Idioma = existente.DatosCuenta.Idioma
+            };
+
+            bool enviado = _notificacionCodigosServicio.EnviarNotificacion(parametrosNotificacion);
 
             if (!enviado)
             {

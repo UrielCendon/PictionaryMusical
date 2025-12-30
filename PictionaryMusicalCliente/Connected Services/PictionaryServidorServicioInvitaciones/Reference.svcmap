@@ -22,11 +22,11 @@
     <MetadataSource Address="http://localhost:8521/Pictionary/Invitaciones" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Invitaciones.xsd" MetadataType="Schema" ID="ed9b431b-6cb2-4c47-9a08-ed88e5f0fae5" SourceId="1" SourceUrl="http://localhost:8521/Pictionary/Invitaciones?xsd=xsd0" />
-    <MetadataFile FileName="Invitaciones.disco" MetadataType="Disco" ID="36888884-dd05-49dc-90a2-3cff0bd5df28" SourceId="1" SourceUrl="http://localhost:8521/Pictionary/Invitaciones?disco" />
-    <MetadataFile FileName="Invitaciones1.xsd" MetadataType="Schema" ID="517cdb1d-4b02-4566-b427-3d40421056f4" SourceId="1" SourceUrl="http://localhost:8521/Pictionary/Invitaciones?xsd=xsd1" />
-    <MetadataFile FileName="InvitacionesManejador.wsdl" MetadataType="Wsdl" ID="b2cab200-061f-4bc8-8eed-027f0d48b122" SourceId="1" SourceUrl="http://localhost:8521/Pictionary/Invitaciones?wsdl" />
-    <MetadataFile FileName="Invitaciones2.xsd" MetadataType="Schema" ID="77765165-3a86-4e6a-ad0d-cf300fc3c858" SourceId="1" SourceUrl="http://localhost:8521/Pictionary/Invitaciones?xsd=xsd2" />
+    <MetadataFile FileName="Invitaciones3.xsd" MetadataType="Schema" ID="0dfa4ef8-44bd-43db-a46f-95864fe78915" SourceId="1" SourceUrl="http://192.168.1.71:8521/Pictionary/Invitaciones?xsd=xsd1" />
+    <MetadataFile FileName="Invitaciones31.xsd" MetadataType="Schema" ID="bc29f397-a28a-4071-8ac9-8e0ea57fdc9f" SourceId="1" SourceUrl="http://192.168.1.71:8521/Pictionary/Invitaciones?xsd=xsd2" />
+    <MetadataFile FileName="Invitaciones32.xsd" MetadataType="Schema" ID="7619fb85-1b40-4d0b-af42-48d7c2c5a1f8" SourceId="1" SourceUrl="http://192.168.1.71:8521/Pictionary/Invitaciones?xsd=xsd0" />
+    <MetadataFile FileName="InvitacionesManejador1.wsdl" MetadataType="Wsdl" ID="7d6448f2-bafc-436e-bf61-ff2851172917" SourceId="1" SourceUrl="http://192.168.1.71:8521/Pictionary/Invitaciones?wsdl" />
+    <MetadataFile FileName="Invitaciones1.disco" MetadataType="Disco" ID="4f6f700c-e560-4562-887f-68a3c3c0fc05" SourceId="1" SourceUrl="http://192.168.1.71:8521/Pictionary/Invitaciones?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

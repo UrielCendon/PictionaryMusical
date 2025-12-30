@@ -56,14 +56,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <summary>
         /// Notifica el inicio de una ronda a un jugador especifico.
         /// </summary>
-        /// <param name="callback">Callback del jugador.</param>
-        /// <param name="ronda">Datos de la ronda.</param>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="idJugador">Identificador del jugador.</param>
-        void NotificarInicioRondaAJugador(
-            ICursoPartidaManejadorCallback callback,
-            RondaDTO ronda,
-            string idSala,
-            string idJugador);
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
+        void NotificarInicioRondaAJugador(NotificacionRondaParametros parametros);
     }
 }

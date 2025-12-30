@@ -43,15 +43,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <summary>
         /// Ejecuta una accion de forma segura sobre un callback.
         /// </summary>
-        /// <param name="callback">Callback sobre el que ejecutar.</param>
-        /// <param name="idJugador">Identificador del jugador.</param>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="accion">Accion a ejecutar.</param>
-        void EjecutarCallbackSeguro(
-            ICursoPartidaManejadorCallback callback,
-            string idJugador,
-            string idSala,
-            Action<ICursoPartidaManejadorCallback> accion);
+        /// <param name="parametros">Objeto con los datos necesarios para la ejecucion.</param>
+        void EjecutarCallbackSeguro(CallbackEjecucionParametros parametros);
 
         /// <summary>
         /// Obtiene todos los callbacks de una sala como pares clave-valor.

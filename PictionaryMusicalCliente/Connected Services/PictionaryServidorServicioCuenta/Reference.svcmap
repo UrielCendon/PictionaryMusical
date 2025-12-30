@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8501/Pictionary/Cuenta" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Cuenta.xsd" MetadataType="Schema" ID="3ddfbf1f-1750-457e-b004-06448bf4aafc" SourceId="1" SourceUrl="http://localhost:8501/Pictionary/Cuenta?xsd=xsd0" />
-    <MetadataFile FileName="Cuenta.disco" MetadataType="Disco" ID="71d7d8c3-fad7-4a46-84ff-7cbaf831c3e1" SourceId="1" SourceUrl="http://localhost:8501/Pictionary/Cuenta?disco" />
-    <MetadataFile FileName="Cuenta1.xsd" MetadataType="Schema" ID="598fdf3e-1d52-4b74-aa9b-2f87c95a99eb" SourceId="1" SourceUrl="http://localhost:8501/Pictionary/Cuenta?xsd=xsd2" />
-    <MetadataFile FileName="CuentaManejador.wsdl" MetadataType="Wsdl" ID="6f679b57-af6a-4886-b934-9ff717f9f684" SourceId="1" SourceUrl="http://localhost:8501/Pictionary/Cuenta?wsdl" />
-    <MetadataFile FileName="Cuenta2.xsd" MetadataType="Schema" ID="100a9b8e-11b4-43e4-8cc4-aba45a5b4f95" SourceId="1" SourceUrl="http://localhost:8501/Pictionary/Cuenta?xsd=xsd1" />
+    <MetadataFile FileName="Cuenta3.xsd" MetadataType="Schema" ID="c600a1dd-0031-45a1-8489-0afb2580cff8" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd0" />
+    <MetadataFile FileName="Cuenta31.xsd" MetadataType="Schema" ID="29b97084-e11b-46d4-b6ec-cd5f3f27d354" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd2" />
+    <MetadataFile FileName="Cuenta1.disco" MetadataType="Disco" ID="9d5e2d43-2c58-44c8-95e3-68c8d4804e0c" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?disco" />
+    <MetadataFile FileName="CuentaManejador1.wsdl" MetadataType="Wsdl" ID="f62cec0f-6885-4be8-af95-74626010052b" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?wsdl" />
+    <MetadataFile FileName="Cuenta32.xsd" MetadataType="Schema" ID="c8613c7e-6c6a-41f9-9ac9-38dba7f7e69d" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd1" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

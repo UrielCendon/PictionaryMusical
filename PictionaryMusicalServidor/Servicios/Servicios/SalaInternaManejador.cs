@@ -148,11 +148,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _jugadores.Remove(nombreJugadorAExpulsar);
                 _gestorNotificaciones.Remover(nombreJugadorAExpulsar);
 
-                _gestorNotificaciones.NotificarExpulsion(
-                    Codigo,
-                    nombreJugadorAExpulsar,
-                    callbackExpulsado,
-                    ConvertirADto());
+                var parametrosExpulsion = new ExpulsionNotificacionParametros
+                {
+                    CodigoSala = Codigo,
+                    NombreExpulsado = nombreJugadorAExpulsar,
+                    CallbackExpulsado = callbackExpulsado,
+                    SalaActualizada = ConvertirADto()
+                };
+                _gestorNotificaciones.NotificarExpulsion(parametrosExpulsion);
 
                 _logger.InfoFormat(
                     "Sala '{0}': Jugador '{1}' expulsado y notificado exitosamente.",

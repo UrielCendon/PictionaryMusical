@@ -89,33 +89,41 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <summary>
         /// Registra a un jugador para recibir notificaciones de la partida.
         /// </summary>
-        public void SuscribirJugador(string idSala, string idJugador, string nombreUsuario,
-            bool esHost)
+        /// <param name="suscripcion">Datos de suscripcion del jugador.</param>
+        public void SuscribirJugador(SuscripcionJugadorDTO suscripcion)
         {
-            if (string.IsNullOrWhiteSpace(idSala))
+            if (suscripcion == null)
+            {
+                throw new FaultException(MensajesError.Cliente.DatosSuscripcionObligatorios);
+            }
+
+            if (string.IsNullOrWhiteSpace(suscripcion.IdSala))
             {
                 throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
             }
 
-            if (string.IsNullOrWhiteSpace(idJugador))
+            if (string.IsNullOrWhiteSpace(suscripcion.IdJugador))
             {
                 throw new FaultException(MensajesError.Cliente.IdJugadorObligatorio);
             }
 
             var callback = ObtenerCallbackActual();
-            var controlador = ObtenerOCrearControlador(idSala.Trim());
+            var controlador = ObtenerOCrearControlador(suscripcion.IdSala.Trim());
 
             controlador.AgregarJugador(
-                idJugador.Trim(),
-                nombreUsuario?.Trim() ?? string.Empty,
-                esHost);
+                suscripcion.IdJugador.Trim(),
+                suscripcion.NombreUsuario?.Trim() ?? string.Empty,
+                suscripcion.EsHost);
 
-            RegistrarCallback(idSala.Trim(), idJugador.Trim(), callback);
+            RegistrarCallback(
+                suscripcion.IdSala.Trim(), 
+                suscripcion.IdJugador.Trim(), 
+                callback);
 
             _logger.InfoFormat(
                 MensajesError.Log.JugadorSuscritoPartida,
-                idJugador.Trim(),
-                idSala.Trim());
+                suscripcion.IdJugador.Trim(),
+                suscripcion.IdSala.Trim());
         }
 
         /// <summary>

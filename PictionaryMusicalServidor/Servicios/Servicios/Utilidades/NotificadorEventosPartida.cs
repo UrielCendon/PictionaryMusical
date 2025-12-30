@@ -34,11 +34,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarPartidaIniciada());
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarPartidaIniciada()
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
@@ -48,11 +51,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarJugadorAdivino(nombreJugador, puntos));
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarJugadorAdivino(nombreJugador, puntos)
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
@@ -62,11 +68,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarMensajeChat(nombreJugador, mensaje));
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarMensajeChat(nombreJugador, mensaje)
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
@@ -76,11 +85,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarTrazoRecibido(trazo));
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarTrazoRecibido(trazo)
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
@@ -90,11 +102,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarFinRonda());
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarFinRonda()
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
@@ -104,26 +119,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
             {
-                _gestorCallbacks.EjecutarCallbackSeguro(
-                    par.Value, 
-                    par.Key, 
-                    idSala,
-                    cb => cb.NotificarFinPartida(resultado));
+                var parametros = new CallbackEjecucionParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = cb => cb.NotificarFinPartida(resultado)
+                };
+                _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }
         }
 
         /// <inheritdoc/>
-        public void NotificarInicioRondaAJugador(
-            ICursoPartidaManejadorCallback callback,
-            RondaDTO ronda,
-            string idSala,
-            string idJugador)
+        public void NotificarInicioRondaAJugador(NotificacionRondaParametros parametros)
         {
-            _gestorCallbacks.EjecutarCallbackSeguro(
-                callback, 
-                idJugador, 
-                idSala,
-                cb => cb.NotificarInicioRonda(ronda));
+            var callbackParams = new CallbackEjecucionParametros
+            {
+                Callback = parametros.Callback,
+                IdJugador = parametros.IdJugador,
+                IdSala = parametros.IdSala,
+                Accion = cb => cb.NotificarInicioRonda(parametros.Ronda)
+            };
+            _gestorCallbacks.EjecutarCallbackSeguro(callbackParams);
         }
     }
 }

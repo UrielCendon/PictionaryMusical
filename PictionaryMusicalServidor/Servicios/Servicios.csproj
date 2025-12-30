@@ -77,8 +77,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contratos\DTOs\ConfiguracionPartidaDTO.cs" />
+    <Compile Include="Contratos\DTOs\InvitacionCorreoParametros.cs" />
+    <Compile Include="Contratos\DTOs\NotificacionCodigoParametros.cs" />
     <Compile Include="Contratos\DTOs\ReporteJugadorDTO.cs" />
     <Compile Include="Contratos\DTOs\SalaDTO.cs" />
+    <Compile Include="Contratos\DTOs\SuscripcionJugadorDTO.cs" />
     <Compile Include="Contratos\IAmigosManejador.cs" />
     <Compile Include="Contratos\IAmigosManejadorCallback.cs" />
     <Compile Include="Contratos\ICambioContrasenaManejador.cs" />
@@ -101,8 +104,10 @@
     <Compile Include="Contratos\ISalasManejadorCallback.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="LogicaNegocio\GestorTiemposPartida.cs" />
+    <Compile Include="Servicios\Notificadores\ExpulsionNotificacionParametros.cs" />
     <Compile Include="Servicios\ReportesManejador.cs" />
     <Compile Include="Servicios\Utilidades\ActualizadorClasificacionPartida.cs" />
+    <Compile Include="Servicios\Utilidades\CallbackEjecucionParametros.cs" />
     <Compile Include="Servicios\Utilidades\CallbacksCompartidos.cs" />
     <Compile Include="Servicios\Utilidades\GestorCallbacksPartida.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />
@@ -168,6 +173,7 @@
     <Compile Include="Servicios\Utilidades\INotificadorEventosPartida.cs" />
     <Compile Include="Servicios\Utilidades\IRepositorioFactoria.cs" />
     <Compile Include="Servicios\Utilidades\ManejadorCallback.cs" />
+    <Compile Include="Servicios\Utilidades\NotificacionRondaParametros.cs" />
     <Compile Include="Servicios\Utilidades\NotificadorEventosPartida.cs" />
     <Compile Include="Servicios\Utilidades\RepositorioFactoria.cs" />
     <Compile Include="Servicios\VerificacionRegistroServicio.cs" />

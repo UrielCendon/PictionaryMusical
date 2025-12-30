@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8511/Pictionary/Clasificacion" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Clasificacion.disco" MetadataType="Disco" ID="9a09c8eb-fa39-404b-ae74-72d3fa22d6c3" SourceId="1" SourceUrl="http://localhost:8511/Pictionary/Clasificacion?disco" />
-    <MetadataFile FileName="Clasificacion.xsd" MetadataType="Schema" ID="b4300b95-e934-48e4-82e3-ccbda6df08f5" SourceId="1" SourceUrl="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd1" />
-    <MetadataFile FileName="ClasificacionManejador.wsdl" MetadataType="Wsdl" ID="fdec9a3c-ee06-4898-be7a-57a8482285e4" SourceId="1" SourceUrl="http://localhost:8511/Pictionary/Clasificacion?wsdl" />
-    <MetadataFile FileName="Clasificacion1.xsd" MetadataType="Schema" ID="218d1268-2c04-4a01-a6ea-6a780c70123c" SourceId="1" SourceUrl="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd0" />
-    <MetadataFile FileName="Clasificacion2.xsd" MetadataType="Schema" ID="7efe6054-9bc8-45da-8cde-d1923df20ff8" SourceId="1" SourceUrl="http://localhost:8511/Pictionary/Clasificacion?xsd=xsd2" />
+    <MetadataFile FileName="Clasificacion3.xsd" MetadataType="Schema" ID="a676a36b-4427-4db3-bfc6-b0b5dfe49dc0" SourceId="1" SourceUrl="http://192.168.1.71:8511/Pictionary/Clasificacion?xsd=xsd0" />
+    <MetadataFile FileName="Clasificacion31.xsd" MetadataType="Schema" ID="a484d1ce-9727-4f63-b996-2b47cef9d1c2" SourceId="1" SourceUrl="http://192.168.1.71:8511/Pictionary/Clasificacion?xsd=xsd2" />
+    <MetadataFile FileName="ClasificacionManejador1.wsdl" MetadataType="Wsdl" ID="524fbfee-b83d-4150-b0c5-4f41ea6cde12" SourceId="1" SourceUrl="http://192.168.1.71:8511/Pictionary/Clasificacion?wsdl" />
+    <MetadataFile FileName="Clasificacion32.xsd" MetadataType="Schema" ID="34a42ada-7bf6-494a-9050-6f4479db5c4f" SourceId="1" SourceUrl="http://192.168.1.71:8511/Pictionary/Clasificacion?xsd=xsd1" />
+    <MetadataFile FileName="Clasificacion1.disco" MetadataType="Disco" ID="5f8b705f-3977-45ec-b441-5f14bcd92933" SourceId="1" SourceUrl="http://192.168.1.71:8511/Pictionary/Clasificacion?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

@@ -231,6 +231,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
                 "No se pudo identificar al jugador.";
             public const string IdSalaObligatorio = 
                 "No se pudo identificar la sala.";
+            public const string DatosSuscripcionObligatorios = 
+                "Se requieren los datos de suscripcion para unirse a la partida.";
 
             public const string ConfiguracionObligatoria = 
                 "Configura la partida antes de iniciar.";

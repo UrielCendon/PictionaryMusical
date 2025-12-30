@@ -105,43 +105,59 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <inheritdoc/>
-        public void EjecutarCallbackSeguro(
-            ICursoPartidaManejadorCallback callback,
-            string idJugador,
-            string idSala,
-            Action<ICursoPartidaManejadorCallback> accion)
+        public void EjecutarCallbackSeguro(CallbackEjecucionParametros parametros)
         {
             try
             {
-                if (!EsCanalActivo(callback))
+                if (!EsCanalActivo(parametros.Callback))
                 {
                     _logger.WarnFormat(
                         "Canal inactivo para jugador {0} en sala {1}. Removiendo.",
-                        idJugador, idSala);
-                    RemoverCallbackYJugador(idSala, idJugador);
+                        parametros.IdJugador, parametros.IdSala);
+                    RemoverCallbackYJugador(parametros.IdSala, parametros.IdJugador);
                     return;
                 }
-                accion(callback);
+                parametros.Accion(parametros.Callback);
             }
             catch (ObjectDisposedException excepcion)
             {
-                ManejarErrorCallback("Canal desechado", idJugador, idSala, excepcion);
+                ManejarErrorCallback(
+                    "Canal desechado", 
+                    parametros.IdJugador, 
+                    parametros.IdSala, 
+                    excepcion);
             }
             catch (CommunicationObjectFaultedException excepcion)
             {
-                ManejarErrorCallback("Canal en falta", idJugador, idSala, excepcion);
+                ManejarErrorCallback(
+                    "Canal en falta", 
+                    parametros.IdJugador, 
+                    parametros.IdSala, 
+                    excepcion);
             }
             catch (CommunicationException excepcion)
             {
-                ManejarErrorCallback("Error comunicacion", idJugador, idSala, excepcion);
+                ManejarErrorCallback(
+                    "Error comunicacion", 
+                    parametros.IdJugador, 
+                    parametros.IdSala, 
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                ManejarErrorCallback("Timeout", idJugador, idSala, excepcion);
+                ManejarErrorCallback(
+                    "Timeout", 
+                    parametros.IdJugador, 
+                    parametros.IdSala, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                ManejarErrorCallback("Error inesperado", idJugador, idSala, excepcion);
+                ManejarErrorCallback(
+                    "Error inesperado", 
+                    parametros.IdJugador, 
+                    parametros.IdSala, 
+                    excepcion);
             }
         }
 

@@ -1,4 +1,5 @@
 using log4net;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using System;
@@ -25,15 +26,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <summary>
         /// Envia un codigo de verificacion al usuario especificado de forma asincrona.
         /// </summary>
-        /// <param name="correoDestino">Correo electronico del destinatario.</param>
-        /// <param name="codigo">Codigo de verificacion a enviar.</param>
-        /// <param name="usuarioDestino">Nombre del usuario destinatario.</param>
-        /// <param name="idioma">Idioma preferido para el correo (es/en).</param>
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
         /// <returns>True si el envio fue exitoso, False en caso contrario.</returns>
-        public async Task<bool> NotificarAsync(string correoDestino, string codigo,
-            string usuarioDestino, string idioma)
+        public async Task<bool> NotificarAsync(NotificacionCodigoParametros parametros)
         {
-            if (string.IsNullOrWhiteSpace(correoDestino) || string.IsNullOrWhiteSpace(codigo))
+            if (parametros == null ||
+                string.IsNullOrWhiteSpace(parametros.CorreoDestino) || 
+                string.IsNullOrWhiteSpace(parametros.Codigo))
             {
                 return false;
             }
@@ -45,11 +44,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return false;
             }
 
-            string idiomaNormalizado = NormalizarIdioma(idioma);
+            string idiomaNormalizado = NormalizarIdioma(parametros.Idioma);
             string asunto = ObtenerAsunto(idiomaNormalizado);
-            string cuerpoHtml = ConstruirCuerpoMensaje(usuarioDestino, codigo, idiomaNormalizado);
+            string cuerpoHtml = ConstruirCuerpoMensaje(
+                parametros.UsuarioDestino, 
+                parametros.Codigo, 
+                idiomaNormalizado);
 
-            return await EjecutarEnvioSmtpAsync(correoDestino, asunto, cuerpoHtml, config);
+            return await EjecutarEnvioSmtpAsync(
+                parametros.CorreoDestino, 
+                asunto, 
+                cuerpoHtml, 
+                config);
         }
 
         /// <summary>

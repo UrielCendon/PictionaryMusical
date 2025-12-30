@@ -22,11 +22,11 @@
     <MetadataSource Address="http://localhost:8515/Pictionary/Amigos" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Amigos.xsd" MetadataType="Schema" ID="a6a111f1-5697-4b26-a384-6d48b09de28c" SourceId="1" SourceUrl="http://localhost:8515/Pictionary/Amigos?xsd=xsd1" />
-    <MetadataFile FileName="Amigos.disco" MetadataType="Disco" ID="4257f92a-bb57-4cf1-a3ae-95d1af2acabb" SourceId="1" SourceUrl="http://localhost:8515/Pictionary/Amigos?disco" />
-    <MetadataFile FileName="AmigosManejador.wsdl" MetadataType="Wsdl" ID="99e31507-765a-448b-95f7-bfe04496491f" SourceId="1" SourceUrl="http://localhost:8515/Pictionary/Amigos?wsdl" />
-    <MetadataFile FileName="Amigos1.xsd" MetadataType="Schema" ID="81cacf9b-4fe0-478f-b7f9-62d9a58996f6" SourceId="1" SourceUrl="http://localhost:8515/Pictionary/Amigos?xsd=xsd2" />
-    <MetadataFile FileName="Amigos2.xsd" MetadataType="Schema" ID="aa71553e-95de-4a8f-8097-bb4183757006" SourceId="1" SourceUrl="http://localhost:8515/Pictionary/Amigos?xsd=xsd0" />
+    <MetadataFile FileName="Amigos1.disco" MetadataType="Disco" ID="a702aeca-9f40-4520-b3a2-02a554b7577d" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?disco" />
+    <MetadataFile FileName="Amigos3.xsd" MetadataType="Schema" ID="742d106d-7f43-4e7b-9593-ec2d5f32344b" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd2" />
+    <MetadataFile FileName="AmigosManejador1.wsdl" MetadataType="Wsdl" ID="42b07ff7-fdee-4c1a-aad9-90496fd94c5a" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?wsdl" />
+    <MetadataFile FileName="Amigos31.xsd" MetadataType="Schema" ID="22c7b416-ae4f-40a6-b90d-ed407899100f" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd1" />
+    <MetadataFile FileName="Amigos32.xsd" MetadataType="Schema" ID="e5bb1dcf-1178-446f-9e42-e4227a78f370" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

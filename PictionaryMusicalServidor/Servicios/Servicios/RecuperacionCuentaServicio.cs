@@ -231,11 +231,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 Idioma = idioma
             };
 
-            bool enviado = _notificacionServicio.EnviarNotificacion(
-                pendiente.Correo,
-                codigo,
-                pendiente.NombreUsuario,
-                pendiente.Idioma);
+            var parametrosNotificacion = new NotificacionCodigoParametros
+            {
+                CorreoDestino = pendiente.Correo,
+                Codigo = codigo,
+                UsuarioDestino = pendiente.NombreUsuario,
+                Idioma = pendiente.Idioma
+            };
+
+            bool enviado = _notificacionServicio.EnviarNotificacion(parametrosNotificacion);
 
             if (!enviado)
             {
@@ -299,11 +303,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             pendiente.Expira = DateTime.UtcNow.AddMinutes(MinutosExpiracionCodigo);
             pendiente.Confirmado = false;
 
-            bool enviado = _notificacionServicio.EnviarNotificacion(
-                pendiente.Correo,
-                nuevoCodigo,
-                pendiente.NombreUsuario,
-                pendiente.Idioma);
+            var parametrosNotificacion = new NotificacionCodigoParametros
+            {
+                CorreoDestino = pendiente.Correo,
+                Codigo = nuevoCodigo,
+                UsuarioDestino = pendiente.NombreUsuario,
+                Idioma = pendiente.Idioma
+            };
+
+            bool enviado = _notificacionServicio.EnviarNotificacion(parametrosNotificacion);
 
             if (!enviado)
             {

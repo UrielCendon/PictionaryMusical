@@ -14,12 +14,9 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// Suscribe a un jugador a la partida de una sala especifica y registra su callback para
         /// notificaciones.
         /// </summary>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="idJugador">Identificador unico del jugador.</param>
-        /// <param name="nombreUsuario">Nombre del usuario.</param>
-        /// <param name="esHost">Indica si el jugador es el host de la sala.</param>
+        /// <param name="suscripcion">Datos de suscripcion del jugador.</param>
         [OperationContract]
-        void SuscribirJugador(string idSala, string idJugador, string nombreUsuario, bool esHost);
+        void SuscribirJugador(SuscripcionJugadorDTO suscripcion);
 
         /// <summary>
         /// Inicia la partida de la sala indicada.

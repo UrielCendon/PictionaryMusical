@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="22djszerrmYWIJl3rZkhWcOBIqzlOco1hnp/EytYuGU=">
+<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="MfCjBUiad8ZUleZmt/u4fdpqCXY+y9Pf19DjWznCxCU=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="netTcpBinding" name="NetTcpBinding_IChatManejador">
       <properties>
@@ -215,10 +215,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="WSDualHttpBinding_IChatManejador" contract="PictionaryServidorServicioChat.IChatManejador" bindingType="wsDualHttpBinding" address="http://localhost:8525/Pictionary/Chat/Chat" bindingConfiguration="WSDualHttpBinding_IChatManejador">
+    <endpoint name="WSDualHttpBinding_IChatManejador" contract="PictionaryServidorServicioChat.IChatManejador" bindingType="wsDualHttpBinding" address="http://192.168.1.71:8525/Pictionary/Chat/Chat" bindingConfiguration="WSDualHttpBinding_IChatManejador">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://localhost:8525/Pictionary/Chat/Chat</serializedValue>
+          <serializedValue>http://192.168.1.71:8525/Pictionary/Chat/Chat</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -300,10 +300,10 @@
         </property>
       </properties>
     </endpoint>
-    <endpoint name="NetTcpBinding_IChatManejador" contract="PictionaryServidorServicioChat.IChatManejador" bindingType="netTcpBinding" address="net.tcp://localhost:8526/Pictionary/Chat/Chat" bindingConfiguration="NetTcpBinding_IChatManejador">
+    <endpoint name="NetTcpBinding_IChatManejador" contract="PictionaryServidorServicioChat.IChatManejador" bindingType="netTcpBinding" address="net.tcp://192.168.1.71:8526/Pictionary/Chat/Chat" bindingConfiguration="NetTcpBinding_IChatManejador">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>net.tcp://localhost:8526/Pictionary/Chat/Chat</serializedValue>
+          <serializedValue>net.tcp://192.168.1.71:8526/Pictionary/Chat/Chat</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8507/Pictionary/InicioSesion" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="InicioSesion.xsd" MetadataType="Schema" ID="9a2eb0df-9ecb-45e8-b649-6aca1885de4e" SourceId="1" SourceUrl="http://localhost:8507/Pictionary/InicioSesion?xsd=xsd0" />
-    <MetadataFile FileName="InicioSesion.disco" MetadataType="Disco" ID="18cf9cde-c30c-4b88-8c45-cc9775de9667" SourceId="1" SourceUrl="http://localhost:8507/Pictionary/InicioSesion?disco" />
-    <MetadataFile FileName="InicioSesion1.xsd" MetadataType="Schema" ID="454868c2-acb3-40bd-9828-fddace69c021" SourceId="1" SourceUrl="http://localhost:8507/Pictionary/InicioSesion?xsd=xsd1" />
-    <MetadataFile FileName="InicioSesion2.xsd" MetadataType="Schema" ID="5b5d97ad-5e03-488e-b5c6-8b1214733b53" SourceId="1" SourceUrl="http://localhost:8507/Pictionary/InicioSesion?xsd=xsd2" />
-    <MetadataFile FileName="InicioSesionManejador.wsdl" MetadataType="Wsdl" ID="b3bf7ad0-300a-4072-8dd7-ec12cf833895" SourceId="1" SourceUrl="http://localhost:8507/Pictionary/InicioSesion?wsdl" />
+    <MetadataFile FileName="InicioSesion3.xsd" MetadataType="Schema" ID="b7cfd7e1-781c-4ead-866c-b9a48f31fd8a" SourceId="1" SourceUrl="http://192.168.1.71:8507/Pictionary/InicioSesion?xsd=xsd2" />
+    <MetadataFile FileName="InicioSesionManejador1.wsdl" MetadataType="Wsdl" ID="9ab6e876-bf39-4c32-b92f-06a9a3b07345" SourceId="1" SourceUrl="http://192.168.1.71:8507/Pictionary/InicioSesion?wsdl" />
+    <MetadataFile FileName="InicioSesion31.xsd" MetadataType="Schema" ID="4d7d08ad-1e2c-4b90-b209-d3f59189fc17" SourceId="1" SourceUrl="http://192.168.1.71:8507/Pictionary/InicioSesion?xsd=xsd0" />
+    <MetadataFile FileName="InicioSesion32.xsd" MetadataType="Schema" ID="c209b538-455c-4c0b-9a34-06c332d84c94" SourceId="1" SourceUrl="http://192.168.1.71:8507/Pictionary/InicioSesion?xsd=xsd1" />
+    <MetadataFile FileName="InicioSesion1.disco" MetadataType="Disco" ID="3be90b1c-322a-4af5-8323-51693f05ddc4" SourceId="1" SourceUrl="http://192.168.1.71:8507/Pictionary/InicioSesion?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

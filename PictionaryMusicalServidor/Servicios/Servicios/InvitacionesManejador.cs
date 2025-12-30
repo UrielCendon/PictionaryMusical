@@ -209,11 +209,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             SalaDTO sala,
             string idioma)
         {
-            bool enviado = await _correoNotificador.EnviarInvitacionAsync(
-                correo,
-                sala.Codigo,
-                sala.Creador,
-                idioma).ConfigureAwait(false);
+            var parametrosInvitacion = new InvitacionCorreoParametros
+            {
+                CorreoDestino = correo,
+                CodigoSala = sala.Codigo,
+                Creador = sala.Creador,
+                Idioma = idioma
+            };
+
+            bool enviado = await _correoNotificador
+                .EnviarInvitacionAsync(parametrosInvitacion)
+                .ConfigureAwait(false);
 
             if (!enviado)
             {

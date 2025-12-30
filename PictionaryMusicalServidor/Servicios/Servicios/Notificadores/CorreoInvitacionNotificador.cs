@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
@@ -24,16 +25,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <summary>
         /// Envia una invitacion a una partida al correo indicado de forma asincrona.
         /// </summary>
-        /// <param name="correoDestino">Direccion de correo del destinatario.</param>
-        /// <param name="codigoSala">Codigo de la sala.</param>
-        /// <param name="creador">Nombre del creador de la sala.</param>
-        /// <param name="idioma">Idioma del destinatario (es/en).</param>
+        /// <param name="parametros">Objeto con los datos necesarios para la invitacion.</param>
         /// <returns>True si el correo se envio correctamente.</returns>
-        public async Task<bool> EnviarInvitacionAsync(string correoDestino, string codigoSala, 
-            string creador, string idioma)
+        public async Task<bool> EnviarInvitacionAsync(InvitacionCorreoParametros parametros)
         {
-            if (!EntradaComunValidador.EsMensajeValido(correoDestino) || 
-                !EntradaComunValidador.EsCodigoSalaValido(codigoSala))
+            if (parametros == null ||
+                !EntradaComunValidador.EsMensajeValido(parametros.CorreoDestino) || 
+                !EntradaComunValidador.EsCodigoSalaValido(parametros.CodigoSala))
             {
                 return false;
             }
@@ -45,11 +43,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 return false;
             }
 
-            string idiomaNormalizado = NormalizarIdioma(idioma);
+            string idiomaNormalizado = NormalizarIdioma(parametros.Idioma);
             string asunto = ObtenerAsunto(idiomaNormalizado);
-            string cuerpoHtml = ConstruirCuerpoMensaje(codigoSala, creador, idiomaNormalizado);
+            string cuerpoHtml = ConstruirCuerpoMensaje(
+                parametros.CodigoSala, 
+                parametros.Creador, 
+                idiomaNormalizado);
 
-            return await EjecutarEnvioSmtpAsync(correoDestino, asunto, cuerpoHtml, configuracion);
+            return await EjecutarEnvioSmtpAsync(
+                parametros.CorreoDestino, 
+                asunto, 
+                cuerpoHtml, 
+                configuracion);
         }
 
         private ConfiguracionSmtp ObtenerConfiguracionSmtp()

@@ -655,11 +655,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
                 SuscribirEventosCanalPartida();
 
-                _proxyJuego.SuscribirJugador(
-                    _codigoSala,
-                    _idJugador,
-                    _nombreUsuarioSesion,
-                    _esHost);
+                var suscripcion = new DTOs.SuscripcionJugadorDTO
+                {
+                    IdSala = _codigoSala,
+                    IdJugador = _idJugador,
+                    NombreUsuario = _nombreUsuarioSesion,
+                    EsHost = _esHost
+                };
+                _proxyJuego.SuscribirJugador(suscripcion);
             }
             catch (FaultException excepcion)
             {

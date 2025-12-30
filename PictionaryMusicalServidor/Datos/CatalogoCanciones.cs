@@ -22,48 +22,247 @@ namespace PictionaryMusicalServidor.Datos
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCanciones));
         private static readonly Dictionary<int, Cancion> _canciones = new Dictionary<int, Cancion>
         {
-            { 1, CrearCancion(1, "Gasolina", "Daddy Yankee", "Reggaeton", IdiomaEspanol) },
-            { 2, CrearCancion(2, "Bocanada", "Gustavo Cerati", "Rock Alternativo", IdiomaEspanol) },
-            { 3, CrearCancion(3, "La Nave Del Olvido", "José José", "Balada", IdiomaEspanol) },
-            { 4, CrearCancion(4, "Tiburón", "Proyecto Uno", "Merengue House", IdiomaEspanol) },
-            { 5, CrearCancion(5, "Pupilas De Gato", "Luis Miguel", "Pop Latino", IdiomaEspanol) },
-            { 6, CrearCancion(6, "El Triste", "Jose Jose", "Balada", IdiomaEspanol) },
-            { 7, CrearCancion(7, "El Reloj", "Luis Miguel", "Bolero", IdiomaEspanol) },
-            { 8, CrearCancion(8, "La Camisa Negra", "Juanes", "Pop Rock", IdiomaEspanol) },
-            { 9, CrearCancion(9, "Rosas", "La Oreja de Van Gogh", "Pop", IdiomaEspanol) },
-            { 10, CrearCancion(10, "La Bicicleta", "Shakira", "Vallenato Pop", IdiomaEspanol) },
-            { 11, CrearCancion(11, "El Taxi", "Pitbull", "Urbano", IdiomaEspanol) },
-            { 12, CrearCancion
-                (12, "La Puerta Negra", "Los Tigres del Norte", "Norteño", IdiomaEspanol) },
-            { 13, CrearCancion(13, "Baraja de Oro", "Chalino Sánchez", "Corrido", IdiomaEspanol) },
-            { 14, CrearCancion(14, "Los Luchadores", "La Sonora Santanera", "Cumbia", IdiomaEspanol) },
-            { 15, CrearCancion(15, "El Oso Polar", "Nelson Kanzela", "Cumbia", IdiomaEspanol) },
-            { 16, CrearCancion(16, "El Teléfono", "Wisin & Yandel", "Reggaeton", IdiomaEspanol) },
-            { 17, CrearCancion(17, "La Planta", "Caos", "Pop Rock", IdiomaEspanol) },
-            { 18, CrearCancion(18, "Lluvia", "Eddie Santiago", "Salsa", IdiomaEspanol) },
-            { 19, CrearCancion(19, "Pose", "Daddy Yankee", "Reggaeton", IdiomaEspanol) },
-            { 20, CrearCancion(20, "Cama y Mesa", "Roberto Carlos", "Balada", IdiomaEspanol) },
+            { 1, CrearCancion(new CancionCreacionParametros { 
+                Id = 1, 
+                Nombre = "Gasolina", 
+                Artista = "Daddy Yankee", 
+                Genero = "Reggaeton", 
+                Idioma = IdiomaEspanol }) },
+            { 2, CrearCancion(new CancionCreacionParametros { 
+                Id = 2, 
+                Nombre = "Bocanada", 
+                Artista = "Gustavo Cerati", 
+                Genero = "Rock Alternativo", 
+                Idioma = IdiomaEspanol }) },
+            { 3, CrearCancion(new CancionCreacionParametros { 
+                Id = 3, 
+                Nombre = "La Nave Del Olvido", 
+                Artista = "José José", 
+                Genero = "Balada", 
+                Idioma = IdiomaEspanol }) },
+            { 4, CrearCancion(new CancionCreacionParametros { 
+                Id = 4, 
+                Nombre = "Tiburón", 
+                Artista = "Proyecto Uno", 
+                Genero = "Merengue House", 
+                Idioma = IdiomaEspanol }) },
+            { 5, CrearCancion(new CancionCreacionParametros { 
+                Id = 5, 
+                Nombre = "Pupilas De Gato", 
+                Artista = "Luis Miguel", 
+                Genero = "Pop Latino", 
+                Idioma = IdiomaEspanol }) },
+            { 6, CrearCancion(new CancionCreacionParametros { 
+                Id = 6, 
+                Nombre = "El Triste", 
+                Artista = "Jose Jose", 
+                Genero = "Balada", 
+                Idioma = IdiomaEspanol }) },
+            { 7, CrearCancion(new CancionCreacionParametros { 
+                Id = 7, 
+                Nombre = "El Reloj", 
+                Artista = "Luis Miguel", 
+                Genero = "Bolero", 
+                Idioma = IdiomaEspanol }) },
+            { 8, CrearCancion(new CancionCreacionParametros { 
+                Id = 8, 
+                Nombre = "La Camisa Negra", 
+                Artista = "Juanes", 
+                Genero = "Pop Rock", 
+                Idioma = IdiomaEspanol }) },
+            { 9, CrearCancion(new CancionCreacionParametros { 
+                Id = 9, 
+                Nombre = "Rosas", 
+                Artista = "La Oreja de Van Gogh", 
+                Genero = "Pop", 
+                Idioma = IdiomaEspanol }) },
+            { 10, CrearCancion(new CancionCreacionParametros { 
+                Id = 10, 
+                Nombre = "La Bicicleta", 
+                Artista = "Shakira", 
+                Genero = "Vallenato Pop", 
+                Idioma = IdiomaEspanol }) },
+            { 11, CrearCancion(new CancionCreacionParametros { 
+                Id = 11, 
+                Nombre = "El Taxi", 
+                Artista = "Pitbull", 
+                Genero = "Urbano", 
+                Idioma = IdiomaEspanol }) },
+            { 12, CrearCancion(new CancionCreacionParametros { 
+                Id = 12, 
+                Nombre = "La Puerta Negra", 
+                Artista = "Los Tigres del Norte", 
+                Genero = "Norteño", 
+                Idioma = IdiomaEspanol }) },
+            { 13, CrearCancion(new CancionCreacionParametros { 
+                Id = 13, 
+                Nombre = "Baraja de Oro", 
+                Artista = "Chalino Sánchez", 
+                Genero = "Corrido", 
+                Idioma = IdiomaEspanol }) },
+            { 14, CrearCancion(new CancionCreacionParametros { 
+                Id = 14, 
+                Nombre = "Los Luchadores", 
+                Artista = "La Sonora Santanera", 
+                Genero = "Cumbia", 
+                Idioma = IdiomaEspanol }) },
+            { 15, CrearCancion(new CancionCreacionParametros { 
+                Id = 15, 
+                Nombre = "El Oso Polar", 
+                Artista = "Nelson Kanzela", 
+                Genero = "Cumbia", 
+                Idioma = IdiomaEspanol }) },
+            { 16, CrearCancion(new CancionCreacionParametros { 
+                Id = 16, 
+                Nombre = "El Teléfono", 
+                Artista = "Wisin & Yandel", 
+                Genero = "Reggaeton", 
+                Idioma = IdiomaEspanol }) },
+            { 17, CrearCancion(new CancionCreacionParametros { 
+                Id = 17, 
+                Nombre = "La Planta", 
+                Artista = "Caos", 
+                Genero = "Pop Rock", 
+                Idioma = IdiomaEspanol }) },
+            { 18, CrearCancion(new CancionCreacionParametros { 
+                Id = 18, 
+                Nombre = "Lluvia", 
+                Artista = "Eddie Santiago", 
+                Genero = "Salsa", 
+                Idioma = IdiomaEspanol }) },
+            { 19, CrearCancion(new CancionCreacionParametros { 
+                Id = 19, 
+                Nombre = "Pose", 
+                Artista = "Daddy Yankee", 
+                Genero = "Reggaeton", 
+                Idioma = IdiomaEspanol }) },
+            { 20, CrearCancion(new CancionCreacionParametros { 
+                Id = 20, 
+                Nombre = "Cama y Mesa", 
+                Artista = "Roberto Carlos", 
+                Genero = "Balada", 
+                Idioma = IdiomaEspanol }) },
 
-            { 21, CrearCancion(21, "Black Or White", "Michael Jackson", "Pop", IdiomaIngles) },
-            { 22, CrearCancion(22, "Don't Stop The Music", "Rihanna", "Dance Pop", IdiomaIngles) },
-            { 23, CrearCancion(23, "Man In The Mirror", "Michael Jackson", "Pop/R&B", IdiomaIngles) },
-            { 24, CrearCancion(24, "Earth Song", "Michael Jackson", "Pop", IdiomaIngles) },
-            { 25, CrearCancion(25, "Redbone", "Childish Gambino", "Funk", IdiomaIngles) },
-            { 26, CrearCancion(26, "The Chain", "Fleetwood Mac", "Rock", IdiomaIngles) },
-            { 27, CrearCancion(27, "Umbrella", "Rihanna", "R&B", IdiomaIngles) },
-            { 28, CrearCancion(28, "Yellow Submarine", "The Beatles", "Pop Rock", IdiomaIngles) },
-            { 29, CrearCancion(29, "Money", "Pink Floyd", "Rock Progresivo", IdiomaIngles) },
-            { 30, CrearCancion(30, "Diamonds", "Rihanna", "Pop", IdiomaIngles) },
-            { 31, CrearCancion(31, "Grenade", "Bruno Mars", "Pop", IdiomaIngles) },
-            { 32, CrearCancion(32, "Scarface", "Paul Engemann", "Synthpop", IdiomaIngles) },
-            { 33, CrearCancion(33, "Animals", "Martin Garrix", "EDM", IdiomaIngles) },
-            { 34, CrearCancion(34, "Hotel California", "Eagles", "Rock", IdiomaIngles) },
-            { 35, CrearCancion(35, "67", "Skrilla", "Hip Hop", IdiomaIngles) },
-            { 36, CrearCancion(36, "Blackbird", "The Beatles", "Folk", IdiomaIngles) },
-            { 37, CrearCancion(37, "Pony", "Ginuwine", "R&B", IdiomaIngles) },
-            { 38, CrearCancion(38, "Rocket Man", "Elton John", "Soft Rock", IdiomaIngles) },
-            { 39, CrearCancion(39, "Starman", "David Bowie", "Glam Rock", IdiomaIngles) },
-            { 40, CrearCancion(40, "Time In A Bottle", "Jim Croce", "Folk", IdiomaIngles) }
+            { 21, CrearCancion(new CancionCreacionParametros { 
+                Id = 21, 
+                Nombre = "Black Or White", 
+                Artista = "Michael Jackson", 
+                Genero = "Pop", 
+                Idioma = IdiomaIngles }) },
+            { 22, CrearCancion(new CancionCreacionParametros { 
+                Id = 22, 
+                Nombre = "Don't Stop The Music", 
+                Artista = "Rihanna", 
+                Genero = "Dance Pop", 
+                Idioma = IdiomaIngles }) },
+            { 23, CrearCancion(new CancionCreacionParametros { 
+                Id = 23, 
+                Nombre = "Man In The Mirror", 
+                Artista = "Michael Jackson", 
+                Genero = "Pop/R&B", 
+                Idioma = IdiomaIngles }) },
+            { 24, CrearCancion(new CancionCreacionParametros { 
+                Id = 24, 
+                Nombre = "Earth Song", 
+                Artista = "Michael Jackson", 
+                Genero = "Pop", 
+                Idioma = IdiomaIngles }) },
+            { 25, CrearCancion(new CancionCreacionParametros { 
+                Id = 25, 
+                Nombre = "Redbone", 
+                Artista = "Childish Gambino", 
+                Genero = "Funk", 
+                Idioma = IdiomaIngles }) },
+            { 26, CrearCancion(new CancionCreacionParametros { 
+                Id = 26, 
+                Nombre = "The Chain", 
+                Artista = "Fleetwood Mac", 
+                Genero = "Rock", 
+                Idioma = IdiomaIngles }) },
+            { 27, CrearCancion(new CancionCreacionParametros { 
+                Id = 27, 
+                Nombre = "Umbrella", 
+                Artista = "Rihanna", 
+                Genero = "R&B", 
+                Idioma = IdiomaIngles }) },
+            { 28, CrearCancion(new CancionCreacionParametros { 
+                Id = 28, 
+                Nombre = "Yellow Submarine", 
+                Artista = "The Beatles", 
+                Genero = "Pop Rock", 
+                Idioma = IdiomaIngles }) },
+            { 29, CrearCancion(new CancionCreacionParametros { 
+                Id = 29, 
+                Nombre = "Money", 
+                Artista = "Pink Floyd", 
+                Genero = "Rock", 
+                Idioma = IdiomaIngles }) },
+            { 30, CrearCancion(new CancionCreacionParametros { 
+                Id = 30, 
+                Nombre = "Diamonds", 
+                Artista = "Rihanna", 
+                Genero = "Pop", 
+                Idioma = IdiomaIngles }) },
+            { 31, CrearCancion(new CancionCreacionParametros { 
+                Id = 31, 
+                Nombre = "Grenade", 
+                Artista = "Bruno Mars", 
+                Genero = "Pop", 
+                Idioma = IdiomaIngles }) },
+            { 32, CrearCancion(new CancionCreacionParametros { 
+                Id = 32, 
+                Nombre = "Scarface", 
+                Artista = "Paul Engemann", 
+                Genero = "Synthpop", 
+                Idioma = IdiomaIngles }) },
+            { 33, CrearCancion(new CancionCreacionParametros { 
+                Id = 33, 
+                Nombre = "Animals", 
+                Artista = "Martin Garrix", 
+                Genero = "EDM", 
+                Idioma = IdiomaIngles }) },
+            { 34, CrearCancion(new CancionCreacionParametros { 
+                Id = 34, 
+                Nombre = "Hotel California", 
+                Artista = "Eagles", 
+                Genero = "Rock", 
+                Idioma = IdiomaIngles }) },
+            { 35, CrearCancion(new CancionCreacionParametros { 
+                Id = 35, 
+                Nombre = "67", 
+                Artista = "Skrilla", 
+                Genero = "Hip Hop", 
+                Idioma = IdiomaIngles }) },
+            { 36, CrearCancion(new CancionCreacionParametros { 
+                Id = 36, 
+                Nombre = "Blackbird", 
+                Artista = "The Beatles", 
+                Genero = "Folk", 
+                Idioma = IdiomaIngles }) },
+            { 37, CrearCancion(new CancionCreacionParametros { 
+                Id = 37, 
+                Nombre = "Pony", 
+                Artista = "Ginuwine", 
+                Genero = "R&B", 
+                Idioma = IdiomaIngles }) },
+            { 38, CrearCancion(new CancionCreacionParametros { 
+                Id = 38, 
+                Nombre = "Rocket Man", 
+                Artista = "Elton John", 
+                Genero = "Soft Rock", 
+                Idioma = IdiomaIngles }) },
+            { 39, CrearCancion(new CancionCreacionParametros { 
+                Id = 39, 
+                Nombre = "Starman", 
+                Artista = "David Bowie", 
+                Genero = "Glam Rock", 
+                Idioma = IdiomaIngles }) },
+            { 40, CrearCancion(new CancionCreacionParametros { 
+                Id = 40, 
+                Nombre = "Time In A Bottle", 
+                Artista = "Jim Croce", 
+                Genero = "Folk", 
+                Idioma = IdiomaIngles }) }
         };
 
         /// <summary>
@@ -190,19 +389,18 @@ namespace PictionaryMusicalServidor.Datos
                 StringComparison.Ordinal);
         }
 
-        private static Cancion CrearCancion(int id, string nombre, string artista, string genero, 
-            string idioma)
+        private static Cancion CrearCancion(CancionCreacionParametros parametros)
         {
-            var nombreNormalizado = NormalizarTexto(nombre);
+            var nombreNormalizado = NormalizarTexto(parametros.Nombre);
 
             return new Cancion
             {
-                Id = id,
-                Nombre = nombre,
+                Id = parametros.Id,
+                Nombre = parametros.Nombre,
                 NombreNormalizado = nombreNormalizado,
-                Artista = artista,
-                Genero = genero,
-                Idioma = idioma
+                Artista = parametros.Artista,
+                Genero = parametros.Genero,
+                Idioma = parametros.Idioma
             };
         }
 

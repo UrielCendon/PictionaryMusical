@@ -43,8 +43,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <summary>
         /// Notifica una expulsion especifica al afectado y actualiza a los demas.
         /// </summary>
-        void NotificarExpulsion(string codigoSala, string nombreExpulsado, 
-            ISalasManejadorCallback callbackExpulsado, SalaDTO salaActualizada);
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
+        void NotificarExpulsion(ExpulsionNotificacionParametros parametros);
 
         /// <summary>
         /// Notifica a todos los integrantes que la sala ha sido cancelada.

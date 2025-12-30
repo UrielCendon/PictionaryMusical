@@ -24,12 +24,12 @@
     <MetadataSource Address="http://localhost:8523/Pictionary/CursoPartida" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="CursoPartida.xsd" MetadataType="Schema" ID="1256cc08-2d85-45a9-a530-9d2c0e8181c2" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?xsd=xsd1" />
-    <MetadataFile FileName="CursoPartidaManejador.wsdl" MetadataType="Wsdl" ID="93e9293b-8a0c-46ed-8086-561035b3d6c0" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?wsdl" />
-    <MetadataFile FileName="CursoPartida1.xsd" MetadataType="Schema" ID="1fe68c9f-2044-4deb-8d78-d3eec2b7730f" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?xsd=xsd0" />
-    <MetadataFile FileName="CursoPartida2.xsd" MetadataType="Schema" ID="23f04bb4-0e48-41f7-85d2-be27875f7f63" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?xsd=xsd3" />
-    <MetadataFile FileName="CursoPartida.disco" MetadataType="Disco" ID="d5ae59de-49bf-42f3-b182-ae94e9e110df" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?disco" />
-    <MetadataFile FileName="CursoPartida3.xsd" MetadataType="Schema" ID="941633f1-ffeb-4d9c-ab46-4bede785b901" SourceId="1" SourceUrl="http://localhost:8523/Pictionary/CursoPartida?xsd=xsd2" />
+    <MetadataFile FileName="CursoPartidaManejador1.wsdl" MetadataType="Wsdl" ID="c1d63d96-7ea5-4f8d-a6c7-4430e04eba6c" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?wsdl" />
+    <MetadataFile FileName="CursoPartida1.disco" MetadataType="Disco" ID="00fe5b54-3d16-497b-b797-39929b11c43a" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?disco" />
+    <MetadataFile FileName="CursoPartida4.xsd" MetadataType="Schema" ID="acbb9ce1-1069-4307-a1e9-151d612e2901" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?xsd=xsd1" />
+    <MetadataFile FileName="CursoPartida41.xsd" MetadataType="Schema" ID="76ab89ab-697d-41d9-a000-a655910d9bc4" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?xsd=xsd0" />
+    <MetadataFile FileName="CursoPartida42.xsd" MetadataType="Schema" ID="d082c7ab-527f-4261-b079-1db1601c7e3d" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?xsd=xsd3" />
+    <MetadataFile FileName="CursoPartida43.xsd" MetadataType="Schema" ID="f5e2f22d-23c9-45ca-ace0-1b8a9c3e3283" SourceId="1" SourceUrl="http://192.168.1.71:8523/Pictionary/CursoPartida?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

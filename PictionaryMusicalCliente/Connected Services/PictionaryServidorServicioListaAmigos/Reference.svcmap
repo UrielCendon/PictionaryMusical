@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8517/Pictionary/ListaAmigos" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ListaAmigosManejador.wsdl" MetadataType="Wsdl" ID="d5051af6-300a-46d2-91bd-193438ee4995" SourceId="1" SourceUrl="http://localhost:8517/Pictionary/ListaAmigos?wsdl" />
-    <MetadataFile FileName="ListaAmigos.disco" MetadataType="Disco" ID="d16221f0-bd16-4108-a3f8-78fc0cccbea7" SourceId="1" SourceUrl="http://localhost:8517/Pictionary/ListaAmigos?disco" />
-    <MetadataFile FileName="ListaAmigos.xsd" MetadataType="Schema" ID="25666205-80fa-4fa1-bdc6-5e91e6201a48" SourceId="1" SourceUrl="http://localhost:8517/Pictionary/ListaAmigos?xsd=xsd1" />
-    <MetadataFile FileName="ListaAmigos1.xsd" MetadataType="Schema" ID="87fa26e3-6ae5-43e1-854f-5ef09d520abc" SourceId="1" SourceUrl="http://localhost:8517/Pictionary/ListaAmigos?xsd=xsd0" />
-    <MetadataFile FileName="ListaAmigos2.xsd" MetadataType="Schema" ID="2274f539-fe4a-441c-8b01-228c3fb42941" SourceId="1" SourceUrl="http://localhost:8517/Pictionary/ListaAmigos?xsd=xsd2" />
+    <MetadataFile FileName="ListaAmigos3.xsd" MetadataType="Schema" ID="64773158-6c88-4a8e-893c-f9d35be61bfc" SourceId="1" SourceUrl="http://192.168.1.71:8517/Pictionary/ListaAmigos?xsd=xsd0" />
+    <MetadataFile FileName="ListaAmigos1.disco" MetadataType="Disco" ID="a4367697-1d38-421c-a007-9ed91cf894f2" SourceId="1" SourceUrl="http://192.168.1.71:8517/Pictionary/ListaAmigos?disco" />
+    <MetadataFile FileName="ListaAmigosManejador1.wsdl" MetadataType="Wsdl" ID="66b7c60c-9ddb-4415-80ac-b326c9c7bcdc" SourceId="1" SourceUrl="http://192.168.1.71:8517/Pictionary/ListaAmigos?wsdl" />
+    <MetadataFile FileName="ListaAmigos31.xsd" MetadataType="Schema" ID="0a600da5-e0d3-4ed9-a66e-6a5fb08284c0" SourceId="1" SourceUrl="http://192.168.1.71:8517/Pictionary/ListaAmigos?xsd=xsd1" />
+    <MetadataFile FileName="ListaAmigos32.xsd" MetadataType="Schema" ID="5f6c6659-4a03-41aa-b597-9fbc10354387" SourceId="1" SourceUrl="http://192.168.1.71:8517/Pictionary/ListaAmigos?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

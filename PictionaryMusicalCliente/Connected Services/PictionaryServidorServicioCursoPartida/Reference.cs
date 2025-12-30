@@ -16,10 +16,10 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida {
     public interface ICursoPartidaManejador {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICursoPartidaManejador/SuscribirJugador", ReplyAction="http://tempuri.org/ICursoPartidaManejador/SuscribirJugadorResponse")]
-        void SuscribirJugador(string idSala, string idJugador, string nombreUsuario, bool esHost);
+        void SuscribirJugador(PictionaryMusicalServidor.Servicios.Contratos.DTOs.SuscripcionJugadorDTO suscripcion);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICursoPartidaManejador/SuscribirJugador", ReplyAction="http://tempuri.org/ICursoPartidaManejador/SuscribirJugadorResponse")]
-        System.Threading.Tasks.Task SuscribirJugadorAsync(string idSala, string idJugador, string nombreUsuario, bool esHost);
+        System.Threading.Tasks.Task SuscribirJugadorAsync(PictionaryMusicalServidor.Servicios.Contratos.DTOs.SuscripcionJugadorDTO suscripcion);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/ICursoPartidaManejador/IniciarPartida", ReplyAction="http://tempuri.org/ICursoPartidaManejador/IniciarPartidaResponse")]
         void IniciarPartida(string idSala, string idJugadorSolicitante);
@@ -93,12 +93,12 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida {
                 base(callbackInstance, binding, remoteAddress) {
         }
         
-        public void SuscribirJugador(string idSala, string idJugador, string nombreUsuario, bool esHost) {
-            base.Channel.SuscribirJugador(idSala, idJugador, nombreUsuario, esHost);
+        public void SuscribirJugador(PictionaryMusicalServidor.Servicios.Contratos.DTOs.SuscripcionJugadorDTO suscripcion) {
+            base.Channel.SuscribirJugador(suscripcion);
         }
         
-        public System.Threading.Tasks.Task SuscribirJugadorAsync(string idSala, string idJugador, string nombreUsuario, bool esHost) {
-            return base.Channel.SuscribirJugadorAsync(idSala, idJugador, nombreUsuario, esHost);
+        public System.Threading.Tasks.Task SuscribirJugadorAsync(PictionaryMusicalServidor.Servicios.Contratos.DTOs.SuscripcionJugadorDTO suscripcion) {
+            return base.Channel.SuscribirJugadorAsync(suscripcion);
         }
         
         public void IniciarPartida(string idSala, string idJugadorSolicitante) {

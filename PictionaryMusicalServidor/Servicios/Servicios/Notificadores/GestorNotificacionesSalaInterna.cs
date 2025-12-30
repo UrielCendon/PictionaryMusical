@@ -110,33 +110,39 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <summary>
         /// Notifica una expulsion especifica al afectado y actualiza a los demas.
         /// </summary>
-        public void NotificarExpulsion(string codigoSala, string nombreExpulsado, 
-            ISalasManejadorCallback callbackExpulsado, SalaDTO salaActualizada)
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
+        public void NotificarExpulsion(ExpulsionNotificacionParametros parametros)
         {
             _logger.InfoFormat(
                 "Notificando expulsion de '{0}' en sala '{1}' a todos los clientes.",
-                nombreExpulsado, codigoSala);
+                parametros.NombreExpulsado, parametros.CodigoSala);
 
             var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in todosLosDestinatarios)
             {
-                NotificarJugadorExpulsadoSeguro(callback, codigoSala, nombreExpulsado);
+                NotificarJugadorExpulsadoSeguro(
+                    callback, 
+                    parametros.CodigoSala, 
+                    parametros.NombreExpulsado);
             }
 
-            if (callbackExpulsado != null)
+            if (parametros.CallbackExpulsado != null)
             {
-                NotificarJugadorExpulsadoSeguro(callbackExpulsado, codigoSala, nombreExpulsado);
+                NotificarJugadorExpulsadoSeguro(
+                    parametros.CallbackExpulsado, 
+                    parametros.CodigoSala, 
+                    parametros.NombreExpulsado);
             }
 
-            var destinatarios = ObtenerDestinatariosExcluyendo(nombreExpulsado);
+            var destinatarios = ObtenerDestinatariosExcluyendo(parametros.NombreExpulsado);
             foreach (var callback in destinatarios)
             {
-                NotificarSalaActualizadaSeguro(callback, salaActualizada);
+                NotificarSalaActualizadaSeguro(callback, parametros.SalaActualizada);
             }
 
             _logger.InfoFormat(
                 "Expulsion de '{0}' notificada a todos los clientes en sala '{1}'.",
-                nombreExpulsado, codigoSala);
+                parametros.NombreExpulsado, parametros.CodigoSala);
         }
 
         /// <summary>
