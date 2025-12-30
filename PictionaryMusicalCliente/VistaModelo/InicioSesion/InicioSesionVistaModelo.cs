@@ -20,6 +20,7 @@ using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.ClienteServicios.Wcf;
 using PictionaryMusicalCliente.ClienteServicios.Dialogos;
+using PictionaryMusicalCliente.ClienteServicios;
 
 namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 {
@@ -436,11 +437,25 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.Error("Error durante inicio de sesion.", excepcion);
             _sonidoManejador.ReproducirError();
-            string localizado = _localizador.Localizar(
+            
+            string localizado = ObtenerMensajeErrorInicioSesion(excepcion);
+            _avisoServicio.Mostrar(localizado);
+        }
+
+        private string ObtenerMensajeErrorInicioSesion(Exception excepcion)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return servicioExcepcion.Message;
+                }
+            }
+
+            return _localizador.Localizar(
                 excepcion.Message,
                 Lang.inicioSesionErrorServicio);
-
-            _avisoServicio.Mostrar(localizado);
         }
 
         private List<string> ValidarCamposInicioSesion()
@@ -585,7 +600,25 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.Error("Error durante recuperacion de cuenta.", excepcion);
             _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.errorTextoCuentaNoRegistrada);
+            
+            string mensajeLocalizado = ObtenerMensajeErrorRecuperacion(excepcion);
+            _avisoServicio.Mostrar(mensajeLocalizado);
+        }
+
+        private string ObtenerMensajeErrorRecuperacion(Exception excepcion)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return servicioExcepcion.Message;
+                }
+            }
+
+            return _localizador.Localizar(
+                excepcion.Message, 
+                Lang.errorTextoCuentaNoRegistrada);
         }
 
         private bool ValidarIdentificadorRecuperacion()

@@ -552,6 +552,9 @@
   <data name="errorTextoCuentaNoRegistrada" xml:space="preserve">
     <value>No encontramos una cuenta con ese usuario o correo.</value>
   </data>
+  <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
+    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde.</value>
+  </data>
   <data name="errorTextoDeterminarUsuarioCambioContrasena" xml:space="preserve">
     <value>No se pudo determinar el usuario actual para cambiar la contrasena.</value>
   </data>

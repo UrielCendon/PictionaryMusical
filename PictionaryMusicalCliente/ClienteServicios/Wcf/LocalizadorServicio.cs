@@ -69,6 +69,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 ["No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
+                ["No pudimos conectar con el servidor. Verifica tu conexion e intenta mas tarde."]
+                    = () => Recursos.Lang.errorTextoBaseDatosRecuperacion,
                 ["No pudimos reenviar el codigo. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorReenviarCodigo,
                 ["No pudimos confirmar el codigo de recuperacion. Intenta mas tarde."]

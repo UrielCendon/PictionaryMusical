@@ -7,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using Datos.Modelo;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -78,7 +79,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     MensajesError.Cliente.SolicitudRecuperacionIdentificadorObligatorio);
             }
 
-            var usuario = BuscarUsuarioParaRecuperacion(solicitud.Identificador);
+            Usuario usuario;
+            try
+            {
+                usuario = BuscarUsuarioParaRecuperacion(solicitud.Identificador);
+            }
+            catch (BaseDatosExcepcion excepcion)
+            {
+                _logger.Error(
+                    MensajesError.Log.ErrorBaseDatosBuscarUsuarioRecuperacion, 
+                    excepcion);
+                return CrearFalloSolicitud(
+                    MensajesError.Cliente.ErrorBaseDatosRecuperacion);
+            }
+
             if (usuario == null)
             {
                 return CrearFalloSolicitud(

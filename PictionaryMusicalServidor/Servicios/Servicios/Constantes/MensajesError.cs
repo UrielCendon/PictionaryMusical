@@ -109,6 +109,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
 
             public const string ErrorRecuperarCuenta = 
                 "No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde.";
+            public const string ErrorBaseDatosRecuperacion = 
+                "No pudimos conectar con el servidor. Verifica tu conexion e intenta mas tarde.";
             public const string ErrorReenviarCodigo = 
                 "No pudimos reenviar el codigo. Intenta mas tarde.";
             public const string ErrorConfirmarCodigo = 
@@ -659,6 +661,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
 
             public const string ErrorBaseDatosSolicitarRecuperacion = 
                 "Error de base de datos al solicitar codigo de recuperacion.";
+            public const string ErrorBaseDatosBuscarUsuarioRecuperacion = 
+                "Error de base de datos al buscar usuario para recuperacion.";
             public const string ErrorDatosSolicitarRecuperacion = 
                 "Error de datos al solicitar codigo de recuperacion.";
             public const string ErrorInesperadoSolicitarRecuperacion = 

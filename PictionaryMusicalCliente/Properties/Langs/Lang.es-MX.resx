@@ -1209,4 +1209,7 @@ aciertan o cuando se acaba el tiempo.
   <data name="inicioSesionErrorServicio" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
   </data>
+  <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
+    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde.</value>
+  </data>
 </root>

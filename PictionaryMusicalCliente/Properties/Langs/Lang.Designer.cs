@@ -1204,6 +1204,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde..
+        /// </summary>
+        public static string errorTextoBaseDatosRecuperacion {
+            get {
+                return ResourceManager.GetString("errorTextoBaseDatosRecuperacion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ocurrió un error al guardar los datos:.
         /// </summary>
         public static string errorTextoBaseDeDatosMensaje {
