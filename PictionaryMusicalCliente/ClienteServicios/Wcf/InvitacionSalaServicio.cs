@@ -6,7 +6,6 @@ using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Amigos;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf
@@ -84,13 +83,18 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <summary>
         /// Prepara el ViewModel para invitar amigos conectados.
         /// </summary>
+        /// <param name="parametros">Parametros que contienen el codigo de sala, usuario y
+        /// amigos invitados.</param>
+        /// <returns>Resultado con el ViewModel preparado o mensaje de error.</returns>
         public async Task<InvitacionAmigosResultado> ObtenerInvitacionAmigosAsync(
-            string codigoSala,
-            string nombreUsuarioSesion,
-            ISet<int> amigosInvitados,
-            Action<string> mostrarMensaje)
+            InvitacionAmigosParametros parametros)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuarioSesion))
+            if (parametros == null)
+            {
+                throw new ArgumentNullException(nameof(parametros));
+            }
+
+            if (string.IsNullOrWhiteSpace(parametros.NombreUsuarioSesion))
             {
                 _logger.Warn("Intento de invitar amigos sin usuario de sesion.");
                 return InvitacionAmigosResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
@@ -99,7 +103,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             try
             {
                 var amigos = await _listaAmigosServicio
-                    .ObtenerAmigosAsync(nombreUsuarioSesion)
+                    .ObtenerAmigosAsync(parametros.NombreUsuarioSesion)
                     .ConfigureAwait(false);
 
                 if (amigos == null || amigos.Count == 0)
@@ -117,9 +121,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     _invitacionesServicio,
                     _perfilServicio,
                     amigos,
-                    codigoSala,
-                    id => amigosInvitados?.Contains(id) ?? false,
-                    id => amigosInvitados?.Add(id));
+                    parametros.CodigoSala,
+                    id => parametros.AmigosInvitados?.Contains(id) ?? false,
+                    id => parametros.AmigosInvitados?.Add(id));
 
                 var vistaModelo = new InvitarAmigosVistaModelo(
                     dependenciasBase,

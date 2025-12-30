@@ -20,14 +20,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         /// <summary>
         /// Muestra el dialogo de verificacion de codigo y retorna el resultado.
         /// </summary>
-        /// <param name="descripcion">
-        /// Texto descriptivo que se muestra al usuario en el dialogo.
-        /// </param>
-        /// <param name="tokenCodigo">
-        /// Token asociado al codigo de verificacion enviado al usuario.
-        /// </param>
-        /// <param name="codigoVerificacionServicio">
-        /// Servicio que valida el codigo ingresado por el usuario.
+        /// <param name="parametros">
+        /// Parametros que contienen la descripcion, token y servicio de verificacion.
         /// </param>
         /// <param name="avisoServicio">Servicio para mostrar avisos al usuario.</param>
         /// <param name="sonidoManejador">Manejador de efectos de sonido.</param>
@@ -35,26 +29,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         /// Resultado de la verificacion, o null si el usuario cancelo el dialogo.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Se lanza si <paramref name="codigoVerificacionServicio"/>,
+        /// Se lanza si <paramref name="parametros"/>,
         /// <paramref name="avisoServicio"/> o <paramref name="sonidoManejador"/> es nulo.
         /// </exception>
         public Task<DTOs.ResultadoRegistroCuentaDTO> MostrarDialogoAsync(
-            string descripcion,
-            string tokenCodigo,
-            ICodigoVerificacionServicio codigoVerificacionServicio,
+            VerificacionDialogoParametros parametros,
             IAvisoServicio avisoServicio,
             SonidoManejador sonidoManejador)
         {
-            ValidarParametros(codigoVerificacionServicio, avisoServicio, sonidoManejador);
+            ValidarParametros(parametros, avisoServicio, sonidoManejador);
 
             var finalizacion = new TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO>();
             var ventana = CrearVentanaVerificacion();
-            var vistaModelo = CrearVistaModelo(
-                descripcion,
-                tokenCodigo,
-                codigoVerificacionServicio,
-                avisoServicio,
-                sonidoManejador);
+            var vistaModelo = CrearVistaModelo(parametros, avisoServicio, sonidoManejador);
 
             ConfigurarEventoVerificacionCompletada(vistaModelo, ventana, finalizacion);
             ConfigurarEventoCancelacion(vistaModelo, ventana, finalizacion);
@@ -65,13 +52,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         }
 
         private static void ValidarParametros(
-            ICodigoVerificacionServicio codigoVerificacionServicio,
+            VerificacionDialogoParametros parametros,
             IAvisoServicio avisoServicio,
             SonidoManejador sonidoManejador)
         {
-            if (codigoVerificacionServicio == null)
+            if (parametros == null)
             {
-                throw new ArgumentNullException(nameof(codigoVerificacionServicio));
+                throw new ArgumentNullException(nameof(parametros));
             }
 
             if (avisoServicio == null)
@@ -91,18 +78,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
         }
 
         private static VerificacionCodigoVistaModelo CrearVistaModelo(
-            string descripcion,
-            string tokenCodigo,
-            ICodigoVerificacionServicio codigoVerificacionServicio,
+            VerificacionDialogoParametros parametros,
             IAvisoServicio avisoServicio,
             SonidoManejador sonidoManejador)
         {
             return new VerificacionCodigoVistaModelo(
                 App.VentanaServicio,
                 App.Localizador,
-                descripcion,
-                tokenCodigo,
-                codigoVerificacionServicio,
+                parametros.Descripcion,
+                parametros.TokenCodigo,
+                parametros.CodigoVerificacionServicio,
                 avisoServicio,
                 sonidoManejador);
         }

@@ -1,6 +1,5 @@
 ﻿using PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
@@ -19,10 +18,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <summary>
         /// Obtiene la informacion necesaria para mostrar el dialogo de invitar amigos.
         /// </summary>
+        /// <param name="parametros">Parametros que contienen el codigo de sala, usuario y
+        /// amigos invitados.</param>
+        /// <returns>Resultado con el ViewModel preparado o mensaje de error.</returns>
         Task<InvitacionAmigosResultado> ObtenerInvitacionAmigosAsync(
-            string codigoSala,
-            string nombreUsuarioSesion,
-            ISet<int> amigosInvitados,
-            Action<string> mostrarMensaje);
+            InvitacionAmigosParametros parametros);
     }
 }

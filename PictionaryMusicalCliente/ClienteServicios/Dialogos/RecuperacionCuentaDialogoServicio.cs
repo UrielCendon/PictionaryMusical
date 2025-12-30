@@ -168,10 +168,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             string token,
             ICodigoVerificacionServicio adaptador)
         {
-            return await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
+            var parametros = new VerificacionDialogoParametros(
                 Lang.cambiarContrasenaTextoCodigoVerificacion,
                 token,
-                adaptador,
+                adaptador);
+
+            return await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
+                parametros,
                 _avisoServicio,
                 _sonidoManejador).ConfigureAwait(true);
         }

@@ -551,11 +551,14 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             DTOs.ResultadoRegistroCuentaDTO Resultado)>
             MostrarDialogoVerificacionAsync()
         {
+            var parametros = new VerificacionDialogoParametros(
+                Lang.cambiarContrasenaTextoCodigoVerificacion,
+                _resultadoSolicitudCodigo.TokenCodigo,
+                _codigoVerificacionServicio);
+
             DTOs.ResultadoRegistroCuentaDTO resultadoVerificacion =
                 await _verificarCodigoDialogoServicio.MostrarDialogoAsync(
-                    Lang.cambiarContrasenaTextoCodigoVerificacion,
-                    _resultadoSolicitudCodigo.TokenCodigo,
-                    _codigoVerificacionServicio,
+                    parametros,
                     _avisoServicio,
                     _sonidoManejador)
                 .ConfigureAwait(true);

@@ -2,6 +2,7 @@
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using System;
@@ -73,24 +74,18 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         /// <summary>
         /// Navega a una sala de juego.
         /// </summary>
-        /// <param name="sala">Datos de la sala.</param>
-        /// <param name="servicio">Servicio de salas.</param>
-        /// <param name="nombreJugador">Nombre del jugador.</param>
-        /// <param name="esInvitado">Indica si es invitado.</param>
-        /// <param name="vistaModeloActual">
-        /// VistaModelo actual para cerrar.
-        /// </param>
-        public void NavegarAVentanaSala(
-            DTOs.SalaDTO sala,
-            ISalasServicio servicio,
-            string nombreJugador,
-            bool esInvitado,
-            object vistaModeloActual)
+        /// <param name="parametros">Parámetros de navegación a la sala.</param>
+        public void NavegarAVentanaSala(NavegacionSalaParametros parametros)
         {
+            if (parametros == null)
+            {
+                throw new ArgumentNullException(nameof(parametros));
+            }
+
             App.MusicaManejador.Detener();
 
             var comunicacion = new ComunicacionSalaDependencias(
-                servicio,
+                parametros.Servicio,
                 App.InvitacionesServicio,
                 new ClienteServicios.Wcf.InvitacionSalaServicio(
                     App.InvitacionesServicio,
@@ -120,13 +115,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
             var salaVistaModelo = new SalaVistaModelo(
                 _ventana,
                 _localizador,
-                sala,
+                parametros.Sala,
                 dependenciasSala,
-                nombreJugador,
-                esInvitado);
+                parametros.NombreJugador,
+                parametros.EsInvitado);
 
             _ventana.MostrarVentana(salaVistaModelo);
-            _ventana.CerrarVentana(vistaModeloActual);
+            _ventana.CerrarVentana(parametros.VistaModeloActual);
         }
     }
 }

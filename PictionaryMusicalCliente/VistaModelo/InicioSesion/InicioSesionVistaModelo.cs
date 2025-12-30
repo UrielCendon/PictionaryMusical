@@ -2,6 +2,7 @@
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Salas;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
@@ -292,13 +293,9 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             _navegacion.NavegarAVentanaPrincipal(this);
         }
 
-        private void NavegarAVentanaSala(
-            DTOs.SalaDTO sala,
-            ISalasServicio servicio,
-            string nombre,
-            bool esInvitado)
+        private void NavegarAVentanaSala(NavegacionSalaParametros parametros)
         {
-            _navegacion.NavegarAVentanaSala(sala, servicio, nombre, esInvitado, this);
+            _navegacion.NavegarAVentanaSala(parametros);
         }
 
         private async Task IniciarSesionInvitadoAsync()
@@ -369,11 +366,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.InfoFormat("Invitado {0} se unio a sala {1}",
                 vistaModelo.NombreInvitadoGenerado, vistaModelo.SalaUnida?.Codigo);
-            NavegarAVentanaSala(
+            var parametros = new NavegacionSalaParametros(
                 vistaModelo.SalaUnida,
                 salasServicio,
                 vistaModelo.NombreInvitadoGenerado,
-                true);
+                true,
+                this);
+            NavegarAVentanaSala(parametros);
         }
 
         private bool MostrarDialogoIngresoInvitado(

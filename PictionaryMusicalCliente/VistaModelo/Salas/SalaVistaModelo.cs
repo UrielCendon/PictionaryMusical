@@ -783,12 +783,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private async Task EjecutarInvitarAmigosAsync()
         {
+            var parametros = new InvitacionAmigosParametros(
+                _codigoSala,
+                _nombreUsuarioSesion,
+                _invitacionesManejador.AmigosInvitados);
+
             var resultado = await _invitacionSalaServicio
-                .ObtenerInvitacionAmigosAsync(
-                    _codigoSala,
-                    _nombreUsuarioSesion,
-                    _invitacionesManejador.AmigosInvitados,
-                    MostrarMensajeAviso)
+                .ObtenerInvitacionAmigosAsync(parametros)
                 .ConfigureAwait(true);
 
             if (!resultado.Exitoso)

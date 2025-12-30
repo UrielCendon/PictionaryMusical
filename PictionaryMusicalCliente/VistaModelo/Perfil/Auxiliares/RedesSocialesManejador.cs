@@ -1,6 +1,7 @@
 ﻿using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -148,20 +149,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares
         /// <summary>
         /// Carga los valores de las redes sociales desde un perfil.
         /// </summary>
-        /// <param name="instagram">Identificador de Instagram.</param>
-        /// <param name="facebook">Identificador de Facebook.</param>
-        /// <param name="x">Identificador de X.</param>
-        /// <param name="discord">Identificador de Discord.</param>
-        public void CargarDesdeDTO(
-            string instagram,
-            string facebook,
-            string x,
-            string discord)
+        /// <param name="redesSociales">Datos de las redes sociales.</param>
+        public void CargarDesdeDTO(RedesSocialesDTO redesSociales)
         {
-            EstablecerIdentificador(RedSocialInstagram, instagram);
-            EstablecerIdentificador(RedSocialFacebook, facebook);
-            EstablecerIdentificador(RedSocialX, x);
-            EstablecerIdentificador(RedSocialDiscord, discord);
+            if (redesSociales == null)
+            {
+                return;
+            }
+
+            EstablecerIdentificador(RedSocialInstagram, redesSociales.Instagram);
+            EstablecerIdentificador(RedSocialFacebook, redesSociales.Facebook);
+            EstablecerIdentificador(RedSocialX, redesSociales.X);
+            EstablecerIdentificador(RedSocialDiscord, redesSociales.Discord);
         }
 
         private ObservableCollection<RedSocialItemVistaModelo> CrearRedesSociales()

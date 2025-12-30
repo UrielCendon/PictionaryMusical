@@ -76,10 +76,12 @@
     <Compile Include="ClienteServicios\Abstracciones\IInvitacionSalaServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ILocalizadorServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IManejadorErrorServicio.cs" />
+    <Compile Include="ClienteServicios\Abstracciones\InvitacionAmigosParametros.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IReportesServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\ISalasServicio.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IUsuarioMapeador.cs" />
     <Compile Include="ClienteServicios\Abstracciones\IWcfClienteEjecutor.cs" />
+    <Compile Include="ClienteServicios\Abstracciones\VerificacionDialogoParametros.cs" />
     <Compile Include="ClienteServicios\Wcf\Administrador\ISolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Administrador\SolicitudesAmistadAdministrador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\ResultadosInvitacion.cs" />
@@ -228,6 +230,9 @@
     <Compile Include="ClienteServicios\Wcf\Ayudante\UsuarioMapeador.cs" />
     <Compile Include="ClienteServicios\Wcf\Ayudante\WcfClienteEjecutor.cs" />
     <Compile Include="Utilidades\VentanaServicio.cs" />
+    <Compile Include="VistaModelo\Auxiliares\ErrorConexionParametros.cs" />
+    <Compile Include="VistaModelo\Auxiliares\NavegacionSalaParametros.cs" />
+    <Compile Include="VistaModelo\Auxiliares\RedesSocialesDTO.cs" />
     <Compile Include="VistaModelo\BaseVistaModelo.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

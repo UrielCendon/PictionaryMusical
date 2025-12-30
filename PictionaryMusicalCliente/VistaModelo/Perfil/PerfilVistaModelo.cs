@@ -5,6 +5,7 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
+using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares;
 using System;
@@ -751,11 +752,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             EstablecerAvatarPorId(perfil.AvatarId);
 
-            _redesSocialesManejador.CargarDesdeDTO(
+            var redesSociales = new RedesSocialesDTO(
                 perfil.Instagram,
                 perfil.Facebook,
                 perfil.X,
                 perfil.Discord);
+            _redesSocialesManejador.CargarDesdeDTO(redesSociales);
 
             ActualizarSesion(perfil);
         }

@@ -212,13 +212,13 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_ObtenerInvitacionAmigosAsync_UsuarioNulo_RetornaFallo()
         {
             var amigosInvitados = new HashSet<int>();
-            Action<string> mostrarMensaje = m => { };
 
-            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(
+            var parametros = new InvitacionAmigosParametros(
                 "SALA123",
                 null,
-                amigosInvitados,
-                mostrarMensaje);
+                amigosInvitados);
+
+            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(parametros);
 
             Assert.IsFalse(resultado.Exitoso);
         }
@@ -227,13 +227,13 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_ObtenerInvitacionAmigosAsync_UsuarioVacio_RetornaFallo()
         {
             var amigosInvitados = new HashSet<int>();
-            Action<string> mostrarMensaje = m => { };
 
-            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(
+            var parametros = new InvitacionAmigosParametros(
                 "SALA123",
                 "",
-                amigosInvitados,
-                mostrarMensaje);
+                amigosInvitados);
+
+            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(parametros);
 
             Assert.IsFalse(resultado.Exitoso);
         }
@@ -242,17 +242,17 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         public async Task Prueba_ObtenerInvitacionAmigosAsync_SinAmigos_RetornaFallo()
         {
             var amigosInvitados = new HashSet<int>();
-            Action<string> mostrarMensaje = m => { };
 
             _listaAmigosServicioMock
                 .Setup(s => s.ObtenerAmigosAsync("usuario"))
                 .ReturnsAsync(new List<DTOs.AmigoDTO>());
 
-            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(
+            var parametros = new InvitacionAmigosParametros(
                 "SALA123",
                 "usuario",
-                amigosInvitados,
-                mostrarMensaje);
+                amigosInvitados);
+
+            var resultado = await _servicio.ObtenerInvitacionAmigosAsync(parametros);
 
             Assert.IsFalse(resultado.Exitoso);
         }

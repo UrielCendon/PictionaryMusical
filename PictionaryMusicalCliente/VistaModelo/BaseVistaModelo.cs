@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -108,27 +109,43 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (TimeoutException excepcion)
             {
-                ManejarErrorDeConexion(excepcion, "Tiempo agotado en operacion.",
-                    Lang.errorTextoTiempoAgotadoConexion, Lang.errorTextoServidorTiempoAgotado,
+                var parametros = new ErrorConexionParametros(
+                    excepcion,
+                    "Tiempo agotado en operacion.",
+                    Lang.errorTextoTiempoAgotadoConexion,
+                    Lang.errorTextoServidorTiempoAgotado,
                     redirigirEnDesconexion);
+                ManejarErrorDeConexion(parametros);
             }
             catch (EndpointNotFoundException excepcion)
             {
-                ManejarErrorDeConexion(excepcion, "Servidor no encontrado.",
-                    Lang.errorTextoServidorDesconectado, Lang.errorTextoServidorNoDisponible,
+                var parametros = new ErrorConexionParametros(
+                    excepcion,
+                    "Servidor no encontrado.",
+                    Lang.errorTextoServidorDesconectado,
+                    Lang.errorTextoServidorNoDisponible,
                     redirigirEnDesconexion);
+                ManejarErrorDeConexion(parametros);
             }
             catch (CommunicationObjectFaultedException excepcion)
             {
-                ManejarErrorDeConexion(excepcion, "Canal de comunicacion en estado fallido.",
-                    Lang.errorTextoConexionInterrumpida, Lang.errorTextoDesconexionServidor,
+                var parametros = new ErrorConexionParametros(
+                    excepcion,
+                    "Canal de comunicacion en estado fallido.",
+                    Lang.errorTextoConexionInterrumpida,
+                    Lang.errorTextoDesconexionServidor,
                     redirigirEnDesconexion);
+                ManejarErrorDeConexion(parametros);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
-                ManejarErrorDeConexion(excepcion, "Canal de comunicacion abortado.",
-                    Lang.errorTextoConexionInterrumpida, Lang.errorTextoDesconexionServidor,
+                var parametros = new ErrorConexionParametros(
+                    excepcion,
+                    "Canal de comunicacion abortado.",
+                    Lang.errorTextoConexionInterrumpida,
+                    Lang.errorTextoDesconexionServidor,
                     redirigirEnDesconexion);
+                ManejarErrorDeConexion(parametros);
             }
             catch (FaultException excepcion)
             {
@@ -140,9 +157,13 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (CommunicationException excepcion)
             {
-                ManejarErrorDeConexion(excepcion, "Error de comunicacion con el servicio.",
-                    Lang.errorTextoDesconexionServidor, Lang.errorTextoServidorNoDisponible,
+                var parametros = new ErrorConexionParametros(
+                    excepcion,
+                    "Error de comunicacion con el servicio.",
+                    Lang.errorTextoDesconexionServidor,
+                    Lang.errorTextoServidorNoDisponible,
                     redirigirEnDesconexion);
+                ManejarErrorDeConexion(parametros);
             }
             catch (ServicioExcepcion excepcion)
             {
@@ -160,21 +181,16 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
         }
 
-        private void ManejarErrorDeConexion(
-            Exception excepcion,
-            string mensajeLog,
-            string mensajeDesconexion,
-            string mensajeError,
-            bool redirigirEnDesconexion)
+        private void ManejarErrorDeConexion(ErrorConexionParametros parametros)
         {
-            _logger.Error(mensajeLog, excepcion);
-            if (redirigirEnDesconexion)
+            _logger.Error(parametros.MensajeLog, parametros.Excepcion);
+            if (parametros.RedirigirEnDesconexion)
             {
-                ManejarDesconexionCritica(mensajeDesconexion);
+                ManejarDesconexionCritica(parametros.MensajeDesconexion);
             }
             else
             {
-                MostrarErrorEnUI(mensajeError);
+                MostrarErrorEnUI(parametros.MensajeError);
             }
         }
 
