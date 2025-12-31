@@ -187,10 +187,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 _logger.Warn(MensajesError.Log.ReporteUsuariosNoRegistrados, excepcion);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
+            catch (EntityException excepcion)
+            {
+                _logger.Error(MensajesError.Log.ErrorBaseDatosReporte, excepcion);
+                throw;
+            }
+            catch (DataException excepcion)
+            {
+                _logger.Error(MensajesError.Log.ErrorDatosReporte, excepcion);
+                throw;
+            }
             catch (Exception excepcion)
             {
                 _logger.Warn(MensajesError.Log.ErrorObtenerIdUsuariosReporte, excepcion);
-                throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
+                throw;
             }
         }
 
