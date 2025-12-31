@@ -88,6 +88,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             _amigosServicio.SolicitudesActualizadas += SolicitudesActualizadas;
             ActualizarSolicitudes(_amigosServicio.SolicitudesPendientes);
+
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcherLocal(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+                _ventana.CerrarVentana(this);
+            });
         }
 
         /// <summary>
@@ -114,6 +131,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         public void Dispose()
         {
             _amigosServicio.SolicitudesActualizadas -= SolicitudesActualizadas;
+            DesconexionDetectada -= ManejarDesconexionServidor;
         }
 
         private bool PuedeAceptar(SolicitudAmistadEntrada entrada)
@@ -253,9 +271,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(
-                async () => await EjecutarAceptacionAsync(entrada),
-                ManejarErrorAceptacion);
+            await EjecutarOperacionConDesconexionAsync(
+                async () => await EjecutarAceptacionAsync(entrada));
 
             EstaProcesando = false;
         }
@@ -279,18 +296,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             _avisoServicio.Mostrar(Lang.amigosTextoSolicitudAceptada);
         }
 
-        private void ManejarErrorAceptacion(Exception excepcion)
-        {
-            _logger.WarnFormat(
-                "Error al aceptar solicitud de amistad: {0}",
-                excepcion.Message);
-            _sonidoManejador.ReproducirError();
-            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoErrorProcesarSolicitud;
-            _avisoServicio.Mostrar(mensaje);
-        }
-
         private async Task RechazarSolicitudAsync(SolicitudAmistadEntrada entrada)
         {
             if (!ValidarEntrada(entrada, "rechazar"))
@@ -300,9 +305,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(
-                async () => await EjecutarRechazoAsync(entrada),
-                ManejarErrorRechazo);
+            await EjecutarOperacionConDesconexionAsync(
+                async () => await EjecutarRechazoAsync(entrada));
 
             EstaProcesando = false;
         }
@@ -324,18 +328,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             _sonidoManejador.ReproducirNotificacion();
             _avisoServicio.Mostrar(Lang.amigosTextoSolicitudCancelada);
-        }
-
-        private void ManejarErrorRechazo(Exception excepcion)
-        {
-            _logger.WarnFormat(
-                "Error al rechazar/cancelar solicitud de amistad: {0}",
-                excepcion.Message);
-            _sonidoManejador.ReproducirError();
-            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoErrorProcesarSolicitud;
-            _avisoServicio.Mostrar(mensaje);
         }
 
         private static bool ValidarEntrada(SolicitudAmistadEntrada entrada, string operacion)

@@ -64,6 +64,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 _sonidoManejador.ReproducirClick();
                 _ventana.CerrarVentana(this);
             });
+
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+                _ventana.CerrarVentana(this);
+            });
         }
 
         /// <summary>
@@ -160,11 +177,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             EstaProcesando = true;
 
-            await EjecutarOperacionAsync(
+            await EjecutarOperacionConDesconexionAsync(
                 async () => await EnviarYNotificarExitoAsync(
                     usuarioActual, 
-                    nombreAmigo),
-                excepcion => ManejarErrorEnvio(excepcion, nombreAmigo));
+                    nombreAmigo));
 
             EstaProcesando = false;
         }
@@ -190,32 +206,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             _sonidoManejador.ReproducirNotificacion();
             _avisoServicio.Mostrar(Lang.amigosTextoSolicitudEnviada);
             _ventana.CerrarVentana(this);
-        }
-
-        private void ManejarErrorEnvio(Exception excepcion, string nombreAmigo)
-        {
-            _logger.WarnFormat(
-                "Error al enviar solicitud de amistad a '{0}': {1}",
-                nombreAmigo,
-                excepcion.Message);
-            _sonidoManejador.ReproducirError();
-
-            string mensajeError = ObtenerMensajeError(excepcion);
-            _avisoServicio.Mostrar(mensajeError);
-
-            EstaProcesando = false;
-        }
-
-        private string ObtenerMensajeError(Exception excepcion)
-        {
-            string mensajeOriginal = excepcion.Message;
-            
-            if (string.IsNullOrWhiteSpace(mensajeOriginal))
-            {
-                return Lang.errorTextoErrorProcesarSolicitud;
-            }
-
-            return mensajeOriginal;
         }
     }
 }

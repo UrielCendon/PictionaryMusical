@@ -676,7 +676,7 @@
     <value>El servidor reportó un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta de nuevo.</value>
+    <value>No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>No pudimos cargar tu perfil. Intenta más tarde.</value>
@@ -688,7 +688,7 @@
     <value>El servidor reportó un error al solicitar el cambio de contrasena.</value>
   </data>
   <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
-    <value>El servidor tardó demasiado tiempo en responder. Intente más tarde.</value>
+    <value>El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta más tarde.</value>
   </data>
   <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
     <value>El servidor reportó un error al validar el código.</value>
@@ -1168,16 +1168,16 @@
     <value>Llegaste al límite de caracteres permitido, intenta ingresando un texto más corto.</value>
   </data>
   <data name="errorTextoDesconexionServidor" xml:space="preserve">
-    <value>Se perdió la conexión con el servidor. Por favor, inicia sesión nuevamente.</value>
+    <value>Se perdió la conexión con el servidor. Revisa tu conexión a internet e inicia sesión nuevamente.</value>
   </data>
   <data name="errorTextoServidorDesconectado" xml:space="preserve">
-    <value>El servidor no está disponible. Serás redirigido al inicio de sesión.</value>
+    <value>No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta de nuevo.</value>
   </data>
   <data name="errorTextoConexionInterrumpida" xml:space="preserve">
-    <value>La conexión fue interrumpida inesperadamente. Intenta iniciar sesión de nuevo.</value>
+    <value>La conexión con el servidor se interrumpió. Revisa tu conexión a internet e inicia sesión de nuevo.</value>
   </data>
   <data name="errorTextoTiempoAgotadoConexion" xml:space="preserve">
-    <value>Se agotó el tiempo de espera con el servidor. Serás redirigido al inicio de sesión.</value>
+    <value>El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta de nuevo.</value>
   </data>
   <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
     <value>Ocurrió un error de comunicación. Verifica tu conexión e intenta de nuevo.</value>

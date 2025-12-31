@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using log4net;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalCliente.Utilidades;
 
@@ -18,8 +17,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
     /// </summary>
     public class ClasificacionVistaModelo : BaseVistaModelo
     {
-        private static readonly ILog _logger = LogManager.GetLogger(
-            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly SonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _avisoServicio;
 
@@ -58,6 +55,23 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             OrdenarPorRondasComando = new ComandoDelegado(EjecutarComandoOrdenarPorRondas, ValidarPuedeOrdenar);
             OrdenarPorPuntosComando = new ComandoDelegado(EjecutarComandoOrdenarPorPuntos, ValidarPuedeOrdenar);
             CerrarComando = new ComandoDelegado(EjecutarComandoCerrar);
+
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+                _ventana.CerrarVentana(this);
+            });
         }
 
         private void EjecutarComandoOrdenarPorRondas(object parametro)
@@ -142,7 +156,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             EstaCargando = true;
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 IReadOnlyList<DTOs.ClasificacionUsuarioDTO> clasificacion =
                     await ObtenerClasificacionAsync().ConfigureAwait(true);
@@ -150,10 +164,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _clasificacionOriginal = clasificacion 
                     ?? Array.Empty<DTOs.ClasificacionUsuarioDTO>();
                 ActualizarClasificacion(_clasificacionOriginal);
-            },
-            excepcion =>
-            {
-                ManejarErrorClasificacion(excepcion);
             });
 
             EstaCargando = false;
@@ -165,28 +175,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             return await _clasificacionServicio
                 .ObtenerTopJugadoresAsync()
                 .ConfigureAwait(true);
-        }
-
-        private void ManejarErrorClasificacion(Exception excepcion)
-        {
-            RegistrarErrorClasificacion(excepcion);
-            NotificarErrorClasificacion(excepcion.Message);
-        }
-
-        private static void RegistrarErrorClasificacion(Exception excepcion)
-        {
-            _logger.Error("Error al obtener clasificacion.", excepcion);
-        }
-
-        private void NotificarErrorClasificacion(string mensaje)
-        {
-            string localizado = _localizador.Localizar(
-                mensaje,
-                Lang.clasificacionErrorObtener);
-
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(localizado);
-            _ventana.CerrarVentana(this);
         }
 
         private void ActualizarClasificacion(

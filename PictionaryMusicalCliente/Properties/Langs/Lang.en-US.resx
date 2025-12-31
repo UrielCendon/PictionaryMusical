@@ -685,7 +685,7 @@
     <value>There was an error while signing in.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>We couldn't connect to the server. Check your connection and try again.</value>
+    <value>Could not connect to the server. Please check your internet connection and try again later.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>We couldn't load your profile. Please try again later.</value>
@@ -697,7 +697,7 @@
     <value>There was an error while requesting the password change.</value>
   </data>
   <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
-    <value>The server took too long to respond. Please try again later.</value>
+    <value>The server did not respond in time. Please check your internet connection and try again later.</value>
   </data>
   <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
     <value>There was an error while validating the code.</value>
@@ -1177,16 +1177,16 @@
     <value>You have reached the character limit, try entering a shorter text.</value>
   </data>
   <data name="errorTextoDesconexionServidor" xml:space="preserve">
-    <value>Connection to the server was lost. Please sign in again.</value>
+    <value>Connection to the server was lost. Please check your internet connection and sign in again.</value>
   </data>
   <data name="errorTextoServidorDesconectado" xml:space="preserve">
-    <value>The server is not available. You will be redirected to sign in.</value>
+    <value>Could not connect to the server. Please check your internet connection and try again.</value>
   </data>
   <data name="errorTextoConexionInterrumpida" xml:space="preserve">
-    <value>The connection was unexpectedly interrupted. Please sign in again.</value>
+    <value>Connection to the server was interrupted. Please check your internet connection and sign in again.</value>
   </data>
   <data name="errorTextoTiempoAgotadoConexion" xml:space="preserve">
-    <value>Server connection timed out. You will be redirected to sign in.</value>
+    <value>The server did not respond in time. Please check your internet connection and try again.</value>
   </data>
   <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
     <value>A communication error occurred. Check your connection and try again.</value>

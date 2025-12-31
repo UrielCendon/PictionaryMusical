@@ -455,7 +455,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             return _localizador.Localizar(
                 excepcion.Message,
-                Lang.errorTextoInicioSesionServicio);
+                Lang.inicioSesionErrorServicio);
         }
 
         private List<string> ValidarCamposInicioSesion()
@@ -561,7 +561,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 mensaje = (resultado?.ContrasenaIncorrecta == true || 
                     resultado?.CuentaEncontrada == false)
                     ? Lang.errorTextoCredencialesIncorrectas
-                    : Lang.errorTextoInicioSesionServicio;
+                    : Lang.inicioSesionErrorServicio;
             }
 
             _avisoServicio.Mostrar(mensaje);

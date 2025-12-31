@@ -62,6 +62,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             Amigos = new ObservableCollection<AmigoInvitacionItemVistaModelo>(
                 CrearElementos(dependencias.Amigos, dependencias.AmigoInvitado));
+
+            ConfigurarEventoDesconexion();
+        }
+
+        private void ConfigurarEventoDesconexion()
+        {
+            DesconexionDetectada += ManejarDesconexionServidor;
+        }
+
+        private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensaje);
+            });
         }
 
         private static void ValidarDependencias(
@@ -100,7 +116,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             amigo.EstaProcesando = true;
 
-            await EjecutarOperacionAsync(async () =>
+            await EjecutarOperacionConDesconexionAsync(async () =>
             {
                 DTOs.UsuarioDTO perfil = await ObtenerPerfilAmigoAsync(
                     amigo.UsuarioId);
@@ -111,18 +127,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 }
 
                 await EnviarInvitacionPorCorreoAsync(perfil.Correo, amigo);
-            },
-            excepcion =>
-            {
-                _logger.WarnFormat(
-                    "Error al enviar invitacion: {0}",
-                    excepcion.Message);
-                _sonidoManejador.ReproducirError();
-                string mensajeLocalizado = !string.IsNullOrWhiteSpace(excepcion.Message)
-                    ? excepcion.Message
-                    : Lang.errorTextoEnviarCorreo;
-                _avisoServicio.Mostrar(mensajeLocalizado);
-                amigo.EstaProcesando = false;
             });
 
             amigo.EstaProcesando = false;
