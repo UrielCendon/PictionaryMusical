@@ -97,7 +97,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <inheritdoc/>
-        public void NotificarFinRonda(string idSala)
+        public void NotificarFinRonda(string idSala, bool tiempoAgotado)
         {
             var callbacks = _gestorCallbacks.ObtenerCallbacksSala(idSala);
             foreach (var par in callbacks)
@@ -107,7 +107,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                     Callback = par.Value,
                     IdJugador = par.Key,
                     IdSala = idSala,
-                    Accion = cb => cb.NotificarFinRonda()
+                    Accion = cb => cb.NotificarFinRonda(tiempoAgotado)
                 };
                 _gestorCallbacks.EjecutarCallbackSeguro(parametros);
             }

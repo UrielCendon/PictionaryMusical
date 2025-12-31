@@ -205,15 +205,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No pudimos cargar tus solicitudes de amistad. Intenta más tarde..
-        /// </summary>
-        public static string amigosErrorRecuperarSolicitudes {
-            get {
-                return ResourceManager.GetString("amigosErrorRecuperarSolicitudes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos cargar tu lista de amigos. Intenta mas tarde..
         /// </summary>
         public static string amigosErrorRecuperarLista {
@@ -223,11 +214,11 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No pudimos cargar tus amigos debido a un problema del servidor..
+        ///   Busca una cadena traducida similar a No pudimos cargar tus solicitudes de amistad. Intenta más tarde..
         /// </summary>
-        public static string amigosErrorServicioAmigos {
+        public static string amigosErrorRecuperarSolicitudes {
             get {
-                return ResourceManager.GetString("amigosErrorServicioAmigos", resourceCulture);
+                return ResourceManager.GetString("amigosErrorRecuperarSolicitudes", resourceCulture);
             }
         }
         
@@ -246,6 +237,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string amigosErrorRelacionNoExiste {
             get {
                 return ResourceManager.GetString("amigosErrorRelacionNoExiste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No pudimos cargar tus amigos debido a un problema del servidor..
+        /// </summary>
+        public static string amigosErrorServicioAmigos {
+            get {
+                return ResourceManager.GetString("amigosErrorServicioAmigos", resourceCulture);
             }
         }
         
@@ -1294,7 +1294,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Ingresa el código de la sala..
+        ///   Busca una cadena traducida similar a Ingresa un código válido, debe tener 6 caracteres numéricos..
         /// </summary>
         public static string errorTextoCodigoSalaRequerido {
             get {
@@ -1632,6 +1632,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoIniciarRecuperacion {
             get {
                 return ResourceManager.GetString("errorTextoIniciarRecuperacion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoInicioSesionServicio {
+            get {
+                return ResourceManager.GetString("errorTextoInicioSesionServicio", resourceCulture);
             }
         }
         
@@ -2473,15 +2482,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde..
-        /// </summary>
-        public static string inicioSesionErrorServicio {
-            get {
-                return ResourceManager.GetString("inicioSesionErrorServicio", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Correo electrónico / Usuario.
         /// </summary>
         public static string inicioSesionTextoCorreoUsuario {
@@ -3292,7 +3292,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Ingrese el código de una sala..
+        ///   Busca una cadena traducida similar a Ingresa el código de una sala..
         /// </summary>
         public static string unirseSalaTextoVacio {
             get {

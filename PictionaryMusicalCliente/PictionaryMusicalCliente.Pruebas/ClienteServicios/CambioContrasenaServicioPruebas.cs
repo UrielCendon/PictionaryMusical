@@ -20,6 +20,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private Mock<IWcfClienteEjecutor> _ejecutorMock;
         private Mock<IWcfClienteFabrica> _fabricaClientesMock;
         private Mock<IManejadorErrorServicio> _manejadorErrorMock;
+        private Mock<ILocalizadorServicio> _localizadorMock;
         private Mock<PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador>
             _clienteVerificacionMock;
         private Mock<PictionaryServidorServicioCambioContrasena.ICambioContrasenaManejador>
@@ -35,6 +36,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _ejecutorMock = new Mock<IWcfClienteEjecutor>();
             _fabricaClientesMock = new Mock<IWcfClienteFabrica>();
             _manejadorErrorMock = new Mock<IManejadorErrorServicio>();
+            _localizadorMock = new Mock<ILocalizadorServicio>();
             _clienteVerificacionMock =
                 new Mock<PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador>();
             _clienteCambioContrasenaMock =
@@ -48,10 +50,16 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 .Setup(f => f.CrearClienteCambioContrasena())
                 .Returns(_clienteCambioContrasenaMock.Object);
 
+            _localizadorMock
+                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string mensaje, string predeterminado) => 
+                    string.IsNullOrWhiteSpace(mensaje) ? predeterminado : mensaje);
+
             _servicio = new CambioContrasenaServicio(
                 _ejecutorMock.Object,
                 _fabricaClientesMock.Object,
-                _manejadorErrorMock.Object);
+                _manejadorErrorMock.Object,
+                _localizadorMock.Object);
         }
 
         /// <summary>
@@ -71,7 +79,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 var servicio = new CambioContrasenaServicio(
                     null,
                     _fabricaClientesMock.Object,
-                    _manejadorErrorMock.Object);
+                    _manejadorErrorMock.Object,
+                    _localizadorMock.Object);
             });
         }
 
@@ -83,7 +92,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 var servicio = new CambioContrasenaServicio(
                     _ejecutorMock.Object,
                     null,
-                    _manejadorErrorMock.Object);
+                    _manejadorErrorMock.Object,
+                    _localizadorMock.Object);
             });
         }
 
@@ -95,6 +105,20 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 var servicio = new CambioContrasenaServicio(
                     _ejecutorMock.Object,
                     _fabricaClientesMock.Object,
+                    null,
+                    _localizadorMock.Object);
+            });
+        }
+
+        [TestMethod]
+        public void Prueba_Constructor_LocalizadorNulo_LanzaExcepcion()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var servicio = new CambioContrasenaServicio(
+                    _ejecutorMock.Object,
+                    _fabricaClientesMock.Object,
+                    _manejadorErrorMock.Object,
                     null);
             });
         }

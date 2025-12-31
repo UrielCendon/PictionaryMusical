@@ -14,6 +14,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     {
         private readonly Dictionary<string, JugadorPartida> _jugadores;
         private readonly Queue<string> _colaDibujantes;
+        private List<string> _ordenDibujantesBase;
 
         /// <summary>
         /// Inicializa una nueva instancia del gestor de jugadores.
@@ -22,6 +23,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             _jugadores = new Dictionary<string, JugadorPartida>(StringComparer.Ordinal);
             _colaDibujantes = new Queue<string>();
+            _ordenDibujantesBase = null;
         }
 
         /// <summary>
@@ -107,18 +109,24 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         /// <summary>
         /// Inicializa y aleatoriza la cola de turnos para los dibujantes al inicio de 
-        /// una ronda general.
+        /// una ronda general. El orden se mantiene constante durante todas las rondas.
         /// </summary>
         public void PrepararColaDibujantes()
         {
             _colaDibujantes.Clear();
-            var listaIds = new List<string>(_jugadores.Keys);
-            
-            GeneradorAleatorio.MezclarLista(listaIds);
 
-            foreach (var id in listaIds)
+            if (_ordenDibujantesBase == null)
             {
-                _colaDibujantes.Enqueue(id);
+                _ordenDibujantesBase = new List<string>(_jugadores.Keys);
+                GeneradorAleatorio.MezclarLista(_ordenDibujantesBase);
+            }
+
+            foreach (var id in _ordenDibujantesBase)
+            {
+                if (_jugadores.ContainsKey(id))
+                {
+                    _colaDibujantes.Enqueue(id);
+                }
             }
         }
 

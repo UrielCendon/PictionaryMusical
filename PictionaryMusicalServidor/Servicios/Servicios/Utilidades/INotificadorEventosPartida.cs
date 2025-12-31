@@ -44,7 +44,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// Notifica a todos los jugadores que la ronda ha finalizado.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
-        void NotificarFinRonda(string idSala);
+        /// <param name="tiempoAgotado">Indica si la ronda termino por tiempo agotado.</param>
+        void NotificarFinRonda(string idSala, bool tiempoAgotado);
 
         /// <summary>
         /// Notifica a todos los jugadores que la partida ha finalizado.

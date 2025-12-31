@@ -11,8 +11,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
     /// </summary>
     public class GestorTiemposPartida : IDisposable
     {
-        private readonly Timer _timerRonda;
-        private readonly Timer _timerTransicion;
+        private readonly Timer _temporizadorRonda;
+        private readonly Timer _temporizadorTransicion;
         private DateTime _inicioRonda;
         private readonly int _duracionRondaSegundos;
         private bool _disposed = false;
@@ -38,20 +38,20 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             _duracionRondaSegundos = duracionRondaSegundos;
 
-            _timerRonda = new Timer 
+            _temporizadorRonda = new Timer 
             { 
                 AutoReset = false 
             };
 
-            _timerRonda.Elapsed += ManejarTiempoRondaAgotado;
+            _temporizadorRonda.Elapsed += ManejarTiempoRondaAgotado;
 
-            _timerTransicion = new Timer
+            _temporizadorTransicion = new Timer
             {
                 AutoReset = false,
                 Interval = duracionTransicionSegundos * 1000
             };
 
-            _timerTransicion.Elapsed += ManejarTiempoTransicionAgotado;
+            _temporizadorTransicion.Elapsed += ManejarTiempoTransicionAgotado;
         }
 
         private void ManejarTiempoRondaAgotado(object sender, ElapsedEventArgs argumentos)
@@ -69,10 +69,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// </summary>
         public void IniciarRonda()
         {
-            _timerTransicion.Stop();
-            _timerRonda.Interval = _duracionRondaSegundos * 1000;
+            _temporizadorTransicion.Stop();
+            _temporizadorRonda.Interval = _duracionRondaSegundos * 1000;
             _inicioRonda = DateTime.UtcNow;
-            _timerRonda.Start();
+            _temporizadorRonda.Start();
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public void IniciarTransicion()
         {
             DetenerRonda();
-            _timerTransicion.Start();
+            _temporizadorTransicion.Start();
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public void DetenerTodo()
         {
             DetenerRonda();
-            _timerTransicion.Stop();
+            _temporizadorTransicion.Stop();
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// </returns>
         public int CalcularPuntosPorTiempo()
         {
-            if (!_timerRonda.Enabled)
+            if (!_temporizadorRonda.Enabled)
             {
                 return 0;
             }
@@ -126,8 +126,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (disposing)
             {
-                _timerRonda?.Dispose();
-                _timerTransicion?.Dispose();
+                _temporizadorRonda?.Dispose();
+                _temporizadorTransicion?.Dispose();
             }
 
             _disposed = true;
@@ -135,7 +135,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void DetenerRonda()
         {
-            _timerRonda.Stop();
+            _temporizadorRonda.Stop();
             _inicioRonda = default;
         }
     }

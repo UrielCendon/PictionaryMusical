@@ -1212,7 +1212,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <summary>
         /// Notifica la finalizacion de la ronda actual. Callback del servicio WCF.
         /// </summary>
-        public void NotificarFinRonda()
+        /// <param name="tiempoAgotado">Indica si la ronda termino por tiempo agotado.</param>
+        public void NotificarFinRonda(bool tiempoAgotado)
         {
             var dispatcher = Application.Current?.Dispatcher;
             if (dispatcher == null)
@@ -1227,7 +1228,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     return;
                 }
 
-                _partidaVistaModelo.NotificarFinRonda();
+                _partidaVistaModelo.NotificarFinRonda(tiempoAgotado);
             }));
         }
 

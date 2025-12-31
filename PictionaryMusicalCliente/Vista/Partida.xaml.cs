@@ -63,7 +63,7 @@ namespace PictionaryMusicalCliente.Vista
             InkCanvasStrokeCollectedEventArgs argumentosEvento)
         {
             if (argumentosEvento.Stroke == null || !(DataContext is PartidaVistaModelo vistaModelo)
-                || !vistaModelo.EsDibujante)
+                || !vistaModelo.PuedeDibujar)
             {
                 return;
             }
@@ -86,7 +86,7 @@ namespace PictionaryMusicalCliente.Vista
         private void AlPresionarBotonIzquierdoEnLienzo(object remitente,
             MouseButtonEventArgs argumentosEvento)
         {
-            if (DataContext is PartidaVistaModelo vistaModelo && vistaModelo.EsDibujante
+            if (DataContext is PartidaVistaModelo vistaModelo && vistaModelo.PuedeDibujar
                 && vistaModelo.EsHerramientaBorrador)
             {
                 _borradoEnProgreso = true;

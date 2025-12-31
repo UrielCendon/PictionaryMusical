@@ -125,7 +125,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No encontramos al usuario. Verifica que el nombre sea correcto."]
                     = () => Recursos.Lang.errorTextoUsuarioNoEncontrado,
                 ["No pudimos iniciar sesion. Por favor, intenta mas tarde."]
-                    = () => Recursos.Lang.inicioSesionErrorServicio,
+                    = () => Recursos.Lang.errorTextoInicioSesionServicio,
                 ["Error al obtener el usuario."]
                     = () => Recursos.Lang.amigosErrorBuscarBase,
                 ["No encontramos a uno o mas usuarios especificados."]

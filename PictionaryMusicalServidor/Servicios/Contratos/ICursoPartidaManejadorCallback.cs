@@ -48,8 +48,9 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// <summary>
         /// Notifica que la ronda actual ha finalizado.
         /// </summary>
+        /// <param name="tiempoAgotado">Indica si la ronda termino por tiempo agotado.</param>
         [OperationContract(IsOneWay = true)]
-        void NotificarFinRonda();
+        void NotificarFinRonda(bool tiempoAgotado);
 
         /// <summary>
         /// Notifica que la partida termino y envia los resultados finales.

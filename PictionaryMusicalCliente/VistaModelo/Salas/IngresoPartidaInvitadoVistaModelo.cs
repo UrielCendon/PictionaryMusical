@@ -153,31 +153,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private async Task UnirseSalaComoInvitadoAsync()
         {
-            if (EstaProcesando || !ValidarCodigoSala())
+            if (EstaProcesando)
             {
                 return;
             }
 
-            await IntentarUnirseSalaAsync(CodigoSala.Trim()).ConfigureAwait(true);
-        }
-
-        private bool ValidarCodigoSala()
-        {
-            string codigo = CodigoSala?.Trim();
-            
-            if (!string.IsNullOrWhiteSpace(codigo))
+            var resultadoValidacion = ValidadorEntrada.ValidarCodigoSala(CodigoSala);
+            if (!resultadoValidacion.OperacionExitosa)
             {
-                return true;
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(resultadoValidacion.Mensaje);
+                return;
             }
 
-            NotificarCodigoSalaVacio();
-            return false;
-        }
-
-        private void NotificarCodigoSalaVacio()
-        {
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(Lang.unirseSalaTextoVacio);
+            await IntentarUnirseSalaAsync(CodigoSala.Trim()).ConfigureAwait(true);
         }
 
         private async Task IntentarUnirseSalaAsync(string codigo)

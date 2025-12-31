@@ -746,10 +746,11 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task UnirseSalaInternoAsync()
         {
-            string codigo = ValidarCodigoSala();
-            if (codigo == null)
+            var resultadoValidacion = ValidadorEntrada.ValidarCodigoSala(CodigoSala);
+            if (!resultadoValidacion.OperacionExitosa)
             {
-                ManejarErrorCodigoInvalido();
+                _sonidoManejador.ReproducirError();
+                App.AvisoServicio.Mostrar(resultadoValidacion.Mensaje);
                 return;
             }
 
@@ -761,21 +762,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
-                var sala = await UnirseSalaEnServidorAsync(codigo);
+                var sala = await UnirseSalaEnServidorAsync(CodigoSala.Trim());
                 NavegarASala(sala);
             });
-        }
-
-        private string ValidarCodigoSala()
-        {
-            string codigo = CodigoSala?.Trim();
-            return string.IsNullOrWhiteSpace(codigo) ? null : codigo;
-        }
-
-        private void ManejarErrorCodigoInvalido()
-        {
-            _sonidoManejador.ReproducirError();
-            App.AvisoServicio.Mostrar(Lang.unirseSalaTextoVacio);
         }
 
         private bool ValidarSesionActivaParaUnirse()

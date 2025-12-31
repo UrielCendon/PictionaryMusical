@@ -40,6 +40,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private int _rondaActual;
         private int _cancionActualId;
         private bool _rondaFinalizadaPorAciertos;
+        private bool _enTransicionRonda;
 
         /// <summary>
         /// Inicializa una nueva instancia del controlador de partida.
@@ -111,8 +112,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         /// <summary>
         /// Evento que notifica la finalizacion de una ronda.
+        /// El parametro indica si fue por tiempo agotado (true) o por otra razon (false).
         /// </summary>
-        public event Action FinRonda;
+        public event Action<bool> FinRonda;
 
         /// <summary>
         /// Evento que notifica el fin de la partida y envia los resultados finales.
@@ -211,7 +213,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (eraDibujante)
             {
-                return ResultadoRemocionJugador.AvanzarRonda();
+                return _enTransicionRonda 
+                    ? ResultadoRemocionJugador.AvanzarRondaDirecto() 
+                    : ResultadoRemocionJugador.AvanzarRonda();
             }
 
             if (_gestorJugadores.TodosAdivinaron())
@@ -228,6 +232,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 CancelarPartida(resultado.MensajeCancelacion);
             }
+            else if (resultado.DebeAvanzarDirecto)
+            {
+                PrepararSiguienteRonda();
+            }
             else if (resultado.DebeAvanzar)
             {
                 FinalizarRondaActual();
@@ -238,6 +246,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         {
             public bool DebeCancelar { get; private set; }
             public bool DebeAvanzar { get; private set; }
+            public bool DebeAvanzarDirecto { get; private set; }
             public string MensajeCancelacion { get; private set; }
 
             public static ResultadoRemocionJugador SinAccion()
@@ -257,6 +266,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             public static ResultadoRemocionJugador AvanzarRonda()
             {
                 return new ResultadoRemocionJugador { DebeAvanzar = true };
+            }
+
+            public static ResultadoRemocionJugador AvanzarRondaDirecto()
+            {
+                return new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
             }
         }
 
@@ -317,8 +331,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             lock (_sincronizacion)
             {
                 var jugador = _gestorJugadores.Obtener(id);
-                if (_estadoActual == EstadoPartida.Jugando && jugador != null 
-                    && jugador.EsDibujante)
+                if (_estadoActual == EstadoPartida.Jugando && !_enTransicionRonda 
+                    && jugador != null && jugador.EsDibujante)
                 {
                     TrazoRecibido?.Invoke(trazo);
                 }
@@ -428,6 +442,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return;
                 }
 
+                _enTransicionRonda = true;
+
                 if (!_gestorJugadores.QuedanDibujantesPendientes())
                 {
                     if (_rondaActual >= _totalRondas)
@@ -450,7 +466,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     _cancionesUsadas.Add(cancion.Id);
 
                     rondaDto = CrearRondaDto(cancion);
-                    IniciarTimerRondaConRetardo();
+                    IniciarTemporizadorRondaConRetardo();
                 }
                 else
                 {
@@ -468,23 +484,25 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private void IniciarTimerRondaConRetardo()
+        private void IniciarTemporizadorRondaConRetardo()
         {
-            Task.Delay(TiempoOverlayClienteSegundos * 1000).ContinueWith(ManejarRetardoTimer);
+            Task.Delay(TiempoOverlayClienteSegundos * 1000).
+                ContinueWith(ManejarRetardoTemporizador);
         }
 
-        private void ManejarRetardoTimer(Task tarea)
+        private void ManejarRetardoTemporizador(Task tarea)
         {
             lock (_sincronizacion)
             {
                 if (_estadoActual == EstadoPartida.Jugando)
                 {
+                    _enTransicionRonda = false;
                     _gestorTiempos.IniciarRonda();
                 }
             }
         }
 
-        private void FinalizarRondaActual(bool forzarPorAciertos = false)
+        private void FinalizarRondaActual(bool forzarPorAciertos = false, bool tiempoAgotado = false)
         {
             lock (_sincronizacion)
             {
@@ -497,9 +515,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return;
                 }
                 _gestorTiempos.DetenerTodo();
+                _enTransicionRonda = true;
             }
 
-            FinRonda?.Invoke();
+            FinRonda?.Invoke(tiempoAgotado);
             EvaluarContinuidadPartida();
         }
 
@@ -515,7 +534,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (!yaFinalizada)
             {
-                FinalizarRondaActual(true);
+                FinalizarRondaActual(forzarPorAciertos: true, tiempoAgotado: false);
             }
         }
 
@@ -592,7 +611,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void ManejarTiempoRondaAgotado()
         {
-            FinalizarRondaActual();
+            FinalizarRondaActual(forzarPorAciertos: false, tiempoAgotado: true);
         }
 
         private static bool EsMensajeInvalido(string id, string mensaje)

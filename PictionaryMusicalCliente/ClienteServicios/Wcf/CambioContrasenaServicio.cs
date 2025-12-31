@@ -19,6 +19,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IWcfClienteEjecutor _ejecutor;
         private readonly IWcfClienteFabrica _fabricaClientes;
         private readonly IManejadorErrorServicio _manejadorError;
+        private readonly ILocalizadorServicio _localizador;
 
         /// <summary>
         /// Inicializa el servicio con las dependencias necesarias.
@@ -26,19 +27,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <param name="ejecutor">Ejecutor de operaciones WCF.</param>
         /// <param name="fabricaClientes">Fabrica para crear clientes WCF.</param>
         /// <param name="manejadorError">Manejador para procesar errores de servicio.</param>
+        /// <param name="localizador">Localizador para traducir mensajes del servidor.</param>
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia es nula.
         /// </exception>
         public CambioContrasenaServicio(
             IWcfClienteEjecutor ejecutor,
             IWcfClienteFabrica fabricaClientes,
-            IManejadorErrorServicio manejadorError)
+            IManejadorErrorServicio manejadorError,
+            ILocalizadorServicio localizador)
         {
             _ejecutor = ejecutor ?? throw new ArgumentNullException(nameof(ejecutor));
             _fabricaClientes = fabricaClientes ??
                 throw new ArgumentNullException(nameof(fabricaClientes));
             _manejadorError = manejadorError ??
                 throw new ArgumentNullException(nameof(manejadorError));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -125,7 +130,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 },
                 Lang.errorTextoServidorValidarCodigo).ConfigureAwait(false);
 
-            return MapearResultadoOperacion(resultado);
+            return MapearResultadoOperacion(resultado, Lang.errorTextoServidorValidarCodigo);
         }
 
         /// <summary>
@@ -150,7 +155,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 Lang.errorTextoServidorActualizarContrasena).ConfigureAwait(false);
 
             RegistrarActualizacionExitosa(resultado);
-            return MapearResultadoOperacion(resultado);
+            return MapearResultadoOperacion(resultado, Lang.errorTextoActualizarContrasena);
         }
 
         private async Task<T> EjecutarOperacionAsync<T>(
@@ -297,8 +302,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             };
         }
 
-        private static DTOs.ResultadoOperacionDTO MapearResultadoOperacion(
-            DTOs.ResultadoOperacionDTO dto)
+        private DTOs.ResultadoOperacionDTO MapearResultadoOperacion(
+            DTOs.ResultadoOperacionDTO dto,
+            string mensajePredeterminado)
         {
             if (dto == null)
             {
@@ -308,7 +314,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return new DTOs.ResultadoOperacionDTO
             {
                 OperacionExitosa = dto.OperacionExitosa,
-                Mensaje = dto.Mensaje
+                Mensaje = _localizador.Localizar(dto.Mensaje, mensajePredeterminado)
             };
         }
 

@@ -255,9 +255,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 ManejarTrazoRecibido(idSala, trazo);
             };
 
-            controlador.FinRonda += delegate()
+            controlador.FinRonda += delegate(bool tiempoAgotado)
             {
-                ManejarFinRonda(idSala);
+                ManejarFinRonda(idSala, tiempoAgotado);
             };
 
             controlador.FinPartida += delegate(ResultadoPartidaDTO resultado)
@@ -407,9 +407,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             NotificarCallbacksTrazoRecibido(idSala, trazo);
         }
 
-        private static void ManejarFinRonda(string idSala)
+        private static void ManejarFinRonda(string idSala, bool tiempoAgotado)
         {
-            NotificarCallbacksFinRonda(idSala);
+            NotificarCallbacksFinRonda(idSala, tiempoAgotado);
         }
 
         private void ManejarFinPartida(
@@ -665,7 +665,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
         }
 
-        private static void NotificarCallbacksFinRonda(string idSala)
+        private static void NotificarCallbacksFinRonda(string idSala, bool tiempoAgotado)
         {
             List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
             lock (_sincronizacion)
@@ -683,7 +683,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             foreach (var par in callbacks)
             {
                 NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) { cb.NotificarFinRonda(); });
+                    delegate(ICursoPartidaManejadorCallback cb) { cb.NotificarFinRonda(tiempoAgotado); });
             }
         }
 

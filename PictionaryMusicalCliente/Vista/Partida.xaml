@@ -133,7 +133,7 @@
                     </DockPanel>
 
                     <InkCanvas x:Name="inkLienzoDibujo" Grid.Row="1" Margin="4" Background="White"
-                               IsHitTestVisible="{Binding EsDibujante}"/>
+                               IsHitTestVisible="{Binding PuedeDibujar}"/>
                 </Grid>
             </Grid>
         </Border>

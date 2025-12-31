@@ -172,7 +172,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public async Task Prueba_AbandonarSalaAsync_NombreUsuarioVacio_RetornaSinAccion()
         {
-            await _servicio.AbandonarSalaAsync("SALA123", "");
+            await _servicio.AbandonarSalaAsync("123456", "");
 
             Assert.IsInstanceOfType(_servicio, typeof(SalasServicio));
         }

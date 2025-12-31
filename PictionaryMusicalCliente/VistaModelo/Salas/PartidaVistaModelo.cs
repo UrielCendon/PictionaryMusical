@@ -53,6 +53,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool _mostrarEstadoRonda;
         private int _turnosCompletadosEnCiclo;
         private bool _esDibujante;
+        private bool _enTransicionRonda;
         private bool _alarmaActiva;
         private DTOs.RondaDTO _rondaPendiente;
         private int _totalJugadoresPendiente;
@@ -357,7 +358,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         public bool EsDibujante
         {
             get => _esDibujante;
-            private set => EstablecerPropiedad(ref _esDibujante, value);
+            private set
+            {
+                if (EstablecerPropiedad(ref _esDibujante, value))
+                {
+                    NotificarCambio(nameof(PuedeDibujar));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indica si el dibujante puede dibujar actualmente.
+        /// Es false durante la transicion entre rondas (overlay de rol).
+        /// </summary>
+        public bool PuedeDibujar
+        {
+            get => _esDibujante && !_enTransicionRonda;
         }
 
         /// <summary>
@@ -612,6 +628,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void MostrarOverlayAlarma()
         {
             _alarmaActiva = true;
+            _enTransicionRonda = true;
+            NotificarCambio(nameof(PuedeDibujar));
 
             if (!string.IsNullOrWhiteSpace(_nombreCancionActual))
             {
@@ -637,6 +655,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _temporizadores.DetenerOverlay();
             VisibilidadOverlayDibujante = Visibility.Collapsed;
             VisibilidadOverlayAdivinador = Visibility.Collapsed;
+            _enTransicionRonda = false;
+            NotificarCambio(nameof(PuedeDibujar));
             HabilitarEscrituraTrasOverlay();
             IniciarTemporizador();
         }
@@ -907,6 +927,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             VisibilidadOverlayAdivinador = Visibility.Collapsed;
             VisibilidadOverlayDibujante = Visibility.Visible;
+            _enTransicionRonda = true;
+            NotificarCambio(nameof(PuedeDibujar));
             _temporizadores.DetenerOverlay();
             _temporizadores.IniciarOverlay();
         }
@@ -933,6 +955,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             VisibilidadOverlayDibujante = Visibility.Collapsed;
             VisibilidadOverlayAdivinador = Visibility.Visible;
+            _enTransicionRonda = true;
+            NotificarCambio(nameof(PuedeDibujar));
             _temporizadores.DetenerOverlay();
             _temporizadores.IniciarOverlay();
         }
@@ -1000,7 +1024,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <summary>
         /// Procesa la notificacion de fin de ronda.
         /// </summary>
-        public void NotificarFinRonda()
+        /// <param name="tiempoAgotado">Indica si la ronda termino por tiempo agotado.</param>
+        public void NotificarFinRonda(bool tiempoAgotado)
         {
             var dispatcher = Application.Current?.Dispatcher;
             if (dispatcher == null)
@@ -1022,8 +1047,39 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 PuedeEscribirCambiado?.Invoke(false);
                 MostrarEstadoRonda = false;
                 TextoContador = string.Empty;
-                MostrarOverlayAlarma();
+                
+                if (tiempoAgotado)
+                {
+                    MostrarOverlayAlarma();
+                }
+                else
+                {
+                    MostrarTransicionFinRondaSinAlarma();
+                }
             }));
+        }
+
+        private void MostrarTransicionFinRondaSinAlarma()
+        {
+            _enTransicionRonda = true;
+            NotificarCambio(nameof(PuedeDibujar));
+
+            if (!string.IsNullOrWhiteSpace(_nombreCancionActual))
+            {
+                PalabraAdivinar = _nombreCancionActual;
+            }
+
+            VisibilidadPalabraAdivinar = Visibility.Visible;
+            ColorPalabraAdivinar = Brushes.Blue;
+
+            if (!string.IsNullOrWhiteSpace(_archivoCancionActual))
+            {
+                _cancionManejador.Reproducir(_archivoCancionActual);
+            }
+
+            _alarmaActiva = true;
+            _temporizadores.DetenerAlarma();
+            _temporizadores.IniciarAlarma();
         }
 
         /// <summary>

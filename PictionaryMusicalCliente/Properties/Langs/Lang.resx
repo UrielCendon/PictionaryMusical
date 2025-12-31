@@ -775,7 +775,7 @@
     <value>JUGADORES</value>
   </data>
   <data name="unirseSalaTextoVacio" xml:space="preserve">
-    <value>Ingrese el código de una sala.</value>
+    <value>Ingresa el código de una sala.</value>
   </data>
   <data name="apellidoRegistroInvalido" xml:space="preserve">
     <value>El apellido es obligatorio y no debe exceder 50 caracteres.</value>
@@ -1132,7 +1132,7 @@
     <value>El jugador ya no está en la sala.</value>
   </data>
   <data name="errorTextoCodigoSalaRequerido" xml:space="preserve">
-    <value>Ingresa el código de la sala.</value>
+    <value>Ingresa un código válido, debe tener 6 caracteres numéricos.</value>
   </data>
   <data name="errorTextoConfiguracionRequerida" xml:space="preserve">
     <value>Configura la partida antes de iniciar.</value>
@@ -1203,7 +1203,7 @@
   <data name="clasificacionErrorObtener" xml:space="preserve">
     <value>No se pudo obtener la clasificación en este momento.</value>
   </data>
-  <data name="inicioSesionErrorServicio" xml:space="preserve">
+  <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
   </data>
 </root>

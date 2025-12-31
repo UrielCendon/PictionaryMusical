@@ -124,7 +124,7 @@ namespace PictionaryMusicalCliente
                 WcfEjecutor, WcfFabrica, ManejadorError, UsuarioMapeador, Localizador);
 
             CambioContrasenaServicio = new CambioContrasenaServicio(
-                WcfEjecutor, WcfFabrica, ManejadorError);
+                WcfEjecutor, WcfFabrica, ManejadorError, Localizador);
 
             PerfilServicio = new PerfilServicio(
                 WcfEjecutor, WcfFabrica, ManejadorError);

@@ -224,7 +224,7 @@
     <value>AJUSTES</value>
   </data>
   <data name="globalTextoIngreseCodigoPartida" xml:space="preserve">
-    <value>Ingrese el código de la partida</value>
+    <value>Ingrese el código de la partida:</value>
   </data>
   <data name="globalTextoUnirse" xml:space="preserve">
     <value>¡UNIRSE!</value>
@@ -531,10 +531,10 @@ aciertan o cuando se acaba el tiempo.
     <value>Ocurrió un problema de comunicación con el servidor. Se mostrarán los datos actuales de la sesión.</value>
   </data>
   <data name="errorTextoActualizarContrasena" xml:space="preserve">
-    <value>No pudimos actualizar tu contraseña. Intenta más tarde.</value>
+    <value>No pudimos actualizar tu contraseña debido a un error con el servidor. Intenta más tarde.</value>
   </data>
   <data name="errorTextoActualizarPerfil" xml:space="preserve">
-    <value>No se pudo actualizar el perfil. Intente nuevamente.</value>
+    <value>No se pudo actualizar el perfil debido a un error del servicio. Intente nuevamente más tarde.</value>
   </data>
   <data name="errorTextoCampoLongitudMaxima" xml:space="preserve">
     <value>El {0} no debe superar {1} caracteres.</value>
@@ -568,6 +568,9 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoCuentaNoRegistrada" xml:space="preserve">
     <value>No se encontró una cuenta con el usuario o correo proporcionado.</value>
+  </data>
+  <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
+    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde.</value>
   </data>
   <data name="errorTextoDeterminarUsuarioCambioContrasena" xml:space="preserve">
     <value>No se pudo determinar el usuario actual para cambiar la contraseña.</value>
@@ -783,7 +786,7 @@ aciertan o cuando se acaba el tiempo.
     <value>JUGADORES</value>
   </data>
   <data name="unirseSalaTextoVacio" xml:space="preserve">
-    <value>Ingrese el código de una sala.</value>
+    <value>Ingresa el código de una sala.</value>
   </data>
   <data name="apellidoRegistroInvalido" xml:space="preserve">
     <value>El apellido es obligatorio y no debe exceder 50 caracteres.</value>
@@ -1140,7 +1143,7 @@ aciertan o cuando se acaba el tiempo.
     <value>El jugador ya no está en la sala.</value>
   </data>
   <data name="errorTextoCodigoSalaRequerido" xml:space="preserve">
-    <value>Ingresa el código de la sala.</value>
+    <value>Ingresa un código válido, debe tener 6 caracteres numéricos.</value>
   </data>
   <data name="errorTextoConfiguracionRequerida" xml:space="preserve">
     <value>Configura la partida antes de iniciar.</value>
@@ -1211,11 +1214,7 @@ aciertan o cuando se acaba el tiempo.
   <data name="clasificacionErrorObtener" xml:space="preserve">
     <value>No se pudo obtener la clasificación en este momento.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="inicioSesionErrorServicio" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
-    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde.</value>
+  <data name="errorTextoInicioSesionServicio" xml:space="preserve">
+    <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
   </data>
 </root>

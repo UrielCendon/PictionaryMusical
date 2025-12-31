@@ -1,5 +1,6 @@
 ﻿using PictionaryMusicalCliente.Properties.Langs;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
@@ -10,6 +11,8 @@ namespace PictionaryMusicalCliente.Utilidades
     /// </summary>
     public static class ValidadorEntrada
     {
+        private const int LongitudCodigoSala = 6;
+
         private static readonly Regex CorreoRegex = new Regex(
             @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
@@ -87,6 +90,28 @@ namespace PictionaryMusicalCliente.Utilidades
             if (!ContrasenaRegex.IsMatch(contrasenaNormalizada))
             {
                 return CrearResultadoFallido(Lang.errorTextoContrasenaFormato);
+            }
+
+            return CrearResultadoExitoso();
+        }
+
+        /// <summary>
+        /// Valida que el codigo de sala tenga el formato correcto.
+        /// Debe tener exactamente 6 caracteres numericos.
+        /// </summary>
+        public static DTOs.ResultadoOperacionDTO ValidarCodigoSala(string codigoSala)
+        {
+            if (string.IsNullOrWhiteSpace(codigoSala))
+            {
+                return CrearResultadoFallido(Lang.errorTextoCodigoSalaRequerido);
+            }
+
+            string codigoNormalizado = codigoSala.Trim();
+
+            if (codigoNormalizado.Length != LongitudCodigoSala ||
+                !codigoNormalizado.All(char.IsDigit))
+            {
+                return CrearResultadoFallido(Lang.errorTextoCodigoSalaRequerido);
             }
 
             return CrearResultadoExitoso();
