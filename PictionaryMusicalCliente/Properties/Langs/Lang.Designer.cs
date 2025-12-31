@@ -214,6 +214,24 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No pudimos cargar tu lista de amigos. Intenta mas tarde..
+        /// </summary>
+        public static string amigosErrorRecuperarLista {
+            get {
+                return ResourceManager.GetString("amigosErrorRecuperarLista", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No pudimos cargar tus amigos debido a un problema del servidor..
+        /// </summary>
+        public static string amigosErrorServicioAmigos {
+            get {
+                return ResourceManager.GetString("amigosErrorServicioAmigos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Ya tienes una solicitud o amistad con este usuario..
         /// </summary>
         public static string amigosErrorRelacionExiste {

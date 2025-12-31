@@ -273,41 +273,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 cliente.Abort();
             }
-            else if (EsErrorComunicacion(excepcion))
-            {
-                _logger.Warn("Error comunicacion permanente. Intentando reconexion.");
-                await IntentarReconexionAsync();
-            }
 
             LanzarExcepcionServicio(excepcion, Lang.errorTextoErrorProcesarSolicitud);
-        }
-
-        private async Task IntentarReconexionAsync()
-        {
-            string usuario = _usuarioSuscrito;
-            if (string.IsNullOrWhiteSpace(usuario))
-            {
-                return;
-            }
-
-            await CancelarSuscripcionInternaAsync();
-
-            try
-            {
-                await SuscribirNuevoClienteAsync(usuario);
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Error("Fallo critico al reconectar suscripcion.", excepcion);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error("Timeout al reconectar suscripcion.", excepcion);
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                _logger.Error("Error de servicio al reconectar suscripcion.", excepcion);
-            }
         }
 
         private async Task SuscribirNuevoClienteAsync(string nombreUsuario)

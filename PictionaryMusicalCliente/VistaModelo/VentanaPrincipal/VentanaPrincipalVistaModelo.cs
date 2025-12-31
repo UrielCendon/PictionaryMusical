@@ -48,6 +48,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private bool _suscripcionActiva;
         private bool _canalAmigosDisponible;
+        private bool _desconexionProcesada;
 
         public VentanaPrincipalVistaModelo(
             IVentanaServicio ventana,
@@ -360,6 +361,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task SuscribirAServiciosAsync()
         {
+            _desconexionProcesada = false;
             await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
                 ConfigureAwait(false);
             await _amigosServicio.SuscribirAsync(_nombreUsuarioSesion).ConfigureAwait(false);
@@ -413,6 +415,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void CanalAmigos_Desconectado(object remitente, EventArgs argumentosEvento)
         {
+            if (_desconexionProcesada)
+            {
+                return;
+            }
+
+            _desconexionProcesada = true;
             _logger.Error("Se detecto desconexion del canal de amigos.");
             _canalAmigosDisponible = false;
             EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
@@ -460,6 +468,11 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             object remitente,
             IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
         {
+            if (!_canalAmigosDisponible || _desconexionProcesada)
+            {
+                return;
+            }
+
             _ = ActualizarListaAmigosDesdeServidorAsync();
         }
 

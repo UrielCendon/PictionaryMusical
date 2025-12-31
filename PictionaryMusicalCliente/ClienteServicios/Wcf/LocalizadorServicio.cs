@@ -173,9 +173,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos eliminar a este amigo. Intenta mas tarde."]
                     = () => Recursos.Lang.amigosErrorEliminarRelacion,
                 ["No pudimos cargar tu lista de amigos. Intenta mas tarde."]
-                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
+                    = () => Recursos.Lang.amigosErrorRecuperarLista,
                 ["No pudimos cargar tus amigos debido a un problema del servidor."]
-                    = () => Recursos.Lang.amigosErrorRecuperarSolicitudes,
+                    = () => Recursos.Lang.amigosErrorServicioAmigos,
                 ["No pudimos enviar la notificacion de amistad. Intenta mas tarde."]
                     = () => Recursos.Lang.amigosErrorActualizarSolicitud,
                 ["No pudimos notificar la eliminacion de amistad."]
