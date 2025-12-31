@@ -15,7 +15,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// Administra la conexion Duplex para mantener actualizada la lista de amigos conectados.
     /// </summary>
     [CallbackBehavior(
-        ConcurrencyMode = ConcurrencyMode.Reentrant,
+        ConcurrencyMode = ConcurrencyMode.Multiple,
         UseSynchronizationContext = false)]
     public sealed class ListaAmigosServicio : IListaAmigosServicio,
         PictionaryServidorServicioListaAmigos.IListaAmigosManejadorCallback
@@ -138,8 +138,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             await _semaforo.WaitAsync().ConfigureAwait(false);
 
-            var cliente = _cliente ?? CrearCliente();
-            bool esTemporal = (_cliente == null);
+            var clienteExistente = _cliente;
+            bool usarClienteExistente = clienteExistente != null && 
+                clienteExistente.State == CommunicationState.Opened;
+            
+            var cliente = usarClienteExistente ? clienteExistente : CrearCliente();
+            bool esTemporal = !usarClienteExistente;
 
             try
             {
