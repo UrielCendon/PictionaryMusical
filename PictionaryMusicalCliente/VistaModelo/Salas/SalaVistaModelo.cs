@@ -1556,15 +1556,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             _expulsionNavegada = true;
             _eventosManejador.MarcarSalaCancelada();
-            _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
-            var destino = ObtenerDestinoSegunSesion();
+            string mensaje = _usuarioSesion?.EstaAutenticado == true
+                ? Lang.errorTextoUsuarioBaneado
+                : Lang.expulsarJugadorTextoFuisteExpulsado;
+            _avisoServicio.Mostrar(mensaje);
 
-            if (destino == DestinoNavegacion.InicioSesion)
-            {
-                _aplicacionCerrando = true;
-            }
-
-            Navegar(destino);
+            _aplicacionCerrando = true;
+            Navegar(DestinoNavegacion.InicioSesion);
         }
 
         private void ReiniciarPuntajesJugadores()

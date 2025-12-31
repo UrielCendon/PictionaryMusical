@@ -75,6 +75,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                     return ProcesarAutenticacion(contexto, credenciales);
                 }
             }
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
+            {
+                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
+                return CrearErrorGenerico();
+            }
             catch (EntityException excepcion)
             {
                 _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);

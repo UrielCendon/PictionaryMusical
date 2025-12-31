@@ -125,9 +125,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
                 }
 
                 _jugadores.Remove(nombreUsuario);
-                _gestorNotificaciones.Remover(nombreUsuario);
-
                 ManejarLogicaSalida(nombreUsuario);
+                _gestorNotificaciones.Remover(nombreUsuario);
             }
         }
 

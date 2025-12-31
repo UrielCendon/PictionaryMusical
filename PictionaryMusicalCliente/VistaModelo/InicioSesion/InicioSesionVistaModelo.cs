@@ -554,17 +554,17 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void MostrarErrorInicioSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
-            string predeterminado = (resultado?.ContrasenaIncorrecta == true || 
-                resultado?.CuentaEncontrada == false)
-                ? Lang.errorTextoCredencialesIncorrectas
-                : Lang.inicioSesionErrorServicio;
+            string mensaje = resultado?.Mensaje;
 
-            string localizado = _localizador.Localizar(resultado?.Mensaje, predeterminado);
-
-            if (!string.IsNullOrWhiteSpace(localizado))
+            if (string.IsNullOrWhiteSpace(mensaje))
             {
-                _avisoServicio.Mostrar(localizado);
+                mensaje = (resultado?.ContrasenaIncorrecta == true || 
+                    resultado?.CuentaEncontrada == false)
+                    ? Lang.errorTextoCredencialesIncorrectas
+                    : Lang.inicioSesionErrorServicio;
             }
+
+            _avisoServicio.Mostrar(mensaje);
         }
 
         private async Task RecuperarCuentaAsync()
