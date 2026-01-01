@@ -148,8 +148,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         {
             EjecutarEnDispatcher(() =>
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
                 _usuarioSesion?.Limpiar();
                 RequiereReinicioSesion = true;
                 SolicitarReinicioSesion?.Invoke();

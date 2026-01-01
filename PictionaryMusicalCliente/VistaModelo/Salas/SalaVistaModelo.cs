@@ -153,7 +153,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void ManejarDesconexionServidor(string mensaje)
         {
             _logger.WarnFormat("Desconexion del servidor detectada en sala: {0}", mensaje);
-            _sonidoManejador.ReproducirError();
             _aplicacionCerrando = true;
             Navegar(DestinoNavegacion.InicioSesion);
         }

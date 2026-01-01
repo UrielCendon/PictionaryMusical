@@ -68,8 +68,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             EjecutarEnDispatcher(() =>
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
                 _ventana.CerrarVentana(this);
             });
         }

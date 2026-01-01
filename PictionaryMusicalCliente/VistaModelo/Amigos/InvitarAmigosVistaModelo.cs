@@ -62,22 +62,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             Amigos = new ObservableCollection<AmigoInvitacionItemVistaModelo>(
                 CrearElementos(dependencias.Amigos, dependencias.AmigoInvitado));
-
-            ConfigurarEventoDesconexion();
-        }
-
-        private void ConfigurarEventoDesconexion()
-        {
-            DesconexionDetectada += ManejarDesconexionServidor;
-        }
-
-        private void ManejarDesconexionServidor(string mensaje)
-        {
-            EjecutarEnDispatcher(() =>
-            {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
-            });
         }
 
         private static void ValidarDependencias(

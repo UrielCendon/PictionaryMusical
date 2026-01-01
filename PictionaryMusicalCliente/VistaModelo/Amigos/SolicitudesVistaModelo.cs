@@ -101,8 +101,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             EjecutarEnDispatcherLocal(() =>
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
                 _ventana.CerrarVentana(this);
             });
         }

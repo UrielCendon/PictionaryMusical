@@ -77,8 +77,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             EjecutarEnDispatcher(() =>
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
                 _ventana.CerrarVentana(this);
             });
         }
