@@ -703,6 +703,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 App.ClasificacionServicio,
                 App.AvisoServicio,
                 _sonidoManejador);
+            clasificacionVistaModelo.SolicitarReinicioSesion = EjecutarReinicioAplicacion;
             _ventana.MostrarVentanaDialogo(clasificacionVistaModelo);
         }
 

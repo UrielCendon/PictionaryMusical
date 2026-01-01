@@ -60,7 +60,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Error de comunicacion al obtener perfil.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
-                    Lang.avisoTextoComunicacionServidorSesion,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (TimeoutException excepcion)
@@ -68,7 +68,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout al obtener perfil.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.avisoTextoServidorTiempoSesion,
+                    Lang.errorTextoServidorTiempoAgotado,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)

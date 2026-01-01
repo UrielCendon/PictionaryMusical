@@ -68,6 +68,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             EjecutarEnDispatcher(() =>
             {
+                RequiereReinicioSesion = true;
+                SolicitarReinicioSesion?.Invoke();
                 _ventana.CerrarVentana(this);
             });
         }
@@ -147,8 +149,17 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         public IComandoNotificable CerrarComando { get; }
 
         /// <summary>
-        /// Recupera la informacion de clasificacion desde el servicio.
+        /// Obtiene o establece la accion para solicitar reinicio de sesion.
         /// </summary>
+        public Action SolicitarReinicioSesion { get; set; }
+
+        /// <summary>
+        /// Obtiene un valor que indica si se requiere reiniciar sesion.
+        /// </summary>
+        public bool RequiereReinicioSesion { get; private set; }
+
+        /// <summary>
+        /// Recupera la informacion de clasificacion desde el servicio.
         /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task CargarClasificacionAsync()
         {
