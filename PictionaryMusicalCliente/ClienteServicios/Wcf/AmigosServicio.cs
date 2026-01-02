@@ -280,7 +280,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task SuscribirNuevoClienteAsync(string nombreUsuario)
         {
             await CancelarSuscripcionInternaAsync();
-            LimpiarEstadoLocal();
 
             var cliente = CrearCliente();
             _cliente = cliente;
@@ -324,7 +323,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             var cliente = _cliente;
             var usuario = _usuarioSuscrito;
 
-            LimpiarEstadoLocal();
+            LimpiarEstadoLocal(notificar: false);
 
             if (cliente != null)
             {
@@ -389,12 +388,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return excepcion is CommunicationException || excepcion is EndpointNotFoundException;
         }
 
-        private void LimpiarEstadoLocal()
+        private void LimpiarEstadoLocal(bool notificar = true)
         {
             _cliente = null;
             _usuarioSuscrito = null;
             _administradorSolicitudes.LimpiarSolicitudes();
-            NotificarSolicitudesActualizadas();
+            if (notificar)
+            {
+                NotificarSolicitudesActualizadas();
+            }
         }
 
         private void CerrarClienteSeguro(ICommunicationObject cliente)

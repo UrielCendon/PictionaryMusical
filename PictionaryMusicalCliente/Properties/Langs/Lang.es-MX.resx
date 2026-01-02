@@ -268,11 +268,8 @@
   <data name="amigosErrorRecuperarSolicitudes" xml:space="preserve">
     <value>No pudimos cargar tus solicitudes de amistad. Intenta más tarde.</value>
   </data>
-  <data name="amigosErrorRecuperarLista" xml:space="preserve">
-    <value>No pudimos obtener tu lista de amigos en este momento debido a un problema con el servicio.</value>
-  </data>
   <data name="amigosErrorServicioAmigos" xml:space="preserve">
-    <value>No pudimos cargar tus amigos debido a un problema del servidor.</value>
+    <value>No pudimos obtener tu lista de amigos en este momento debido a un problema con el servicio.</value>
   </data>
   <data name="amigosAvisoSinSolicitudesPendientes" xml:space="preserve">
     <value>No tienes solicitudes de amistad pendientes.</value>
@@ -1119,7 +1116,7 @@ aciertan o cuando se acaba el tiempo.
     <value>La invitación no es válida o ha expirado.</value>
   </data>
   <data name="errorTextoEnviarInvitacion" xml:space="preserve">
-    <value>No pudimos enviar la invitación. Intenta más tarde.</value>
+    <value>No pudimos enviar la invitación debido a un problema con el servicio. Intenta más tarde.</value>
   </data>
   <data name="errorTextoCrearSala" xml:space="preserve">
     <value>No pudimos crear la sala. Intenta más tarde.</value>

@@ -268,11 +268,8 @@
   <data name="amigosErrorRecuperarSolicitudes" xml:space="preserve">
     <value>We couldn't load your friend requests. Please try again later.</value>
   </data>
-  <data name="amigosErrorRecuperarLista" xml:space="preserve">
-    <value>We couldn't load your friends list in this moment because there was a problem with the service.</value>
-  </data>
   <data name="amigosErrorServicioAmigos" xml:space="preserve">
-    <value>We couldn't load your friends due to a server problem.</value>
+    <value>We couldn't load your friends list in this moment because there was a problem with the service.</value>
   </data>
   <data name="amigosAvisoSinSolicitudesPendientes" xml:space="preserve">
     <value>You have no pending friend requests.</value>
@@ -1117,7 +1114,7 @@
     <value>The invitation is invalid or has expired.</value>
   </data>
   <data name="errorTextoEnviarInvitacion" xml:space="preserve">
-    <value>We couldn't send the invitation. Please try again later.</value>
+    <value>We couldn't send the invitation because there was a problem with the service. Please try again later.</value>
   </data>
   <data name="errorTextoCrearSala" xml:space="preserve">
     <value>We couldn't create the room. Please try again later.</value>

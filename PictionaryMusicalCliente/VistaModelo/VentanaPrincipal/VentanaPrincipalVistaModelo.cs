@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using log4net;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -49,6 +48,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private bool _suscripcionActiva;
         private bool _canalAmigosDisponible;
         private bool _desconexionProcesada;
+        private bool _actualizacionAmigosEnProgreso;
 
         public VentanaPrincipalVistaModelo(
             IVentanaServicio ventana,
@@ -362,6 +362,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private async Task SuscribirAServiciosAsync()
         {
             _desconexionProcesada = false;
+            _actualizacionAmigosEnProgreso = false;
             await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
                 ConfigureAwait(false);
             await _amigosServicio.SuscribirAsync(_nombreUsuarioSesion).ConfigureAwait(false);
@@ -470,7 +471,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             object remitente,
             IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
         {
-            if (!_canalAmigosDisponible || _desconexionProcesada)
+            if (!_canalAmigosDisponible || _desconexionProcesada || _actualizacionAmigosEnProgreso)
             {
                 return;
             }
@@ -525,16 +526,24 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task ActualizarListaAmigosDesdeServidorAsync()
         {
-            if (!ValidarSesionParaActualizarAmigos())
+            if (!ValidarSesionParaActualizarAmigos() || _actualizacionAmigosEnProgreso)
             {
                 return;
             }
 
-            await EjecutarOperacionConDesconexionAsync(async () =>
+            _actualizacionAmigosEnProgreso = true;
+            try
             {
-                var amigos = await ObtenerAmigosDelServidorAsync();
-                ActualizarListaEnDispatcher(amigos);
-            });
+                await EjecutarOperacionConDesconexionAsync(async () =>
+                {
+                    var amigos = await ObtenerAmigosDelServidorAsync();
+                    ActualizarListaEnDispatcher(amigos);
+                });
+            }
+            finally
+            {
+                _actualizacionAmigosEnProgreso = false;
+            }
         }
 
         private bool ValidarSesionParaActualizarAmigos()
