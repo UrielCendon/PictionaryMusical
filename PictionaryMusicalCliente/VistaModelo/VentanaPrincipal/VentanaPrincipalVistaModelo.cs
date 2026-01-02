@@ -916,7 +916,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _listaAmigosServicio,
                 App.PerfilServicio,
                 _sonidoManejador,
-                App.AvisoServicio);
+                App.AvisoServicio,
+                App.Localizador);
 
             var comunicacion = new ComunicacionSalaDependencias(
                 _salasServicio,

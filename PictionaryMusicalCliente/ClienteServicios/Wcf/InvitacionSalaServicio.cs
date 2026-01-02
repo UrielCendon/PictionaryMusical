@@ -23,6 +23,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IPerfilServicio _perfilServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IAvisoServicio _aviso;
+        private readonly ILocalizadorServicio _localizador;
         private bool _desechado;
 
         /// <summary>
@@ -33,6 +34,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <param name="perfilServicio">Servicio de perfiles de usuario.</param>
         /// <param name="sonidoManejador">Manejador de efectos de sonido.</param>
         /// <param name="aviso">Servicio para mostrar avisos al usuario.</param>
+        /// <param name="localizador">Servicio de localizacion de mensajes.</param>
         /// <exception cref="ArgumentNullException">
         /// Si alguna dependencia es nula.
         /// </exception>
@@ -41,7 +43,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             IListaAmigosServicio listaAmigosServicio,
             IPerfilServicio perfilServicio,
             SonidoManejador sonidoManejador,
-            IAvisoServicio aviso)
+            IAvisoServicio aviso,
+            ILocalizadorServicio localizador)
         {
             _invitacionesServicio = invitacionesServicio ??
                 throw new ArgumentNullException(nameof(invitacionesServicio));
@@ -53,6 +56,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 throw new ArgumentNullException(nameof(sonidoManejador));
             _aviso = aviso ??
                 throw new ArgumentNullException(nameof(aviso));
+            _localizador = localizador ??
+                throw new ArgumentNullException(nameof(localizador));
         }
 
         /// <summary>
@@ -113,7 +118,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 var dependenciasBase = new VistaModeloBaseDependencias(
                     App.VentanaServicio,
-                    App.Localizador,
+                    _localizador,
                     _sonidoManejador,
                     _aviso);
 
@@ -183,7 +188,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     return InvitacionCorreoResultado.Exito(Lang.invitarCorreoTextoEnviado);
                 }
 
-                string mensajeLocalizado = App.Localizador.Localizar(
+                string mensajeLocalizado = _localizador.Localizar(
                     resultado?.Mensaje,
                     Lang.errorTextoEnviarInvitacion);
                 return InvitacionCorreoResultado.Fallo(mensajeLocalizado);

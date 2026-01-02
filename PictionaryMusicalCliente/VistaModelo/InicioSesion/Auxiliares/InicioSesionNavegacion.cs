@@ -92,7 +92,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
                     App.ListaAmigosServicio,
                     App.PerfilServicio,
                     _sonidoManejador,
-                    _avisoServicio),
+                    _avisoServicio,
+                    _localizador),
                 App.WcfFabrica);
 
             var perfiles = new PerfilesSalaDependencias(

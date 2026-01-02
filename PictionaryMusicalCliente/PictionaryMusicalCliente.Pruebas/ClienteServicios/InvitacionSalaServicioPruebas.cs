@@ -22,6 +22,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private Mock<IPerfilServicio> _perfilServicioMock;
         private Mock<SonidoManejador> _sonidoManejadorMock;
         private Mock<IAvisoServicio> _avisoServicioMock;
+        private Mock<ILocalizadorServicio> _localizadorServicioMock;
         private InvitacionSalaServicio _servicio;
 
         /// <summary>
@@ -35,13 +36,19 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _perfilServicioMock = new Mock<IPerfilServicio>();
             _sonidoManejadorMock = new Mock<SonidoManejador>();
             _avisoServicioMock = new Mock<IAvisoServicio>();
+            _localizadorServicioMock = new Mock<ILocalizadorServicio>();
+
+            _localizadorServicioMock
+                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string mensaje, string predeterminado) => predeterminado);
 
             _servicio = new InvitacionSalaServicio(
                 _invitacionesServicioMock.Object,
                 _listaAmigosServicioMock.Object,
                 _perfilServicioMock.Object,
                 _sonidoManejadorMock.Object,
-                _avisoServicioMock.Object);
+                _avisoServicioMock.Object,
+                _localizadorServicioMock.Object);
         }
 
         /// <summary>
@@ -64,7 +71,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                     _listaAmigosServicioMock.Object,
                     _perfilServicioMock.Object,
                     _sonidoManejadorMock.Object,
-                    _avisoServicioMock.Object);
+                    _avisoServicioMock.Object,
+                    _localizadorServicioMock.Object);
             });
         }
 
@@ -78,7 +86,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                     null,
                     _perfilServicioMock.Object,
                     _sonidoManejadorMock.Object,
-                    _avisoServicioMock.Object);
+                    _avisoServicioMock.Object,
+                    _localizadorServicioMock.Object);
             });
         }
 
@@ -92,7 +101,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                     _listaAmigosServicioMock.Object,
                     null,
                     _sonidoManejadorMock.Object,
-                    _avisoServicioMock.Object);
+                    _avisoServicioMock.Object,
+                    _localizadorServicioMock.Object);
             });
         }
 
@@ -106,7 +116,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                     _listaAmigosServicioMock.Object,
                     _perfilServicioMock.Object,
                     null,
-                    _avisoServicioMock.Object);
+                    _avisoServicioMock.Object,
+                    _localizadorServicioMock.Object);
             });
         }
 
@@ -120,7 +131,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                     _listaAmigosServicioMock.Object,
                     _perfilServicioMock.Object,
                     _sonidoManejadorMock.Object,
-                    null);
+                    null,
+                    _localizadorServicioMock.Object);
             });
         }
 
