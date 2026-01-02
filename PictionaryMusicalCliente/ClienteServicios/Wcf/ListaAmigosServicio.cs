@@ -77,34 +77,47 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
 
             await _semaforo.WaitAsync().ConfigureAwait(false);
+            PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient clienteLocal = null;
             try
             {
                 if (EsSuscripcionActiva(nombreUsuario)) return;
 
                 await CancelarSuscripcionInternaAsync();
 
-                var cliente = CrearCliente();
-                await cliente.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
+                clienteLocal = CrearCliente();
+                await clienteLocal.SuscribirAsync(nombreUsuario).ConfigureAwait(false);
 
-                _cliente = cliente;
+                _cliente = clienteLocal;
                 _usuarioSuscrito = nombreUsuario;
+                clienteLocal = null;
             }
             catch (FaultException excepcion)
             {
+                LimpiarClienteLocal(clienteLocal);
                 ManejarErrorSuscripcion(excepcion);
             }
             catch (CommunicationException excepcion)
             {
+                LimpiarClienteLocal(clienteLocal);
                 ManejarErrorSuscripcion(excepcion);
             }
             catch (TimeoutException excepcion)
             {
+                LimpiarClienteLocal(clienteLocal);
                 ManejarErrorSuscripcion(excepcion);
             }
             finally
             {
                 _semaforo.Release();
             }
+        }
+
+        private void LimpiarClienteLocal(
+            PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient cliente)
+        {
+            if (cliente == null) return;
+            DesuscribirEventosCanal(cliente);
+            cliente.Abort();
         }
 
         /// <summary>

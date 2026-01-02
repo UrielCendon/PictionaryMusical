@@ -314,6 +314,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private void AbortarYLimpiar(ICommunicationObject cliente)
         {
+            DesuscribirEventosCanal(cliente);
             cliente.Abort();
             LimpiarEstadoLocal();
         }

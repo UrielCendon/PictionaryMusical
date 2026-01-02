@@ -269,7 +269,7 @@
     <value>No pudimos cargar tus solicitudes de amistad. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorRecuperarLista" xml:space="preserve">
-    <value>No pudimos cargar tu lista de amigos. Intenta mas tarde.</value>
+    <value>No pudimos obtener tu lista de amigos en este momento debido a un problema con el servicio.</value>
   </data>
   <data name="amigosErrorServicioAmigos" xml:space="preserve">
     <value>No pudimos cargar tus amigos debido a un problema del servidor.</value>

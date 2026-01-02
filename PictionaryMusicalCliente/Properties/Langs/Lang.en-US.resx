@@ -269,7 +269,7 @@
     <value>We couldn't load your friend requests. Please try again later.</value>
   </data>
   <data name="amigosErrorRecuperarLista" xml:space="preserve">
-    <value>We couldn't load your friends list. Please try again later.</value>
+    <value>We couldn't load your friends list in this moment because there was a problem with the service.</value>
   </data>
   <data name="amigosErrorServicioAmigos" xml:space="preserve">
     <value>We couldn't load your friends due to a server problem.</value>

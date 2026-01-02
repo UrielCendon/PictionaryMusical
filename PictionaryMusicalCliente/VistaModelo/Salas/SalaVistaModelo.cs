@@ -155,6 +155,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _logger.WarnFormat("Desconexion del servidor detectada en sala: {0}", mensaje);
             _aplicacionCerrando = true;
             Navegar(DestinoNavegacion.InicioSesion);
+            
+            if (!string.IsNullOrWhiteSpace(mensaje))
+            {
+                _avisoServicio.Mostrar(mensaje);
+            }
         }
 
         private static void ValidarDependenciasSala(DTOs.SalaDTO sala)
@@ -732,7 +737,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
                 {
-                    ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                    ManejarDesconexionCritica(Lang.errorTextoServidorCerrado);
                 }
             });
         }
@@ -1589,7 +1594,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             BotonIniciarPartidaHabilitado = false;
             _jugadoresManejador.Limpiar();
             NotificarCambio(nameof(Jugadores));
-            _avisoServicio.Mostrar(Lang.partidaTextoHostCanceloSala);
 
             var destino = ObtenerDestinoSegunSesion();
 
@@ -1599,6 +1603,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
 
             Navegar(destino);
+            _avisoServicio.Mostrar(Lang.partidaTextoHostCanceloSala);
         }
 
         /// <summary>
