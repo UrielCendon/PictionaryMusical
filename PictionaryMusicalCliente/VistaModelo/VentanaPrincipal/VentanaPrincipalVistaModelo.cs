@@ -428,7 +428,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ManejarDesconexionCanalAmigos()
         {
-            ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+            _sonidoManejador.ReproducirError();
+            ReiniciarAplicacion();
         }
 
         private async Task CancelarSuscripcionesAsync()
@@ -908,6 +909,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ManejarDesconexion(string mensaje)
         {
+            if (_desconexionProcesada)
+            {
+                return;
+            }
+
+            _desconexionProcesada = true;
             _logger.WarnFormat("Desconexion detectada: {0}", mensaje);
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
