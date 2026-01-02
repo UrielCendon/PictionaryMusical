@@ -136,18 +136,39 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private void EjecutarComandoCerrar(object parametro)
         {
             _sonidoManejador.ReproducirClick();
+            DesuscribirEventosDesconexion();
             _ventana.CerrarVentana(this);
         }
 
         private void ConfigurarEventoDesconexion()
         {
             DesconexionDetectada += ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+        }
+
+        private void DesuscribirEventosDesconexion()
+        {
+            DesconexionDetectada -= ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
         }
 
         private void ManejarDesconexionServidor(string mensaje)
         {
             EjecutarEnDispatcher(() =>
             {
+                DesuscribirEventosDesconexion();
+                _usuarioSesion?.Limpiar();
+                RequiereReinicioSesion = true;
+                _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
+            });
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                DesuscribirEventosDesconexion();
                 _usuarioSesion?.Limpiar();
                 RequiereReinicioSesion = true;
                 _ventana.CerrarVentana(this);

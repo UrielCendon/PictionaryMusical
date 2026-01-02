@@ -71,12 +71,30 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private void ConfigurarEventoDesconexion()
         {
             DesconexionDetectada += ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+        }
+
+        private void DesuscribirEventosDesconexion()
+        {
+            DesconexionDetectada -= ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
         }
 
         private void ManejarDesconexionServidor(string mensaje)
         {
             EjecutarEnDispatcher(() =>
             {
+                DesuscribirEventosDesconexion();
+                _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
+            });
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                DesuscribirEventosDesconexion();
                 _ventana.CerrarVentana(this);
                 SolicitarReinicioSesion?.Invoke();
             });

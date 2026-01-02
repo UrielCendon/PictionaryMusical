@@ -1203,4 +1203,7 @@
   <data name="errorTextoServidorCerrado" xml:space="preserve">
     <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
   </data>
+  <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
+    <value>Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión.</value>
+  </data>
 </root>

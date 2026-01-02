@@ -48,6 +48,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private bool _suscripcionActiva;
         private bool _canalAmigosDisponible;
         private bool _desconexionProcesada;
+        private bool _desconexionInternetProcesada;
         private bool _actualizacionAmigosEnProgreso;
 
         public VentanaPrincipalVistaModelo(
@@ -78,6 +79,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
             _listaAmigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
             _amigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
             DesconexionDetectada += ManejarDesconexion;
 
             _nombreUsuarioSesion = _usuarioSesion.NombreUsuario ?? string.Empty;
@@ -412,6 +414,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _amigosServicio.SolicitudesActualizadas -= SolicitudesAmistadActualizadas;
             _listaAmigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
             _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
+            DesconexionDetectada -= ManejarDesconexion;
         }
 
         private void CanalAmigos_Desconectado(object remitente, EventArgs argumentosEvento)
@@ -929,7 +933,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ManejarDesconexion(string mensaje)
         {
-            if (_desconexionProcesada)
+            if (_desconexionProcesada || _desconexionInternetProcesada)
             {
                 return;
             }
@@ -939,6 +943,24 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
             _ventana.MostrarError(mensaje);
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        {
+            if (_desconexionInternetProcesada || _desconexionProcesada)
+            {
+                return;
+            }
+
+            _desconexionInternetProcesada = true;
+            _logger.Warn("Se detectó pérdida de conexión a internet en ventana principal.");
+
+            EjecutarEnDispatcher(() =>
+            {
+                _sonidoManejador.ReproducirError();
+                ReiniciarAplicacion();
+                _ventana.MostrarError(Lang.errorTextoPerdidaConexionInternet);
+            });
         }
     }
 }

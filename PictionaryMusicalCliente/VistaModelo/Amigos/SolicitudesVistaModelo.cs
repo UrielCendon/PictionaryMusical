@@ -95,9 +95,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private void ConfigurarEventoDesconexion()
         {
             DesconexionDetectada += ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
         }
 
         private void ManejarDesconexionServidor(string mensaje)
+        {
+            EjecutarEnDispatcherLocal(() =>
+            {
+                _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
+            });
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
         {
             EjecutarEnDispatcherLocal(() =>
             {
@@ -136,6 +146,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             _amigosServicio.SolicitudesActualizadas -= SolicitudesActualizadas;
             DesconexionDetectada -= ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
         }
 
         private bool PuedeAceptar(SolicitudAmistadEntrada entrada)

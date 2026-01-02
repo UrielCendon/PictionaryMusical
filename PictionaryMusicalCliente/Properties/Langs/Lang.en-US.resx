@@ -1212,4 +1212,7 @@
   <data name="errorTextoServidorCerrado" xml:space="preserve">
     <value>The server is no longer available. Please try signing in again.</value>
   </data>
+  <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
+    <value>Internet connection lost. Check your connection and sign in again.</value>
+  </data>
 </root>

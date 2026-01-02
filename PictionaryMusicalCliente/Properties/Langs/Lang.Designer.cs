@@ -1816,6 +1816,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión..
+        /// </summary>
+        public static string errorTextoPerdidaConexionInternet {
+            get {
+                return ResourceManager.GetString("errorTextoPerdidaConexionInternet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El servidor reportó un error al solicitar el código de verificación..
         /// </summary>
         public static string errorTextoServidorCodigoVerificacion {
