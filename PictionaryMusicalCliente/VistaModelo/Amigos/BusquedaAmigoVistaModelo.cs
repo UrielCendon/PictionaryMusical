@@ -71,21 +71,40 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         private void ConfigurarEventoDesconexion()
         {
             DesconexionDetectada += ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+        }
+
+        private void DesuscribirEventosDesconexion()
+        {
+            DesconexionDetectada -= ManejarDesconexionServidor;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
         }
 
         private void ManejarDesconexionServidor(string mensaje)
         {
             EjecutarEnDispatcher(() =>
             {
+                DesuscribirEventosDesconexion();
                 _ventana.CerrarVentana(this);
-                SolicitarReinicioSesion?.Invoke();
+                SolicitarReinicioSesion?.Invoke(false);
+            });
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                DesuscribirEventosDesconexion();
+                _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke(false);
             });
         }
 
         /// <summary>
         /// Accion a invocar cuando se requiere reiniciar la sesion.
+        /// El parametro indica si es un reinicio voluntario (true) o por error (false).
         /// </summary>
-        public Action SolicitarReinicioSesion { get; set; }
+        public Action<bool> SolicitarReinicioSesion { get; set; }
 
         /// <summary>
         /// Nombre de usuario ingresado para buscar.

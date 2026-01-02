@@ -280,7 +280,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task SuscribirNuevoClienteAsync(string nombreUsuario)
         {
             await CancelarSuscripcionInternaAsync();
-            LimpiarEstadoLocal();
 
             var cliente = CrearCliente();
             _cliente = cliente;
@@ -324,7 +323,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             var cliente = _cliente;
             var usuario = _usuarioSuscrito;
 
-            LimpiarEstadoLocal();
+            LimpiarEstadoLocal(notificar: false);
 
             if (cliente != null)
             {
@@ -389,12 +388,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             return excepcion is CommunicationException || excepcion is EndpointNotFoundException;
         }
 
-        private void LimpiarEstadoLocal()
+        private void LimpiarEstadoLocal(bool notificar = true)
         {
             _cliente = null;
             _usuarioSuscrito = null;
             _administradorSolicitudes.LimpiarSolicitudes();
-            NotificarSolicitudesActualizadas();
+            if (notificar)
+            {
+                NotificarSolicitudesActualizadas();
+            }
         }
 
         private void CerrarClienteSeguro(ICommunicationObject cliente)
@@ -456,7 +458,30 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("El canal de amigos entro en estado Faulted.");
+            
+            LimpiarEstadoTrasDesconexion();
             CanalDesconectado?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void LimpiarEstadoTrasDesconexion()
+        {
+            var cliente = _cliente;
+            _cliente = null;
+            _usuarioSuscrito = null;
+            _administradorSolicitudes.LimpiarSolicitudes();
+
+            if (cliente != null)
+            {
+                DesuscribirEventosCanal(cliente);
+                try
+                {
+                    cliente.Abort();
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al abortar cliente de amigos tras desconexion.", excepcion);
+                }
+            }
         }
 
         private async Task EjecutarEnSeccionCriticaAsync(Func<Task> accion)

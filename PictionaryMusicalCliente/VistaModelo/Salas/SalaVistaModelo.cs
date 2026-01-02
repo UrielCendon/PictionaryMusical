@@ -73,6 +73,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool _aplicacionCerrando;
         private bool _expulsionNavegada;
         private bool _cancelacionNavegada;
+        private bool _desconexionInternetProcesada;
         private HashSet<string> _adivinadoresQuienYaAcertaron;
         private string _nombreDibujanteActual;
         private bool _rondaTerminadaTemprano;
@@ -143,6 +144,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ConfigurarPermisos();
             InicializarProxyPartida();
             ConfigurarEventoDesconexion();
+            SuscribirMonitorConectividad();
         }
 
         private void ConfigurarEventoDesconexion()
@@ -150,8 +152,76 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             DesconexionDetectada += ManejarDesconexionServidor;
         }
 
+        private void SuscribirMonitorConectividad()
+        {
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+        }
+
+        private void DesuscribirMonitorConectividad()
+        {
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
+        }
+
+        private void DesuscribirEventosDesconexion()
+        {
+            DesconexionDetectada -= ManejarDesconexionServidor;
+            DesuscribirMonitorConectividad();
+        }
+
+        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        {
+            if (_desconexionInternetProcesada || _aplicacionCerrando || 
+                _expulsionNavegada || _cancelacionNavegada)
+            {
+                return;
+            }
+
+            _desconexionInternetProcesada = true;
+            _logger.Warn("Se detectó pérdida de conexión a internet durante la partida.");
+            
+            EjecutarEnDispatcher(() =>
+            {
+                ManejarPerdidaConexionInternet();
+            });
+        }
+
+        private void ManejarPerdidaConexionInternet()
+        {
+            DesuscribirEventosDesconexion();
+            _aplicacionCerrando = true;
+            _sonidoManejador.ReproducirError();
+            
+            AbortarCanalPartidaSiNecesario();
+            
+            Navegar(DestinoNavegacion.InicioSesion);
+            _avisoServicio.Mostrar(Lang.errorTextoPerdidaConexionInternet);
+        }
+
+        private void AbortarCanalPartidaSiNecesario()
+        {
+            try
+            {
+                if (_proxyJuego is ICommunicationObject canal)
+                {
+                    canal.Abort();
+                    _proxyJuego = null;
+                }
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn("Error al abortar canal de partida tras pérdida de internet.", 
+                    excepcion);
+            }
+        }
+
         private void ManejarDesconexionServidor(string mensaje)
         {
+            if (_desconexionInternetProcesada)
+            {
+                return;
+            }
+
+            DesuscribirEventosDesconexion();
             _logger.WarnFormat("Desconexion del servidor detectada en sala: {0}", mensaje);
             _aplicacionCerrando = true;
             Navegar(DestinoNavegacion.InicioSesion);
@@ -1565,9 +1635,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             _expulsionNavegada = true;
             _eventosManejador.MarcarSalaCancelada();
-            string mensaje = _usuarioSesion?.EstaAutenticado == true
-                ? Lang.errorTextoUsuarioBaneado
-                : Lang.expulsarJugadorTextoFuisteExpulsado;
+            string mensaje = Lang.expulsarJugadorTextoFuisteExpulsado;
             _avisoServicio.Mostrar(mensaje);
 
             _aplicacionCerrando = true;
@@ -1612,6 +1680,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task FinalizarAsync()
         {
+            DesuscribirEventosDesconexion();
+
             _partidaVistaModelo.PropertyChanged -= PartidaVistaModelo_PropertyChanged;
 
             _partidaVistaModelo.Detener();

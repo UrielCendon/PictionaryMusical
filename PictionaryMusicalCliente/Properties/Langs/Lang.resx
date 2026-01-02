@@ -267,9 +267,6 @@
   <data name="amigosErrorRecuperarSolicitudes" xml:space="preserve">
     <value>No pudimos cargar tus solicitudes de amistad. Intenta más tarde.</value>
   </data>
-  <data name="amigosErrorRecuperarLista" xml:space="preserve">
-    <value>No pudimos cargar tu lista de amigos. Intenta mas tarde.</value>
-  </data>
   <data name="amigosErrorServicioAmigos" xml:space="preserve">
     <value>No pudimos cargar tus amigos debido a un problema del servidor.</value>
   </data>
@@ -1173,9 +1170,6 @@
   <data name="errorTextoConexionInterrumpida" xml:space="preserve">
     <value>La conexión con el servidor se interrumpió. Revisa tu conexión a internet e inicia sesión de nuevo.</value>
   </data>
-  <data name="errorTextoServidorCerrado" xml:space="preserve">
-    <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
-  </data>
   <data name="errorTextoTiempoAgotadoConexion" xml:space="preserve">
     <value>El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta de nuevo.</value>
   </data>
@@ -1205,5 +1199,11 @@
   </data>
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoServidorCerrado" xml:space="preserve">
+    <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
+  </data>
+  <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
+    <value>Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión.</value>
   </data>
 </root>

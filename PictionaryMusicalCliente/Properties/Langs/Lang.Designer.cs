@@ -205,15 +205,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No pudimos cargar tu lista de amigos. Intenta mas tarde..
-        /// </summary>
-        public static string amigosErrorRecuperarLista {
-            get {
-                return ResourceManager.GetString("amigosErrorRecuperarLista", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos cargar tus solicitudes de amistad. Intenta más tarde..
         /// </summary>
         public static string amigosErrorRecuperarSolicitudes {
@@ -1821,6 +1812,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorCerrado {
             get {
                 return ResourceManager.GetString("errorTextoServidorCerrado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión..
+        /// </summary>
+        public static string errorTextoPerdidaConexionInternet {
+            get {
+                return ResourceManager.GetString("errorTextoPerdidaConexionInternet", resourceCulture);
             }
         }
         

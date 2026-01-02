@@ -320,7 +320,34 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
         {
             _logger.Error("El canal de lista de amigos entro en estado Faulted.");
+            
+            LimpiarEstadoTrasDesconexion();
             CanalDesconectado?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void LimpiarEstadoTrasDesconexion()
+        {
+            var cliente = _cliente;
+            _cliente = null;
+            _usuarioSuscrito = null;
+
+            if (cliente != null)
+            {
+                DesuscribirEventosCanal(cliente);
+                try
+                {
+                    cliente.Abort();
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al abortar cliente tras desconexion.", excepcion);
+                }
+            }
+
+            lock (_amigosBloqueo)
+            {
+                _amigos.Clear();
+            }
         }
 
         /// <summary>
