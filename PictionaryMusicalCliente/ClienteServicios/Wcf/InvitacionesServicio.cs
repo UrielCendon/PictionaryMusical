@@ -84,7 +84,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout al enviar invitacion.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)

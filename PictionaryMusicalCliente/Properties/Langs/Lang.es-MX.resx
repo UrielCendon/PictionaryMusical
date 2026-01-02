@@ -698,9 +698,6 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoServidorSolicitudCambioContrasena" xml:space="preserve">
     <value>Hubo un error al solicitar el cambio de contraseña.</value>
   </data>
-  <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
-    <value>El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta más tarde.</value>
-  </data>
   <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
     <value>Hubo un error al validar el código.</value>
   </data>

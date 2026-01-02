@@ -895,7 +895,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _logger.Error("Tiempo agotado al enviar mensaje de juego.", excepcion);
                 _sonidoManejador.ReproducirError();
                 EjecutarEnDispatcher(() => 
-                    _avisoServicio.Mostrar(Lang.errorTextoServidorTiempoAgotado));
+                    _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible));
             }
             catch (InvalidOperationException excepcion)
             {
@@ -1064,7 +1064,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 _logger.Error("Tiempo agotado al iniciar la partida.", excepcion);
                 _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.errorTextoServidorTiempoAgotado);
+                _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible);
                 BotonIniciarPartidaHabilitado = true;
             }
             catch (InvalidOperationException excepcion)

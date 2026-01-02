@@ -185,7 +185,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout WCF.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)

@@ -98,7 +98,8 @@ namespace PictionaryMusicalCliente.VistaModelo
         /// Ejecuta una operacion asincrona y redirige al inicio de sesion en caso de desconexion.
         /// </summary>
         /// <param name="operacion">La tarea asincrona a ejecutar.</param>
-        /// <param name="redirigirEnDesconexion">Indica si se debe redirigir al inicio de sesion en caso de desconexion.</param>
+        /// <param name="redirigirEnDesconexion">Indica si se debe redirigir al inicio de sesion en
+        /// caso de desconexion.</param>
         protected async Task EjecutarOperacionConDesconexionAsync(
             Func<Task> operacion,
             bool redirigirEnDesconexion = true)
@@ -113,7 +114,7 @@ namespace PictionaryMusicalCliente.VistaModelo
                     excepcion,
                     "Tiempo agotado en operacion.",
                     Lang.errorTextoTiempoAgotadoConexion,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     redirigirEnDesconexion);
                 ManejarErrorDeConexion(parametros);
             }
@@ -215,31 +216,36 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
         }
 
-        private void ManejarErrorTiempoAgotado(TimeoutException excepcion, Action<Exception> accionError)
+        private void ManejarErrorTiempoAgotado(TimeoutException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("Tiempo agotado en la solicitud al servidor.", excepcion);
-            ManejarError(excepcion, Lang.errorTextoServidorTiempoAgotado, accionError);
+            ManejarError(excepcion, Lang.errorTextoServidorNoDisponible, accionError);
         }
 
-        private void ManejarErrorServidorNoEncontrado(EndpointNotFoundException excepcion, Action<Exception> accionError)
+        private void ManejarErrorServidorNoEncontrado(EndpointNotFoundException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("No se encontro el servidor.", excepcion);
             ManejarError(excepcion, Lang.errorTextoServidorNoDisponible, accionError);
         }
 
-        private void ManejarErrorCanalFallido(CommunicationObjectFaultedException excepcion, Action<Exception> accionError)
+        private void ManejarErrorCanalFallido(CommunicationObjectFaultedException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("El canal de comunicacion esta en estado fallido.", excepcion);
             ManejarError(excepcion, Lang.errorTextoDesconexionServidor, accionError);
         }
 
-        private void ManejarErrorCanalAbortado(CommunicationObjectAbortedException excepcion, Action<Exception> accionError)
+        private void ManejarErrorCanalAbortado(CommunicationObjectAbortedException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("El canal de comunicacion fue abortado.", excepcion);
             ManejarError(excepcion, Lang.errorTextoConexionInterrumpida, accionError);
         }
 
-        private void ManejarErrorFallaServicio(FaultException excepcion, Action<Exception> accionError)
+        private void ManejarErrorFallaServicio(FaultException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Warn("El servicio reporto una falla controlada.", excepcion);
             string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message) 
@@ -248,19 +254,22 @@ namespace PictionaryMusicalCliente.VistaModelo
             ManejarError(excepcion, mensaje, accionError);
         }
 
-        private void ManejarErrorComunicacion(CommunicationException excepcion, Action<Exception> accionError)
+        private void ManejarErrorComunicacion(CommunicationException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("Error de comunicacion con el servicio.", excepcion);
             ManejarError(excepcion, Lang.errorTextoServidorNoDisponible, accionError);
         }
 
-        private void ManejarErrorServicio(ServicioExcepcion excepcion, Action<Exception> accionError)
+        private void ManejarErrorServicio(ServicioExcepcion excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Warn("Excepcion del servicio personalizada.", excepcion);
             ManejarError(excepcion, excepcion.Message, accionError);
         }
 
-        private void ManejarErrorOperacionInvalida(InvalidOperationException excepcion, Action<Exception> accionError)
+        private void ManejarErrorOperacionInvalida(InvalidOperationException excepcion, 
+            Action<Exception> accionError)
         {
             _logger.Error("Operacion invalida ejecutada.", excepcion);
             ManejarError(excepcion, Lang.errorTextoErrorProcesarSolicitud, accionError);

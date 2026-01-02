@@ -696,9 +696,6 @@
   <data name="errorTextoServidorSolicitudCambioContrasena" xml:space="preserve">
     <value>There was an error while requesting the password change.</value>
   </data>
-  <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
-    <value>The server did not respond in time. Please check your internet connection and try again later.</value>
-  </data>
   <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
     <value>There was an error while validating the code.</value>
   </data>

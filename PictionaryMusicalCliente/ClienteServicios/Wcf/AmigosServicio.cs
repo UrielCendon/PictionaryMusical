@@ -368,7 +368,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
 

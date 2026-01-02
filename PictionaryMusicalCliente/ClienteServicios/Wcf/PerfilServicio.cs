@@ -68,7 +68,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout al obtener perfil.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)
@@ -128,7 +128,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout al actualizar perfil.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)

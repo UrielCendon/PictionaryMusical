@@ -687,9 +687,6 @@
   <data name="errorTextoServidorSolicitudCambioContrasena" xml:space="preserve">
     <value>El servidor reportó un error al solicitar el cambio de contrasena.</value>
   </data>
-  <data name="errorTextoServidorTiempoAgotado" xml:space="preserve">
-    <value>El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta más tarde.</value>
-  </data>
   <data name="errorTextoServidorValidarCodigo" xml:space="preserve">
     <value>El servidor reportó un error al validar el código.</value>
   </data>

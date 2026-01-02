@@ -90,7 +90,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout en inicio de sesion.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)

@@ -19,7 +19,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
     // a través de una herramienta como ResGen o Visual Studio.
     // Para agregar o quitar un miembro, edite el archivo .ResX y, a continuación, vuelva a ejecutar ResGen
     // con la opción /str o recompile su proyecto de VS.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Lang {
@@ -1312,7 +1312,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a La conexión fue interrumpida inesperadamente. Intenta iniciar sesión de nuevo..
+        ///   Busca una cadena traducida similar a La conexión con el servidor se interrumpió. Revisa tu conexión a internet e inicia sesión de nuevo..
         /// </summary>
         public static string errorTextoConexionInterrumpida {
             get {
@@ -1474,7 +1474,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Se perdió la conexión con el servidor. Por favor, inicia sesión nuevamente..
+        ///   Busca una cadena traducida similar a Se perdió la conexión con el servidor. Revisa tu conexión a internet e inicia sesión nuevamente..
         /// </summary>
         public static string errorTextoDesconexionServidor {
             get {
@@ -1825,7 +1825,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El servidor no está disponible. Serás redirigido al inicio de sesión..
+        ///   Busca una cadena traducida similar a No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta de nuevo..
         /// </summary>
         public static string errorTextoServidorDesconectado {
             get {
@@ -1861,7 +1861,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No pudimos conectar con el servidor. Verifica tu conexión e intenta de nuevo..
+        ///   Busca una cadena traducida similar a No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde..
         /// </summary>
         public static string errorTextoServidorNoDisponible {
             get {
@@ -1902,15 +1902,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorSolicitudCodigo {
             get {
                 return ResourceManager.GetString("errorTextoServidorSolicitudCodigo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a El servidor tardó demasiado tiempo en responder. Intente más tarde..
-        /// </summary>
-        public static string errorTextoServidorTiempoAgotado {
-            get {
-                return ResourceManager.GetString("errorTextoServidorTiempoAgotado", resourceCulture);
             }
         }
         
@@ -2023,7 +2014,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Se agotó el tiempo de espera con el servidor. Serás redirigido al inicio de sesión..
+        ///   Busca una cadena traducida similar a El servidor no respondió a tiempo. Revisa tu conexión a internet e intenta de nuevo..
         /// </summary>
         public static string errorTextoTiempoAgotadoConexion {
             get {

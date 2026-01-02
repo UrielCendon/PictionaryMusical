@@ -81,7 +81,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.Error("Timeout al registrar cuenta.", excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
-                    Lang.errorTextoServidorTiempoAgotado,
+                    Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
             catch (InvalidOperationException excepcion)
