@@ -183,13 +183,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     return InvitacionCorreoResultado.Exito(Lang.invitarCorreoTextoEnviado);
                 }
 
-                return InvitacionCorreoResultado.Fallo(
-                    resultado?.Mensaje ?? Lang.errorTextoEnviarCorreo);
+                string mensajeLocalizado = App.Localizador.Localizar(
+                    resultado?.Mensaje,
+                    Lang.errorTextoEnviarInvitacion);
+                return InvitacionCorreoResultado.Fallo(mensajeLocalizado);
             }
             catch (ServicioExcepcion excepcion)
             {
                 _logger.Error("Error de servicio al enviar correo.", excepcion);
-                return InvitacionCorreoResultado.Fallo(Lang.errorTextoErrorProcesarSolicitud);
+                return InvitacionCorreoResultado.Fallo(Lang.errorTextoEnviarInvitacion);
             }
         }
     }

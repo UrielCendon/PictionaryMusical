@@ -1,4 +1,5 @@
-﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -333,9 +334,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                 "Se rechazó una solicitud de amistad con: {0}",
                 entrada.NombreUsuario);
 
-            await _amigosServicio.EliminarAmigoAsync(
-                entrada.Solicitud.UsuarioEmisor,
-                entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
+            try
+            {
+                await _amigosServicio.EliminarAmigoAsync(
+                    entrada.Solicitud.UsuarioEmisor,
+                    entrada.Solicitud.UsuarioReceptor).ConfigureAwait(true);
+            }
+            catch (ServicioExcepcion excepcion)
+            {
+                throw new ServicioExcepcion(
+                    excepcion.Tipo,
+                    Lang.errorTextoRechazarSolicitudServicio,
+                    excepcion);
+            }
 
             NotificarExitoRechazo();
         }

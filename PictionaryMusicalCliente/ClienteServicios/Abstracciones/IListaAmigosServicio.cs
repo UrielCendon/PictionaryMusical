@@ -38,6 +38,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         Task CancelarSuscripcionAsync(string nombreUsuario);
 
         /// <summary>
+        /// Aborta la conexion inmediatamente sin esperar una desuscripcion limpia.
+        /// Usar cuando el servidor ya no esta disponible.
+        /// </summary>
+        void AbortarConexion();
+
+        /// <summary>
         /// Recupera la lista completa de amigos desde el servidor.
         /// </summary>
         /// <param name="nombreUsuario">Usuario del cual consultar los amigos.</param>

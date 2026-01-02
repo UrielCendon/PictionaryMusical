@@ -118,6 +118,31 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         /// <summary>
+        /// Aborta la conexion inmediatamente sin esperar una desuscripcion limpia.
+        /// </summary>
+        public void AbortarConexion()
+        {
+            var cliente = _cliente;
+            _cliente = null;
+            _usuarioSuscrito = null;
+
+            if (cliente != null)
+            {
+                DesuscribirEventosCanal(cliente);
+                try
+                {
+                    cliente.Abort();
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn("Error al abortar conexion de amigos.", excepcion);
+                }
+            }
+
+            LimpiarEstadoLocal();
+        }
+
+        /// <summary>
         /// Envia una nueva peticion de amistad al servidor.
         /// </summary>
         public Task EnviarSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) 

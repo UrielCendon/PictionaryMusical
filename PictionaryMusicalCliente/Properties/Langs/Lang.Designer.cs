@@ -1177,6 +1177,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo aceptar la solicitud de amistad en este momento debido a un problema con el servicio..
+        /// </summary>
+        public static string errorTextoAceptarSolicitudServicio {
+            get {
+                return ResourceManager.GetString("errorTextoAceptarSolicitudServicio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos actualizar tu contraseña. Intenta más tarde..
         /// </summary>
         public static string errorTextoActualizarContrasena {
@@ -1501,6 +1510,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo enviar un correo electrónico debido a un problema con el servicio. Intente de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoEnviarCorreoRecuperacion {
+            get {
+                return ResourceManager.GetString("errorTextoEnviarCorreoRecuperacion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos enviar la invitación. Intenta más tarde..
         /// </summary>
         public static string errorTextoEnviarInvitacion {
@@ -1717,6 +1735,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión..
+        /// </summary>
+        public static string errorTextoPerdidaConexionInternet {
+            get {
+                return ResourceManager.GetString("errorTextoPerdidaConexionInternet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No fue posible obtener la información actualizada del perfil..
         /// </summary>
         public static string errorTextoPerfilActualizarInformacion {
@@ -1740,6 +1767,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoProcesarSolicitudVerificacion {
             get {
                 return ResourceManager.GetString("errorTextoProcesarSolicitudVerificacion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio..
+        /// </summary>
+        public static string errorTextoRechazarSolicitudServicio {
+            get {
+                return ResourceManager.GetString("errorTextoRechazarSolicitudServicio", resourceCulture);
             }
         }
         
@@ -1812,15 +1848,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorCerrado {
             get {
                 return ResourceManager.GetString("errorTextoServidorCerrado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión..
-        /// </summary>
-        public static string errorTextoPerdidaConexionInternet {
-            get {
-                return ResourceManager.GetString("errorTextoPerdidaConexionInternet", resourceCulture);
             }
         }
         

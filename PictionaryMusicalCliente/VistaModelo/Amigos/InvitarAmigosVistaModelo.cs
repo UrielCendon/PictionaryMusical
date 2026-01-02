@@ -1,4 +1,5 @@
 ﻿using log4net;
+using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -102,7 +103,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
-                DTOs.UsuarioDTO perfil = await ObtenerPerfilAmigoAsync(
+                DTOs.UsuarioDTO perfil = await ObtenerPerfilParaInvitacionAsync(
                     amigo.UsuarioId);
                 
                 if (!ValidarPerfil(perfil, amigo.UsuarioId))
@@ -148,6 +149,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
             _sonidoManejador.ReproducirError();
             _avisoServicio.Mostrar(validacion.MensajeError);
+        }
+
+        private async Task<DTOs.UsuarioDTO> ObtenerPerfilParaInvitacionAsync(int usuarioId)
+        {
+            try
+            {
+                return await _perfilServicio
+                    .ObtenerPerfilAsync(usuarioId)
+                    .ConfigureAwait(true);
+            }
+            catch (ServicioExcepcion excepcion)
+            {
+                _logger.WarnFormat(
+                    "Error al obtener perfil para invitacion, usuario ID: {0}",
+                    usuarioId);
+                throw new ServicioExcepcion(
+                    excepcion.Tipo,
+                    Lang.errorTextoEnviarInvitacion,
+                    excepcion);
+            }
         }
 
         private async Task<DTOs.UsuarioDTO> ObtenerPerfilAmigoAsync(int usuarioId)

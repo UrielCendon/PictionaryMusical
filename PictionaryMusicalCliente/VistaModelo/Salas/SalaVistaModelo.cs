@@ -197,6 +197,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _avisoServicio.Mostrar(Lang.errorTextoPerdidaConexionInternet);
         }
 
+        private void ManejarDesconexionConVerificacionInternet(string mensajeServidorCaido)
+        {
+            string mensaje = ConectividadRedMonitor.Instancia.HayConexion
+                ? mensajeServidorCaido
+                : Lang.errorTextoPerdidaConexionInternet;
+            ManejarDesconexionCritica(mensaje);
+        }
+
         private void AbortarCanalPartidaSiNecesario()
         {
             try
@@ -750,28 +758,28 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _logger.Error(
                     "Canal en estado fallido al suscribir al jugador.",
                     excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
                 _logger.Error(
                     "Canal abortado al suscribir al jugador.",
                     excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Error(
                     "Error de comunicacion al suscribir al jugador en la partida.",
                     excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoDesconexionServidor);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoDesconexionServidor);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error(
                     "Se agoto el tiempo para inicializar el proxy de partida.",
                     excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoTiempoAgotadoConexion);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoTiempoAgotadoConexion);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -807,7 +815,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
                 {
-                    ManejarDesconexionCritica(Lang.errorTextoServidorCerrado);
+                    ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorCerrado);
                 }
             });
         }
@@ -951,12 +959,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationObjectFaultedException excepcion)
             {
                 _logger.Error("Canal fallido al enviar mensaje de juego.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
                 _logger.Error("Canal abortado al enviar mensaje de juego.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
@@ -1016,12 +1024,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationObjectFaultedException excepcion)
             {
                 _logger.Error("Canal fallido al registrar acierto.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
                 _logger.Error("Canal abortado al registrar acierto.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
@@ -1062,12 +1070,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationObjectFaultedException excepcion)
             {
                 _logger.Error("Canal fallido al enviar trazo.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
                 _logger.Error("Canal abortado al enviar trazo.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
@@ -1121,12 +1129,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationObjectFaultedException excepcion)
             {
                 _logger.Error("Canal fallido al iniciar la partida.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationObjectAbortedException excepcion)
             {
                 _logger.Error("Canal abortado al iniciar la partida.", excepcion);
-                ManejarDesconexionCritica(Lang.errorTextoConexionInterrumpida);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {

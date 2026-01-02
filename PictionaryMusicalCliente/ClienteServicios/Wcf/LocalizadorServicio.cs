@@ -70,7 +70,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos procesar tu solicitud de recuperacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
                 ["No pudimos conectar con el servidor. Verifica tu conexion e intenta mas tarde."]
-                    = () => Recursos.Lang.errorTextoBaseDatosRecuperacion,
+                    = () => Recursos.Lang.errorTextoEnviarCorreoRecuperacion,
                 ["No pudimos reenviar el codigo. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoServidorReenviarCodigo,
                 ["No pudimos confirmar el codigo de recuperacion. Intenta mas tarde."]
@@ -161,7 +161,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos enviar la solicitud de amistad. Intenta mas tarde."]
                     = () => Recursos.Lang.amigosErrorCompletarSolicitud,
                 ["No pudimos procesar la solicitud de amistad. Intenta mas tarde."]
-                    = () => Recursos.Lang.amigosErrorActualizarSolicitud,
+                    = () => Recursos.Lang.errorTextoAceptarSolicitudServicio,
                 ["No existe una solicitud de amistad con este usuario."]
                     = () => Recursos.Lang.amigosErrorSolicitudNoExiste,
                 ["No pudimos aceptar la solicitud de amistad. Intenta mas tarde."]
@@ -190,7 +190,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["No pudimos enviar la invitacion. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoEnviarInvitacion,
                 ["Hubo un problema al procesar la invitacion."]
-                    = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
+                    = () => Recursos.Lang.errorTextoEnviarInvitacion,
                 ["Este jugador ya esta en la sala."]
                     = () => Recursos.Lang.invitarCorreoTextoJugadorYaEnSala,
                 ["Invitacion enviada correctamente."]
@@ -200,7 +200,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 ["El jugador con este correo ya esta en la sala."]
                     = () => Recursos.Lang.invitarCorreoTextoJugadorYaEnSala,
                 ["No pudimos enviar la invitacion al correo. Intenta mas tarde."]
-                    = () => Recursos.Lang.errorTextoEnviarCorreo,
+                    = () => Recursos.Lang.errorTextoEnviarInvitacion,
 
                 ["No pudimos crear la sala. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoCrearSala,

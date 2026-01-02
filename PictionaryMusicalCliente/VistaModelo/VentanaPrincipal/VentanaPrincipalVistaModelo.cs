@@ -428,7 +428,15 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _desconexionProcesada = true;
             _logger.Error("Se detecto desconexion del canal de amigos.");
             _canalAmigosDisponible = false;
+            
+            DesuscribirEventosCanalesAmigos();
             EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
+        }
+
+        private void DesuscribirEventosCanalesAmigos()
+        {
+            _listaAmigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
+            _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
         }
 
         private void ManejarDesconexionCanalAmigos()
@@ -683,6 +691,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ReiniciarAplicacion()
         {
+            DesuscribirEventos();
+            AbortarCanalesAmigos();
             _usuarioSesion.Limpiar();
 
             var dependenciasBase = new VistaModeloBaseDependencias(
@@ -706,6 +716,27 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarVentana(inicioVistaModelo);
             _ventana.CerrarTodasLasVentanas();
             _ventana.CerrarVentana(this);
+        }
+
+        private void AbortarCanalesAmigos()
+        {
+            try
+            {
+                _listaAmigosServicio.AbortarConexion();
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn("Error al abortar canal de lista de amigos.", excepcion);
+            }
+
+            try
+            {
+                _amigosServicio.AbortarConexion();
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn("Error al abortar canal de amigos.", excepcion);
+            }
         }
 
         private void EjecutarAbrirAjustes()

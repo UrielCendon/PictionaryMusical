@@ -276,9 +276,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             string mensajeServidor,
             string mensajeContingencia)
         {
-            var mensajeFinal = string.IsNullOrWhiteSpace(mensajeServidor)
-                ? mensajeContingencia
-                : mensajeServidor;
+            string mensajeFinal = App.Localizador.Localizar(
+                mensajeServidor,
+                mensajeContingencia);
 
             return new DTOs.ResultadoOperacionDTO
             {

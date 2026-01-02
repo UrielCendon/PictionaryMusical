@@ -1098,7 +1098,7 @@ aciertan o cuando se acaba el tiempo.
     <value>No puedes reportarte a ti mismo.</value>
   </data>
   <data name="errorTextoReportarJugador" xml:space="preserve">
-    <value>No pudimos enviar el reporte. Intenta más tarde.</value>
+    <value>No pudimos enviar el reporte debido a un problema con el servicio, intenta más tarde.</value>
   </data>
   <data name="reportarJugadorTextoMotivoLongitud" xml:space="preserve">
     <value>El motivo del reporte es muy largo. Usa máximo 100 caracteres.</value>
@@ -1216,5 +1216,14 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
     <value>Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión.</value>
+  </data>
+  <data name="errorTextoAceptarSolicitudServicio" xml:space="preserve">
+    <value>No se pudo aceptar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
+  </data>
+  <data name="errorTextoEnviarCorreoRecuperacion" xml:space="preserve">
+    <value>No se pudo enviar un correo electrónico debido a un problema con el servicio. Intente de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
+    <value>No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
   </data>
 </root>
