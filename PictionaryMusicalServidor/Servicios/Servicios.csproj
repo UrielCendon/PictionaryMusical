@@ -105,7 +105,7 @@
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="LogicaNegocio\GestorTiemposPartida.cs" />
     <Compile Include="Servicios\Notificadores\ExpulsionNotificacionParametros.cs" />
-    <Compile Include="Servicios\ReportesManejador.cs" />
+    <Compile Include="Servicios\Usuarios\ReportesManejador.cs" />
     <Compile Include="Servicios\Utilidades\ActualizadorClasificacionPartida.cs" />
     <Compile Include="Servicios\Utilidades\CallbackEjecucionParametros.cs" />
     <Compile Include="Servicios\Utilidades\CallbacksCompartidos.cs" />
@@ -138,32 +138,32 @@
     <Compile Include="Contratos\DTOs\RondaDTO.cs" />
     <Compile Include="Contratos\DTOs\TrazoDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Servicios\AmigosManejador.cs" />
-    <Compile Include="Servicios\AmistadServicio.cs" />
-    <Compile Include="Servicios\ListaAmigosManejador.cs" />
-    <Compile Include="Servicios\ClasificacionManejador.cs" />
-    <Compile Include="Servicios\CodigoVerificacionManejador.cs" />
+    <Compile Include="Servicios\Amigos\AmigosManejador.cs" />
+    <Compile Include="Servicios\Amigos\AmistadServicio.cs" />
+    <Compile Include="Servicios\Amigos\ListaAmigosManejador.cs" />
+    <Compile Include="Servicios\Usuarios\ClasificacionManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\CodigoVerificacionManejador.cs" />
     <Compile Include="Servicios\Constantes\MensajesError.cs" />
-    <Compile Include="Servicios\CuentaManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\CuentaManejador.cs" />
     <Compile Include="Servicios\Notificadores\ICorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\EntradaComunValidador.cs" />
-    <Compile Include="Servicios\CursoPartidaManejador.cs" />
-    <Compile Include="Servicios\InicioSesionManejador.cs" />
-    <Compile Include="Servicios\CambioContrasenaManejador.cs" />
-    <Compile Include="Servicios\ChatManejador.cs" />
+    <Compile Include="Servicios\Partida\CursoPartidaManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\InicioSesionManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\CambioContrasenaManejador.cs" />
+    <Compile Include="Servicios\Partida\ChatManejador.cs" />
     <Compile Include="Servicios\Notificadores\GestorNotificacionesSalaInterna.cs" />
     <Compile Include="Servicios\Notificadores\IGestorNotificacionesSalaInterna.cs" />
     <Compile Include="Servicios\Notificadores\INotificadorAmigos.cs" />
     <Compile Include="Servicios\Notificadores\INotificadorSalas.cs" />
-    <Compile Include="Servicios\SalaInternaManejador.cs" />
-    <Compile Include="Servicios\NotificacionCodigosServicio.cs" />
+    <Compile Include="Servicios\Salas\SalaInternaManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\NotificacionCodigosServicio.cs" />
     <Compile Include="Servicios\Notificadores\NotificadorAmigos.cs" />
     <Compile Include="Servicios\Notificadores\NotificadorListaAmigos.cs" />
     <Compile Include="Servicios\Notificadores\NotificadorSalas.cs" />
-    <Compile Include="Servicios\PerfilManejador.cs" />
-    <Compile Include="Servicios\RecuperacionCuentaServicio.cs" />
-    <Compile Include="Servicios\SalasManejador.cs" />
-    <Compile Include="Servicios\InvitacionesManejador.cs" />
+    <Compile Include="Servicios\Usuarios\PerfilManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\RecuperacionCuentaServicio.cs" />
+    <Compile Include="Servicios\Salas\SalasManejador.cs" />
+    <Compile Include="Servicios\Salas\InvitacionesManejador.cs" />
     <Compile Include="Servicios\Utilidades\ContextoFactoria.cs" />
     <Compile Include="Servicios\Notificadores\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificador.cs" />
@@ -176,7 +176,7 @@
     <Compile Include="Servicios\Utilidades\NotificacionRondaParametros.cs" />
     <Compile Include="Servicios\Utilidades\NotificadorEventosPartida.cs" />
     <Compile Include="Servicios\Utilidades\RepositorioFactoria.cs" />
-    <Compile Include="Servicios\VerificacionRegistroServicio.cs" />
+    <Compile Include="Servicios\Autenticacion\VerificacionRegistroServicio.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup />

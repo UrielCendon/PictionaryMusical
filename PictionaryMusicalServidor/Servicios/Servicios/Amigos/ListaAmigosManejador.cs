@@ -12,7 +12,7 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Implementacion del servicio de gestion de listas de amigos.

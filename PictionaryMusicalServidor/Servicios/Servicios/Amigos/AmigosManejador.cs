@@ -12,7 +12,7 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.ServiceModel;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Implementacion del servicio de gestion de amistades entre usuarios.

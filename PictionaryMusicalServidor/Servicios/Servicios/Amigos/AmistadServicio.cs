@@ -7,7 +7,7 @@ using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Servicio interno para la gestion de logica de negocio relacionada con amistades.

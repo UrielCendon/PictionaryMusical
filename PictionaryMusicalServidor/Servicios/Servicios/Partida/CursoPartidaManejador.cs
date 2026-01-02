@@ -6,6 +6,7 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 {
     /// <summary>
     /// Implementa una fachada para administrar el curso de las partidas activas.

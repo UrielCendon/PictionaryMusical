@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Servicio interno para la logica de negocio de verificacion de registro de cuentas.

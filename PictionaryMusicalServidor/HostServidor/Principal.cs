@@ -1,6 +1,10 @@
 using log4net;
 using log4net.Config;
-using PictionaryMusicalServidor.Servicios.Servicios;
+using PictionaryMusicalServidor.Servicios.Servicios.Autenticacion;
+using PictionaryMusicalServidor.Servicios.Servicios.Amigos;
+using PictionaryMusicalServidor.Servicios.Servicios.Salas;
+using PictionaryMusicalServidor.Servicios.Servicios.Partida;
+using PictionaryMusicalServidor.Servicios.Servicios.Usuarios;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -6,7 +6,7 @@ using System;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Servicio interno para el envio de notificaciones de codigos de verificacion.

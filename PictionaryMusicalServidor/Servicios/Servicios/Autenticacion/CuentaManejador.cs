@@ -12,7 +12,7 @@ using System.Data.Entity.Validation;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Implementacion del servicio de gestion de cuentas de usuario.

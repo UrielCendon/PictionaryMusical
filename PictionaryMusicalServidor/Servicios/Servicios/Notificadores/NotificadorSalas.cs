@@ -7,6 +7,7 @@ using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {

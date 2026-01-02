@@ -9,7 +9,7 @@ using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Implementacion del servicio de recuperacion y cambio de contrasena de usuarios.

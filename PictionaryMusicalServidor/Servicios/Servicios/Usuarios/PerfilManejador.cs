@@ -13,7 +13,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 {
     /// <summary>
     /// Implementacion del servicio de gestion de perfiles de usuario.

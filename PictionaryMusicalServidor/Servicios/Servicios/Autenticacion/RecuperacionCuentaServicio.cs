@@ -14,7 +14,7 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Servicio interno para la logica de negocio de recuperacion y cambio de contrasena.

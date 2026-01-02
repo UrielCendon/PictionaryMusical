@@ -10,9 +10,10 @@ using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 {
     /// <summary>
     /// Servicio encargado de registrar reportes de jugadores.

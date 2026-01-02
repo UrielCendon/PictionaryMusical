@@ -11,7 +11,7 @@ using System.Data;
 using System.Data.Entity.Core;
 using BCryptNet = BCrypt.Net.BCrypt;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Implementacion del servicio de autenticacion de usuarios.

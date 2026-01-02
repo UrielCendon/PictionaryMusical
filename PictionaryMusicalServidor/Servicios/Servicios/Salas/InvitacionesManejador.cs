@@ -14,7 +14,7 @@ using System.ServiceModel;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios
+namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 {
     /// <summary>
     /// Implementacion del servicio de gestion de invitaciones a salas de juego.
