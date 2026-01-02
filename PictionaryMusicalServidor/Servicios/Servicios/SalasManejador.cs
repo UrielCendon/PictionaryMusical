@@ -82,7 +82,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             try
             {
                 EntradaComunValidador.ValidarNombreUsuario(nombreCreador, nameof(nombreCreador));
-                ValidarConfiguracion(configuracion);
+                EntradaComunValidador.ValidarConfiguracionPartida(configuracion);
 
                 string codigo = GenerarCodigoSala();
                 var callback = OperationContext.Current.GetCallbackChannel
@@ -504,36 +504,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
 
             _logger.Error(MensajesError.Log.ErrorGenerarCodigoSala);
             throw new FaultException(MensajesError.Cliente.ErrorGenerarCodigo);
-        }
-
-        private static void ValidarConfiguracion(ConfiguracionPartidaDTO configuracion)
-        {
-            if (configuracion == null)
-            {
-                throw new FaultException(MensajesError.Cliente.ConfiguracionObligatoria);
-            }
-
-            if (configuracion.NumeroRondas <= 0 || 
-                configuracion.NumeroRondas > EntradaComunValidador.NumeroRondasMaximo)
-            {
-                throw new FaultException(MensajesError.Cliente.NumeroRondasInvalido);
-            }
-
-            if (configuracion.TiempoPorRondaSegundos <= 0 ||
-                configuracion.TiempoPorRondaSegundos > EntradaComunValidador.TiempoRondaMaximoSegundos)
-            {
-                throw new FaultException(MensajesError.Cliente.TiempoRondaInvalido);
-            }
-
-            if (!EntradaComunValidador.EsIdiomaValido(configuracion.IdiomaCanciones))
-            {
-                throw new FaultException(MensajesError.Cliente.IdiomaObligatorio);
-            }
-
-            if (!EntradaComunValidador.EsDificultadValida(configuracion.Dificultad))
-            {
-                throw new FaultException(MensajesError.Cliente.DificultadObligatoria);
-            }
         }
     }
 }

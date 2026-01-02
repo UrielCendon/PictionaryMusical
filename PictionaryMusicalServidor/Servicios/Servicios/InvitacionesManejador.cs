@@ -75,7 +75,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarDatosEntrada(invitacion);
+                EntradaComunValidador.ValidarInvitacionSala(invitacion);
 
                 string codigoSala = invitacion.CodigoSala.Trim();
                 string correo = invitacion.Correo.Trim();
@@ -130,36 +130,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
-            }
-        }
-
-        private static void ValidarDatosEntrada(InvitacionSalaDTO invitacion)
-        {
-            ValidarNulosVacios(invitacion);
-            ValidarFormatoCorreo(invitacion.Correo);
-        }
-
-        private static void ValidarNulosVacios(InvitacionSalaDTO invitacion)
-        {
-            if (invitacion == null)
-            {
-                throw new ArgumentException(
-                    MensajesError.Cliente.SolicitudInvitacionInvalida);
-            }
-
-            if (!EntradaComunValidador.EsCodigoSalaValido(invitacion.CodigoSala) ||
-                string.IsNullOrWhiteSpace(invitacion.Correo))
-            {
-                throw new ArgumentException(
-                    MensajesError.Cliente.DatosInvitacionInvalidos);
-            }
-        }
-
-        private static void ValidarFormatoCorreo(string correo)
-        {
-            if (!EntradaComunValidador.EsCorreoValido(correo.Trim()))
-            {
-                throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
             }
         }
 

@@ -42,7 +42,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarEntradaUnirse(idSala, nombreJugador);
+                EntradaComunValidador.ValidarEntradaSalaChat(idSala, nombreJugador);
 
                 var callback = ObtenerCallbackActual();
                 var idSalaNormalizado = idSala.Trim();
@@ -207,16 +207,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
-            }
-        }
-
-        private static void ValidarEntradaUnirse(string idSala, string nombreJugador)
-        {
-            EntradaComunValidador.ValidarNombreUsuario(nombreJugador, nameof(nombreJugador));
-
-            if (!EntradaComunValidador.EsCodigoSalaValido(idSala))
-            {
-                throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
             }
         }
 

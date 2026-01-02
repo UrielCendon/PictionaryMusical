@@ -29,7 +29,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         private const int TiempoRondaPorDefectoSegundos = 90;
         private const int NumeroRondasPorDefecto = 3;
         private const string DificultadPorDefecto = "Media";
-        private const int LimiteCaracteresMensaje = 150;
 
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CursoPartidaManejador));
@@ -92,20 +91,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="suscripcion">Datos de suscripcion del jugador.</param>
         public void SuscribirJugador(SuscripcionJugadorDTO suscripcion)
         {
-            if (suscripcion == null)
-            {
-                throw new FaultException(MensajesError.Cliente.DatosSuscripcionObligatorios);
-            }
-
-            if (string.IsNullOrWhiteSpace(suscripcion.IdSala))
-            {
-                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
-            }
-
-            if (string.IsNullOrWhiteSpace(suscripcion.IdJugador))
-            {
-                throw new FaultException(MensajesError.Cliente.IdJugadorObligatorio);
-            }
+            EntradaComunValidador.ValidarSuscripcionJugador(suscripcion);
 
             var callback = ObtenerCallbackActual();
             var controlador = ObtenerOCrearControlador(suscripcion.IdSala.Trim());
@@ -134,10 +120,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </param>
         public void IniciarPartida(string idSala, string idJugadorSolicitante)
         {
-            if (string.IsNullOrWhiteSpace(idSala))
-            {
-                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
-            }
+            EntradaComunValidador.ValidarIdSala(idSala);
 
             _logger.InfoFormat(
                 MensajesError.Log.InicioPartidaSolicitado,
@@ -157,23 +140,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="idJugador">Identificador del jugador.</param>
         public void EnviarMensajeJuego(string mensaje, string idSala, string idJugador)
         {
-            if (string.IsNullOrWhiteSpace(idSala))
-            {
-                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
-            }
-
-            if (SuperaLimiteCaracteres(mensaje))
-            {
-                throw new FaultException(MensajesError.Cliente.MensajeSuperaLimiteCaracteres);
-            }
+            EntradaComunValidador.ValidarMensajeJuego(mensaje, idSala);
 
             var controlador = ObtenerOCrearControlador(idSala.Trim());
             controlador.ProcesarMensaje(idJugador?.Trim(), mensaje);
-        }
-
-        private static bool SuperaLimiteCaracteres(string mensaje)
-        {
-            return !string.IsNullOrWhiteSpace(mensaje) && mensaje.Length > LimiteCaracteresMensaje;
         }
 
         /// <summary>
@@ -181,10 +151,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// </summary>
         public void EnviarTrazo(TrazoDTO trazo, string idSala, string idJugador)
         {
-            if (string.IsNullOrWhiteSpace(idSala))
-            {
-                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
-            }
+            EntradaComunValidador.ValidarIdSala(idSala);
 
             var controlador = ObtenerOCrearControlador(idSala.Trim());
             controlador.ProcesarTrazo(idJugador?.Trim(), trazo);

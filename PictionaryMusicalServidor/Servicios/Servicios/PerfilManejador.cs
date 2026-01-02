@@ -56,7 +56,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarIdUsuario(idUsuario);
+                EntradaComunValidador.ValidarIdUsuario(idUsuario);
 
                 using (var contexto = _contextoFactoria.CrearContexto())
                 {
@@ -159,14 +159,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
-            }
-        }
-
-        private static void ValidarIdUsuario(int idUsuario)
-        {
-            if (idUsuario <= 0)
-            {
-                throw new ArgumentException(MensajesError.Cliente.DatosInvalidos);
             }
         }
 

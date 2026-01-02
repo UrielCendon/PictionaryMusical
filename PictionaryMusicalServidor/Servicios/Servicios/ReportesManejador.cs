@@ -61,7 +61,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarSolicitud(reporte);
+                EntradaComunValidador.ValidarReporteJugador(reporte);
                 string motivoNormalizado = EntradaComunValidador.NormalizarTexto(reporte.Motivo);
 
                 using (var contexto = _contextoFactoria.CrearContexto())
@@ -139,32 +139,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error(MensajesError.Log.ErrorInesperadoReporte, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
-            }
-        }
-
-        private static void ValidarSolicitud(ReporteJugadorDTO reporte)
-        {
-            if (reporte == null)
-            {
-                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
-            }
-
-            EntradaComunValidador.ValidarNombreUsuario(
-                reporte.NombreUsuarioReportante,
-                "usuario reportante");
-            EntradaComunValidador.ValidarNombreUsuario(
-                reporte.NombreUsuarioReportado,
-                "usuario reportado");
-
-            string motivo = EntradaComunValidador.NormalizarTexto(reporte.Motivo);
-            if (motivo == null)
-            {
-                throw new FaultException(MensajesError.Cliente.ReporteMotivoObligatorio);
-            }
-
-            if (!EntradaComunValidador.EsLongitudValidaReporte(motivo))
-            {
-                throw new FaultException(MensajesError.Cliente.ReporteMotivoLongitud);
             }
         }
 

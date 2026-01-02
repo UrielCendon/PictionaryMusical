@@ -457,5 +457,232 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 Mensaje = mensaje
             };
         }
+
+        /// <summary>
+        /// Valida la configuracion de una partida.
+        /// Verifica que los campos de configuracion cumplan con los requisitos.
+        /// </summary>
+        /// <param name="configuracion">Configuracion de partida a validar.</param>
+        /// <exception cref="FaultException">Se lanza si algun campo no es valido.</exception>
+        public static void ValidarConfiguracionPartida(ConfiguracionPartidaDTO configuracion)
+        {
+            if (configuracion == null)
+            {
+                throw new FaultException(MensajesError.Cliente.ConfiguracionObligatoria);
+            }
+
+            if (configuracion.NumeroRondas <= 0 || 
+                configuracion.NumeroRondas > NumeroRondasMaximo)
+            {
+                throw new FaultException(MensajesError.Cliente.NumeroRondasInvalido);
+            }
+
+            if (configuracion.TiempoPorRondaSegundos <= 0 ||
+                configuracion.TiempoPorRondaSegundos > TiempoRondaMaximoSegundos)
+            {
+                throw new FaultException(MensajesError.Cliente.TiempoRondaInvalido);
+            }
+
+            if (!EsIdiomaValido(configuracion.IdiomaCanciones))
+            {
+                throw new FaultException(MensajesError.Cliente.IdiomaObligatorio);
+            }
+
+            if (!EsDificultadValida(configuracion.Dificultad))
+            {
+                throw new FaultException(MensajesError.Cliente.DificultadObligatoria);
+            }
+        }
+
+        /// <summary>
+        /// Valida los datos de entrada para unirse a una sala o chat.
+        /// Verifica que el codigo de sala y nombre de jugador sean validos.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala a validar.</param>
+        /// <param name="nombreJugador">Nombre del jugador a validar.</param>
+        /// <exception cref="FaultException">Se lanza si algun campo no es valido.</exception>
+        public static void ValidarEntradaSalaChat(string codigoSala, string nombreJugador)
+        {
+            ValidarNombreUsuario(nombreJugador, nameof(nombreJugador));
+
+            if (!EsCodigoSalaValido(codigoSala))
+            {
+                throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
+            }
+        }
+
+        /// <summary>
+        /// Valida que el codigo de sala sea valido y lanza FaultException si no lo es.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de sala a validar.</param>
+        /// <exception cref="FaultException">Se lanza si el codigo no es valido.</exception>
+        public static void ValidarCodigoSala(string codigoSala)
+        {
+            if (!EsCodigoSalaValido(codigoSala))
+            {
+                throw new FaultException(MensajesError.Cliente.CodigoSalaObligatorio);
+            }
+        }
+
+        /// <summary>
+        /// Valida que el identificador de sala no este vacio.
+        /// </summary>
+        /// <param name="idSala">Identificador de sala a validar.</param>
+        /// <exception cref="FaultException">Se lanza si el identificador esta vacio.</exception>
+        public static void ValidarIdSala(string idSala)
+        {
+            if (string.IsNullOrWhiteSpace(idSala))
+            {
+                throw new FaultException(MensajesError.Cliente.IdSalaObligatorio);
+            }
+        }
+
+        /// <summary>
+        /// Valida que el identificador de jugador no este vacio.
+        /// </summary>
+        /// <param name="idJugador">Identificador de jugador a validar.</param>
+        /// <exception cref="FaultException">Se lanza si el identificador esta vacio.</exception>
+        public static void ValidarIdJugador(string idJugador)
+        {
+            if (string.IsNullOrWhiteSpace(idJugador))
+            {
+                throw new FaultException(MensajesError.Cliente.IdJugadorObligatorio);
+            }
+        }
+
+        /// <summary>
+        /// Valida los datos de suscripcion de un jugador a una partida.
+        /// Verifica que la suscripcion, el id de sala y el id de jugador sean validos.
+        /// </summary>
+        /// <param name="suscripcion">Datos de suscripcion a validar.</param>
+        /// <exception cref="FaultException">Se lanza si algun campo no es valido.</exception>
+        public static void ValidarSuscripcionJugador(SuscripcionJugadorDTO suscripcion)
+        {
+            if (suscripcion == null)
+            {
+                throw new FaultException(MensajesError.Cliente.DatosSuscripcionObligatorios);
+            }
+
+            ValidarIdSala(suscripcion.IdSala);
+            ValidarIdJugador(suscripcion.IdJugador);
+        }
+
+        /// <summary>
+        /// Valida que un mensaje no supere el limite de caracteres permitido.
+        /// </summary>
+        /// <param name="mensaje">Mensaje a validar.</param>
+        /// <returns>True si el mensaje supera el limite de caracteres.</returns>
+        public static bool SuperaLimiteCaracteresMensaje(string mensaje)
+        {
+            return !string.IsNullOrWhiteSpace(mensaje) && mensaje.Length > LongitudMaximaMensajeChat;
+        }
+
+        /// <summary>
+        /// Valida que un mensaje de juego sea valido.
+        /// </summary>
+        /// <param name="mensaje">Mensaje a validar.</param>
+        /// <param name="idSala">Identificador de sala.</param>
+        /// <exception cref="FaultException">Se lanza si el mensaje o sala no son validos.</exception>
+        public static void ValidarMensajeJuego(string mensaje, string idSala)
+        {
+            ValidarIdSala(idSala);
+
+            if (SuperaLimiteCaracteresMensaje(mensaje))
+            {
+                throw new FaultException(MensajesError.Cliente.MensajeSuperaLimiteCaracteres);
+            }
+        }
+
+        /// <summary>
+        /// Valida los datos de un reporte de jugador.
+        /// Verifica que el reporte no sea nulo, los usuarios sean validos y el motivo cumpla 
+        /// requisitos.
+        /// </summary>
+        /// <param name="reporte">Reporte a validar.</param>
+        /// <exception cref="FaultException">Se lanza si algun campo no es valido.</exception>
+        public static void ValidarReporteJugador(ReporteJugadorDTO reporte)
+        {
+            if (reporte == null)
+            {
+                throw new FaultException(MensajesError.Cliente.DatosInvalidos);
+            }
+
+            ValidarNombreUsuario(reporte.NombreUsuarioReportante, "usuario reportante");
+            ValidarNombreUsuario(reporte.NombreUsuarioReportado, "usuario reportado");
+
+            string motivo = NormalizarTexto(reporte.Motivo);
+            if (motivo == null)
+            {
+                throw new FaultException(MensajesError.Cliente.ReporteMotivoObligatorio);
+            }
+
+            if (!EsLongitudValidaReporte(motivo))
+            {
+                throw new FaultException(MensajesError.Cliente.ReporteMotivoLongitud);
+            }
+        }
+
+        /// <summary>
+        /// Valida los datos de una invitacion a sala.
+        /// Verifica que la invitacion no sea nula, el codigo de sala y correo sean validos.
+        /// </summary>
+        /// <param name="invitacion">Invitacion a validar.</param>
+        /// <exception cref="ArgumentException">Se lanza si algun campo no es valido.</exception>
+        public static void ValidarInvitacionSala(InvitacionSalaDTO invitacion)
+        {
+            if (invitacion == null)
+            {
+                throw new ArgumentException(MensajesError.Cliente.SolicitudInvitacionInvalida);
+            }
+
+            if (!EsCodigoSalaValido(invitacion.CodigoSala) ||
+                string.IsNullOrWhiteSpace(invitacion.Correo))
+            {
+                throw new ArgumentException(MensajesError.Cliente.DatosInvitacionInvalidos);
+            }
+
+            if (!EsCorreoValido(invitacion.Correo.Trim()))
+            {
+                throw new ArgumentException(MensajesError.Cliente.CorreoInvalido);
+            }
+        }
+
+        /// <summary>
+        /// Valida que el identificador de usuario sea un valor positivo.
+        /// </summary>
+        /// <param name="idUsuario">Identificador de usuario a validar.</param>
+        /// <exception cref="ArgumentException">Se lanza si el identificador no es valido.</exception>
+        public static void ValidarIdUsuario(int idUsuario)
+        {
+            if (idUsuario <= 0)
+            {
+                throw new ArgumentException(MensajesError.Cliente.DatosInvalidos);
+            }
+        }
+
+        /// <summary>
+        /// Valida que el nombre de usuario para suscripcion no este vacio.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre de usuario a validar.</param>
+        /// <exception cref="FaultException">Se lanza si el nombre esta vacio.</exception>
+        public static void ValidarNombreUsuarioSuscripcion(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                throw new FaultException(MensajesError.Cliente.NombreUsuarioObligatorioSuscripcion);
+            }
+        }
+
+        /// <summary>
+        /// Valida que dos nombres de usuario para interaccion sean validos.
+        /// </summary>
+        /// <param name="usuarioA">Primer nombre de usuario.</param>
+        /// <param name="usuarioB">Segundo nombre de usuario.</param>
+        /// <exception cref="FaultException">Se lanza si alguno no es valido.</exception>
+        public static void ValidarUsuariosInteraccion(string usuarioA, string usuarioB)
+        {
+            ValidarNombreUsuario(usuarioA, nameof(usuarioA));
+            ValidarNombreUsuario(usuarioB, nameof(usuarioB));
+        }
     }
 }

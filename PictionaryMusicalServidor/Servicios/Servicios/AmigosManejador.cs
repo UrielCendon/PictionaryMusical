@@ -86,7 +86,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         /// <param name="nombreUsuario">Nombre del usuario a suscribir.</param>
         public void Suscribir(string nombreUsuario)
         {
-            ValidarEntradaSuscripcion(nombreUsuario);
+            EntradaComunValidador.ValidarNombreUsuarioSuscripcion(nombreUsuario);
 
             try
             {
@@ -145,7 +145,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarEntradasInteraccion(nombreUsuarioEmisor, nombreUsuarioReceptor);
+                EntradaComunValidador.ValidarUsuariosInteraccion(
+                    nombreUsuarioEmisor, 
+                    nombreUsuarioReceptor);
 
                 var usuarios = EjecutarCreacionSolicitudEnBaseDatos(
                     nombreUsuarioEmisor,
@@ -217,7 +219,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarEntradasInteraccion(nombreUsuarioEmisor, nombreUsuarioReceptor);
+                EntradaComunValidador.ValidarUsuariosInteraccion(
+                    nombreUsuarioEmisor, 
+                    nombreUsuarioReceptor);
 
                 var nombresNormalizados = EjecutarAceptacionSolicitudEnBaseDatos(
                     nombreUsuarioEmisor,
@@ -268,7 +272,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
         {
             try
             {
-                ValidarEntradasInteraccion(nombreUsuarioA, nombreUsuarioB);
+                EntradaComunValidador.ValidarUsuariosInteraccion(nombreUsuarioA, nombreUsuarioB);
 
                 var resultadoEliminacion = EjecutarEliminacionEnBaseDatos(
                     nombreUsuarioA,
@@ -301,15 +305,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             {
                 _logger.Error("Error inesperado al eliminar amistad.", excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
-            }
-        }
-
-        private static void ValidarEntradaSuscripcion(string nombreUsuario)
-        {
-            if (string.IsNullOrWhiteSpace(nombreUsuario))
-            {
-                throw new FaultException(
-                    MensajesError.Cliente.NombreUsuarioObligatorioSuscripcion);
             }
         }
 
@@ -354,12 +349,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios
             }
 
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
-        }
-
-        private static void ValidarEntradasInteraccion(string usuarioA, string usuarioB)
-        {
-            EntradaComunValidador.ValidarNombreUsuario(usuarioA, nameof(usuarioA));
-            EntradaComunValidador.ValidarNombreUsuario(usuarioB, nameof(usuarioB));
         }
 
         private (Usuario Emisor, Usuario Receptor) EjecutarCreacionSolicitudEnBaseDatos(
