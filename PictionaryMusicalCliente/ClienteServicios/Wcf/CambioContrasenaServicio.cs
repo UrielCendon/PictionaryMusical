@@ -311,10 +311,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return CrearResultadoOperacionVacio();
             }
 
+            string mensajeAUsar = dto.OperacionExitosa
+                ? Lang.avisoTextoContrasenaActualizada
+                : mensajePredeterminado;
+
             return new DTOs.ResultadoOperacionDTO
             {
                 OperacionExitosa = dto.OperacionExitosa,
-                Mensaje = _localizador.Localizar(dto.Mensaje, mensajePredeterminado)
+                Mensaje = _localizador.Localizar(dto.Mensaje, mensajeAUsar)
             };
         }
 

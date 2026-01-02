@@ -103,7 +103,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             EjecutarEnDispatcherLocal(() =>
             {
                 _ventana.CerrarVentana(this);
-                SolicitarReinicioSesion?.Invoke();
+                SolicitarReinicioSesion?.Invoke(false);
             });
         }
 
@@ -112,14 +112,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             EjecutarEnDispatcherLocal(() =>
             {
                 _ventana.CerrarVentana(this);
-                SolicitarReinicioSesion?.Invoke();
+                SolicitarReinicioSesion?.Invoke(false);
             });
         }
 
         /// <summary>
         /// Accion a invocar cuando se requiere reiniciar la sesion.
+        /// El parametro indica si es un reinicio voluntario (true) o por error (false).
         /// </summary>
-        public Action SolicitarReinicioSesion { get; set; }
+        public Action<bool> SolicitarReinicioSesion { get; set; }
 
         /// <summary>
         /// Coleccion de solicitudes de amistad pendientes.

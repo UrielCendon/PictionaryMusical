@@ -664,7 +664,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarVentanaDialogo(perfilVistaModelo);
         }
 
-        private void EjecutarReinicioAplicacion()
+        private void EjecutarReinicioAplicacion(bool esVoluntario)
         {
             if (_desconexionProcesada)
             {
@@ -672,9 +672,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
 
             _desconexionProcesada = true;
-            _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
-            _ventana.MostrarError(Lang.errorTextoDesconexionServidor);
+
+            if (!esVoluntario)
+            {
+                _sonidoManejador.ReproducirError();
+                _ventana.MostrarError(Lang.errorTextoDesconexionServidor);
+            }
         }
 
         private void ReiniciarAplicacion()

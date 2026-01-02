@@ -1635,9 +1635,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             _expulsionNavegada = true;
             _eventosManejador.MarcarSalaCancelada();
-            string mensaje = _usuarioSesion?.EstaAutenticado == true
-                ? Lang.errorTextoUsuarioBaneado
-                : Lang.expulsarJugadorTextoFuisteExpulsado;
+            string mensaje = Lang.expulsarJugadorTextoFuisteExpulsado;
             _avisoServicio.Mostrar(mensaje);
 
             _aplicacionCerrando = true;

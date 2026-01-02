@@ -79,7 +79,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 DesuscribirEventosDesconexion();
                 RequiereReinicioSesion = true;
                 _ventana.CerrarVentana(this);
-                SolicitarReinicioSesion?.Invoke();
+                SolicitarReinicioSesion?.Invoke(false);
             });
         }
 
@@ -90,7 +90,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 DesuscribirEventosDesconexion();
                 RequiereReinicioSesion = true;
                 _ventana.CerrarVentana(this);
-                SolicitarReinicioSesion?.Invoke();
+                SolicitarReinicioSesion?.Invoke(false);
             });
         }
 
@@ -170,8 +170,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         /// <summary>
         /// Obtiene o establece la accion para solicitar reinicio de sesion.
+        /// El parametro indica si es un reinicio voluntario (true) o por error (false).
         /// </summary>
-        public Action SolicitarReinicioSesion { get; set; }
+        public Action<bool> SolicitarReinicioSesion { get; set; }
 
         /// <summary>
         /// Obtiene un valor que indica si se requiere reiniciar sesion.
