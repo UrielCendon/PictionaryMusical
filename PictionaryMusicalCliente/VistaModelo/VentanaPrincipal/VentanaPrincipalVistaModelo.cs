@@ -652,7 +652,15 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarReinicioAplicacion()
         {
+            if (_desconexionProcesada)
+            {
+                return;
+            }
+
+            _desconexionProcesada = true;
+            _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
+            _ventana.MostrarError(Lang.errorTextoDesconexionServidor);
         }
 
         private void ReiniciarAplicacion()
@@ -717,6 +725,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _sonidoManejador,
                 App.AvisoServicio,
                 _usuarioSesion);
+            busquedaAmigoVistaModelo.SolicitarReinicioSesion = EjecutarReinicioAplicacion;
             _ventana.MostrarVentanaDialogo(busquedaAmigoVistaModelo);
         }
 
@@ -743,6 +752,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _sonidoManejador,
                 App.AvisoServicio,
                 _usuarioSesion);
+            solicitudesVistaModelo.SolicitarReinicioSesion = EjecutarReinicioAplicacion;
             _ventana.MostrarVentanaDialogo(solicitudesVistaModelo);
         }
 
@@ -918,6 +928,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _logger.WarnFormat("Desconexion detectada: {0}", mensaje);
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
+            _ventana.MostrarError(mensaje);
         }
     }
 }

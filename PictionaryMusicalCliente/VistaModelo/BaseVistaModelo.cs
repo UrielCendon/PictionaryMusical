@@ -330,7 +330,6 @@ namespace PictionaryMusicalCliente.VistaModelo
 
         private void EjecutarDesconexionCritica(string mensaje)
         {
-            _ventana?.MostrarError(mensaje);
             DesconexionDetectada?.Invoke(mensaje);
         }
 

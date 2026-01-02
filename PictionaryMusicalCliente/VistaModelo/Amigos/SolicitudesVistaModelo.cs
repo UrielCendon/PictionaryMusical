@@ -102,8 +102,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             EjecutarEnDispatcherLocal(() =>
             {
                 _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
             });
         }
+
+        /// <summary>
+        /// Accion a invocar cuando se requiere reiniciar la sesion.
+        /// </summary>
+        public Action SolicitarReinicioSesion { get; set; }
 
         /// <summary>
         /// Coleccion de solicitudes de amistad pendientes.

@@ -78,8 +78,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             EjecutarEnDispatcher(() =>
             {
                 _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
             });
         }
+
+        /// <summary>
+        /// Accion a invocar cuando se requiere reiniciar la sesion.
+        /// </summary>
+        public Action SolicitarReinicioSesion { get; set; }
 
         /// <summary>
         /// Nombre de usuario ingresado para buscar.

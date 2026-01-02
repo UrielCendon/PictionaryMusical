@@ -69,8 +69,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             EjecutarEnDispatcher(() =>
             {
                 RequiereReinicioSesion = true;
-                SolicitarReinicioSesion?.Invoke();
                 _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
             });
         }
 

@@ -150,8 +150,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             {
                 _usuarioSesion?.Limpiar();
                 RequiereReinicioSesion = true;
-                SolicitarReinicioSesion?.Invoke();
                 _ventana.CerrarVentana(this);
+                SolicitarReinicioSesion?.Invoke();
             });
         }
 
