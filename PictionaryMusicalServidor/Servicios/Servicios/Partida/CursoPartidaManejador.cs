@@ -1,7 +1,5 @@
 using log4net;
 using PictionaryMusicalServidor.Datos;
-using PictionaryMusicalServidor.Datos.Constantes;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
@@ -10,9 +8,6 @@ using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -44,46 +39,49 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         private static readonly object _sincronizacion = new object();
 
-        private readonly IContextoFactoria _contextoFactoria;
-        private readonly IRepositorioFactoria _repositorioFactoria;
         private readonly ISalasManejador _salasManejador;
         private readonly ICatalogoCanciones _catalogoCanciones;
+        private readonly INotificadorPartida _notificadorPartida;
+        private readonly IActualizadorClasificacionPartida _actualizadorClasificacion;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
         /// </summary>
         public CursoPartidaManejador() : this(
-            new ContextoFactoria(),
-            new RepositorioFactoria(),
             new SalasManejador(),
-            new CatalogoCanciones())
+            new CatalogoCanciones(),
+            new NotificadorPartida(),
+            new ActualizadorClasificacionPartida())
         {
         }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias para pruebas unitarias.
         /// </summary>
-        /// <param name="contextoFactoria">Factoria para crear contextos de base de datos.</param>
-        /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
         /// <param name="salasManejador">Manejador de salas.</param>
         /// <param name="catalogoCanciones">Catalogo de canciones.</param>
+        /// <param name="notificadorPartida">Servicio de notificaciones de partida.</param>
+        /// <param name="actualizadorClasificacion">Servicio de actualizacion de clasificaciones.
+        /// </param>
         public CursoPartidaManejador(
-            IContextoFactoria contextoFactoria,
-            IRepositorioFactoria repositorioFactoria,
             ISalasManejador salasManejador,
-            ICatalogoCanciones catalogoCanciones)
+            ICatalogoCanciones catalogoCanciones,
+            INotificadorPartida notificadorPartida,
+            IActualizadorClasificacionPartida actualizadorClasificacion)
         {
-            _contextoFactoria = contextoFactoria
-                ?? throw new ArgumentNullException(nameof(contextoFactoria));
-
-            _repositorioFactoria = repositorioFactoria
-                ?? throw new ArgumentNullException(nameof(repositorioFactoria));
-
             _salasManejador = salasManejador
                 ?? throw new ArgumentNullException(nameof(salasManejador));
 
             _catalogoCanciones = catalogoCanciones
                 ?? throw new ArgumentNullException(nameof(catalogoCanciones));
+
+            _notificadorPartida = notificadorPartida
+                ?? throw new ArgumentNullException(nameof(notificadorPartida));
+
+            _actualizadorClasificacion = actualizadorClasificacion
+                ?? throw new ArgumentNullException(nameof(actualizadorClasificacion));
+
+            _notificadorPartida.CallbackInvalido += ManejarCallbackInvalido;
         }
 
         /// <summary>
@@ -234,9 +232,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             };
         }
 
-        private static void ManejarPartidaIniciada(string idSala)
+        private void ManejarPartidaIniciada(string idSala)
         {
-            NotificarCallbacksPartidaIniciada(idSala);
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarPartidaIniciada(idSala, callbacks);
+            }
         }
 
         private void ManejarInicioRonda(
@@ -360,24 +362,40 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
+        private void ManejarJugadorAdivino(string idSala, string jugador, int puntos)
         {
-            NotificarCallbacksJugadorAdivino(idSala, jugador, puntos);
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarJugadorAdivino(idSala, callbacks, jugador, puntos);
+            }
         }
 
-        private static void ManejarMensajeChat(string idSala, string jugador, string mensaje)
+        private void ManejarMensajeChat(string idSala, string jugador, string mensaje)
         {
-            NotificarCallbacksMensajeChat(idSala, jugador, mensaje);
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarMensajeChat(idSala, callbacks, jugador, mensaje);
+            }
         }
 
-        private static void ManejarTrazoRecibido(string idSala, TrazoDTO trazo)
+        private void ManejarTrazoRecibido(string idSala, TrazoDTO trazo)
         {
-            NotificarCallbacksTrazoRecibido(idSala, trazo);
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarTrazoRecibido(idSala, callbacks, trazo);
+            }
         }
 
-        private static void ManejarFinRonda(string idSala, bool tiempoAgotado)
+        private void ManejarFinRonda(string idSala, bool tiempoAgotado)
         {
-            NotificarCallbacksFinRonda(idSala, tiempoAgotado);
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarFinRonda(idSala, callbacks, tiempoAgotado);
+            }
         }
 
         private void ManejarFinPartida(
@@ -386,76 +404,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             ControladorPartida controlador)
         {
             _salasManejador.MarcarPartidaComoFinalizada(idSala);
-            ActualizarClasificacionPartida(controlador, resultado);
-            NotificarCallbacksFinPartida(idSala, resultado);
-        }
-
-        private void ActualizarClasificacionPartida(
-            ControladorPartida controlador,
-            ResultadoPartidaDTO resultado)
-        {
-            if (controlador == null ||
-                resultado?.Clasificacion == null ||
-                !resultado.Clasificacion.Any())
+            
+            var jugadores = ObtenerJugadoresFinales(controlador);
+            _actualizadorClasificacion.ActualizarClasificaciones(jugadores, resultado);
+            
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
             {
-                return;
-            }
-
-            if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
-            {
-                _logger.Info(MensajesError.Log.PartidaFinalizadaSinClasificacion);
-                return;
-            }
-
-            var jugadoresFinales = ObtenerJugadoresFinales(controlador);
-
-            if (jugadoresFinales == null || jugadoresFinales.Count == 0)
-            {
-                return;
-            }
-
-            var ganadores = CalcularGanadores(jugadoresFinales);
-
-            try
-            {
-                using (var contexto = _contextoFactoria.CrearContexto())
-                {
-                    var clasificacionRepositorio = 
-                        _repositorioFactoria.CrearClasificacionRepositorio(contexto);
-
-                    foreach (var jugador in jugadoresFinales)
-                    {
-                        PersistirEstadisticasJugador(
-                            clasificacionRepositorio,
-                            jugador,
-                            ganadores);
-                    }
-                }
-            }
-            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
-            {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
-                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
-                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
-                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarClasificaciones, excepcion);
-                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarClasificaciones, excepcion);
-                resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
+                _notificadorPartida.NotificarFinPartida(idSala, callbacks, resultado);
             }
         }
 
@@ -463,33 +419,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         {
             try
             {
-                var jugadores = controlador.ObtenerJugadores();
+                var jugadores = controlador?.ObtenerJugadores();
                 if (jugadores == null)
                 {
                     return new List<JugadorPartida>();
                 }
                 return new List<JugadorPartida>(jugadores);
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
-                    excepcion);
-                return new List<JugadorPartida>();
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesError.Log.ErrorObtenerJugadoresClasificacion,
-                    excepcion);
-                return new List<JugadorPartida>();
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesError.Log.ErrorDatosObtenerJugadoresClasificacion,
-                    excepcion);
-                return new List<JugadorPartida>();
             }
             catch (Exception excepcion)
             {
@@ -500,259 +435,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
+        private static Dictionary<string, ICursoPartidaManejadorCallback> ObtenerCallbacksSala(
+            string idSala)
         {
-            int puntajeMaximo = jugadores.Max(j => j.PuntajeTotal);
-
-            return new HashSet<string>(
-                jugadores
-                    .Where(j => j.PuntajeTotal == puntajeMaximo)
-                    .Select(j => j.IdConexion),
-                StringComparer.OrdinalIgnoreCase);
-        }
-
-        private static void PersistirEstadisticasJugador(
-            IClasificacionRepositorio repositorio,
-            JugadorPartida jugador,
-            HashSet<string> ganadores)
-        {
-            int jugadorId;
-            if (!int.TryParse(jugador.IdConexion, out jugadorId) || jugadorId <= 0)
-            {
-                return;
-            }
-
-            bool ganoPartida = ganadores.Contains(jugador.IdConexion);
-
-            repositorio.ActualizarEstadisticas(
-                jugadorId,
-                jugador.PuntajeTotal,
-                ganoPartida);
-        }
-
-        private static void NotificarCallbacksPartidaIniciada(string idSala)
-        {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
             lock (_sincronizacion)
             {
                 Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
+                if (_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
                 {
-                    return;
+                    return new Dictionary<string, ICursoPartidaManejadorCallback>(
+                        callbacksSala,
+                        StringComparer.OrdinalIgnoreCase);
                 }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) { cb.NotificarPartidaIniciada(); });
+                return new Dictionary<string, ICursoPartidaManejadorCallback>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
-        private static void NotificarCallbacksJugadorAdivino(
-            string idSala, 
-            string jugador, 
-            int puntos)
+        private void ManejarCallbackInvalido(string idSala, string idJugador)
         {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-            lock (_sincronizacion)
-            {
-                Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
-                {
-                    return;
-                }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) 
-                    { 
-                        cb.NotificarJugadorAdivino(jugador, puntos); 
-                    });
-            }
-        }
-
-        private static void NotificarCallbacksMensajeChat(
-            string idSala, 
-            string jugador, 
-            string mensaje)
-        {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-            lock (_sincronizacion)
-            {
-                Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
-                {
-                    return;
-                }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) 
-                    { 
-                        cb.NotificarMensajeChat(jugador, mensaje); 
-                    });
-            }
-        }
-
-        private static void NotificarCallbacksTrazoRecibido(string idSala, TrazoDTO trazo)
-        {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-            lock (_sincronizacion)
-            {
-                Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
-                {
-                    return;
-                }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) 
-                    { 
-                        cb.NotificarTrazoRecibido(trazo); 
-                    });
-            }
-        }
-
-        private static void NotificarCallbacksFinRonda(string idSala, bool tiempoAgotado)
-        {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-            lock (_sincronizacion)
-            {
-                Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
-                {
-                    return;
-                }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) { cb.NotificarFinRonda(tiempoAgotado); });
-            }
-        }
-
-        private static void NotificarCallbacksFinPartida(
-            string idSala, 
-            ResultadoPartidaDTO resultado)
-        {
-            List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
-            lock (_sincronizacion)
-            {
-                Dictionary<string, ICursoPartidaManejadorCallback> callbacksSala;
-                if (!_callbacksPorSala.TryGetValue(idSala, out callbacksSala))
-                {
-                    return;
-                }
-
-                callbacks = new List<KeyValuePair<string, ICursoPartidaManejadorCallback>>
-                    (callbacksSala);
-            }
-
-            foreach (var par in callbacks)
-            {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala,
-                    delegate(ICursoPartidaManejadorCallback cb) 
-                    { 
-                        cb.NotificarFinPartida(resultado); 
-                    });
-            }
-        }
-
-        private static void NotificarCallbackSeguro(
-            ICursoPartidaManejadorCallback callback,
-            string idJugador,
-            string idSala,
-            Action<ICursoPartidaManejadorCallback> accion)
-        {
-            try
-            {
-                if (!CanalActivo(callback))
-                {
-                    _logger.WarnFormat(
-                        "Canal inactivo para jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala);
-
-                    RemoverCallback(idSala, idJugador);
-                    return;
-                }
-                accion(callback);
-            }
-            catch (ObjectDisposedException excepcion)
-            {
-                _logger.Warn(
-                    string.Format("Canal desechado para jugador {0} en sala {1}. Removiendo.", 
-                        idJugador, idSala),
-                    excepcion);
-                RemoverCallback(idSala, idJugador);
-            }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Warn(
-                    string.Format("Canal en falta para jugador {0} en sala {1}. Removiendo.", 
-                        idJugador, idSala),
-                    excepcion);
-                RemoverCallback(idSala, idJugador);
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Warn(
-                    string.Format("Error comunicacion con jugador {0} en sala {1}. Removiendo.", 
-                        idJugador, idSala),
-                    excepcion);
-                RemoverCallback(idSala, idJugador);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Warn(
-                    string.Format("Timeout con jugador {0} en sala {1}. Removiendo.", 
-                        idJugador, idSala),
-                    excepcion);
-                RemoverCallback(idSala, idJugador);
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn(
-                    string.Format("Error inesperado con jugador {0} en sala {1}. Removiendo.", 
-                        idJugador, idSala),
-                    excepcion);
-                RemoverCallback(idSala, idJugador);
-            }
-        }
-
-        private static bool CanalActivo(ICursoPartidaManejadorCallback callback)
-        {
-            var canal = callback as ICommunicationObject;
-            if (canal != null)
-            {
-                return canal.State == CommunicationState.Opened;
-            }
-
-            return true;
+            RemoverCallback(idSala, idJugador);
         }
 
         private static void RegistrarCallback(

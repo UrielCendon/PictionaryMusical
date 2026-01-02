@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
@@ -408,13 +408,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         private static string ObtenerClave(string usuario, string correo)
         {
             return ($"{usuario}|{correo}").ToLowerInvariant();
-        }
-
-        private sealed class SolicitudCodigoPendiente
-        {
-            public NuevaCuentaDTO DatosCuenta { get; set; }
-            public string Codigo { get; set; }
-            public DateTime Expira { get; set; }
         }
     }
 }

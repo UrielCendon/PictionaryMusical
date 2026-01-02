@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using Datos.Modelo;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using log4net;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
@@ -465,17 +464,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 OperacionExitosa = false,
                 Mensaje = mensaje
             };
-        }
-
-        private sealed class SolicitudRecuperacionPendiente
-        {
-            public int UsuarioId { get; set; }
-            public string Correo { get; set; }
-            public string NombreUsuario { get; set; }
-            public string Codigo { get; set; }
-            public DateTime Expira { get; set; }
-            public bool Confirmado { get; set; }
-            public string Idioma { get; set; }
         }
     }
 }

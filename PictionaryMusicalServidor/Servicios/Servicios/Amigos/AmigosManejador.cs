@@ -28,8 +28,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
         private readonly INotificadorAmigos _notificador;
         private readonly INotificadorListaAmigos _notificadorListaAmigos;
-        private readonly IContextoFactoria _contextoFactoria;
-        private readonly IRepositorioFactoria _repositorioFactoria;
+        private readonly IOperacionAmistadServicio _operacionAmistadServicio;
         private readonly IAmistadServicio _amistadServicio;
 
         /// <summary>
@@ -38,9 +37,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// a todos los clientes suscritos en ListaAmigosManejador.
         /// </summary>
         public AmigosManejador() : this(
-            new ContextoFactoria(),
-            new RepositorioFactoria(),
             new AmistadServicio(),
+            new OperacionAmistadServicio(),
             new NotificadorListaAmigos(
                 CallbacksCompartidos.ListaAmigos,
                 new AmistadServicio(),
@@ -51,24 +49,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Constructor con inyeccion de dependencias para pruebas unitarias.
         /// </summary>
-        /// <param name="contextoFactoria">Factoria para crear contextos de base de datos.</param>
-        /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
         /// <param name="amistadServicio">Servicio de amistad.</param>
+        /// <param name="operacionAmistadServicio">Servicio de operaciones de amistad.</param>
         /// <param name="notificadorLista">Notificador de lista de amigos.</param>
         public AmigosManejador(
-            IContextoFactoria contextoFactoria,
-            IRepositorioFactoria repositorioFactoria,
             IAmistadServicio amistadServicio,
+            IOperacionAmistadServicio operacionAmistadServicio,
             INotificadorListaAmigos notificadorLista)
         {
-            _contextoFactoria = contextoFactoria ??
-                throw new ArgumentNullException(nameof(contextoFactoria));
-
-            _repositorioFactoria = repositorioFactoria ??
-                throw new ArgumentNullException(nameof(repositorioFactoria));
-
             _amistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
+
+            _operacionAmistadServicio = operacionAmistadServicio ??
+                throw new ArgumentNullException(nameof(operacionAmistadServicio));
 
             _notificadorListaAmigos = notificadorLista ??
                 throw new ArgumentNullException(nameof(notificadorLista));
@@ -90,7 +83,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
             try
             {
-                var datosUsuario = ObtenerDatosUsuarioSuscripcion(nombreUsuario);
+                var datosUsuario = _operacionAmistadServicio.ObtenerDatosUsuarioSuscripcion(
+                    nombreUsuario);
 
                 RegistrarCallback(nombreUsuario, datosUsuario.NombreNormalizado);
 
@@ -146,17 +140,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             try
             {
                 EntradaComunValidador.ValidarUsuariosInteraccion(
-                    nombreUsuarioEmisor, 
+                    nombreUsuarioEmisor,
                     nombreUsuarioReceptor);
 
-                var usuarios = EjecutarCreacionSolicitudEnBaseDatos(
+                var resultado = _operacionAmistadServicio.EjecutarCreacionSolicitud(
                     nombreUsuarioEmisor,
                     nombreUsuarioReceptor);
 
                 NotificarSolicitudNueva(
-                    usuarios.Emisor,
+                    resultado.Emisor,
                     nombreUsuarioEmisor,
-                    usuarios.Receptor,
+                    resultado.Receptor,
                     nombreUsuarioReceptor);
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
@@ -220,14 +214,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             try
             {
                 EntradaComunValidador.ValidarUsuariosInteraccion(
-                    nombreUsuarioEmisor, 
-                    nombreUsuarioReceptor);
-
-                var nombresNormalizados = EjecutarAceptacionSolicitudEnBaseDatos(
                     nombreUsuarioEmisor,
                     nombreUsuarioReceptor);
 
-                EjecutarNotificacionesRespuesta(nombresNormalizados);
+                var resultado = _operacionAmistadServicio.EjecutarAceptacionSolicitud(
+                    nombreUsuarioEmisor,
+                    nombreUsuarioReceptor);
+
+                EjecutarNotificacionesRespuesta(
+                    resultado.NombreNormalizadoEmisor,
+                    resultado.NombreNormalizadoReceptor);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -274,11 +270,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 EntradaComunValidador.ValidarUsuariosInteraccion(nombreUsuarioA, nombreUsuarioB);
 
-                var resultadoEliminacion = EjecutarEliminacionEnBaseDatos(
+                var resultado = _operacionAmistadServicio.EjecutarEliminacion(
                     nombreUsuarioA,
                     nombreUsuarioB);
 
-                EjecutarNotificacionesEliminacion(resultadoEliminacion);
+                EjecutarNotificacionesEliminacion(resultado);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -308,33 +304,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             }
         }
 
-        private (int IdUsuario, string NombreNormalizado) ObtenerDatosUsuarioSuscripcion(
-            string nombreUsuario)
-        {
-            using (var contexto = _contextoFactoria.CrearContexto())
-            {
-                var usuarioRepositorio = 
-                    _repositorioFactoria.CrearUsuarioRepositorio(contexto);
-                var usuario = usuarioRepositorio.ObtenerPorNombreUsuario(nombreUsuario);
-
-                if (usuario == null)
-                {
-                    throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
-                }
-
-                string nombreNormalizado = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuario.Nombre_Usuario,
-                    nombreUsuario);
-
-                if (string.IsNullOrWhiteSpace(nombreNormalizado))
-                {
-                    throw new FaultException(MensajesError.Cliente.UsuarioNoEncontrado);
-                }
-
-                return (usuario.idUsuario, nombreNormalizado);
-            }
-        }
-
         private void RegistrarCallback(string nombreUsuario, string nombreNormalizado)
         {
             var callback = ManejadorCallback<IAmigosManejadorCallback>.ObtenerCallbackActual();
@@ -349,112 +318,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             }
 
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
-        }
-
-        private (Usuario Emisor, Usuario Receptor) EjecutarCreacionSolicitudEnBaseDatos(
-            string nombreEmisor,
-            string nombreReceptor)
-        {
-            using (var contexto = _contextoFactoria.CrearContexto())
-            {
-                var (emisor, receptor) = ObtenerUsuariosParaInteraccion(
-                    contexto,
-                    nombreEmisor,
-                    nombreReceptor);
-
-                _amistadServicio.CrearSolicitud(emisor.idUsuario, receptor.idUsuario);
-
-                return (emisor, receptor);
-            }
-        }
-
-        private (string NormalizadoEmisor, string NormalizadoReceptor)
-            EjecutarAceptacionSolicitudEnBaseDatos(
-                string nombreEmisor,
-                string nombreReceptor)
-        {
-            using (var contexto = _contextoFactoria.CrearContexto())
-            {
-                var (usuarioEmisor, usuarioReceptor) = ObtenerUsuariosParaInteraccion(
-                    contexto,
-                    nombreEmisor,
-                    nombreReceptor);
-
-                _amistadServicio.AceptarSolicitud(
-                    usuarioEmisor.idUsuario,
-                    usuarioReceptor.idUsuario);
-
-                string normEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioEmisor.Nombre_Usuario,
-                    nombreEmisor);
-
-                string normReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioReceptor.Nombre_Usuario,
-                    nombreReceptor);
-
-                return (normEmisor, normReceptor);
-            }
-        }
-
-        private ResultadoEliminacionAmistad EjecutarEliminacionEnBaseDatos(
-            string nombreA,
-            string nombreB)
-        {
-            using (var contexto = _contextoFactoria.CrearContexto())
-            {
-                var (usuarioA, usuarioB) = ObtenerUsuariosParaInteraccion(
-                    contexto,
-                    nombreA,
-                    nombreB);
-
-                var relacion = _amistadServicio.EliminarAmistad(
-                    usuarioA.idUsuario,
-                    usuarioB.idUsuario);
-
-                string normA = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioA.Nombre_Usuario,
-                    nombreA);
-
-                string normB = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioB.Nombre_Usuario,
-                    nombreB);
-
-                return new ResultadoEliminacionAmistad
-                {
-                    Relacion = relacion,
-                    NombreANormalizado = normA,
-                    NombreBNormalizado = normB
-                };
-            }
-        }
-
-        private (Usuario Emisor, Usuario Receptor) ObtenerUsuariosParaInteraccion(
-            BaseDatosPruebaEntities contexto,
-            string nombreEmisor,
-            string nombreReceptor)
-        {
-            var usuarioRepositorio = 
-                _repositorioFactoria.CrearUsuarioRepositorio(contexto);
-            var usuarioEmisor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreEmisor);
-            var usuarioReceptor = usuarioRepositorio.ObtenerPorNombreUsuario(nombreReceptor);
-
-            ValidarUsuariosExistentes(usuarioEmisor, usuarioReceptor);
-
-            return (usuarioEmisor, usuarioReceptor);
-        }
-
-        private static void ValidarUsuariosExistentes(Usuario emisor, Usuario receptor)
-        {
-            if (emisor == null)
-            {
-                throw new FaultException(
-                    MensajesError.Cliente.UsuariosEspecificadosNoExisten);
-            }
-            if (receptor == null)
-            {
-                throw new FaultException(
-                    MensajesError.Cliente.UsuariosEspecificadosNoExisten);
-            }
         }
 
         private void NotificarSolicitudNueva(
@@ -481,12 +344,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _notificador.NotificarSolicitudActualizada(nombreReceptor, solicitud);
         }
 
-        private void EjecutarNotificacionesRespuesta(
-            (string Emisor, string Receptor) nombres)
+        private void EjecutarNotificacionesRespuesta(string emisor, string receptor)
         {
-            NotificarSolicitudAceptada(nombres.Emisor, nombres.Receptor);
-            _notificadorListaAmigos.NotificarCambioAmistad(nombres.Emisor);
-            _notificadorListaAmigos.NotificarCambioAmistad(nombres.Receptor);
+            NotificarSolicitudAceptada(emisor, receptor);
+            _notificadorListaAmigos.NotificarCambioAmistad(emisor);
+            _notificadorListaAmigos.NotificarCambioAmistad(receptor);
         }
 
         private void NotificarSolicitudAceptada(string emisor, string receptor)
@@ -530,16 +392,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
             _notificador.NotificarAmistadEliminada(usuarioA, solicitud);
             _notificador.NotificarAmistadEliminada(usuarioB, solicitud);
-        }
-
-        /// <summary>
-        /// Clase auxiliar interna para transportar datos de eliminacion.
-        /// </summary>
-        private sealed class ResultadoEliminacionAmistad
-        {
-            public Amigo Relacion { get; set; }
-            public string NombreANormalizado { get; set; }
-            public string NombreBNormalizado { get; set; }
         }
     }
 }

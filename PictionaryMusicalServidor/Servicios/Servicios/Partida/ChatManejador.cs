@@ -532,20 +532,5 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 }
             }
         }
-
-        /// <summary>
-        /// Representa un cliente conectado al chat con su nombre y callback.
-        /// </summary>
-        private sealed class ClienteChat
-        {
-            public ClienteChat(string nombreJugador, IChatManejadorCallback callback)
-            {
-                NombreJugador = nombreJugador;
-                Callback = callback;
-            }
-
-            public string NombreJugador { get; }
-            public IChatManejadorCallback Callback { get; set; }
-        }
     }
 }

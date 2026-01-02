@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
-using System.Linq;
 using System.ServiceModel;
 using Datos.Modelo;
 using log4net;
@@ -10,7 +9,6 @@ using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
@@ -23,17 +21,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ReportesManejador));
 
-        private const int LimiteReportesParaExpulsion = 3;
-
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
+        private readonly IExpulsionPorReportesServicio _expulsionServicio;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
         /// </summary>
         public ReportesManejador() : this(
             new ContextoFactoria(), 
-            new RepositorioFactoria())
+            new RepositorioFactoria(),
+            new ExpulsionPorReportesServicio())
         {
         }
 
@@ -42,14 +40,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
         /// </summary>
         /// <param name="contextoFactoria">Factoria para crear contextos de base de datos.</param>
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
+        /// <param name="expulsionServicio">Servicio de expulsion por reportes.</param>
         public ReportesManejador(
             IContextoFactoria contextoFactoria,
-            IRepositorioFactoria repositorioFactoria)
+            IRepositorioFactoria repositorioFactoria,
+            IExpulsionPorReportesServicio expulsionServicio)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
             _repositorioFactoria = repositorioFactoria ??
                 throw new ArgumentNullException(nameof(repositorioFactoria));
+            _expulsionServicio = expulsionServicio ??
+                throw new ArgumentNullException(nameof(expulsionServicio));
         }
 
         /// <summary>
@@ -94,10 +96,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                     };
 
                     reporteRepositorio.CrearReporte(nuevoReporte);
-                    ExpulsarJugadorPorReportesSiAlcanzaLimite(
-                        reporteRepositorio,
+                    
+                    int totalReportes = reporteRepositorio.ContarReportesRecibidos(
+                        idsUsuarios.IdReportado);
+                    _expulsionServicio.ExpulsarSiAlcanzaLimite(
                         idsUsuarios.IdReportado,
-                        reporte.NombreUsuarioReportado);
+                        reporte.NombreUsuarioReportado,
+                        totalReportes);
 
                     return new ResultadoOperacionDTO
                     {
@@ -143,7 +148,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
         }
 
-        private (int IdReportante, int IdReportado) ObtenerIdentificadoresUsuarios(
+        private IdentificadoresUsuarios ObtenerIdentificadoresUsuarios(
            BaseDatosPruebaEntities contexto,
            ReporteJugadorDTO reporte)
         {
@@ -162,7 +167,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                         MensajesError.Cliente.UsuariosEspecificadosNoExisten);
                 }
 
-                return (reportante.idUsuario, reportado.idUsuario);
+                return new IdentificadoresUsuarios
+                {
+                    IdReportante = reportante.idUsuario,
+                    IdReportado = reportado.idUsuario
+                };
             }
             catch (KeyNotFoundException excepcion)
             {
@@ -183,112 +192,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             {
                 _logger.Warn(MensajesError.Log.ErrorObtenerIdUsuariosReporte, excepcion);
                 throw;
-            }
-        }
-
-        private void ExpulsarJugadorPorReportesSiAlcanzaLimite(
-            IReporteRepositorio reporteRepositorio,
-            int idReportado,
-            string nombreUsuarioReportado)
-        {
-            if (reporteRepositorio == null || idReportado <= 0)
-            {
-                return;
-            }
-
-            int totalReportes = reporteRepositorio.ContarReportesRecibidos(idReportado);
-            if (totalReportes < LimiteReportesParaExpulsion)
-            {
-                return;
-            }
-
-            string nombreNormalizado = EntradaComunValidador.NormalizarTexto(
-                nombreUsuarioReportado);
-            if (string.IsNullOrWhiteSpace(nombreNormalizado))
-            {
-                return;
-            }
-
-            _logger.WarnFormat(
-                "Usuario {0} alcanzo el limite de reportes ({1}). Iniciando expulsion de salas activas.",
-                nombreNormalizado,
-                LimiteReportesParaExpulsion);
-
-            try
-            {
-                ExpulsarDeSalasActivas(nombreNormalizado);
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn(
-                    "Error al intentar expulsar jugador con limite de reportes.",
-                    excepcion);
-            }
-        }
-
-        private void ExpulsarDeSalasActivas(string nombreUsuario)
-        {
-            var salas = SalasManejador.ObtenerListaSalas();
-            if (salas == null || salas.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var sala in salas)
-            {
-                bool jugadorEnSala = sala?.Jugadores?.Any(jugador =>
-                {
-                    string jugadorNormalizado = EntradaComunValidador.NormalizarTexto(jugador);
-                    return string.Equals(
-                        jugadorNormalizado,
-                        EntradaComunValidador.NormalizarTexto(nombreUsuario),
-                        StringComparison.OrdinalIgnoreCase);
-                }) == true;
-
-                if (!jugadorEnSala)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    var salasManejador = new SalasManejador();
-
-                    string creadorNormalizado = EntradaComunValidador.NormalizarTexto(sala?.Creador);
-                    string usuarioNormalizado = EntradaComunValidador.NormalizarTexto(nombreUsuario);
-
-                    bool esCreador = !string.IsNullOrWhiteSpace(creadorNormalizado) &&
-                        string.Equals(
-                            creadorNormalizado,
-                            usuarioNormalizado,
-                            StringComparison.OrdinalIgnoreCase);
-
-                    if (esCreador)
-                    {
-                        salasManejador.AbandonarSala(sala.Codigo, nombreUsuario);
-                    }
-                    else
-                    {
-                        salasManejador.ExpulsarJugador(
-                            sala.Codigo,
-                            sala.Creador,
-                            nombreUsuario);
-                    }
-                }
-                catch (FaultException excepcion)
-                {
-                    _logger.Warn(string.Format(
-                        "No se pudo expulsar a {0} de la sala {1}.",
-                        nombreUsuario,
-                        sala?.Codigo), excepcion);
-                }
-                catch (Exception excepcion)
-                {
-                    _logger.Warn(string.Format(
-                        "Error inesperado al expulsar a {0} de la sala {1}.",
-                        nombreUsuario,
-                        sala?.Codigo), excepcion);
-                }
             }
         }
 

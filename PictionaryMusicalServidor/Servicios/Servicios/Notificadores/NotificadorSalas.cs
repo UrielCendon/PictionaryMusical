@@ -155,12 +155,4 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             return listaSalas.ToArray();
         }
     }
-
-    /// <summary>
-    /// Interfaz para obtener la coleccion de salas.
-    /// </summary>
-    internal interface IObtenerSalas
-    {
-        IEnumerable<SalaInternaManejador> ObtenerSalasInternas();
-    }
 }
