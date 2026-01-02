@@ -1378,28 +1378,32 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
-            MostrarAvisoResultadoPartida(resultado);
-
+            string mensajeErrorClasificacion = null;
             if (!_esInvitado && !string.IsNullOrWhiteSpace(resultado?.Mensaje))
             {
-                var mensaje = _localizador.Localizar(
+                mensajeErrorClasificacion = _localizador.Localizar(
                     resultado.Mensaje,
                     Lang.clasificacionErrorActualizar);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(mensaje);
             }
 
             NavegarSegunSesion();
+            MostrarAvisoResultadoPartida(resultado);
+
+            if (!string.IsNullOrWhiteSpace(mensajeErrorClasificacion))
+            {
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(mensajeErrorClasificacion);
+            }
         }
 
         private void ProcesarCancelacionPartida(string mensaje)
         {
+            NavegarSegunSesion();
+
             if (!string.IsNullOrWhiteSpace(mensaje))
             {
                 _avisoServicio.Mostrar(mensaje);
             }
-
-            NavegarSegunSesion();
         }
 
         private void NavegarSegunSesion()

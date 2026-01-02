@@ -22,7 +22,12 @@ namespace PictionaryMusicalCliente.Vista
         {
             if (DataContext is ClasificacionVistaModelo vistaModelo)
             {
-                await vistaModelo.CargarClasificacionAsync().ConfigureAwait(true);
+                bool cargaExitosa = await vistaModelo.CargarClasificacionAsync().ConfigureAwait(true);
+                
+                if (!cargaExitosa || vistaModelo.CargaFallida)
+                {
+                    Close();
+                }
             }
         }
     }

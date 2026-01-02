@@ -24,6 +24,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private IReadOnlyList<DTOs.ClasificacionUsuarioDTO> _clasificacionOriginal;
         private ObservableCollection<DTOs.ClasificacionUsuarioDTO> _clasificacion;
         private bool _estaCargando;
+        private bool _cargaFallida;
 
         /// <summary>
         /// Inicializa el ViewModel con el servicio de clasificacion.
@@ -159,11 +160,21 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         public bool RequiereReinicioSesion { get; private set; }
 
         /// <summary>
+        /// Obtiene un valor que indica si la carga de datos fallo.
+        /// </summary>
+        public bool CargaFallida
+        {
+            get => _cargaFallida;
+            private set => EstablecerPropiedad(ref _cargaFallida, value);
+        }
+
+        /// <summary>
         /// Recupera la informacion de clasificacion desde el servicio.
-        /// <returns>Tarea que representa la operacion asincrona.</returns>
-        public async Task CargarClasificacionAsync()
+        /// <returns>True si la carga fue exitosa; false en caso contrario.</returns>
+        public async Task<bool> CargarClasificacionAsync()
         {
             EstaCargando = true;
+            bool cargaExitosa = false;
 
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
@@ -173,9 +184,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _clasificacionOriginal = clasificacion 
                     ?? Array.Empty<DTOs.ClasificacionUsuarioDTO>();
                 ActualizarClasificacion(_clasificacionOriginal);
+                cargaExitosa = true;
             });
 
             EstaCargando = false;
+            CargaFallida = !cargaExitosa;
+            return cargaExitosa;
         }
 
         private async Task<IReadOnlyList<DTOs.ClasificacionUsuarioDTO>> 

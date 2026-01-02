@@ -308,7 +308,7 @@
     <value>No tienes una amistad con este usuario.</value>
   </data>
   <data name="amigosErrorEliminarRelacion" xml:space="preserve">
-    <value>No pudimos eliminar a este amigo. Intenta más tarde.</value>
+    <value>No pudimos eliminar a este amigo por un error con el servicio de amigos. Intenta más tarde.</value>
   </data>
   <data name="amigosErrorEliminarRelacionBaseDatos" xml:space="preserve">
     <value>No fue posible eliminar la relación de amistad en la base de datos.</value>
@@ -687,10 +687,10 @@ aciertan o cuando se acaba el tiempo.
     <value>Hubo un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde.</value>
+    <value>Hubo un problema con el servidor o con tu conexión a internet. Intente de nuevo más tarde.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
-    <value>Hubo un error al obtener la información del perfil.</value>
+    <value>No podemos mostrar tu perfil debido a un error al obtener la información.</value>
   </data>
   <data name="errorTextoServidorReenviarCodigo" xml:space="preserve">
     <value>Hubo un error al reenviar el código.</value>
@@ -1209,9 +1209,12 @@ aciertan o cuando se acaba el tiempo.
     <value>No se pudo actualizar la clasificación al terminar la partida por un error del servicio.</value>
   </data>
   <data name="clasificacionErrorObtener" xml:space="preserve">
-    <value>No se pudo obtener la clasificación en este momento.</value>
+    <value>No pudimos obtener la clasificación en este momento debido a un error con el servicio.</value>
   </data>
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoServidorCerrado" xml:space="preserve">
+    <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
   </data>
 </root>

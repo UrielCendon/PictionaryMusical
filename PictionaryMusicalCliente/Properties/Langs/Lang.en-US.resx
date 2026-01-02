@@ -308,7 +308,7 @@
     <value>You don't have a friendship with this user.</value>
   </data>
   <data name="amigosErrorEliminarRelacion" xml:space="preserve">
-    <value>We couldn't remove this friend. Please try again later.</value>
+    <value>We couldn't remove this friend because there was an error with the friends service. Please try again later.</value>
   </data>
   <data name="amigosErrorEliminarRelacionBaseDatos" xml:space="preserve">
     <value>The friendship could not be removed from the database.</value>
@@ -685,10 +685,10 @@
     <value>There was an error while signing in.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>Could not connect to the server. Please check your internet connection and try again later.</value>
+    <value>There was a problem with the server or with your internet connection. Please try again later.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
-    <value>We couldn't load your profile. Please try again later.</value>
+    <value>We couldn't show your profile due to a problem obtaining your information.</value>
   </data>
   <data name="errorTextoServidorReenviarCodigo" xml:space="preserve">
     <value>There was an error while resending the code.</value>
@@ -1207,9 +1207,12 @@
     <value>The leaderboard could not be updated after the match ended due to a service error.</value>
   </data>
   <data name="clasificacionErrorObtener" xml:space="preserve">
-    <value>The leaderboard could not be retrieved at this time.</value>
+    <value>The leaderboard could not be loaded because there was an error with the service.</value>
   </data>
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>We were unable to log in at this time due to a service issue. Please try again later.</value>
+  </data>
+  <data name="errorTextoServidorCerrado" xml:space="preserve">
+    <value>The server is no longer available. Please try signing in again.</value>
   </data>
 </root>

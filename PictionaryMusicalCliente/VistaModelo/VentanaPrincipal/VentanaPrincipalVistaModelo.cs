@@ -430,6 +430,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
+            _ventana.MostrarError(Lang.errorTextoServidorCerrado);
         }
 
         private async Task CancelarSuscripcionesAsync()
