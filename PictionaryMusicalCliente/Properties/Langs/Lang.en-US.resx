@@ -577,7 +577,7 @@
     <value>The verification code could not be sent. Please try again later.</value>
   </data>
   <data name="errorTextoProcesarSolicitudVerificacion" xml:space="preserve">
-    <value>We couldn't process the verification request. Please try again.</value>
+    <value>We couldn't process the verification request because there was a problem with the service, please try again later.</value>
   </data>
   <data name="avisoTextoCodigoEnviado" xml:space="preserve">
     <value>We sent a verification code to your e-mail.</value>
@@ -592,7 +592,7 @@
     <value>The account data is not available.</value>
   </data>
   <data name="errorTextoRegistrarCuentaMasTarde" xml:space="preserve">
-    <value>We couldn't register the account. Please try again later.</value>
+    <value>We couldn't complete the account registration due to a service issue. Please try again later.</value>
   </data>
   <data name="errorTextoCredencialesIncorrectas" xml:space="preserve">
     <value>The credentials you entered are incorrect.</value>
