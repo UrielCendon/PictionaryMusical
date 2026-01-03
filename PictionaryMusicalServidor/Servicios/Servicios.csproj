@@ -106,6 +106,10 @@
     <Compile Include="LogicaNegocio\GestorTiemposPartida.cs" />
     <Compile Include="Servicios\Notificadores\BaneoNotificacionParametros.cs" />
     <Compile Include="Servicios\Notificadores\ExpulsionNotificacionParametros.cs" />
+    <Compile Include="Servicios\Partida\NotificacionCallbackParametros.cs" />
+    <Compile Include="Servicios\Partida\NotificacionJugadorAdivinoParametros.cs" />
+    <Compile Include="Servicios\Partida\NotificacionMensajeChatParametros.cs" />
+    <Compile Include="Servicios\Partida\NotificacionMensajeSeguroParametros.cs" />
     <Compile Include="Servicios\Usuarios\ExpulsionPorReportesServicio.cs" />
     <Compile Include="Servicios\Usuarios\IExpulsionPorReportesServicio.cs" />
     <Compile Include="Servicios\Usuarios\IdentificadoresUsuarios.cs" />

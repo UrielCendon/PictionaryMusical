@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
