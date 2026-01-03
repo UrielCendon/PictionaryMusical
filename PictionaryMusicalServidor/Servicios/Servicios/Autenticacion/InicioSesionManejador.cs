@@ -166,9 +166,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (UsuarioAlcanzoLimiteReportes(contexto, usuario.idUsuario))
             {
-                _logger.WarnFormat(
-                    "Usuario con identificador {0} bloqueado por superar limite de reportes.",
-                    usuario.idUsuario);
+                _logger.Warn(
+                    "Usuario bloqueado por superar limite de reportes.");
 
                 return new ResultadoInicioSesionDTO
                 {
@@ -178,9 +177,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 };
             }
 
-            _logger.InfoFormat(
-                "Inicio de sesion exitoso para usuario con identificador {0}.",
-                usuario.idUsuario);
+            _logger.Info(
+                "Inicio de sesion exitoso.");
 
             return new ResultadoInicioSesionDTO
             {
@@ -234,18 +232,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "Usuario no encontrado por nombre '{0}', se intentara buscar por correo electronico.",
-                        identificador),
+                    "Usuario no encontrado por nombre, se intentara buscar por " +
+                    "correo electronico.",
                     excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Error inesperado al buscar usuario por nombre '{0}', intentando por correo electronico.",
-                        identificador),
+                    "Error inesperado al buscar usuario por nombre, " +
+                    "intentando por correo electronico.",
                     excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
@@ -271,9 +267,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             if (usuario == null)
             {
                 throw new KeyNotFoundException(
-                    string.Format(
-                        "Usuario no encontrado por correo electronico: {0}",
-                        correo));
+                    "Usuario no encontrado por correo electronico.");
             }
             return usuario;
         }

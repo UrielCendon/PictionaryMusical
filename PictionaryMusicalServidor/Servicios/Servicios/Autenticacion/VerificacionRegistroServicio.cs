@@ -34,7 +34,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         /// <summary>
         /// Constructor con inyeccion de dependencias.
         /// </summary>
-        public VerificacionRegistroServicio(IContextoFactoria contextoFactoria,
+        public VerificacionRegistroServicio(
+            IContextoFactoria contextoFactoria,
             INotificacionCodigosServicio notificacionCodigosServicio)
         {
             _contextoFactoria = contextoFactoria ??
@@ -206,10 +207,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             using (var contexto = _contextoFactoria.CrearContexto())
             {
                 bool usuarioRegistrado = contexto.Usuario
-                    .Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+                    .Any(usuarioExistente => 
+                        usuarioExistente.Nombre_Usuario == nuevaCuenta.Usuario);
 
                 bool correoRegistrado = contexto.Jugador
-                    .Any(j => j.Correo == nuevaCuenta.Correo);
+                    .Any(jugadorExistente => 
+                        jugadorExistente.Correo == nuevaCuenta.Correo);
 
                 if (usuarioRegistrado || correoRegistrado)
                 {
