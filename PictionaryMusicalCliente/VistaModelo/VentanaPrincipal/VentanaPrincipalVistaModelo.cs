@@ -420,7 +420,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
 
             _desconexionProcesada = true;
-            _logger.Error("Se detecto desconexion del canal de amigos.");
+            _logger.Error(
+                "Modulo: VentanaPrincipalVistaModelo - Se detecto desconexion del " +
+                "canal de amigos. El servidor de WCF no esta disponible o cerro " +
+                "la conexion por inactividad. Se procedera a reiniciar servicios.");
             _canalAmigosDisponible = false;
             
             DesuscribirEventosCanalesAmigos();
@@ -689,8 +692,11 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ReiniciarAplicacion()
         {
-            _logger.Info("Reiniciando aplicacion tras desconexion. " +
-                "Reinicializando servicios de conexion WCF.");
+            _logger.Info(
+                "Modulo: VentanaPrincipalVistaModelo - Reiniciando aplicacion tras " +
+                "desconexion del servidor WCF. Causas probables: servidor cerrado, " +
+                "timeout por inactividad del cliente, o fallo de red. " +
+                "Reinicializando servicios de conexion.");
             
             DesuscribirEventos();
             AbortarCanalesAmigos();

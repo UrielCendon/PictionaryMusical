@@ -26,6 +26,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
                 "Usuario",
                 contexto);
 
+            ValidarNombreUsuarioNoEsInvitado(datos.Usuario, contexto);
+
             ValidarCampo(
                 ValidadorEntrada.ValidarNombre(datos.Nombre),
                 "Nombre",
@@ -54,6 +56,23 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
             return new ResultadoValidacionCampos(
                 contexto.CamposInvalidos, 
                 contexto.PrimerMensajeError);
+        }
+
+        private static void ValidarNombreUsuarioNoEsInvitado(
+            string usuario,
+            ValidacionContexto contexto)
+        {
+            if (string.IsNullOrWhiteSpace(usuario))
+            {
+                return;
+            }
+
+            if (ValidadorEntrada.EsNombreInvitado(usuario))
+            {
+                contexto.AgregarCampoInvalido(
+                    "Usuario",
+                    Lang.errorTextoUsuarioEnUso);
+            }
         }
 
         /// <summary>
