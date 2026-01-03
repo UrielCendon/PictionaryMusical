@@ -195,8 +195,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             
             Navegar(DestinoNavegacion.InicioSesion);
             string mensaje = _esInvitado
-                ? Lang.errorTextoInvitadoSinConexion
-                : Lang.errorTextoPerdidaConexionInternet;
+                ? Lang.errorTextoSesionExpiradaGenerico
+                : Lang.errorTextoServidorNoDisponible;
             _avisoServicio.Mostrar(mensaje);
         }
 
@@ -206,14 +206,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             if (ConectividadRedMonitor.Instancia.HayConexion)
             {
                 mensaje = _esInvitado
-                    ? Lang.errorTextoInvitadoServidorCaido
+                    ? Lang.errorTextoSesionExpiradaGenerico
                     : mensajeServidorCaido;
             }
             else
             {
                 mensaje = _esInvitado
-                    ? Lang.errorTextoInvitadoSinConexion
-                    : Lang.errorTextoPerdidaConexionInternet;
+                    ? Lang.errorTextoSesionExpiradaGenerico
+                    : Lang.errorTextoServidorNoDisponible;
             }
             ManejarDesconexionCritica(mensaje);
         }
@@ -832,8 +832,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
                 {
                     string mensajeServidorCaido = _esInvitado
-                        ? Lang.errorTextoInvitadoServidorCaido
-                        : Lang.errorTextoSesionExpiradaGenerico;
+                        ? Lang.errorTextoSesionExpiradaGenerico
+                        : Lang.errorTextoServidorNoDisponible;
                     ManejarDesconexionConVerificacionInternet(mensajeServidorCaido);
                 }
             });
@@ -988,16 +988,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo enviar el mensaje de juego.", excepcion);
-                _sonidoManejador.ReproducirError();
-                EjecutarEnDispatcher(() => 
-                    _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible));
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error("Tiempo agotado al enviar mensaje de juego.", excepcion);
-                _sonidoManejador.ReproducirError();
-                EjecutarEnDispatcher(() => 
-                    _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible));
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -1157,16 +1153,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo solicitar el inicio de la partida.", excepcion);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible);
-                BotonIniciarPartidaHabilitado = true;
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Error("Tiempo agotado al iniciar la partida.", excepcion);
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(Lang.errorTextoServidorNoDisponible);
-                BotonIniciarPartidaHabilitado = true;
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
             }
             catch (InvalidOperationException excepcion)
             {

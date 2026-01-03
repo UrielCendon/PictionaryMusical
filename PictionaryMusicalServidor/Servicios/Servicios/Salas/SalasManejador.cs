@@ -106,6 +106,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                     throw new FaultException(MensajesError.Cliente.ErrorCrearSala);
                 }
 
+                SuscribirEventosDesconexionCanal(codigo, nombreCreador.Trim());
+
                 _logger.InfoFormat(
                     MensajesError.Bitacora.SalaCreadaExito,
                     codigo);
@@ -177,6 +179,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                     nombreUsuario.Trim(),
                     callback,
                     notificar: true);
+
+                SuscribirEventosDesconexionCanal(codigoSala.Trim(), nombreUsuario.Trim());
 
                 _logger.InfoFormat(
                     MensajesError.Bitacora.UsuarioUnidoSala,
@@ -536,9 +540,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
         private static string GenerarCodigoSala()
         {
-            const int maxIntentos = 1000;
+            const int MaximoIntentos = 1000;
 
-            for (int i = 0; i < maxIntentos; i++)
+            for (int i = 0; i < MaximoIntentos; i++)
             {
                 string codigo = GeneradorAleatorio.GenerarCodigoSala(6);
                 if (!_salas.ContainsKey(codigo))
@@ -549,6 +553,67 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
             _logger.Error(MensajesError.Bitacora.ErrorGenerarCodigoSala);
             throw new FaultException(MensajesError.Cliente.ErrorGenerarCodigo);
+        }
+
+        private void SuscribirEventosDesconexionCanal(string codigoSala, string nombreUsuario)
+        {
+            var canal = OperationContext.Current?.Channel;
+            if (canal == null)
+            {
+                return;
+            }
+
+            EventHandler manejadorClosed = null;
+            EventHandler manejadorFaulted = null;
+
+            manejadorClosed = delegate(object remitente, EventArgs argumentos)
+            {
+                canal.Closed -= manejadorClosed;
+                canal.Faulted -= manejadorFaulted;
+                ManejarDesconexionJugador(codigoSala, nombreUsuario);
+            };
+
+            manejadorFaulted = delegate(object remitente, EventArgs argumentos)
+            {
+                canal.Closed -= manejadorClosed;
+                canal.Faulted -= manejadorFaulted;
+                ManejarDesconexionJugador(codigoSala, nombreUsuario);
+            };
+
+            canal.Closed += manejadorClosed;
+            canal.Faulted += manejadorFaulted;
+        }
+
+        private void ManejarDesconexionJugador(string codigoSala, string nombreUsuario)
+        {
+            try
+            {
+                _logger.WarnFormat(
+                    "Desconexion detectada del jugador en sala '{0}'. Removiendo de la sala.",
+                    codigoSala);
+
+                SalaInternaManejador sala;
+                if (!_salas.TryGetValue(codigoSala, out sala))
+                {
+                    return;
+                }
+
+                sala.RemoverJugador(nombreUsuario);
+
+                if (sala.DebeEliminarse)
+                {
+                    SalaInternaManejador salaRemovida;
+                    _salas.TryRemove(codigoSala, out salaRemovida);
+                }
+
+                _notificador.NotificarListaSalasATodos();
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn(
+                    "Error al manejar desconexion de jugador en sala.",
+                    excepcion);
+            }
         }
     }
 }
