@@ -1843,15 +1843,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión..
-        /// </summary>
-        public static string errorTextoServidorCerrado {
-            get {
-                return ResourceManager.GetString("errorTextoServidorCerrado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a El servidor reportó un error al solicitar el código de verificación..
         /// </summary>
         public static string errorTextoServidorCodigoVerificacion {
@@ -1897,7 +1888,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde..
+        ///   Busca una cadena traducida similar a Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente de nuevo más tarde..
         /// </summary>
         public static string errorTextoServidorNoDisponible {
             get {
@@ -1947,15 +1938,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorValidarCodigo {
             get {
                 return ResourceManager.GetString("errorTextoServidorValidarCodigo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a Tu sesión ha expirado. Por favor, inicia sesión nuevamente..
-        /// </summary>
-        public static string errorTextoSesionExpirada {
-            get {
-                return ResourceManager.GetString("errorTextoSesionExpirada", resourceCulture);
             }
         }
         

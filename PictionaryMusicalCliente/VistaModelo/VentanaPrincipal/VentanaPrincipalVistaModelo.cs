@@ -443,7 +443,11 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
-            _ventana.MostrarError(Lang.errorTextoServidorCerrado);
+            
+            string mensaje = ConectividadRedMonitor.Instancia.HayConexion
+                ? Lang.errorTextoServidorNoDisponible
+                : Lang.errorTextoPerdidaConexionInternet;
+            _ventana.MostrarError(mensaje);
         }
 
         private async Task CancelarSuscripcionesAsync()

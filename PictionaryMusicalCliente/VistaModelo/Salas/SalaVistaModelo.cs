@@ -815,7 +815,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
                 {
-                    ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorCerrado);
+                    ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
                 }
             });
         }

@@ -673,7 +673,7 @@
     <value>El servidor reportó un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde.</value>
+    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente de nuevo más tarde.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>No pudimos cargar tu perfil. Intenta más tarde.</value>
@@ -1176,9 +1176,6 @@
   <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
     <value>Ocurrió un error de comunicación. Verifica tu conexión e intenta de nuevo.</value>
   </data>
-  <data name="errorTextoSesionExpirada" xml:space="preserve">
-    <value>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</value>
-  </data>
   <data name="errorTextoTrazoDemasiadoGrande" xml:space="preserve">
     <value>El trazo es demasiado grande. Intenta con uno más pequeño y corto.</value>
   </data>
@@ -1199,9 +1196,6 @@
   </data>
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
-  </data>
-  <data name="errorTextoServidorCerrado" xml:space="preserve">
-    <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
   </data>
   <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
     <value>Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión.</value>

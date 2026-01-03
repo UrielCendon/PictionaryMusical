@@ -684,7 +684,7 @@ aciertan o cuando se acaba el tiempo.
     <value>Hubo un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>Hubo un problema con el servidor o con tu conexión a internet. Intente de nuevo más tarde.</value>
+    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente iniciar sesión de nuevo.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>No podemos mostrar tu perfil debido a un error al obtener la información.</value>
