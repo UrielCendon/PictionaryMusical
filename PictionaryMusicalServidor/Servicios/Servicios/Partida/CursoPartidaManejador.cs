@@ -542,22 +542,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                     callbackRemovido = callbacks.Remove(idJugador);
                 }
 
-                ControladorPartida controlador;
-                if (_partidasActivas.TryGetValue(idSala, out controlador)
-                    && !controlador.EstaFinalizada)
+                if (callbackRemovido)
                 {
-                    controladorARemover = controlador;
+                    ControladorPartida controlador;
+                    if (_partidasActivas.TryGetValue(idSala, out controlador)
+                        && !controlador.EstaFinalizada)
+                    {
+                        controladorARemover = controlador;
+                    }
                 }
             }
 
             if (controladorARemover != null)
             {
                 _logger.InfoFormat(
-                    "Removiendo jugador {0} de sala {1}. Callback removido: {2}",
+                    "Removiendo jugador {0} de sala {1}.",
                     idJugador,
-                    idSala,
-                    callbackRemovido);
+                    idSala);
                 controladorARemover.RemoverJugador(idJugador);
+            }
+            else if (!callbackRemovido)
+            {
+                _logger.DebugFormat(
+                    "Callback de jugador {0} en sala {1} ya fue removido previamente.",
+                    idJugador,
+                    idSala);
             }
         }
 
