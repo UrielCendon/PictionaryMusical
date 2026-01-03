@@ -29,6 +29,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private readonly ICatalogoCanciones _catalogoCanciones;
         private readonly GestorJugadoresPartida _gestorJugadores;
         private readonly GestorTiemposPartida _gestorTiempos;
+        private readonly ValidadorAdivinanza _validadorAdivinanza;
         private readonly HashSet<int> _cancionesUsadas;
 
         private readonly int _duracionRondaSegundos;
@@ -60,7 +61,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(tiempoRonda), 
-                    "El tiempo de ronda y el n�mero total de rondas deben ser mayores que cero.");
+                    "El tiempo de ronda y el número total de rondas deben ser mayores que cero.");
             }
 
             if (string.IsNullOrWhiteSpace(dificultad))
@@ -79,6 +80,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             _totalRondas = totalRondas;
 
             _gestorTiempos = new GestorTiemposPartida(tiempoRonda, TiempoOverlayClienteSegundos);
+            _validadorAdivinanza = new ValidadorAdivinanza(_catalogoCanciones, _gestorTiempos);
             _cancionesUsadas = new HashSet<int>();
             _estadoActual = EstadoPartida.EnSalaEspera;
 
@@ -374,12 +376,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             lock (_sincronizacion)
             {
-                if (JugadorPuedeAdivinar(jugador))
+                if (_validadorAdivinanza.JugadorPuedeAdivinar(jugador, _estadoActual))
                 {
-                    acierto = VerificarAcierto(mensaje, out puntos);
+                    acierto = _validadorAdivinanza.VerificarAcierto(
+                        _cancionActualId, mensaje, out puntos);
                     if (acierto)
                     {
-                        RegistrarAcierto(jugador, puntos);
+                        _validadorAdivinanza.RegistrarAcierto(jugador, puntos);
                         finRonda = _gestorJugadores.TodosAdivinaron();
                     }
                 }
@@ -397,37 +400,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 MensajeChatRecibido?.Invoke(jugador.NombreUsuario, mensaje);
             }
-        }
-
-        private bool JugadorPuedeAdivinar(JugadorPartida jugador)
-        {
-            return _estadoActual == EstadoPartida.Jugando && !jugador.EsDibujante 
-                && !jugador.YaAdivino;
-        }
-
-        private bool VerificarAcierto(string mensaje, out int puntos)
-        {
-            puntos = 0;
-            bool esCorrecto = _catalogoCanciones.ValidarRespuesta(_cancionActualId, mensaje);
-
-            if (!esCorrecto && EsMensajeAciertoProtocolo(mensaje, out int puntosProtocolo))
-            {
-                esCorrecto = true;
-                puntos = puntosProtocolo;
-            }
-
-            if (esCorrecto && puntos == 0)
-            {
-                puntos = _gestorTiempos.CalcularPuntosPorTiempo();
-            }
-
-            return esCorrecto;
-        }
-
-        private static void RegistrarAcierto(JugadorPartida jugador, int puntos)
-        {
-            jugador.YaAdivino = true;
-            jugador.PuntajeTotal += puntos;
         }
 
         private void PrepararSiguienteRonda()
@@ -572,10 +544,16 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 if (_estadoActual == EstadoPartida.Finalizada)
                 {
                     _logger.WarnFormat(
-                        "CancelarPartida ignorada - partida ya finalizada. Mensaje: '{0}'",
-                        mensajeCancelacion);
+                        "CancelarPartida ignorada - partida ya en estado Finalizada. " +
+                        "MensajeSolicitado: '{0}', RondaActual: {1}/{2}",
+                        mensajeCancelacion, _rondaActual, _totalRondas);
                     return;
                 }
+
+                _logger.WarnFormat(
+                    "Partida cancelada. Motivo: '{0}', RondaActual: {1}/{2}, " +
+                    "EstadoPrevio: {3}",
+                    mensajeCancelacion, _rondaActual, _totalRondas, _estadoActual);
 
                 _estadoActual = EstadoPartida.Finalizada;
                 _gestorTiempos.DetenerTodo();
@@ -619,18 +597,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             return string.IsNullOrWhiteSpace(id) ||
                    string.IsNullOrWhiteSpace(mensaje) ||
                    mensaje.Split(' ').Length > LimitePalabrasMensaje;
-        }
-
-        private static bool EsMensajeAciertoProtocolo(string mensaje, out int puntos)
-        {
-            puntos = 0;
-            if (!mensaje.StartsWith("ACIERTO:", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            var partes = mensaje.Split(':');
-            return partes.Length >= 3 && int.TryParse(partes[2], out puntos) && puntos > 0;
         }
 
         private RondaDTO CrearRondaDto(Cancion cancion)

@@ -119,6 +119,7 @@
     <Compile Include="LogicaNegocio\EstadoPartida.cs" />
     <Compile Include="LogicaNegocio\GestorJugadoresPartida.cs" />
     <Compile Include="LogicaNegocio\JugadorPartida.cs" />
+    <Compile Include="LogicaNegocio\ValidadorAdivinanza.cs" />
     <Compile Include="Contratos\DTOs\ActualizacionContrasenaDTO.cs" />
     <Compile Include="Contratos\DTOs\ClasificacionUsuarioDTO.cs" />
     <Compile Include="Contratos\DTOs\ConfirmacionCodigoDTO.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Servicios\Amigos\AmigosManejador.cs" />
     <Compile Include="Servicios\Amigos\AmistadServicio.cs" />
+    <Compile Include="Servicios\Amigos\DatosNotificacionSolicitud.cs" />
     <Compile Include="Servicios\Amigos\DatosSuscripcionUsuario.cs" />
     <Compile Include="Servicios\Amigos\IOperacionAmistadServicio.cs" />
     <Compile Include="Servicios\Amigos\ListaAmigosManejador.cs" />

@@ -116,14 +116,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Elimina la relacion de amistad entre dos usuarios.
         /// </summary>
-        /// <param name="usuarioAId">Identificador del primer usuario en la relacion.</param>
-        /// <param name="usuarioBId">Identificador del segundo usuario en la relacion.</param>
+        /// <param name="idPrimerUsuario">Identificador del primer usuario en la relacion.</param>
+        /// <param name="idSegundoUsuario">Identificador del segundo usuario en la relacion.</param>
         /// <returns>La relacion de amistad que fue eliminada.</returns>
         /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el mismo o la
         /// relacion no existe.</exception>
-        public Amigo EliminarAmistad(int usuarioAId, int usuarioBId)
+        public Amigo EliminarAmistad(int idPrimerUsuario, int idSegundoUsuario)
         {
-            if (usuarioAId == usuarioBId)
+            if (idPrimerUsuario == idSegundoUsuario)
             {
                 throw new InvalidOperationException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             using (var contexto = _contextoFactoria.CrearContexto())
             {
                 var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
-                var relacion = repositorioAmigos.ObtenerRelacion(usuarioAId, usuarioBId);
+                var relacion = repositorioAmigos.ObtenerRelacion(idPrimerUsuario, idSegundoUsuario);
 
                 if (relacion == null)
                 {
@@ -163,11 +163,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 }
 
                 return amigos
-                    .Where(a => a != null)
-                    .Select(a => new AmigoDTO
+                    .Where(amigo => amigo != null)
+                    .Select(amigo => new AmigoDTO
                     {
-                        UsuarioId = a.idUsuario,
-                        NombreUsuario = a.Nombre_Usuario
+                        UsuarioId = amigo.idUsuario,
+                        NombreUsuario = amigo.Nombre_Usuario
                     })
                     .ToList();
             }
@@ -177,14 +177,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             int usuarioId)
         {
             return solicitudes
-                .Where(s => s.UsuarioReceptor == usuarioId)
-                .Where(s => !string.IsNullOrWhiteSpace(s.Usuario?.Nombre_Usuario) &&
-                            !string.IsNullOrWhiteSpace(s.Usuario1?.Nombre_Usuario))
-                .Select(s => new SolicitudAmistadDTO
+                .Where(solicitud => solicitud.UsuarioReceptor == usuarioId)
+                .Where(solicitud => 
+                    !string.IsNullOrWhiteSpace(solicitud.Usuario?.Nombre_Usuario) &&
+                    !string.IsNullOrWhiteSpace(solicitud.Usuario1?.Nombre_Usuario))
+                .Select(solicitud => new SolicitudAmistadDTO
                 {
-                    UsuarioEmisor = s.Usuario.Nombre_Usuario,
-                    UsuarioReceptor = s.Usuario1.Nombre_Usuario,
-                    SolicitudAceptada = s.Estado
+                    UsuarioEmisor = solicitud.Usuario.Nombre_Usuario,
+                    UsuarioReceptor = solicitud.Usuario1.Nombre_Usuario,
+                    SolicitudAceptada = solicitud.Estado
                 })
                 .ToList();
         }

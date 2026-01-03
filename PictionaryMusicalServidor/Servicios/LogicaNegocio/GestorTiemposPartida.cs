@@ -16,6 +16,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private DateTime _inicioRonda;
         private readonly int _duracionRondaSegundos;
         private bool _disposed = false;
+
         /// <summary>
         /// Evento que se dispara cuando el tiempo de la ronda de juego ha finalizado.
         /// </summary>

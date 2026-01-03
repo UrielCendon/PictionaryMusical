@@ -15,11 +15,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Nombre del primer usuario normalizado.
         /// </summary>
-        public string NombreANormalizado { get; set; }
+        public string NombrePrimerUsuarioNormalizado { get; set; }
 
         /// <summary>
         /// Nombre del segundo usuario normalizado.
         /// </summary>
-        public string NombreBNormalizado { get; set; }
+        public string NombreSegundoUsuarioNormalizado { get; set; }
     }
 }
