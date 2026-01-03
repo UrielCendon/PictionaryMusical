@@ -372,7 +372,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             var callbacks = ObtenerCallbacksSala(idSala);
             if (callbacks != null)
             {
-                _notificadorPartida.NotificarJugadorAdivino(idSala, callbacks, jugador, puntos);
+                var parametrosNotificacion = new NotificacionJugadorAdivinoParametros
+                {
+                    IdSala = idSala,
+                    Callbacks = callbacks,
+                    NombreJugador = jugador,
+                    Puntos = puntos
+                };
+                _notificadorPartida.NotificarJugadorAdivino(parametrosNotificacion);
             }
         }
 
@@ -381,7 +388,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             var callbacks = ObtenerCallbacksSala(idSala);
             if (callbacks != null)
             {
-                _notificadorPartida.NotificarMensajeChat(idSala, callbacks, jugador, mensaje);
+                var parametrosNotificacion = new NotificacionMensajeChatParametros
+                {
+                    IdSala = idSala,
+                    Callbacks = callbacks,
+                    NombreJugador = jugador,
+                    Mensaje = mensaje
+                };
+                _notificadorPartida.NotificarMensajeChat(parametrosNotificacion);
             }
         }
 

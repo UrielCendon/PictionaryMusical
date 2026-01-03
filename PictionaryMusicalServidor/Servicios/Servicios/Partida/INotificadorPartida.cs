@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
@@ -23,28 +22,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         /// <summary>
         /// Notifica a todos los jugadores que un jugador adivino.
         /// </summary>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="callbacks">Diccionario de callbacks de jugadores.</param>
-        /// <param name="jugador">Nombre del jugador que adivino.</param>
-        /// <param name="puntos">Puntos obtenidos.</param>
-        void NotificarJugadorAdivino(
-            string idSala,
-            Dictionary<string, ICursoPartidaManejadorCallback> callbacks,
-            string jugador,
-            int puntos);
+        /// <param name="parametros">Parametros de la notificacion.</param>
+        void NotificarJugadorAdivino(NotificacionJugadorAdivinoParametros parametros);
 
         /// <summary>
         /// Notifica a todos los jugadores un mensaje de chat.
         /// </summary>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="callbacks">Diccionario de callbacks de jugadores.</param>
-        /// <param name="jugador">Nombre del jugador que envio el mensaje.</param>
-        /// <param name="mensaje">Contenido del mensaje.</param>
-        void NotificarMensajeChat(
-            string idSala,
-            Dictionary<string, ICursoPartidaManejadorCallback> callbacks,
-            string jugador,
-            string mensaje);
+        /// <param name="parametros">Parametros de la notificacion.</param>
+        void NotificarMensajeChat(NotificacionMensajeChatParametros parametros);
 
         /// <summary>
         /// Notifica a todos los jugadores un trazo dibujado.

@@ -37,8 +37,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return false;
             }
 
-            var config = ObtenerConfiguracionSmtp();
-            if (!config.EsValida)
+            var configuracionSmtp = ObtenerConfiguracionSmtp();
+            if (!configuracionSmtp.EsValida)
             {
                 _logger.Error("La configuracion de correo es invalida o esta incompleta.");
                 return false;
@@ -55,7 +55,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 parametros.CorreoDestino, 
                 asunto, 
                 cuerpoHtml, 
-                config);
+                configuracionSmtp);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
         private ConfiguracionSmtp ObtenerConfiguracionSmtp()
         {
-            var config = new ConfiguracionSmtp
+            var configuracionSmtp = new ConfiguracionSmtp
             {
                 Remitente = ObtenerConfiguracion("CorreoRemitente", "Correo.Remitente.Direccion"),
                 Contrasena = ObtenerConfiguracion("CorreoPassword", "Correo.Smtp.Contrasena"),
@@ -114,12 +114,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 SslString = ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl")
             };
 
-            if (string.IsNullOrWhiteSpace(config.Usuario))
+            if (string.IsNullOrWhiteSpace(configuracionSmtp.Usuario))
             {
-                config.Usuario = config.Remitente;
+                configuracionSmtp.Usuario = configuracionSmtp.Remitente;
             }
 
-            return config;
+            return configuracionSmtp;
         }
 
         private static string ObtenerAsunto(string idiomaNormalizado)
