@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
+﻿namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
 {
     /// <summary>
     /// Encapsula los datos necesarios para la creación de una cuenta.

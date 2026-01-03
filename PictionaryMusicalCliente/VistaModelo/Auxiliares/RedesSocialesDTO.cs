@@ -1,4 +1,4 @@
-namespace PictionaryMusicalCliente.VistaModelo.Auxiliares
+﻿namespace PictionaryMusicalCliente.VistaModelo.Auxiliares
 {
     /// <summary>
     /// Agrupa los identificadores de redes sociales de un usuario.
