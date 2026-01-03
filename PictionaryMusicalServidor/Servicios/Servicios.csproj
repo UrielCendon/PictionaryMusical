@@ -119,6 +119,7 @@
     <Compile Include="LogicaNegocio\EstadoPartida.cs" />
     <Compile Include="LogicaNegocio\GestorJugadoresPartida.cs" />
     <Compile Include="LogicaNegocio\JugadorPartida.cs" />
+    <Compile Include="LogicaNegocio\ValidadorAdivinanza.cs" />
     <Compile Include="Contratos\DTOs\ActualizacionContrasenaDTO.cs" />
     <Compile Include="Contratos\DTOs\ClasificacionUsuarioDTO.cs" />
     <Compile Include="Contratos\DTOs\ConfirmacionCodigoDTO.cs" />
