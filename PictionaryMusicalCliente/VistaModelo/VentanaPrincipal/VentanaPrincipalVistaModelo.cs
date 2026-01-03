@@ -689,9 +689,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ReiniciarAplicacion()
         {
+            _logger.Info("Reiniciando aplicacion tras desconexion. " +
+                "Reinicializando servicios de conexion WCF.");
+            
             DesuscribirEventos();
             AbortarCanalesAmigos();
             _usuarioSesion.Limpiar();
+            App.ReinicializarServiciosConexion();
 
             var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,

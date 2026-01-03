@@ -673,9 +673,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
-                _logger.InfoFormat(
-                    "Iniciando solicitud de cambio de contrasena para: {0}",
-                    Correo);
+                _logger.Info("Iniciando solicitud de cambio de contrasena.");
                 
                 DTOs.ResultadoOperacionDTO resultado = 
                     await SolicitarCambioContrasenaAsync();

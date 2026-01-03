@@ -368,8 +368,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             IngresoPartidaInvitadoVistaModelo vistaModelo,
             ISalasServicio salasServicio)
         {
-            _logger.InfoFormat("Invitado {0} se unio a sala {1}",
-                vistaModelo.NombreInvitadoGenerado, vistaModelo.SalaUnida?.Codigo);
+            _logger.InfoFormat("Invitado se unio a sala: {0}",
+                vistaModelo.SalaUnida?.Codigo);
             var parametros = new NavegacionSalaParametros(
                 vistaModelo.SalaUnida,
                 salasServicio,
@@ -589,9 +589,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private async Task EjecutarRecuperacionAsync()
         {
             string identificador = Identificador?.Trim();
-            _logger.InfoFormat(
-                "Solicitando recuperacion de cuenta para: {0}",
-                identificador);
+            _logger.Info("Solicitando recuperacion de cuenta.");
 
             DTOs.ResultadoOperacionDTO resultado = 
                 await SolicitarRecuperacionCuentaAsync(identificador);

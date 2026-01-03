@@ -1013,8 +1013,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
 
             _logger.InfoFormat(
-                "Registrando acierto. Jugador: {0}, Puntos adivinador: {1}, Puntos dibujante: {2}",
-                nombreJugador,
+                "Registrando acierto. Puntos adivinador: {0}, Puntos dibujante: {1}",
                 puntosAdivinador,
                 puntosDibujante);
 
@@ -1383,11 +1382,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 "CrearContextoFinPartida - Mensaje recibido del servidor: '{0}'",
                 mensajeOriginal ?? "(nulo)");
 
-            bool esCancelacionPorFaltaDeJugadores = EsMensajeCancelacionPorFaltaJugadores(mensajeOriginal);
+            bool esCancelacionPorFaltaDeJugadores =
+                EsMensajeCancelacionPorFaltaJugadores(mensajeOriginal);
             bool esCancelacionPorHost = EsMensajeCancelacionPorHost(mensajeOriginal);
 
             _logger.InfoFormat(
-                "CrearContextoFinPartida - EsCancelacionPorFaltaJugadores: {0}, EsCancelacionPorHost: {1}",
+                "CrearContextoFinPartida - " +
+                "EsCancelacionPorFaltaJugadores: {0}, EsCancelacionPorHost: {1}",
                 esCancelacionPorFaltaDeJugadores,
                 esCancelacionPorHost);
 
@@ -1411,10 +1412,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return false;
             }
 
-            bool tieneJugadores = mensaje.IndexOf("jugador", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool tieneFalta = mensaje.IndexOf("falta", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool tieneSuficientes = mensaje.IndexOf("suficientes", StringComparison.OrdinalIgnoreCase) >= 0;
-            bool tieneInsuficientes = mensaje.IndexOf("insuficientes", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneJugadores =
+                mensaje.IndexOf("jugador", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneFalta =
+                mensaje.IndexOf("falta", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneSuficientes =
+                mensaje.IndexOf("suficientes", StringComparison.OrdinalIgnoreCase) >= 0;
+            bool tieneInsuficientes =
+                mensaje.IndexOf("insuficientes", StringComparison.OrdinalIgnoreCase) >= 0;
 
             return tieneJugadores && (tieneFalta || tieneSuficientes || tieneInsuficientes);
         }

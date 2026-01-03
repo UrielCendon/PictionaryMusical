@@ -178,7 +178,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             try
             {
-                _logger.InfoFormat("Enviando invitacion a: {0}", correo);
+                _logger.Info("Modulo: InvitacionSalaServicio - Enviando invitacion por correo.");
                 var resultado = await _invitacionesServicio
                     .EnviarInvitacionAsync(codigoSala, correo)
                     .ConfigureAwait(false);

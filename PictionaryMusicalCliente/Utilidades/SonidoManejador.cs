@@ -102,7 +102,9 @@ namespace PictionaryMusicalCliente.Utilidades
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("El reproductor no estaba en un estado valido para cerrarse.", excepcion);
+                _logger.Warn(
+                    "El reproductor no estaba en un estado valido para cerrarse.",
+                    excepcion);
             }
         }
 

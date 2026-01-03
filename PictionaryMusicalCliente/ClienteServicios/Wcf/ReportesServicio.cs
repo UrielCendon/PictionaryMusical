@@ -102,16 +102,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             if (resultado?.OperacionExitosa == true)
             {
-                _logger.InfoFormat(
-                    "Reporte enviado por {0} contra {1}.",
-                    reporte.NombreUsuarioReportante,
-                    reporte.NombreUsuarioReportado);
+                _logger.Info("Modulo: ReportesServicio - Reporte enviado exitosamente.");
             }
             else
             {
                 _logger.WarnFormat(
-                    "No se pudo completar el reporte para {0}. Mensaje: {1}",
-                    reporte.NombreUsuarioReportado,
+                    "Modulo: ReportesServicio - No se pudo completar el reporte. Mensaje: {0}",
                     resultado?.Mensaje);
             }
         }

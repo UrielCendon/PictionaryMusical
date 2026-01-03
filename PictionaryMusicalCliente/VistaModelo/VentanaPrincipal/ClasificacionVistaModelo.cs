@@ -53,8 +53,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _clasificacionOriginal = Array.Empty<DTOs.ClasificacionUsuarioDTO>();
             _clasificacion = new ObservableCollection<DTOs.ClasificacionUsuarioDTO>();
 
-            OrdenarPorRondasComando = new ComandoDelegado(EjecutarComandoOrdenarPorRondas, ValidarPuedeOrdenar);
-            OrdenarPorPuntosComando = new ComandoDelegado(EjecutarComandoOrdenarPorPuntos, ValidarPuedeOrdenar);
+            OrdenarPorRondasComando = new ComandoDelegado(
+                EjecutarComandoOrdenarPorRondas, ValidarPuedeOrdenar);
+            OrdenarPorPuntosComando = new ComandoDelegado(
+                EjecutarComandoOrdenarPorPuntos, ValidarPuedeOrdenar);
             CerrarComando = new ComandoDelegado(EjecutarComandoCerrar);
 
             ConfigurarEventoDesconexion();

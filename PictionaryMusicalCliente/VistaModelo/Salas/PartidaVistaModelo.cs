@@ -822,7 +822,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ConfigurarTiempoRonda(ronda.TiempoSegundos);
             ActualizarContadorRondas(_totalJugadoresPendiente);
 
-            ResultadoOperacion<Cancion> resultadoCancion = _catalogoCanciones.ObtenerPorId(ronda.IdCancion);
+            ResultadoOperacion<Cancion> resultadoCancion =
+                _catalogoCanciones.ObtenerPorId(ronda.IdCancion);
             Cancion cancion = resultadoCancion.Exitoso ? resultadoCancion.Valor : Cancion.Vacia;
             AlmacenarDatosCancionActual(cancion);
             NotificarCambiosCancionYTiempo();

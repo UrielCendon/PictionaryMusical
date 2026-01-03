@@ -217,7 +217,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
                     continue;
                 }
 
-                ResultadoOperacion<SolicitudAmistadEntrada> resultadoEntrada = CrearEntradaSolicitud(solicitud);
+                ResultadoOperacion<SolicitudAmistadEntrada> resultadoEntrada =
+                    CrearEntradaSolicitud(solicitud);
                 if (resultadoEntrada.Exitoso)
                 {
                     Solicitudes.Add(resultadoEntrada.Valor);
@@ -296,9 +297,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private async Task EjecutarAceptacionAsync(SolicitudAmistadEntrada entrada)
         {
-            _logger.InfoFormat(
-                "Se aceptó una solicitud de amistad del usuario: {0}",
-                entrada.Solicitud.UsuarioEmisor);
+            _logger.Info("Se acepto una solicitud de amistad.");
 
             await _amigosServicio.ResponderSolicitudAsync(
                 entrada.Solicitud.UsuarioEmisor,
@@ -330,9 +329,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private async Task EjecutarRechazoAsync(SolicitudAmistadEntrada entrada)
         {
-            _logger.InfoFormat(
-                "Se rechazó una solicitud de amistad con: {0}",
-                entrada.NombreUsuario);
+            _logger.Info("Se rechazo una solicitud de amistad.");
 
             try
             {

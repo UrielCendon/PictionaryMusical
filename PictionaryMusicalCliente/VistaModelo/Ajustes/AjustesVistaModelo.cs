@@ -99,6 +99,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
         private void NavegarAInicioSesion()
         {
             DetenerMusica();
+            App.ReinicializarServiciosConexion();
+            
             var vistaModelo = CrearInicioSesionVistaModelo();
             MostrarVentanaInicioSesion(vistaModelo);
             CerrarVentanasActuales();

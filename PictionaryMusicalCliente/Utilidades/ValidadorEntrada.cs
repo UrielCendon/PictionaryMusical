@@ -14,7 +14,9 @@ namespace PictionaryMusicalCliente.Utilidades
         private const int LongitudCodigoSala = 6;
 
         private static readonly Regex CorreoRegex = new Regex(
-            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
+            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]" +
+            @"(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" +
+            @"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
             TimeSpan.FromSeconds(1));
 
