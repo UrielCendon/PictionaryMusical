@@ -130,12 +130,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
         private static HashSet<string> CalcularGanadores(List<JugadorPartida> jugadores)
         {
-            int puntajeMaximo = jugadores.Max(j => j.PuntajeTotal);
+            int puntajeMaximo = jugadores.Max(
+                jugadorActual => jugadorActual.PuntajeTotal);
 
             return new HashSet<string>(
                 jugadores
-                    .Where(j => j.PuntajeTotal == puntajeMaximo)
-                    .Select(j => j.IdConexion),
+                    .Where(jugadorActual => jugadorActual.PuntajeTotal == puntajeMaximo)
+                    .Select(jugadorActual => jugadorActual.IdConexion),
                 StringComparer.OrdinalIgnoreCase);
         }
 

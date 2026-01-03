@@ -71,13 +71,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                         LimiteTopJugadores);
 
                     var resultado = new List<ClasificacionUsuarioDTO>();
-                    foreach (var usuario in usuarios)
+                    foreach (var usuarioActual in usuarios)
                     {
                         resultado.Add(new ClasificacionUsuarioDTO
                         {
-                            Usuario = usuario.Nombre_Usuario,
-                            Puntos = usuario.Jugador.Clasificacion.Puntos_Ganados ?? 0,
-                            RondasGanadas = usuario.Jugador.Clasificacion.Rondas_Ganadas ?? 0
+                            Usuario = usuarioActual.Nombre_Usuario,
+                            Puntos = usuarioActual.Jugador.Clasificacion.Puntos_Ganados ?? 0,
+                            RondasGanadas = 
+                                usuarioActual.Jugador.Clasificacion.Rondas_Ganadas ?? 0
                         });
                     }
                     return resultado;

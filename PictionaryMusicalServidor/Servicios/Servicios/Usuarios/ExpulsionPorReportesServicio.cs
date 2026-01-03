@@ -43,8 +43,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
 
             _logger.WarnFormat(
-                "Usuario {0} alcanzo el limite de reportes ({1}). Iniciando expulsion de salas activas.",
-                nombreNormalizado,
+                "Usuario con ID {0} alcanzo el limite de reportes ({1}). " +
+                "Iniciando expulsion de salas activas.",
+                idReportado,
                 LimiteReportesParaExpulsion);
 
             try
@@ -118,17 +119,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(string.Format(
-                    "No se pudo expulsar a {0} de la sala {1}.",
-                    nombreUsuario,
-                    sala?.Codigo), excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "No se pudo expulsar jugador de la sala {0}.",
+                        sala?.Codigo), 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(string.Format(
-                    "Error inesperado al expulsar a {0} de la sala {1}.",
-                    nombreUsuario,
-                    sala?.Codigo), excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "Error inesperado al expulsar jugador de la sala {0}.",
+                        sala?.Codigo), 
+                    excepcion);
             }
         }
     }

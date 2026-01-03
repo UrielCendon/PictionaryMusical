@@ -157,8 +157,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 _gestorNotificaciones.NotificarExpulsion(parametrosExpulsion);
 
                 _logger.InfoFormat(
-                    "Sala '{0}': Jugador '{1}' expulsado y notificado exitosamente.",
-                    Codigo, nombreJugadorAExpulsar);
+                    "Sala '{0}': Jugador expulsado y notificado exitosamente.",
+                    Codigo);
             }
         }
 
