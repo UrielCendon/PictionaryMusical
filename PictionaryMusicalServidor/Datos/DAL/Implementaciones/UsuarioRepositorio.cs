@@ -51,44 +51,50 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
+                var usuarioEncontrado = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
                     usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
-                return usuario != null
-                    && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
-                    StringComparison.Ordinal);
+                return usuarioEncontrado != null
+                    && string.Equals(
+                        usuarioEncontrado.Nombre_Usuario, 
+                        nombreNormalizado,
+                        StringComparison.Ordinal);
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
+                    excepcion);
             }
         }
 
@@ -110,42 +116,46 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                var entidad = _contexto.Usuario.Add(usuario);
+                var usuarioCreado = _contexto.Usuario.Add(usuario);
                 _contexto.SaveChanges();
 
-                return entidad;
+                return usuarioCreado;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario,
-                    usuario.Nombre_Usuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario,
-                    usuario.Nombre_Usuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario,
-                    usuario.Nombre_Usuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario,
-                    usuario.Nombre_Usuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
+                    excepcion);
             }
         }
 
@@ -154,9 +164,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// Usa comparacion exacta (case-sensitive) para buscar el usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre de usuario a buscar.</param>
-        /// <returns>Usuario encontrado o null si no existe.</returns>
+        /// <returns>Usuario encontrado.</returns>
         /// <exception cref="ArgumentException">Se lanza si nombreUsuario es null o vacio.
         /// </exception>
+        /// <exception cref="KeyNotFoundException">Se lanza si el usuario no existe.</exception>
         public Usuario ObtenerPorNombreUsuario(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
@@ -173,57 +184,63 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 string nombreNormalizado = nombreUsuario.Trim();
-                var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
+                var usuarioEncontrado = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
                     usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
-                if (usuario != null && string.Equals(usuario.Nombre_Usuario, nombreNormalizado,
-                    StringComparison.Ordinal))
+                if (usuarioEncontrado != null 
+                    && string.Equals(
+                        usuarioEncontrado.Nombre_Usuario, 
+                        nombreNormalizado,
+                        StringComparison.Ordinal))
                 {
-                    return usuario;
+                    return usuarioEncontrado;
                 }
 
                 throw new KeyNotFoundException(
-                    string.Format(MensajesErrorDatos.Usuario.UsuarioNoExiste, nombreUsuario));
+                    MensajesErrorDatos.Usuario.UsuarioNoExiste);
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.WarnFormat(
+                _logger.Warn(
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado,
-                    nombreUsuario,
                     excepcion);
                 throw;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
+                    excepcion);
             }
         }
 
@@ -232,8 +249,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// Realiza una busqueda exacta (case-sensitive) sobre el correo.
         /// </summary>
         /// <param name="correo">Correo electronico a buscar.</param>
-        /// <returns>Usuario encontrado o null si no existe.</returns>
+        /// <returns>Usuario encontrado.</returns>
         /// <exception cref="ArgumentException">Se lanza si el correo es nulo o vacio.</exception>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe usuario con ese correo.
+        /// </exception>
         public Usuario ObtenerPorCorreo(string correo)
         {
             if (string.IsNullOrWhiteSpace(correo))
@@ -252,40 +271,61 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Where(usuarioEntidad => usuarioEntidad.Jugador.Correo == correo)
                     .ToList();
 
-                return usuariosCandidatos.FirstOrDefault(usuarioCandidato =>
-                    string.Equals(usuarioCandidato.Jugador?.Correo, correo, StringComparison.Ordinal));
+                var usuarioEncontrado = usuariosCandidatos.FirstOrDefault(usuarioCandidato =>
+                    string.Equals(
+                        usuarioCandidato.Jugador?.Correo, 
+                        correo, 
+                        StringComparison.Ordinal));
+
+                if (usuarioEncontrado == null)
+                {
+                    _logger.Warn(
+                        "Busqueda de usuario por correo no arrojo resultados.");
+                    throw new KeyNotFoundException(
+                        MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
+                }
+
+                return usuarioEncontrado;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    excepcion);
             }
         }
 
@@ -295,9 +335,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// </summary>
         /// <param name="correo">Correo electronico a buscar.</param>
         /// <returns>Una tarea que representa la operacion asincrona. El resultado contiene el
-        /// usuario encontrado o null si no existe.</returns>
-        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta a la base
-        /// de datos.</exception>
+        /// usuario encontrado.</returns>
+        /// <exception cref="ArgumentException">Se lanza si el correo es nulo o vacio.</exception>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe usuario con ese correo.
+        /// </exception>
         public async Task<Usuario> ObtenerPorCorreoAsync(string correo)
         {
             if (string.IsNullOrWhiteSpace(correo))
@@ -309,41 +350,60 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                return await _contexto.Usuario
+                var usuarioEncontrado = await _contexto.Usuario
                     .Include(usuarioEntidad => usuarioEntidad.Jugador)
-                    .FirstOrDefaultAsync(usuarioEntidad => usuarioEntidad.Jugador.Correo == correo);
+                    .FirstOrDefaultAsync(
+                        usuarioEntidad => usuarioEntidad.Jugador.Correo == correo);
+
+                if (usuarioEncontrado == null)
+                {
+                    _logger.Warn(
+                        "Busqueda asincrona de usuario por correo no arrojo resultados.");
+                    throw new KeyNotFoundException(
+                        MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
+                }
+
+                return usuarioEncontrado;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    correo);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    excepcion);
             }
         }
 
@@ -352,10 +412,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// jugador y sus redes sociales asociadas.
         /// </summary>
         /// <param name="idUsuario">Identificador unico del usuario.</param>
-        /// <returns>El usuario encontrado con sus relaciones cargadas o null si no existe.
-        /// </returns>
-        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta a la base
-        /// de datos.</exception>
+        /// <returns>El usuario encontrado con sus relaciones cargadas.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Se lanza si el id es menor o igual a 
+        /// cero.</exception>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe el usuario.</exception>
         public Usuario ObtenerPorIdConRedesSociales(int idUsuario)
         {
             if (idUsuario <= 0)
@@ -367,41 +427,60 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                return _contexto.Usuario
+                var usuarioEncontrado = _contexto.Usuario
                     .Include(usuarioEntidad => usuarioEntidad.Jugador.RedSocial)
                     .FirstOrDefault(usuarioEntidad => usuarioEntidad.idUsuario == idUsuario);
+
+                if (usuarioEncontrado == null)
+                {
+                    _logger.WarnFormat(
+                        "No se encontro usuario con id {0} al obtener con redes sociales.",
+                        idUsuario);
+                    throw new KeyNotFoundException(
+                        MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
+                }
+
+                return usuarioEncontrado;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
                     idUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
                     idUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
                     idUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
                     idUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    excepcion);
             }
         }
 
@@ -426,35 +505,43 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
                     usuarioId);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
+                    usuarioId);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
                     usuarioId);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
+                    usuarioId);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
                     usuarioId);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
+                    usuarioId);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
                     usuarioId);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
+                    usuarioId);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
         }
 
@@ -462,8 +549,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         /// Busca los datos de un Jugador con el Nombre del Usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del Usuario.</param>
-        /// <exception cref="Exception">Se lanza si ocurre un error durante la consulta
-        /// a la base de datos.</exception>
+        /// <returns>Usuario encontrado con datos de jugador cargados.</returns>
+        /// <exception cref="ArgumentException">Se lanza si el nombre es nulo o vacio.</exception>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe el usuario.</exception>
         public Usuario ObtenerPorNombreConJugador(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
@@ -477,42 +565,60 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 string nombreNormalizado = nombreUsuario.Trim();
 
-                return _contexto.Usuario
+                var usuarioEncontrado = _contexto.Usuario
                     .Include(usuarioEntidad => usuarioEntidad.Jugador)
                     .FirstOrDefault(usuarioEntidad => 
                         usuarioEntidad.Nombre_Usuario == nombreNormalizado);
+
+                if (usuarioEncontrado == null)
+                {
+                    _logger.Warn(
+                        "Busqueda de usuario con datos de jugador no arrojo resultados.");
+                    throw new KeyNotFoundException(
+                        MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
+                }
+
+                return usuarioEncontrado;
+            }
+            catch (KeyNotFoundException)
+            {
+                throw;
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.Error(
                     MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    nombreUsuario);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    excepcion);
             }
         }
     }

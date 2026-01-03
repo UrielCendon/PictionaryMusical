@@ -444,12 +444,16 @@ namespace PictionaryMusicalServidor.Datos
             return candidatos;
         }
 
-        private static void RegistrarErrorFaltaCanciones(string idiomaOriginal, 
-            string idiomaMapeado, string idiomaNorm)
+        private static void RegistrarErrorFaltaCanciones(
+            string idiomaOriginal, 
+            string idiomaMapeado, 
+            string idiomaNormalizado)
         {
             _logger.WarnFormat(
-                "Fallo al buscar cancion. Idioma Entrante: {0}, Mapeado: {1}, Normalizado: {2}.",
-                idiomaOriginal, idiomaMapeado, idiomaNorm);
+                "Fallo al buscar cancion. Idioma original: {0}, mapeado: {1}, normalizado: {2}.",
+                idiomaOriginal, 
+                idiomaMapeado, 
+                idiomaNormalizado);
         }
 
         private static Cancion SeleccionarAleatorio(List<Cancion> candidatos)

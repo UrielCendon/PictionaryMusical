@@ -36,44 +36,57 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                return _contexto.Reporte.Any(reporte => reporte.idReportante == idReportante
-                    && reporte.idReportado == idReportado);
+                return _contexto.Reporte.Any(reporteEntidad => 
+                    reporteEntidad.idReportante == idReportante
+                    && reporteEntidad.idReportado == idReportado);
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
+                    idReportante,
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
+                    idReportante,
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
+                    idReportante,
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
                     idReportante,
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorVerificarExistencia,
+                    idReportante,
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
         }
 
@@ -93,9 +106,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                var entidad = _contexto.Reporte.Add(reporte);
+                var reporteCreado = _contexto.Reporte.Add(reporte);
                 _contexto.SaveChanges();
-                return entidad;
+                return reporteCreado;
             }
             catch (DbUpdateException excepcion)
             {
@@ -143,39 +156,48 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
             try
             {
-                return _contexto.Reporte.Count(reporte => reporte.idReportado == idReportado);
+                return _contexto.Reporte.Count(
+                    reporteEntidad => reporteEntidad.idReportado == idReportado);
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorContarReportes, 
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorContarReportes, 
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorContarReportes, 
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
+                _logger.ErrorFormat(
                     MensajesErrorDatos.Reporte.ErrorContarReportes, 
                     idReportado);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                string mensajeExcepcion = string.Format(
+                    MensajesErrorDatos.Reporte.ErrorContarReportes, 
+                    idReportado);
+                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
         }
     }

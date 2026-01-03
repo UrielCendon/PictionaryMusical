@@ -28,28 +28,34 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         /// Obtiene un usuario por su nombre de usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre de usuario a buscar.</param>
-        /// <returns>Usuario encontrado o null si no existe.</returns>
+        /// <returns>Usuario encontrado.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si el usuario no existe.</exception>
         Usuario ObtenerPorNombreUsuario(string nombreUsuario);
 
         /// <summary>
         /// Obtiene un usuario buscando por el correo electronico de su jugador asociado.
         /// </summary>
         /// <param name="correo">Correo electronico a buscar.</param>
-        /// <returns>Usuario encontrado o null si no existe.</returns>
+        /// <returns>Usuario encontrado.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe usuario con ese correo.
+        /// </exception>
         Usuario ObtenerPorCorreo(string correo);
 
         /// <summary>
         /// Obtiene un usuario de forma asincrona buscando por su correo electronico.
         /// </summary>
         /// <param name="correo">Correo electronico a buscar.</param>
-        /// <returns>Tarea con el usuario encontrado o null.</returns>
+        /// <returns>Tarea con el usuario encontrado.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe usuario con ese correo.
+        /// </exception>
         Task<Usuario> ObtenerPorCorreoAsync(string correo);
 
         /// <summary>
         /// Obtiene un usuario por su identificador, incluyendo datos de jugador y redes sociales.
         /// </summary>
         /// <param name="idUsuario">Identificador del usuario.</param>
-        /// <returns>Usuario encontrado con relaciones cargadas o null.</returns>
+        /// <returns>Usuario encontrado con relaciones cargadas.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe el usuario.</exception>
         Usuario ObtenerPorIdConRedesSociales(int idUsuario);
 
         /// <summary>
@@ -63,7 +69,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         /// Obtiene un usuario y sus datos de jugador asociados buscando por nombre de usuario.
         /// </summary>
         /// <param name="nombreUsuario">Nombre de usuario a buscar.</param>
-        /// <returns>Usuario con datos de jugador cargados o null.</returns>
+        /// <returns>Usuario con datos de jugador cargados.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe el usuario.</exception>
         Usuario ObtenerPorNombreConJugador(string nombreUsuario);
     }
 }
