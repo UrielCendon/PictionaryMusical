@@ -697,7 +697,7 @@
     <value>There was an error while validating the code.</value>
   </data>
   <data name="errorTextoSolicitarNuevoCodigo" xml:space="preserve">
-    <value>A new code could not be requested. Please try again.</value>
+    <value>A new code could not be requested due to the internet connection. Please try again.</value>
   </data>
   <data name="errorTextoTokenCodigoObligatorio" xml:space="preserve">
     <value>The code token is required.</value>

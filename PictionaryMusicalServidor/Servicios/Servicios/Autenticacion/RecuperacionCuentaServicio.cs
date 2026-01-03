@@ -104,7 +104,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             var generacion = GenerarYEnviarCodigo(usuario, solicitud.Idioma);
             if (!generacion.Exito)
             {
-                return CrearFalloSolicitud(MensajesError.Cliente.ErrorRecuperarCuenta);
+                return CrearFalloSolicitud(MensajesError.Cliente.ErrorBaseDatosRecuperacion);
             }
 
             AlmacenarSolicitud(generacion.Token, generacion.Pendiente);
@@ -217,14 +217,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 IUsuarioRepositorio repositorio = 
                     _repositorioFactoria.CrearUsuarioRepositorio(contexto);
                 string idNormalizado = EntradaComunValidador.NormalizarTexto(identificador);
-                var usuarioPorNombre = repositorio.ObtenerPorNombreConJugador(idNormalizado);
 
-                if (usuarioPorNombre != null)
-                {
-                    return usuarioPorNombre;
-                }
+                return IntentarBuscarPorNombre(repositorio, idNormalizado)
+                    ?? repositorio.ObtenerPorCorreo(idNormalizado);
+            }
+        }
 
-                return repositorio.ObtenerPorCorreo(idNormalizado);
+        private static Usuario IntentarBuscarPorNombre(
+            IUsuarioRepositorio repositorio, 
+            string nombreUsuario)
+        {
+            try
+            {
+                return repositorio.ObtenerPorNombreConJugador(nombreUsuario);
+            }
+            catch (KeyNotFoundException)
+            {
+                //Se 
+                return null;
             }
         }
 

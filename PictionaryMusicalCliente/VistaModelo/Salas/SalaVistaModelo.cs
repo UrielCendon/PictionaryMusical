@@ -1739,44 +1739,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             DesuscribirEventosCanalPartida();
 
-            try
-            {
-                if (_proxyJuego is ICommunicationObject canal)
-                {
-                    if (canal.State == CommunicationState.Faulted)
-                    {
-                        canal.Abort();
-                    }
-                    else
-                    {
-                        canal.Close();
-                    }
-                }
-            }
-            catch (FaultException excepcion)
-            {
-                _logger.Warn("Fallo del servicio al cerrar el canal de partida.", excepcion);
-                (_proxyJuego as ICommunicationObject)?.Abort();
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Warn("Error de comunicacion al cerrar el canal de partida.", excepcion);
-                (_proxyJuego as ICommunicationObject)?.Abort();
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Warn("Timeout al cerrar el canal de partida.", excepcion);
-                (_proxyJuego as ICommunicationObject)?.Abort();
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Warn("Operacion invalida al cerrar el canal de partida.", excepcion);
-                (_proxyJuego as ICommunicationObject)?.Abort();
-            }
-            finally
-            {
-                _proxyJuego = null;
-            }
+            await CerrarCanalPartidaAsync().ConfigureAwait(false);
 
             if (_sala != null && !string.IsNullOrWhiteSpace(_sala.Codigo)
                 && !string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
@@ -1792,6 +1755,57 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _logger.WarnFormat("Error al abandonar sala en finalizacion: {0}",
 						excepcion.Message);
                 }
+            }
+        }
+
+        private async Task CerrarCanalPartidaAsync()
+        {
+            if (!(_proxyJuego is ICommunicationObject canal))
+            {
+                return;
+            }
+
+            try
+            {
+                if (canal.State == CommunicationState.Faulted)
+                {
+                    canal.Abort();
+                    return;
+                }
+
+                var cierreCompletado = await Task.Run(() =>
+                {
+                    try
+                    {
+                        canal.Close(TimeSpan.FromSeconds(2));
+                        return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }).ConfigureAwait(false);
+
+                if (!cierreCompletado)
+                {
+                    canal.Abort();
+                }
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn("Error al cerrar canal de partida, abortando.", excepcion);
+                try
+                {
+                    canal.Abort();
+                }
+                catch (Exception excepcionAbortar)
+                {
+                    _logger.Warn("Error al abortar canal de partida.", excepcionAbortar);
+                }
+            }
+            finally
+            {
+                _proxyJuego = null;
             }
         }
 

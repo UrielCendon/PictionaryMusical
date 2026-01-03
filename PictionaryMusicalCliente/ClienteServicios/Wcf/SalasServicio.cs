@@ -136,7 +136,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -176,7 +176,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -218,7 +218,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -262,7 +262,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -302,7 +302,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -340,7 +340,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -524,6 +524,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (_cliente is ICommunicationObject canal)
             {
                 canal.Abort();
+            }
+        }
+
+        private void LiberarSemaforoSeguro()
+        {
+            if (_desechado)
+            {
+                return;
+            }
+
+            try
+            {
+                _semaforo.Release();
+            }
+            catch (ObjectDisposedException)
+            {
+                // El semáforo ya fue disposed, ignorar
             }
         }
 

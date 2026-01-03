@@ -699,7 +699,7 @@ aciertan o cuando se acaba el tiempo.
     <value>Hubo un error al validar el código.</value>
   </data>
   <data name="errorTextoSolicitarNuevoCodigo" xml:space="preserve">
-    <value>No se pudo solicitar un nuevo código. Intente nuevamente.</value>
+    <value>No se pudo solicitar un nuevo código debido a un problema con la conexión a internet. Intente nuevamente.</value>
   </data>
   <data name="errorTextoTokenCodigoObligatorio" xml:space="preserve">
     <value>El token del código es obligatorio.</value>
@@ -892,9 +892,6 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoUsuarioBaneado" xml:space="preserve">
     <value>Has sido baneado del juego por mala conducta.</value>
-  </data>
-  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
-    <value>Te expulsamos indefinidamente del juego por mala conducta.</value>
   </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>No fue posible establecer la conexión con el servidor.</value>
@@ -1237,5 +1234,8 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
     <value>No se pudo establecer conexión con el servidor, verifica tu conexión a internet. Se redirigió a la ventana de inicio de sesión.</value>
+  </data>
+  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
+    <value>Te expulsamos indefinidamente del juego por mala conducta.</value>
   </data>
 </root>
