@@ -135,7 +135,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 if (!EsCanalActivo(callback))
                 {
                     _logger.WarnFormat(
-                        "Canal inactivo para jugador en sala {0}. Removiendo.",
+                        "Canal inactivo para jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala);
                     DispararCallbackInvalido(idSala, idJugador);
                     return;
@@ -146,7 +147,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _logger.Warn(
                     string.Format(
-                        "Canal desechado para jugador en sala {0}. Removiendo.",
+                        "Canal desechado para jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala),
                     excepcion);
                 DispararCallbackInvalido(idSala, idJugador);
@@ -155,7 +157,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _logger.Warn(
                     string.Format(
-                        "Canal en falta para jugador en sala {0}. Removiendo.",
+                        "Canal en falta para jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala),
                     excepcion);
                 DispararCallbackInvalido(idSala, idJugador);
@@ -164,7 +167,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _logger.Warn(
                     string.Format(
-                        "Error comunicacion con jugador en sala {0}. Removiendo.",
+                        "Error comunicacion con jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala),
                     excepcion);
                 DispararCallbackInvalido(idSala, idJugador);
@@ -173,7 +177,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _logger.Warn(
                     string.Format(
-                        "Timeout con jugador en sala {0}. Removiendo.",
+                        "Timeout con jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala),
                     excepcion);
                 DispararCallbackInvalido(idSala, idJugador);
@@ -182,7 +187,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _logger.Warn(
                     string.Format(
-                        "Error inesperado con jugador en sala {0}. Removiendo.",
+                        "Error inesperado con jugador {0} en sala {1}. Removiendo.",
+                        idJugador,
                         idSala),
                     excepcion);
                 DispararCallbackInvalido(idSala, idJugador);

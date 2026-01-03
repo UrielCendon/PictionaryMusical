@@ -58,9 +58,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
                 manejadorFaulted = delegate(object remitente, EventArgs argumentos)
                 {
-                    _logger.WarnFormat(
-                        "Canal fallado (Faulted) para usuario '{0}'. Desuscribiendo.", 
-                        nombreUsuario);
+                    _logger.Warn("Canal fallado (Faulted). Desuscribiendo cliente.");
                     Desuscribir(nombreUsuario);
                 };
 
@@ -151,15 +149,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (CommunicationException excepcion)
             {
-                _logger.ErrorFormat("Error de comunicacion al notificar a '{0}'. Desuscribiendo.",
-                    nombreUsuario, excepcion);
-                    Desuscribir(nombreUsuario);
+                _logger.Error(
+                    "Error de comunicacion al notificar cliente. Desuscribiendo.",
+                    excepcion);
+                Desuscribir(nombreUsuario);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.ErrorFormat("Timeout al notificar a '{0}'. Desuscribiendo.",
-                    nombreUsuario, excepcion);
-                    Desuscribir(nombreUsuario);
+                _logger.Error("Timeout al notificar cliente. Desuscribiendo.", excepcion);
+                Desuscribir(nombreUsuario);
             }
             catch (InvalidOperationException excepcion)
             {
