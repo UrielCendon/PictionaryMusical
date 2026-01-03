@@ -1,7 +1,3 @@
-using System;
-using System.Configuration;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
@@ -14,13 +10,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     /// <summary>
     /// Implementacion del notificador que envia invitaciones a partidas por correo electronico.
     /// </summary>
-    public class CorreoInvitacionNotificador : ICorreoInvitacionNotificador
+    public class CorreoInvitacionNotificador : NotificadorCorreoBase, ICorreoInvitacionNotificador
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CorreoInvitacionNotificador));
 
         private const string AsuntoPredeterminadoEs = "Invitacion a partida de Pictionary Musical";
         private const string AsuntoPredeterminadoEn = "Pictionary Musical Game Invitation";
+
+        /// <summary>
+        /// Logger para registrar eventos y errores.
+        /// </summary>
+        protected override ILog Logger => _logger;
 
         /// <summary>
         /// Envia una invitacion a una partida al correo indicado de forma asincrona.
@@ -57,26 +58,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 configuracion);
         }
 
-        private ConfiguracionSmtp ObtenerConfiguracionSmtp()
-        {
-            var configuracionSmtp = new ConfiguracionSmtp
-            {
-                Remitente = ObtenerConfiguracion("CorreoRemitente", "Correo.Remitente.Direccion"),
-                Contrasena = ObtenerConfiguracion("CorreoPassword", "Correo.Smtp.Contrasena"),
-                Host = ObtenerConfiguracion("CorreoHost", "Correo.Smtp.Host"),
-                Usuario = ObtenerConfiguracion("CorreoUsuario", "Correo.Smtp.Usuario"),
-                PuertoString = ObtenerConfiguracion("CorreoPuerto", "Correo.Smtp.Puerto"),
-                SslString = ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl")
-            };
-
-            if (string.IsNullOrWhiteSpace(configuracionSmtp.Usuario))
-            {
-                configuracionSmtp.Usuario = configuracionSmtp.Remitente;
-            }
-
-            return configuracionSmtp;
-        }
-
         private static string ObtenerAsunto(string idiomaNormalizado)
         {
             string asuntoConfigurado = ObtenerConfiguracion(
@@ -88,118 +69,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             return string.IsNullOrWhiteSpace(asuntoConfigurado)
                 ? ObtenerAsuntoPredeterminado(idiomaNormalizado)
                 : asuntoConfigurado;
-        }
-
-        private static async Task<bool> EjecutarEnvioSmtpAsync(
-            string destinatario,
-            string asunto, 
-            string cuerpo,
-            ConfiguracionSmtp configuracionSmtp)
-        {
-            try
-            {
-                using (var mensaje = new MailMessage(
-                    configuracionSmtp.Remitente,
-                    destinatario,
-                    asunto, 
-                    cuerpo))
-                {
-                    mensaje.IsBodyHtml = true;
-                    mensaje.BodyEncoding = Encoding.UTF8;
-                    mensaje.SubjectEncoding = Encoding.UTF8;
-
-                    using (var clienteSmtp = new SmtpClient(
-                        configuracionSmtp.Host,
-                        configuracionSmtp.Puerto))
-                    {
-                        clienteSmtp.EnableSsl = configuracionSmtp.HabilitarSsl;
-
-                        if (!string.IsNullOrWhiteSpace(configuracionSmtp.Contrasena))
-                        {
-                            clienteSmtp.Credentials = new NetworkCredential(
-                                configuracionSmtp.Usuario, 
-                                configuracionSmtp.Contrasena);
-                        }
-
-                        await clienteSmtp
-                            .SendMailAsync(mensaje)
-                            .ConfigureAwait(false);
-                    }
-                }
-
-                return true;
-            }
-            catch (SmtpException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.ErrorSmtpEnviarCorreo, excepcion);
-                return false;
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.OperacionInvalidaEnviarCorreo, excepcion);
-                return false;
-            }
-            catch (ArgumentException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.ArgumentosInvalidosCorreo, excepcion);
-                return false;
-            }
-            catch (FormatException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
-                return false;
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
-                return false;
-            }
-        }
-
-        private sealed class ConfiguracionSmtp
-        {
-            public string Remitente { get; set; }
-            public string Contrasena { get; set; }
-            public string Host { get; set; }
-            public string Usuario { get; set; }
-            public string PuertoString { get; set; }
-            public string SslString { get; set; }
-
-            public int Puerto
-            {
-                get
-                {
-                    int puerto;
-                    if (int.TryParse(PuertoString, out puerto))
-                    {
-                        return puerto;
-                    }
-                    return 587;
-                }
-            }
-
-            public bool HabilitarSsl
-            {
-                get
-                {
-                    bool ssl;
-                    if (bool.TryParse(SslString, out ssl))
-                    {
-                        return ssl;
-                    }
-                    return false;
-                }
-            }
-
-            public bool EsValida
-            {
-                get
-                {
-                    return !string.IsNullOrWhiteSpace(Remitente)
-                        && !string.IsNullOrWhiteSpace(Host)
-                        && HabilitarSsl;
-                }
-            }
         }
 
         internal static string ConstruirCuerpoMensaje(string codigoSala, string creador, 
@@ -243,44 +112,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             return cuerpoHtml.ToString();
         }
 
-        private static string NormalizarIdioma(string idioma)
-        {
-            if (string.IsNullOrWhiteSpace(idioma))
-            {
-                return "es";
-            }
-
-            return idioma.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "en" : "es";
-        }
-
         private static string ObtenerAsuntoPredeterminado(string idiomaNormalizado)
         {
             return idiomaNormalizado == "en" ? AsuntoPredeterminadoEn : AsuntoPredeterminadoEs;
-        }
-
-        private static string ObtenerConfiguracion(params string[] claves)
-        {
-            if (claves == null)
-            {
-                return string.Empty;
-            }
-
-            foreach (string clave in claves)
-            {
-                if (string.IsNullOrWhiteSpace(clave))
-                {
-                    continue;
-                }
-
-                string valor = ConfigurationManager.AppSettings[clave];
-
-                if (!string.IsNullOrWhiteSpace(valor))
-                {
-                    return valor;
-                }
-            }
-
-            return string.Empty;
         }
     }
 }

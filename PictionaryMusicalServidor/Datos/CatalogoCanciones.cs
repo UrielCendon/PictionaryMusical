@@ -430,12 +430,11 @@ namespace PictionaryMusicalServidor.Datos
                     continue;
                 }
 
-                if (string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase))
-                {
-                    candidatos.Add(cancion);
-                }
-                else if (string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
-                    StringComparison.OrdinalIgnoreCase))
+                bool esMixto = string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase);
+                bool coincideIdioma = string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
+                    StringComparison.OrdinalIgnoreCase);
+
+                if (esMixto || coincideIdioma)
                 {
                     candidatos.Add(cancion);
                 }

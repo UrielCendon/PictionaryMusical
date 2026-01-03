@@ -403,13 +403,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             lock (_sincronizacion)
             {
-                if (_validadorAdivinanza.JugadorPuedeAdivinar(jugador, _estadoActual))
+                if (ValidadorAdivinanza.JugadorPuedeAdivinar(jugador, _estadoActual))
                 {
                     acierto = _validadorAdivinanza.VerificarAcierto(
                         _cancionActualId, mensaje, out puntos);
                     if (acierto)
                     {
-                        _validadorAdivinanza.RegistrarAcierto(jugador, puntos);
+                        ValidadorAdivinanza.RegistrarAcierto(jugador, puntos);
                         finRonda = _gestorJugadores.TodosAdivinaron();
                     }
                 }

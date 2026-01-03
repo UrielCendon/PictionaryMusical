@@ -32,7 +32,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="jugador">Jugador a verificar.</param>
         /// <param name="estadoPartida">Estado actual de la partida.</param>
         /// <returns>True si el jugador puede adivinar, False en caso contrario.</returns>
-        public bool JugadorPuedeAdivinar(JugadorPartida jugador, EstadoPartida estadoPartida)
+        public static bool JugadorPuedeAdivinar(JugadorPartida jugador, EstadoPartida estadoPartida)
         {
             return estadoPartida == EstadoPartida.Jugando 
                 && !jugador.EsDibujante 
@@ -70,7 +70,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// </summary>
         /// <param name="jugador">Jugador que acerto.</param>
         /// <param name="puntos">Puntos a agregar.</param>
-        public void RegistrarAcierto(JugadorPartida jugador, int puntos)
+        public static void RegistrarAcierto(JugadorPartida jugador, int puntos)
         {
             jugador.YaAdivino = true;
             jugador.PuntajeTotal += puntos;

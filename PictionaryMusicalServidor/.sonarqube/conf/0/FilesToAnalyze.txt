@@ -10,6 +10,7 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Interfaces\IReporteRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\DAL\Interfaces\IUsuarioRepositorio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Entidades\Cancion.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Entidades\CancionCreacionParametros.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Excepciones\BaseDatosExcepcion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Excepciones\CancionNoDisponibleExcepcion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\ICatalogoCanciones.cs
@@ -22,6 +23,7 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\Usuario.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Properties\AssemblyInfo.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\Conexion.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\GeneradorAleatorioDatos.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\CatalogoCanciones.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\BaseDatosPictionaryMusical.Context.tt
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\BaseDatosPictionaryMusical.tt

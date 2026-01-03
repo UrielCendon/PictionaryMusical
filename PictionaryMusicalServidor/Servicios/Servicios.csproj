@@ -186,6 +186,7 @@
     <Compile Include="Servicios\Salas\SalasManejador.cs" />
     <Compile Include="Servicios\Salas\InvitacionesManejador.cs" />
     <Compile Include="Servicios\Utilidades\ContextoFactoria.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorCorreoBase.cs" />
     <Compile Include="Servicios\Notificadores\CorreoCodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\ICodigoVerificacionNotificador.cs" />

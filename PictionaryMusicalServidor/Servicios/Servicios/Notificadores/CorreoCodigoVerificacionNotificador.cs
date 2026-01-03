@@ -1,11 +1,6 @@
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
-using System;
-using System.Configuration;
-using System.Net;
-using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,13 +10,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// Servicio para el envio de codigos de verificacion por correo electronico.
     /// Implementa la interfaz ICodigoVerificacionNotificador.
     /// </summary>
-    public class CorreoCodigoVerificacionNotificador : ICodigoVerificacionNotificador
+    public class CorreoCodigoVerificacionNotificador : NotificadorCorreoBase, 
+        ICodigoVerificacionNotificador
     {
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(CorreoCodigoVerificacionNotificador));
 
         private const string AsuntoPredeterminadoEs = "Codigo de verificacion";
         private const string AsuntoPredeterminadoEn = "Verification code";
+
+        /// <summary>
+        /// Logger para registrar eventos y errores.
+        /// </summary>
+        protected override ILog Logger => _logger;
 
         /// <summary>
         /// Envia un codigo de verificacion al usuario especificado de forma asincrona.
@@ -102,26 +103,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             return cuerpoHtml.ToString();
         }
 
-        private ConfiguracionSmtp ObtenerConfiguracionSmtp()
-        {
-            var configuracionSmtp = new ConfiguracionSmtp
-            {
-                Remitente = ObtenerConfiguracion("CorreoRemitente", "Correo.Remitente.Direccion"),
-                Contrasena = ObtenerConfiguracion("CorreoPassword", "Correo.Smtp.Contrasena"),
-                Host = ObtenerConfiguracion("CorreoHost", "Correo.Smtp.Host"),
-                Usuario = ObtenerConfiguracion("CorreoUsuario", "Correo.Smtp.Usuario"),
-                PuertoString = ObtenerConfiguracion("CorreoPuerto", "Correo.Smtp.Puerto"),
-                SslString = ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl")
-            };
-
-            if (string.IsNullOrWhiteSpace(configuracionSmtp.Usuario))
-            {
-                configuracionSmtp.Usuario = configuracionSmtp.Remitente;
-            }
-
-            return configuracionSmtp;
-        }
-
         private static string ObtenerAsunto(string idiomaNormalizado)
         {
             string asuntoConfigurado = ObtenerConfiguracion(
@@ -135,147 +116,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 : asuntoConfigurado;
         }
 
-        private static async Task<bool> EjecutarEnvioSmtpAsync(string destinatario, string asunto,
-            string cuerpo, ConfiguracionSmtp config)
-        {
-            try
-            {
-                using (var mensaje = new MailMessage(config.Remitente, destinatario, asunto, 
-                    cuerpo))
-                {
-                    mensaje.IsBodyHtml = true;
-                    mensaje.BodyEncoding = Encoding.UTF8;
-                    mensaje.SubjectEncoding = Encoding.UTF8;
-
-                    using (var clienteSmtp = new SmtpClient(config.Host, config.Puerto))
-                    {
-                        clienteSmtp.EnableSsl = config.HabilitarSsl;
-
-                        if (!string.IsNullOrWhiteSpace(config.Contrasena))
-                        {
-                            clienteSmtp.Credentials =
-                                new NetworkCredential(config.Usuario, config.Contrasena);
-                        }
-
-                        await clienteSmtp
-                            .SendMailAsync(mensaje)
-                            .ConfigureAwait(false);
-                    }
-                }
-
-                return true;
-            }
-            catch (SmtpException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.ErrorSmtpEnviarCorreo, excepcion);
-                return false;
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.OperacionInvalidaEnviarCorreo, excepcion);
-                return false;
-            }
-            catch (ArgumentException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.ArgumentosInvalidosCorreo, excepcion);
-                return false;
-            }
-            catch (FormatException excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
-                return false;
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Error(MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo, excepcion);
-                return false;
-            }
-        }
-
-        private static string ObtenerConfiguracion(params string[] claves)
-        {
-            if (claves == null)
-            {
-                return string.Empty;
-            }
-
-            foreach (string clave in claves)
-            {
-                if (string.IsNullOrWhiteSpace(clave))
-                {
-                    continue;
-                }
-
-                string valor = ConfigurationManager.AppSettings[clave];
-
-                if (!string.IsNullOrWhiteSpace(valor))
-                {
-                    return valor;
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private static string NormalizarIdioma(string idioma)
-        {
-            if (string.IsNullOrWhiteSpace(idioma))
-            {
-                return "es";
-            }
-
-            return idioma.StartsWith("en", StringComparison.OrdinalIgnoreCase) ? "en" : "es";
-        }
-
         private static string ObtenerAsuntoPredeterminado(string idiomaNormalizado)
         {
             return idiomaNormalizado == "en" ? AsuntoPredeterminadoEn : AsuntoPredeterminadoEs;
-        }
-
-        private sealed class ConfiguracionSmtp
-        {
-            public string Remitente { get; set; }
-            public string Contrasena { get; set; }
-            public string Host { get; set; }
-            public string Usuario { get; set; }
-            public string PuertoString { get; set; }
-            public string SslString { get; set; }
-
-            public int Puerto
-            {
-                get
-                {
-                    int puerto;
-                    if (int.TryParse(PuertoString, out puerto))
-                    {
-                        return puerto;
-                    }
-                    return 587;
-                }
-            }
-
-            public bool HabilitarSsl
-            {
-                get
-                {
-                    bool ssl;
-                    if (bool.TryParse(SslString, out ssl))
-                    {
-                        return ssl;
-                    }
-                    return false;
-                }
-            }
-
-            public bool EsValida
-            {
-                get
-                {
-                    return !string.IsNullOrWhiteSpace(Remitente)
-                        && !string.IsNullOrWhiteSpace(Host)
-                        && HabilitarSsl;
-                }
-            }
         }
     }
 }
