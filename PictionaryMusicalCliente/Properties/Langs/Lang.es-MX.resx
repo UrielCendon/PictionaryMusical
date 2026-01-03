@@ -540,7 +540,7 @@ aciertan o cuando se acaba el tiempo.
     <value>El {0} es obligatorio.</value>
   </data>
   <data name="avisoTextoCodigoExpirado" xml:space="preserve">
-    <value>El código enviado expiró.</value>
+    <value>El código enviado a tu correo electrónico expiró.</value>
   </data>
   <data name="errorTextoCodigoIncorrecto" xml:space="preserve">
     <value>El código ingresado es incorrecto.</value>
@@ -1223,11 +1223,8 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
   </data>
-  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
-    <value>Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde.</value>
-  </data>
   <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
-    <value>Hubo un problema con la disponibilidad del servidor, intente de nuevo más tarde.</value>
+    <value>Hubo un problema al comunicarse con el servidor o con tu conexión a internet, intente de nuevo más tarde.</value>
   </data>
   <data name="errorTextoSesionExpiradaGenerico" xml:space="preserve">
     <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Se redirigió a la ventana de inicio de sesión.</value>

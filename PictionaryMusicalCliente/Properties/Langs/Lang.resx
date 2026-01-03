@@ -1212,9 +1212,6 @@
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
   </data>
-  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
-    <value>Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde.</value>
-  </data>
   <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
     <value>Hubo un problema con la disponibilidad del servidor, intente de nuevo más tarde.</value>
   </data>

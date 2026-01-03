@@ -1915,15 +1915,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde..
-        /// </summary>
-        public static string errorTextoServidorNoDisponibleSinInternet {
-            get {
-                return ResourceManager.GetString("errorTextoServidorNoDisponibleSinInternet", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos cargar tu perfil. Intenta más tarde..
         /// </summary>
         public static string errorTextoServidorObtenerPerfil {

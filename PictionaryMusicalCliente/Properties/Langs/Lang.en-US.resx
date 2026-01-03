@@ -538,7 +538,7 @@
     <value>The {0} field is required.</value>
   </data>
   <data name="avisoTextoCodigoExpirado" xml:space="preserve">
-    <value>The code sent has expired.</value>
+    <value>The code sent to your email address has expired.</value>
   </data>
   <data name="errorTextoCodigoIncorrecto" xml:space="preserve">
     <value>The code you entered is incorrect.</value>
@@ -1221,11 +1221,8 @@
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>The friend request could not be rejected at this time due to a problem with the service.</value>
   </data>
-  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
-    <value>There was a communication problem with the server, please check your internet connection and try again later.</value>
-  </data>
   <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
-    <value>There was a problem with the server availability, please try again later.</value>
+    <value>There was a problem trying to communicate with the server or with your internet connection, please try again later.</value>
   </data>
   <data name="errorTextoSesionExpiradaGenerico" xml:space="preserve">
     <value>There was a problem with the server, your session expired or it became unavailable. You have been redirected to the login screen.</value>

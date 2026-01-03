@@ -332,7 +332,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void MostrarError(string mensaje)
         {
             RegistrarError(mensaje);
-            NotificarError(mensaje ?? Lang.errorTextoNoEncuentraPartida);
+            string mensajeLocalizado = _localizador.Localizar(
+                mensaje,
+                Lang.errorTextoNoEncuentraPartida);
+            NotificarError(mensajeLocalizado);
         }
 
         private static void RegistrarError(string mensaje)
@@ -399,19 +402,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
-        private static string ObtenerMensajeErrorUnionInvitado(ServicioExcepcion excepcion)
+        private string ObtenerMensajeErrorUnionInvitado(ServicioExcepcion excepcion)
         {
             if (excepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                 excepcion.Tipo == TipoErrorServicio.Comunicacion)
             {
-                return ConectividadRedMonitor.Instancia.HayConexion
-                    ? Lang.errorTextoServidorSinDisponibilidad
-                    : Lang.errorTextoServidorNoDisponibleSinInternet;
+                return Lang.errorTextoServidorSinDisponibilidad;
             }
 
-            return !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoNoEncuentraPartida;
+            return _localizador.Localizar(
+                excepcion.Message,
+                Lang.errorTextoNoEncuentraPartida);
         }
 
         private static bool SalaLlena(DTOs.SalaDTO sala)

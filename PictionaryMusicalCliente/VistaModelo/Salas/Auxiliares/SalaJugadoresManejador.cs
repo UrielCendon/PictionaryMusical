@@ -388,8 +388,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             else
             {
                 _dependencias.SonidoManejador.ReproducirError();
-                _dependencias.AvisoServicio.Mostrar(
-                    respuesta?.Mensaje ?? Lang.errorTextoReportarJugador);
+                string mensajeLocalizado = _dependencias.LocalizadorServicio.Localizar(
+                    respuesta?.Mensaje,
+                    Lang.errorTextoReportarJugador);
+                _dependencias.AvisoServicio.Mostrar(mensajeLocalizado);
             }
         }
 
@@ -400,8 +402,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 nombreJugador,
                 excepcion);
             _dependencias.SonidoManejador.ReproducirError();
-            _dependencias.AvisoServicio.Mostrar(
-                excepcion.Message ?? Lang.errorTextoReportarJugador);
+            string mensajeLocalizado = _dependencias.LocalizadorServicio.Localizar(
+                excepcion.Message,
+                Lang.errorTextoReportarJugador);
+            _dependencias.AvisoServicio.Mostrar(mensajeLocalizado);
         }
     }
 }

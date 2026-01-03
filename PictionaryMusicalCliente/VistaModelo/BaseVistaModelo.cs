@@ -200,19 +200,15 @@ namespace PictionaryMusicalCliente.VistaModelo
             bool redirigirEnDesconexion)
         {
             _logger.Warn("Excepcion de servicio controlada.", excepcion);
+            string mensajeExcepcion = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+
             if (EsExcepcionDeDesconexion(excepcion) && redirigirEnDesconexion)
             {
-                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                    ? excepcion.Message
-                    : Lang.errorTextoDesconexionServidor;
-                ManejarDesconexionCritica(mensaje);
+                ManejarDesconexionCritica(mensajeExcepcion);
             }
             else
             {
-                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                    ? excepcion.Message
-                    : Lang.errorTextoErrorProcesarSolicitud;
-                MostrarErrorEnUI(mensaje);
+                MostrarErrorEnUI(mensajeExcepcion);
             }
         }
 
@@ -248,9 +244,9 @@ namespace PictionaryMusicalCliente.VistaModelo
             Action<Exception> accionError)
         {
             _logger.Warn("El servicio reporto una falla controlada.", excepcion);
-            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message) 
-                ? excepcion.Message 
-                : Lang.errorTextoErrorProcesarSolicitud;
+            string mensaje = _localizador.Localizar(
+                excepcion.Message, 
+                Lang.errorTextoErrorProcesarSolicitud);
             ManejarError(excepcion, mensaje, accionError);
         }
 
@@ -265,7 +261,8 @@ namespace PictionaryMusicalCliente.VistaModelo
             Action<Exception> accionError)
         {
             _logger.Warn("Excepcion del servicio personalizada.", excepcion);
-            ManejarError(excepcion, excepcion.Message, accionError);
+            string mensaje = excepcion.Message ?? Lang.errorTextoErrorProcesarSolicitud;
+            ManejarError(excepcion, mensaje, accionError);
         }
 
         private void ManejarErrorOperacionInvalida(InvalidOperationException excepcion, 

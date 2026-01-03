@@ -449,9 +449,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return ConectividadRedMonitor.Instancia.HayConexion
-                        ? Lang.errorTextoServidorSinDisponibilidad
-                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                    return Lang.errorTextoServidorSinDisponibilidad;
                 }
             }
 
@@ -614,9 +612,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return ConectividadRedMonitor.Instancia.HayConexion
-                        ? Lang.errorTextoServidorSinDisponibilidad
-                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                    return Lang.errorTextoServidorSinDisponibilidad;
                 }
             }
 
@@ -661,16 +657,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                     "Recuperacion fallida o cancelada: {0}",
                     resultado.Mensaje);
                 _sonidoManejador.ReproducirError();
-
-                string mensajeLocalizado = LocalizarMensajeRecuperacion(
-                    resultado.Mensaje);
-                _avisoServicio.Mostrar(mensajeLocalizado);
+                _avisoServicio.Mostrar(resultado.Mensaje);
             }
-        }
-
-        private string LocalizarMensajeRecuperacion(string mensaje)
-        {
-            return _localizador.Localizar(mensaje, Lang.errorTextoCuentaNoRegistrada);
         }
 
         private void CargarIdiomas()

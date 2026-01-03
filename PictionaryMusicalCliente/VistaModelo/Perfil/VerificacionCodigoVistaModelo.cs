@@ -325,14 +325,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private async Task ManejarVerificacionFallidaAsync(
             DTOs.ResultadoRegistroCuentaDTO resultado)
         {
-            RegistrarVerificacionFallida(resultado.Mensaje);
+            string mensajeOriginal = resultado.Mensaje;
+            RegistrarVerificacionFallida(mensajeOriginal);
             _sonidoManejador.ReproducirError();
             
-            string mensajeLocalizado = LocalizarMensajeError(resultado.Mensaje);
+            string mensajeLocalizado = LocalizarMensajeError(mensajeOriginal);
             resultado.Mensaje = mensajeLocalizado;
             MarcarCodigoInvalido?.Invoke(true);
 
-            if (EsCodigoExpirado(mensajeLocalizado, resultado.Mensaje))
+            if (EsCodigoExpirado(mensajeLocalizado, mensajeOriginal))
             {
                 await ManejarCodigoExpiradoAsync(resultado);
                 return;
@@ -348,10 +349,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
         private string LocalizarMensajeError(string mensajeOriginal)
         {
-            return !string.IsNullOrWhiteSpace(mensajeOriginal)
-                ? mensajeOriginal
-                : Lang.errorTextoCodigoIncorrecto;
+            return _localizador.Localizar(
+                mensajeOriginal,
+                Lang.errorTextoCodigoIncorrecto);
         }
+
+        private const string MensajeServidorCodigoExpirado = 
+            "El codigo de verificacion ha expirado. Registrate de nuevo.";
 
         private static bool EsCodigoExpirado(
             string mensajeLocalizado,
@@ -364,7 +368,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             bool coincideOriginal = string.Equals(
                 mensajeOriginal,
-                Lang.avisoTextoCodigoExpirado,
+                MensajeServidorCodigoExpirado,
                 StringComparison.Ordinal);
 
             return coincideLocalizado || coincideOriginal;
@@ -499,7 +503,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private void NotificarErrorReenvio(string mensaje)
         {
             _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(mensaje ?? Lang.errorTextoSolicitarNuevoCodigo);
+            string mensajeLocalizado = _localizador.Localizar(
+                mensaje,
+                Lang.errorTextoSolicitarNuevoCodigo);
+            _avisoServicio.Mostrar(mensajeLocalizado);
         }
 
         private void Cancelar()
@@ -574,7 +581,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
             _temporizadorExpiracion.Stop();
         }
 
-        private static string ObtenerMensajeErrorVerificacion(
+        private string ObtenerMensajeErrorVerificacion(
             Exception excepcion, 
             string mensajePredeterminado)
         {
@@ -583,15 +590,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return ConectividadRedMonitor.Instancia.HayConexion
-                        ? Lang.errorTextoServidorSinDisponibilidad
-                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                    return Lang.errorTextoServidorSinDisponibilidad;
                 }
+                
+                return servicioExcepcion.Message ?? mensajePredeterminado;
             }
 
-            return !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : mensajePredeterminado;
+            return _localizador.Localizar(
+                excepcion.Message,
+                mensajePredeterminado);
         }
     }
 }

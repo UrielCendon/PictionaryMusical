@@ -303,15 +303,13 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return ConectividadRedMonitor.Instancia.HayConexion
-                        ? Lang.errorTextoServidorSinDisponibilidad
-                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                    return Lang.errorTextoServidorSinDisponibilidad;
                 }
             }
 
-            return !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoRegistrarCuentaMasTarde;
+            return _localizador.Localizar(
+                excepcion.Message,
+                Lang.errorTextoRegistrarCuentaMasTarde);
         }
 
         private ResultadoValidacionCuenta ValidarEntradas()
@@ -560,8 +558,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         {
             _logger.WarnFormat("No se pudo enviar el codigo. Mensaje: {0}",
                 resultado.Mensaje);
-            MostrarMensaje?.Invoke(resultado.Mensaje ??
+            string mensajeLocalizado = _localizador.Localizar(
+                resultado.Mensaje,
                 Lang.errorTextoRegistrarCuentaMasTarde);
+            MostrarMensaje?.Invoke(mensajeLocalizado);
         }
 
         private async Task<(bool VerificacionExitosa, 
@@ -654,8 +654,10 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             _logger.WarnFormat("Error al registrar cuenta: {0}",
                 resultadoRegistro.Mensaje);
-            MostrarMensaje?.Invoke(resultadoRegistro.Mensaje ??
+            string mensajeLocalizado = _localizador.Localizar(
+                resultadoRegistro.Mensaje,
                 Lang.errorTextoRegistrarCuentaMasTarde);
+            MostrarMensaje?.Invoke(mensajeLocalizado);
             return (false, resultadoRegistro);
         }
 

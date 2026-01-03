@@ -18,7 +18,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
             ISalasServicio salasServicio,
             IReportesServicio reportesServicio,
             SonidoManejador sonidoManejador,
-            IAvisoServicio avisoServicio)
+            IAvisoServicio avisoServicio,
+            ILocalizadorServicio localizadorServicio)
         {
             SalasServicio = salasServicio ?? 
                 throw new ArgumentNullException(nameof(salasServicio));
@@ -28,6 +29,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
                 throw new ArgumentNullException(nameof(sonidoManejador));
             AvisoServicio = avisoServicio ?? 
                 throw new ArgumentNullException(nameof(avisoServicio));
+            LocalizadorServicio = localizadorServicio ??
+                throw new ArgumentNullException(nameof(localizadorServicio));
         }
 
         /// <summary>
@@ -49,5 +52,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Dependencias
         /// Servicio para mostrar avisos.
         /// </summary>
         public IAvisoServicio AvisoServicio { get; }
+
+        /// <summary>
+        /// Servicio de localizacion de mensajes.
+        /// </summary>
+        public ILocalizadorServicio LocalizadorServicio { get; }
     }
 }

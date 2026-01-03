@@ -309,7 +309,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _salasServicio,
                 _reportesServicio,
                 _sonidoManejador,
-                _avisoServicio);
+                _avisoServicio,
+                _localizador);
             var jugadoresContexto = new ContextoSalaJugador(
                 _nombreUsuarioSesion,
                 _sala.Creador,
