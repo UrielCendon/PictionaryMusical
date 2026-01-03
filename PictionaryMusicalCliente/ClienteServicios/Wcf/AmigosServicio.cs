@@ -25,6 +25,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IWcfClienteFabrica _fabricaClientes; 
         private readonly ISolicitudesAmistadAdministrador _administradorSolicitudes;
         private readonly IManejadorErrorServicio _manejadorError;
+        private volatile bool _desechado = false;
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
         private string _usuarioSuscrito;
@@ -221,6 +222,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void Dispose()
         {
+            if (_desechado)
+            {
+                return;
+            }
+
+            _desechado = true;
             Dispose(liberando: true);
             GC.SuppressFinalize(this);
         }
@@ -229,10 +236,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.SolicitudAmistadDTO solicitud,
             Func<DTOs.SolicitudAmistadDTO, string, bool> accionActualizacion)
         {
-            if (!EsSolicitudValida(solicitud)) return;
+            if (!EsSolicitudValida(solicitud))
+            {
+                return;
+            }
 
             string usuarioActual = _usuarioSuscrito;
-            if (string.IsNullOrWhiteSpace(usuarioActual)) return;
+            if (string.IsNullOrWhiteSpace(usuarioActual))
+            {
+                return;
+            }
 
             bool modificada = accionActualizacion(solicitud, usuarioActual);
             if (modificada)
@@ -244,6 +257,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task EjecutarOperacionAsync(
             Func<PictionaryServidorServicioAmigos.AmigosManejadorClient, Task> operacion)
         {
+            if (_desechado)
+            {
+                return;
+            }
+
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -522,6 +540,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private async Task EjecutarEnSeccionCriticaAsync(Func<Task> accion)
         {
+            if (_desechado)
+            {
+                return;
+            }
+
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -552,7 +575,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static void ValidarNombreUsuario(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre))
+            {
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombre));
+            }
         }
 
         private static bool EsSolicitudValida(DTOs.SolicitudAmistadDTO s)

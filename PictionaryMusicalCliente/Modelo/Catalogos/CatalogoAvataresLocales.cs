@@ -71,7 +71,10 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
                 UriKind.Absolute);
 
             var imagen = new BitmapImage(uri);
-            if (imagen.CanFreeze) imagen.Freeze();
+            if (imagen.CanFreeze)
+            {
+                imagen.Freeze();
+            }
 
             return new ObjetoAvatar(id, nombre, imagen);
         }

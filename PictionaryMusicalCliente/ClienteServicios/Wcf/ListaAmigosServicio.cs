@@ -26,6 +26,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly object _amigosBloqueo = new();
         private readonly List<DTOs.AmigoDTO> _amigos = new();
         private readonly IManejadorErrorServicio _manejadorError;
+        private volatile bool _desechado = false;
 
         private PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient _cliente;
         private string _usuarioSuscrito;
@@ -74,7 +75,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public async Task SuscribirAsync(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
+            }
+
+            if (_desechado)
+            {
+                return;
+            }
 
             await _semaforo.WaitAsync().ConfigureAwait(false);
             PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient clienteLocal = null;
@@ -115,7 +123,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private void LimpiarClienteLocal(
             PictionaryServidorServicioListaAmigos.ListaAmigosManejadorClient cliente)
         {
-            if (cliente == null) return;
+            if (cliente == null)
+            {
+                return;
+            }
             DesuscribirEventosCanal(cliente);
             cliente.Abort();
         }
@@ -125,7 +136,15 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public async Task CancelarSuscripcionAsync(string nombreUsuario)
         {
-            if (string.IsNullOrWhiteSpace(nombreUsuario)) return;
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return;
+            }
+
+            if (_desechado)
+            {
+                return;
+            }
 
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
@@ -175,7 +194,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public async Task<IReadOnlyList<DTOs.AmigoDTO>> ObtenerAmigosAsync(string nombreUsuario)
         {
             if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
+            }
+
+            if (_desechado)
+            {
+                return Array.Empty<DTOs.AmigoDTO>();
+            }
 
             await _semaforo.WaitAsync().ConfigureAwait(false);
 
@@ -191,24 +217,39 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 var amigos = await cliente.ObtenerAmigosAsync(nombreUsuario).ConfigureAwait(false);
                 var lista = ConvertirLista(amigos);
 
-                if (!esTemporal) ActualizarListaInterna(lista);
-                else CerrarClienteSeguro(cliente);
+                if (!esTemporal)
+                {
+                    ActualizarListaInterna(lista);
+                }
+                else
+                {
+                    CerrarClienteSeguro(cliente);
+                }
 
                 return lista;
             }
             catch (FaultException excepcion)
             {
-                if (esTemporal) cliente.Abort();
+                if (esTemporal)
+                {
+                    cliente.Abort();
+                }
                 throw ConvertirExcepcion(excepcion);
             }
             catch (CommunicationException excepcion)
             {
-                if (esTemporal) cliente.Abort();
+                if (esTemporal)
+                {
+                    cliente.Abort();
+                }
                 throw ConvertirExcepcion(excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                if (esTemporal) cliente.Abort();
+                if (esTemporal)
+                {
+                    cliente.Abort();
+                }
                 throw ConvertirExcepcion(excepcion);
             }
             finally
@@ -230,6 +271,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// <inheritdoc />
         public void Dispose()
         {
+            if (_desechado)
+            {
+                return;
+            }
+
+            _desechado = true;
             CerrarClienteSeguro(_cliente);
             _cliente = null;
             _usuarioSuscrito = null;
@@ -250,7 +297,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             _cliente = null;
             _usuarioSuscrito = null;
 
-            if (cliente == null) return;
+            if (cliente == null)
+            {
+                return;
+            }
 
             try
             {
@@ -400,14 +450,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         private void CerrarClienteSeguro(ICommunicationObject cliente)
         {
-            if (cliente == null) return;
+            if (cliente == null)
+            {
+                return;
+            }
             
             DesuscribirEventosCanal(cliente);
             
             try
             {
-                if (cliente.State == CommunicationState.Opened) cliente.Close();
-                else cliente.Abort();
+                if (cliente.State == CommunicationState.Opened)
+                {
+                    cliente.Close();
+                }
+                else
+                {
+                    cliente.Abort();
+                }
             }
             catch (FaultException)
             {
@@ -426,7 +485,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static IReadOnlyList<DTOs.AmigoDTO> ConvertirLista(
             IEnumerable<DTOs.AmigoDTO> amigos)
         {
-            if (amigos == null) return Array.Empty<DTOs.AmigoDTO>();
+            if (amigos == null)
+            {
+                return Array.Empty<DTOs.AmigoDTO>();
+            }
 
             var lista = amigos
                 .Where(a => !string.IsNullOrWhiteSpace(a?.NombreUsuario))

@@ -25,6 +25,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IManejadorErrorServicio _manejadorError;
 
         private readonly SemaphoreSlim _semaforo = new(1, 1);
+        private volatile bool _desechado = false;
         private readonly object _salasBloqueo = new();
         private readonly List<DTOs.SalaDTO> _salas = new();
 
@@ -99,6 +100,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             ValidarCreacionSala(nombreCreador, configuracion);
 
+            if (_desechado)
+            {
+                return null;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -137,6 +142,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             ValidarDatosSalaUsuario(codigoSala, nombreUsuario);
 
+            if (_desechado)
+            {
+                return null;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -176,10 +185,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 return;
             }
 
+            if (_desechado)
+            {
+                return;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (_cliente == null) return;
+                if (_cliente == null)
+                {
+                    return;
+                }
 
                 await _cliente.AbandonarSalaAsync(codigoSala, nombreUsuario).ConfigureAwait(false);
             }
@@ -211,6 +227,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             ValidarExpulsion(codigoSala, nombreHost, nombreJugadorAExpulsar);
 
+            if (_desechado)
+            {
+                return;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -246,10 +266,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public async Task SuscribirListaSalasAsync()
         {
+            if (_desechado)
+            {
+                return;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (_suscrito && _cliente != null) return;
+                if (_suscrito && _cliente != null)
+                {
+                    return;
+                }
 
                 var cliente = ObtenerOCrearCliente();
                 await cliente.SuscribirListaSalasAsync().ConfigureAwait(false);
@@ -279,10 +306,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public async Task CancelarSuscripcionListaSalasAsync()
         {
+            if (_desechado)
+            {
+                return;
+            }
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
-                if (!_suscrito || _cliente == null) return;
+                if (!_suscrito || _cliente == null)
+                {
+                    return;
+                }
 
                 await _cliente.CancelarSuscripcionListaSalasAsync().ConfigureAwait(false);
                 _suscrito = false;
@@ -368,6 +402,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void Dispose()
         {
+            if (_desechado)
+            {
+                return;
+            }
+
+            _desechado = true;
+
             bool lockTomado = _semaforo.Wait(3000);
 
             try
@@ -384,7 +425,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                if (lockTomado) _semaforo.Release();
+                if (lockTomado)
+                {
+                    _semaforo.Release();
+                }
                 _semaforo.Dispose();
             }
         }
@@ -436,8 +480,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 try
                 {
-                    if (canal.State == CommunicationState.Faulted) canal.Abort();
-                    else canal.Close();
+                    if (canal.State == CommunicationState.Faulted)
+                    {
+                        canal.Abort();
+                    }
+                    else
+                    {
+                        canal.Close();
+                    }
                 }
                 catch (FaultException)
                 {
@@ -506,29 +556,45 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.ConfiguracionPartidaDTO config)
         {
             if (string.IsNullOrWhiteSpace(creador))
+            {
                 throw new ArgumentException("Creador obligatorio.", nameof(creador));
+            }
+
             if (config == null)
+            {
                 throw new ArgumentNullException(nameof(config));
+            }
         }
 
         private static void ValidarDatosSalaUsuario(string codigo, string usuario)
         {
             if (string.IsNullOrWhiteSpace(codigo))
+            {
                 throw new ArgumentException("Codigo obligatorio.", nameof(codigo));
+            }
+
             if (string.IsNullOrWhiteSpace(usuario))
+            {
                 throw new ArgumentException("Usuario obligatorio.", nameof(usuario));
+            }
         }
 
         private static void ValidarExpulsion(string codigo, string host, string jugador)
         {
             ValidarDatosSalaUsuario(codigo, host);
+
             if (string.IsNullOrWhiteSpace(jugador))
+            {
                 throw new ArgumentException("Jugador a expulsar obligatorio.", nameof(jugador));
+            }
         }
 
         private static IReadOnlyList<DTOs.SalaDTO> Convertir(IEnumerable<DTOs.SalaDTO> salas)
         {
-            if (salas == null) return Array.Empty<DTOs.SalaDTO>();
+            if (salas == null)
+            {
+                return Array.Empty<DTOs.SalaDTO>();
+            }
 
             var lista = salas
                 .Where(sala => sala != null && !string.IsNullOrWhiteSpace(sala.Codigo))
