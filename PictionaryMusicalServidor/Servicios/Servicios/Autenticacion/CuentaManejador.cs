@@ -214,10 +214,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             NuevaCuentaDTO nuevaCuenta)
         {
             bool usuarioRegistrado = contexto.Usuario
-                .Any(u => u.Nombre_Usuario == nuevaCuenta.Usuario);
+                .Any(usuarioExistente => 
+                    usuarioExistente.Nombre_Usuario == nuevaCuenta.Usuario);
 
             bool correoRegistrado = contexto.Jugador
-                .Any(j => j.Correo == nuevaCuenta.Correo);
+                .Any(jugadorExistente => 
+                    jugadorExistente.Correo == nuevaCuenta.Correo);
 
             if (usuarioRegistrado || correoRegistrado)
             {
@@ -261,7 +263,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 transaccion.Commit();
 
                 _logger.InfoFormat(
-                    "Cuenta creada exitosamente. Usuario identificador: {0}, Jugador identificador: {1}.",
+                    "Cuenta creada exitosamente. " +
+                    "Usuario identificador: {0}, Jugador identificador: {1}.",
                     usuarioCreado.idUsuario,
                     jugador.idJugador);
             }

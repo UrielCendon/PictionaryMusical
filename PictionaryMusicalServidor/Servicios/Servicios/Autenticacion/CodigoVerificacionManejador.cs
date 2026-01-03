@@ -68,7 +68,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.CodigoEnviado)
                 {
                     _logger.WarnFormat(
-                        "Solicitud de codigo fallida. Motivo: {0}",
+                        "Solicitud de codigo de verificacion fallida: {0}",
                         resultado.Mensaje);
                 }
 
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.CodigoEnviado)
                 {
                     _logger.WarnFormat(
-                        "Fallo al reenviar codigo de registro. Motivo: {0}",
+                        "Fallo al reenviar codigo de verificacion de registro: {0}",
                         resultado.Mensaje);
                 }
 
@@ -195,7 +195,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.RegistroExitoso)
                 {
                     _logger.WarnFormat(
-                        "Intento fallido de confirmacion de codigo. Motivo: {0}",
+                        "Intento fallido de confirmacion de codigo de verificacion: {0}",
                         resultado.Mensaje);
                 }
 
@@ -212,7 +212,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ValidacionEntidadFallidaConfirmarCodigo, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ValidacionEntidadFallidaConfirmarCodigo, 
+                    excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -221,7 +223,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorActualizacionBDConfirmarCodigo, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorActualizacionBDConfirmarCodigo, 
+                    excepcion);
                 return new ResultadoRegistroCuentaDTO
                 {
                     RegistroExitoso = false,
@@ -273,7 +277,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.CodigoEnviado)
                 {
                     _logger.WarnFormat(
-                        "Solicitud de recuperacion fallida. Motivo: {0}",
+                        "Solicitud de codigo de recuperacion fallida: {0}",
                         resultado.Mensaje);
                 }
 
@@ -281,7 +285,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ArgumentoNuloSolicitarCodigoRecuperacion, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ArgumentoNuloSolicitarCodigoRecuperacion, 
+                    excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -290,7 +296,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosSolicitarRecuperacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorBaseDatosSolicitarRecuperacion, 
+                    excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -299,7 +307,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorDatosSolicitarRecuperacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorDatosSolicitarRecuperacion, 
+                    excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -308,7 +318,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoSolicitarRecuperacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoSolicitarRecuperacion, 
+                    excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -334,7 +346,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.OperacionExitosa)
                 {
                     _logger.WarnFormat(
-                        "Intento fallido de confirmacion de recuperacion. Motivo: {0}",
+                        "Intento fallido de confirmacion de codigo de recuperacion: {0}",
                         resultado.Mensaje);
                 }
 

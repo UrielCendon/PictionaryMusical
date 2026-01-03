@@ -50,7 +50,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
+                var repositorioAmigos = 
+                    _repositorioFactoria.CrearAmigoRepositorio(contexto);
                 var solicitudes = repositorioAmigos.ObtenerSolicitudesPendientes(usuarioId);
 
                 if (solicitudes == null || solicitudes.Count == 0)
@@ -67,10 +68,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// </summary>
         /// <param name="usuarioEmisorId">Identificador del usuario que envia la solicitud.
         /// </param>
-        /// <param name="usuarioReceptorId">Identificador del usuario que recibe la solicitud.
-        /// </param>
-        /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el mismo o 
-        /// ya existe una relacion.</exception>
+        /// <param name="usuarioReceptorId">Identificador del usuario que recibe la 
+        /// solicitud.</param>
+        /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el 
+        /// mismo o ya existe una relacion.</exception>
         public void CrearSolicitud(int usuarioEmisorId, int usuarioReceptorId)
         {
             if (usuarioEmisorId == usuarioReceptorId)
@@ -81,7 +82,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
+                var repositorioAmigos = 
+                    _repositorioFactoria.CrearAmigoRepositorio(contexto);
                 if (repositorioAmigos.ExisteRelacion(usuarioEmisorId, usuarioReceptorId))
                 {
                     throw new InvalidOperationException(
@@ -95,18 +97,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Acepta una solicitud de amistad pendiente entre dos usuarios.
         /// </summary>
-        /// <param name="usuarioEmisorId">Identificador del usuario que envio la solicitud.
-        /// </param>
-        /// <param name="usuarioReceptorId">Identificador del usuario que acepta la solicitud.
-        /// </param>
-        /// <exception cref="InvalidOperationException">Se lanza si no existe la solicitud o ya
-        /// fue aceptada.</exception>
+        /// <param name="usuarioEmisorId">Identificador del usuario que envio la 
+        /// solicitud.</param>
+        /// <param name="usuarioReceptorId">Identificador del usuario que acepta la 
+        /// solicitud.</param>
+        /// <exception cref="InvalidOperationException">Se lanza si no existe la solicitud 
+        /// o ya fue aceptada.</exception>
         public void AceptarSolicitud(int usuarioEmisorId, int usuarioReceptorId)
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
-                var relacion = repositorioAmigos.ObtenerRelacion(usuarioEmisorId, usuarioReceptorId);
+                var repositorioAmigos = 
+                    _repositorioFactoria.CrearAmigoRepositorio(contexto);
+                var relacion = repositorioAmigos.ObtenerRelacion(
+                    usuarioEmisorId, 
+                    usuarioReceptorId);
 
                 ValidarSolicitudParaAceptar(relacion, usuarioReceptorId);
                 repositorioAmigos.ActualizarEstado(relacion, true);
@@ -116,11 +121,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Elimina la relacion de amistad entre dos usuarios.
         /// </summary>
-        /// <param name="usuarioAId">Identificador del primer usuario en la relacion.</param>
-        /// <param name="usuarioBId">Identificador del segundo usuario en la relacion.</param>
+        /// <param name="usuarioAId">Identificador del primer usuario en la relacion.
+        /// </param>
+        /// <param name="usuarioBId">Identificador del segundo usuario en la relacion.
+        /// </param>
         /// <returns>La relacion de amistad que fue eliminada.</returns>
-        /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el mismo o la
-        /// relacion no existe.</exception>
+        /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el 
+        /// mismo o la relacion no existe.</exception>
         public Amigo EliminarAmistad(int usuarioAId, int usuarioBId)
         {
             if (usuarioAId == usuarioBId)
@@ -130,8 +137,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
-                var relacion = repositorioAmigos.ObtenerRelacion(usuarioAId, usuarioBId);
+                var repositorioAmigos = 
+                    _repositorioFactoria.CrearAmigoRepositorio(contexto);
+                var relacion = repositorioAmigos.ObtenerRelacion(
+                    usuarioAId, 
+                    usuarioBId);
 
                 if (relacion == null)
                 {
@@ -147,14 +157,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Obtiene la lista de amigos de un usuario como objetos DTO.
         /// </summary>
-        /// <param name="usuarioId">Identificador del usuario cuyos amigos se desean obtener.
-        /// </param>
+        /// <param name="usuarioId">Identificador del usuario cuyos amigos se desean 
+        /// obtener.</param>
         /// <returns>Lista de amigos como DTOs, o lista vacia si no hay amigos.</returns>
         public List<AmigoDTO> ObtenerAmigosDTO(int usuarioId)
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
+                var repositorioAmigos = 
+                    _repositorioFactoria.CrearAmigoRepositorio(contexto);
                 var amigos = repositorioAmigos.ObtenerAmigos(usuarioId);
 
                 if (amigos == null)
@@ -163,29 +174,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 }
 
                 return amigos
-                    .Where(amigo => amigo != null)
-                    .Select(amigo => new AmigoDTO
+                    .Where(registroAmigo => registroAmigo != null)
+                    .Select(registroAmigo => new AmigoDTO
                     {
-                        UsuarioId = amigo.idUsuario,
-                        NombreUsuario = amigo.Nombre_Usuario
+                        UsuarioId = registroAmigo.idUsuario,
+                        NombreUsuario = registroAmigo.Nombre_Usuario
                     })
                     .ToList();
             }
         }
 
-       private static List<SolicitudAmistadDTO> MapearSolicitudes(IList<Amigo> solicitudes,
+        private static List<SolicitudAmistadDTO> MapearSolicitudes(
+            IList<Amigo> solicitudes,
             int usuarioId)
         {
             return solicitudes
-                .Where(solicitud => solicitud.UsuarioReceptor == usuarioId)
-                .Where(solicitud => 
-                    !string.IsNullOrWhiteSpace(solicitud.Usuario?.Nombre_Usuario) &&
-                    !string.IsNullOrWhiteSpace(solicitud.Usuario1?.Nombre_Usuario))
-                .Select(solicitud => new SolicitudAmistadDTO
+                .Where(solicitudPendiente => 
+                    solicitudPendiente.UsuarioReceptor == usuarioId)
+                .Where(solicitudPendiente => 
+                    !string.IsNullOrWhiteSpace(
+                        solicitudPendiente.Usuario?.Nombre_Usuario) &&
+                    !string.IsNullOrWhiteSpace(
+                        solicitudPendiente.Usuario1?.Nombre_Usuario))
+                .Select(solicitudPendiente => new SolicitudAmistadDTO
                 {
-                    UsuarioEmisor = solicitud.Usuario.Nombre_Usuario,
-                    UsuarioReceptor = solicitud.Usuario1.Nombre_Usuario,
-                    SolicitudAceptada = solicitud.Estado
+                    UsuarioEmisor = solicitudPendiente.Usuario.Nombre_Usuario,
+                    UsuarioReceptor = solicitudPendiente.Usuario1.Nombre_Usuario,
+                    SolicitudAceptada = solicitudPendiente.Estado
                 })
                 .ToList();
         }
