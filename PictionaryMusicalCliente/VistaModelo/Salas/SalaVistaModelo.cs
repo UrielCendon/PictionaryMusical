@@ -194,14 +194,27 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             AbortarCanalPartidaSiNecesario();
             
             Navegar(DestinoNavegacion.InicioSesion);
-            _avisoServicio.Mostrar(Lang.errorTextoPerdidaConexionInternet);
+            string mensaje = _esInvitado
+                ? Lang.errorTextoInvitadoSinConexion
+                : Lang.errorTextoPerdidaConexionInternet;
+            _avisoServicio.Mostrar(mensaje);
         }
 
         private void ManejarDesconexionConVerificacionInternet(string mensajeServidorCaido)
         {
-            string mensaje = ConectividadRedMonitor.Instancia.HayConexion
-                ? mensajeServidorCaido
-                : Lang.errorTextoPerdidaConexionInternet;
+            string mensaje;
+            if (ConectividadRedMonitor.Instancia.HayConexion)
+            {
+                mensaje = _esInvitado
+                    ? Lang.errorTextoInvitadoServidorCaido
+                    : mensajeServidorCaido;
+            }
+            else
+            {
+                mensaje = _esInvitado
+                    ? Lang.errorTextoInvitadoSinConexion
+                    : Lang.errorTextoPerdidaConexionInternet;
+            }
             ManejarDesconexionCritica(mensaje);
         }
 
@@ -815,7 +828,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
                 {
-                    ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorCerrado);
+                    string mensajeServidorCaido = _esInvitado
+                        ? Lang.errorTextoInvitadoServidorCaido
+                        : Lang.errorTextoSesionExpiradaGenerico;
+                    ManejarDesconexionConVerificacionInternet(mensajeServidorCaido);
                 }
             });
         }

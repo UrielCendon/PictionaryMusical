@@ -567,7 +567,7 @@ aciertan o cuando se acaba el tiempo.
     <value>No se encontró una cuenta con el usuario o correo proporcionado.</value>
   </data>
   <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
-    <value>No pudimos conectar con el servidor. Verifica tu conexión e intenta más tarde.</value>
+    <value>No pudimos conectar con el servidor. Verifica tu conexión a internet e intenta más tarde.</value>
   </data>
   <data name="errorTextoDeterminarUsuarioCambioContrasena" xml:space="preserve">
     <value>No se pudo determinar el usuario actual para cambiar la contraseña.</value>
@@ -684,7 +684,7 @@ aciertan o cuando se acaba el tiempo.
     <value>Hubo un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>Hubo un problema con el servidor o con tu conexión a internet. Intente de nuevo más tarde.</value>
+    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente iniciar sesión de nuevo.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>No podemos mostrar tu perfil debido a un error al obtener la información.</value>
@@ -1211,9 +1211,6 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>No se pudo iniciar sesión en este momento por un problema del servicio, inténtalo de nuevo más tarde.</value>
   </data>
-  <data name="errorTextoServidorCerrado" xml:space="preserve">
-    <value>El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión.</value>
-  </data>
   <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
     <value>Se perdió la conexión a internet. Verifica tu conexión y vuelve a iniciar sesión.</value>
   </data>
@@ -1225,5 +1222,20 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
+  </data>
+  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
+    <value>Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
+    <value>Hubo un problema con la disponibilidad del servidor, intente de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoSesionExpiradaGenerico" xml:space="preserve">
+    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Se redirigió a la ventana de inicio de sesión.</value>
+  </data>
+  <data name="errorTextoInvitadoServidorCaido" xml:space="preserve">
+    <value>Hubo un problema con el servidor, este dejó de estar disponible o hubo mucho tiempo de inactividad. Se le redirigió a la ventana de inicio de sesión.</value>
+  </data>
+  <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
+    <value>No se pudo establecer conexión con el servidor, verifica tu conexión a internet. Se redirigió a la ventana de inicio de sesión.</value>
   </data>
 </root>

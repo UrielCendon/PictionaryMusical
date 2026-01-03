@@ -449,7 +449,9 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return servicioExcepcion.Message;
+                    return ConectividadRedMonitor.Instancia.HayConexion
+                        ? Lang.errorTextoServidorSinDisponibilidad
+                        : Lang.errorTextoServidorNoDisponibleSinInternet;
                 }
             }
 
@@ -612,7 +614,9 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                     servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
                 {
-                    return servicioExcepcion.Message;
+                    return ConectividadRedMonitor.Instancia.HayConexion
+                        ? Lang.errorTextoServidorSinDisponibilidad
+                        : Lang.errorTextoServidorNoDisponibleSinInternet;
                 }
             }
 

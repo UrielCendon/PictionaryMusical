@@ -565,7 +565,7 @@
     <value>No account was found with the provided username or e-mail.</value>
   </data>
   <data name="errorTextoBaseDatosRecuperacion" xml:space="preserve">
-    <value>We couldn't connect to the server. Check your connection and try again later.</value>
+    <value>We couldn't connect to the server. Check your internet connection and try again later.</value>
   </data>
   <data name="errorTextoDeterminarUsuarioCambioContrasena" xml:space="preserve">
     <value>The current user could not be determined to change the password.</value>
@@ -682,7 +682,7 @@
     <value>There was an error while signing in.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>There was a problem with the server or with your internet connection. Please try again later.</value>
+    <value>There was a problem with the server, your session expired or the server is no longer available. Please logging in again.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>We couldn't show your profile due to a problem obtaining your information.</value>
@@ -1209,9 +1209,6 @@
   <data name="errorTextoInicioSesionServicio" xml:space="preserve">
     <value>We were unable to log in at this time due to a service issue. Please try again later.</value>
   </data>
-  <data name="errorTextoServidorCerrado" xml:space="preserve">
-    <value>The server is no longer available. Please try signing in again.</value>
-  </data>
   <data name="errorTextoPerdidaConexionInternet" xml:space="preserve">
     <value>Internet connection lost. Check your connection and sign in again.</value>
   </data>
@@ -1223,5 +1220,20 @@
   </data>
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>The friend request could not be rejected at this time due to a problem with the service.</value>
+  </data>
+  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
+    <value>There was a communication problem with the server, please check your internet connection and try again later.</value>
+  </data>
+  <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
+    <value>There was a problem with the server availability, please try again later.</value>
+  </data>
+  <data name="errorTextoSesionExpiradaGenerico" xml:space="preserve">
+    <value>There was a problem with the server, your session expired or it became unavailable. You have been redirected to the login screen.</value>
+  </data>
+  <data name="errorTextoInvitadoServidorCaido" xml:space="preserve">
+    <value>There was a problem with the server, it became unavailable or there was too much inactivity. You have been redirected to the login screen.</value>
+  </data>
+  <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
+    <value>Could not establish connection with the server, check your internet connection. You have been redirected to the login screen.</value>
   </data>
 </root>

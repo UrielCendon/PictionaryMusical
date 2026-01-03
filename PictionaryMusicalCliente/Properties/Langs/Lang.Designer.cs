@@ -1663,6 +1663,24 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un problema con el servidor, este dejó de estar disponible o hubo mucho tiempo de inactividad. Se le redirigió a la ventana de inicio de sesión..
+        /// </summary>
+        public static string errorTextoInvitadoServidorCaido {
+            get {
+                return ResourceManager.GetString("errorTextoInvitadoServidorCaido", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a No se pudo establecer conexión con el servidor, verifica tu conexión a internet. Se redirigió a la ventana de inicio de sesión..
+        /// </summary>
+        public static string errorTextoInvitadoSinConexion {
+            get {
+                return ResourceManager.GetString("errorTextoInvitadoSinConexion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a El jugador ya no está en la sala..
         /// </summary>
         public static string errorTextoJugadorNoEnSala {
@@ -1843,15 +1861,6 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a El servidor dejó de estar disponible. Por favor, intenta volver a iniciar sesión..
-        /// </summary>
-        public static string errorTextoServidorCerrado {
-            get {
-                return ResourceManager.GetString("errorTextoServidorCerrado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a El servidor reportó un error al solicitar el código de verificación..
         /// </summary>
         public static string errorTextoServidorCodigoVerificacion {
@@ -1906,6 +1915,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoServidorNoDisponibleSinInternet {
+            get {
+                return ResourceManager.GetString("errorTextoServidorNoDisponibleSinInternet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No pudimos cargar tu perfil. Intenta más tarde..
         /// </summary>
         public static string errorTextoServidorObtenerPerfil {
@@ -1920,6 +1938,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoServidorReenviarCodigo {
             get {
                 return ResourceManager.GetString("errorTextoServidorReenviarCodigo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un problema con la disponibilidad del servidor, intente de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoServidorSinDisponibilidad {
+            get {
+                return ResourceManager.GetString("errorTextoServidorSinDisponibilidad", resourceCulture);
             }
         }
         
@@ -1956,6 +1983,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         public static string errorTextoSesionExpirada {
             get {
                 return ResourceManager.GetString("errorTextoSesionExpirada", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Se redirigió a la ventana de inicio de sesión..
+        /// </summary>
+        public static string errorTextoSesionExpiradaGenerico {
+            get {
+                return ResourceManager.GetString("errorTextoSesionExpiradaGenerico", resourceCulture);
             }
         }
         
