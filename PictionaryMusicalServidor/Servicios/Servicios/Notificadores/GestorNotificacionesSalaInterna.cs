@@ -160,33 +160,39 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <summary>
         /// Notifica a todos los integrantes que un jugador fue baneado por reportes.
         /// </summary>
-        /// <param name="codigoSala">Codigo de la sala.</param>
-        /// <param name="nombreBaneado">Nombre del jugador baneado.</param>
-        /// <param name="salaActualizada">Estado actualizado de la sala.</param>
-        public void NotificarBaneo(
-            string codigoSala, 
-            string nombreBaneado,
-            SalaDTO salaActualizada)
+        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
+        public void NotificarBaneo(BaneoNotificacionParametros parametros)
         {
             _logger.InfoFormat(
                 "Notificando baneo de jugador en sala '{0}'.",
-                codigoSala);
+                parametros.CodigoSala);
 
             var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in todosLosDestinatarios)
             {
-                NotificarJugadorBaneadoSeguro(callback, codigoSala, nombreBaneado);
+                NotificarJugadorBaneadoSeguro(
+                    callback, 
+                    parametros.CodigoSala, 
+                    parametros.NombreBaneado);
             }
 
-            var destinatarios = ObtenerDestinatariosExcluyendo(nombreBaneado);
+            if (parametros.CallbackBaneado != null)
+            {
+                NotificarJugadorBaneadoSeguro(
+                    parametros.CallbackBaneado, 
+                    parametros.CodigoSala, 
+                    parametros.NombreBaneado);
+            }
+
+            var destinatarios = ObtenerDestinatariosExcluyendo(parametros.NombreBaneado);
             foreach (var callback in destinatarios)
             {
-                NotificarSalaActualizadaSeguro(callback, salaActualizada);
+                NotificarSalaActualizadaSeguro(callback, parametros.SalaActualizada);
             }
 
             _logger.InfoFormat(
                 "Baneo notificado a todos los clientes en sala '{0}'.",
-                codigoSala);
+                parametros.CodigoSala);
         }
 
         private List<ISalasManejadorCallback> ObtenerDestinatariosExcluyendo(

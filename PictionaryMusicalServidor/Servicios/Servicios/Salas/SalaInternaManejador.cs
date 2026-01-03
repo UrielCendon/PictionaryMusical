@@ -176,18 +176,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                     return;
                 }
 
+                var callbackBaneado = _gestorNotificaciones.ObtenerCallback(
+                    nombreJugadorABanear);
+
                 _jugadores.Remove(nombreJugadorABanear);
                 _gestorNotificaciones.Remover(nombreJugadorABanear);
 
-                _gestorNotificaciones.NotificarBaneo(
-                    Codigo, 
-                    nombreJugadorABanear, 
-                    ConvertirADto());
+                var parametrosBaneo = new BaneoNotificacionParametros
+                {
+                    CodigoSala = Codigo,
+                    NombreBaneado = nombreJugadorABanear,
+                    CallbackBaneado = callbackBaneado,
+                    SalaActualizada = ConvertirADto()
+                };
+                _gestorNotificaciones.NotificarBaneo(parametrosBaneo);
 
                 _logger.InfoFormat(
-                    "Sala '{0}': Jugador '{1}' baneado por reportes y notificado.",
-                    Codigo, 
-                    nombreJugadorABanear);
+                    "Sala '{0}': Jugador baneado por reportes y notificado.",
+                    Codigo);
             }
         }
 
