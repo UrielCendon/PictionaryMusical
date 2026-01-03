@@ -37,9 +37,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Ejecuta la eliminacion de una amistad en la base de datos.
         /// </summary>
-        /// <param name="nombreA">Nombre del primer usuario.</param>
-        /// <param name="nombreB">Nombre del segundo usuario.</param>
+        /// <param name="nombrePrimerUsuario">Nombre del primer usuario.</param>
+        /// <param name="nombreSegundoUsuario">Nombre del segundo usuario.</param>
         /// <returns>Objeto con el resultado de la eliminacion.</returns>
-        ResultadoEliminacionAmistad EjecutarEliminacion(string nombreA, string nombreB);
+        ResultadoEliminacionAmistad EjecutarEliminacion(
+            string nombrePrimerUsuario, 
+            string nombreSegundoUsuario);
     }
 }

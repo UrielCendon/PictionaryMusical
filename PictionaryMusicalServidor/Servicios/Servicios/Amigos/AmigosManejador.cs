@@ -95,18 +95,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    "Error de base de datos al suscribir a notificaciones de amistad.",
+                    string.Format(
+                        "No se pudo conectar a la base de datos al suscribir " +
+                        "al usuario '{0}' a notificaciones de amistad.",
+                        nombreUsuario),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al suscribir a notificaciones de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Los datos del usuario '{0}' son inconsistentes " +
+                        "al intentar suscribirlo a notificaciones de amistad.",
+                        nombreUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al suscribir a notificaciones de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Ocurrio un error desconocido al suscribir al usuario " +
+                        "'{0}' a notificaciones de amistad.",
+                        nombreUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
         }
@@ -147,56 +160,113 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     nombreUsuarioEmisor,
                     nombreUsuarioReceptor);
 
-                NotificarSolicitudNueva(
-                    resultado.Emisor,
-                    nombreUsuarioEmisor,
-                    resultado.Receptor,
-                    nombreUsuarioReceptor);
+                var datosNotificacion = new DatosNotificacionSolicitud
+                {
+                    NombreEmisorOriginal = nombreUsuarioEmisor,
+                    NombreReceptorOriginal = nombreUsuarioReceptor
+                };
+
+                NotificarSolicitudNueva(resultado, datosNotificacion);
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
-                _logger.Warn("Usuario no encontrado en base de datos.", excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "El usuario emisor '{0}' o receptor '{1}' " +
+                        "no existe en la base de datos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Warn("Intento de enviar solicitud a usuario inexistente.", excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "No se encontro al usuario receptor '{0}' " +
+                        "al enviar solicitud desde '{1}'.",
+                        nombreUsuarioReceptor,
+                        nombreUsuarioEmisor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ValidacionFallidaEnvioSolicitud, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "La validacion fallo al enviar solicitud de amistad " +
+                        "de '{0}' a '{1}'.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaSolicitud, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "No se puede crear la solicitud de '{0}' a '{1}': " +
+                        "ya existe una relacion o se intento enviar " +
+                        "solicitud a si mismo.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosSolicitud, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "Los datos proporcionados para la solicitud de amistad " +
+                        "de '{0}' a '{1}' son invalidos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error inesperado al enviar solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "No se pudo guardar la solicitud de amistad de '{0}' " +
+                        "hacia '{1}' debido a un conflicto en la base de datos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error inesperado al enviar solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "La conexion a la base de datos fallo al crear " +
+                        "la solicitud de amistad de '{0}' a '{1}'.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al enviar solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Los datos de la solicitud de '{0}' hacia '{1}' " +
+                        "son invalidos o estan corruptos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al enviar solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Ocurrio un error inesperado al procesar la solicitud " +
+                        "de amistad de '{0}' a '{1}'.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
         }
@@ -227,33 +297,71 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaAceptar, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "No se puede aceptar la solicitud de '{0}' por '{1}': " +
+                        "la solicitud no existe, ya fue aceptada " +
+                        "o el receptor no corresponde.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosAceptar, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "Los datos proporcionados para aceptar la solicitud " +
+                        "de '{0}' por '{1}' son invalidos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error al responder solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "No se pudo actualizar la solicitud de amistad de '{0}' " +
+                        "aceptada por '{1}' debido a un conflicto " +
+                        "en la base de datos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error al responder solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "La conexion a la base de datos fallo al aceptar " +
+                        "la solicitud de '{0}' por parte de '{1}'.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al responder solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Los datos de la solicitud de '{0}' para '{1}' " +
+                        "son invalidos o estan corruptos.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al responder solicitud de amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Ocurrio un error inesperado al aceptar la solicitud " +
+                        "de '{0}' por '{1}'.",
+                        nombreUsuarioEmisor,
+                        nombreUsuarioReceptor),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
         }
@@ -262,44 +370,77 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// Elimina la relacion de amistad entre dos usuarios.
         /// Elimina la amistad, notifica a ambos usuarios y actualiza sus listas de amigos.
         /// </summary>
-        /// <param name="nombreUsuarioA">Nombre del primer usuario.</param>
-        /// <param name="nombreUsuarioB">Nombre del segundo usuario.</param>
-        public void EliminarAmigo(string nombreUsuarioA, string nombreUsuarioB)
+        /// <param name="nombrePrimerUsuario">Nombre del primer usuario.</param>
+        /// <param name="nombreSegundoUsuario">Nombre del segundo usuario.</param>
+        public void EliminarAmigo(string nombrePrimerUsuario, string nombreSegundoUsuario)
         {
             try
             {
-                EntradaComunValidador.ValidarUsuariosInteraccion(nombreUsuarioA, nombreUsuarioB);
+                EntradaComunValidador.ValidarUsuariosInteraccion(
+                    nombrePrimerUsuario, 
+                    nombreSegundoUsuario);
 
                 var resultado = _operacionAmistadServicio.EjecutarEliminacion(
-                    nombreUsuarioA,
-                    nombreUsuarioB);
+                    nombrePrimerUsuario,
+                    nombreSegundoUsuario);
 
                 EjecutarNotificacionesEliminacion(resultado);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ReglaNegocioVioladaEliminar, excepcion);
+                _logger.Warn(
+                    string.Format(
+                        "No se puede eliminar la amistad entre '{0}' y '{1}': " +
+                        "la relacion no existe o se intento eliminar " +
+                        "con el mismo usuario.",
+                        nombrePrimerUsuario,
+                        nombreSegundoUsuario),
+                    excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.RelacionAmistadNoExiste);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error("Error inesperado al eliminar amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "No se pudo eliminar la amistad entre '{0}' y '{1}' " +
+                        "debido a un conflicto en la base de datos.",
+                        nombrePrimerUsuario,
+                        nombreSegundoUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error("Error inesperado al eliminar amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "La conexion a la base de datos fallo al eliminar " +
+                        "la amistad entre '{0}' y '{1}'.",
+                        nombrePrimerUsuario,
+                        nombreSegundoUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (DataException excepcion)
             {
-                _logger.Error("Error de datos al eliminar amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Los datos de la amistad entre '{0}' y '{1}' " +
+                        "son invalidos o estan corruptos.",
+                        nombrePrimerUsuario,
+                        nombreSegundoUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (Exception excepcion)
             {
-                _logger.Error("Error inesperado al eliminar amistad.", excepcion);
+                _logger.Error(
+                    string.Format(
+                        "Ocurrio un error inesperado al eliminar la amistad " +
+                        "entre '{0}' y '{1}'.",
+                        nombrePrimerUsuario,
+                        nombreSegundoUsuario),
+                    excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
         }
@@ -320,19 +461,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
         }
 
-        private void NotificarSolicitudNueva(
-            Usuario emisor,
-            string nombreEmisorInput,
-            Usuario receptor,
-            string nombreReceptorInput)
+        private void NotificarSolicitudNueva(ResultadoCreacionSolicitud resultado,
+            DatosNotificacionSolicitud datosNotificacion)
         {
             string nombreEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                emisor.Nombre_Usuario,
-                nombreEmisorInput);
+                resultado.Emisor.Nombre_Usuario,
+                datosNotificacion.NombreEmisorOriginal);
 
             string nombreReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                receptor.Nombre_Usuario,
-                nombreReceptorInput);
+                resultado.Receptor.Nombre_Usuario,
+                datosNotificacion.NombreReceptorOriginal);
 
             var solicitud = new SolicitudAmistadDTO
             {
@@ -368,30 +506,36 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         {
             NotificarEliminacion(
                 resultado.Relacion,
-                resultado.NombreANormalizado,
-                resultado.NombreBNormalizado);
+                resultado.NombrePrimerUsuarioNormalizado,
+                resultado.NombreSegundoUsuarioNormalizado);
 
-            _notificadorListaAmigos.NotificarCambioAmistad(resultado.NombreANormalizado);
-            _notificadorListaAmigos.NotificarCambioAmistad(resultado.NombreBNormalizado);
+            _notificadorListaAmigos.NotificarCambioAmistad(
+                resultado.NombrePrimerUsuarioNormalizado);
+            _notificadorListaAmigos.NotificarCambioAmistad(
+                resultado.NombreSegundoUsuarioNormalizado);
         }
 
-        private void NotificarEliminacion(Amigo relacion, string usuarioA, string usuarioB)
+        private void NotificarEliminacion(
+            Amigo relacion, 
+            string primerUsuario, 
+            string segundoUsuario)
         {
             if (relacion == null)
             {
-                _logger.Warn("Se solicito notificar una eliminacion de amistad sin relacion.");
+                _logger.Warn(
+                    "Se solicito notificar una eliminacion de amistad sin relacion.");
                 return;
             }
 
             var solicitud = new SolicitudAmistadDTO
             {
-                UsuarioEmisor = usuarioA,
-                UsuarioReceptor = usuarioB,
+                UsuarioEmisor = primerUsuario,
+                UsuarioReceptor = segundoUsuario,
                 SolicitudAceptada = false
             };
 
-            _notificador.NotificarAmistadEliminada(usuarioA, solicitud);
-            _notificador.NotificarAmistadEliminada(usuarioB, solicitud);
+            _notificador.NotificarAmistadEliminada(primerUsuario, solicitud);
+            _notificador.NotificarAmistadEliminada(segundoUsuario, solicitud);
         }
     }
 }

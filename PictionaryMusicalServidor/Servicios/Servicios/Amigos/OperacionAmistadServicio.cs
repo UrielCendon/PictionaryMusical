@@ -146,35 +146,39 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Ejecuta la eliminacion de una amistad en la base de datos.
         /// </summary>
-        /// <param name="nombreA">Nombre del primer usuario.</param>
-        /// <param name="nombreB">Nombre del segundo usuario.</param>
+        /// <param name="nombrePrimerUsuario">Nombre del primer usuario.</param>
+        /// <param name="nombreSegundoUsuario">Nombre del segundo usuario.</param>
         /// <returns>Objeto con el resultado de la eliminacion.</returns>
-        public ResultadoEliminacionAmistad EjecutarEliminacion(string nombreA, string nombreB)
+        public ResultadoEliminacionAmistad EjecutarEliminacion(
+            string nombrePrimerUsuario, 
+            string nombreSegundoUsuario)
         {
             using (var contexto = _contextoFactoria.CrearContexto())
             {
-                var (usuarioA, usuarioB) = ObtenerUsuariosParaInteraccion(
+                var (primerUsuario, segundoUsuario) = ObtenerUsuariosParaInteraccion(
                     contexto,
-                    nombreA,
-                    nombreB);
+                    nombrePrimerUsuario,
+                    nombreSegundoUsuario);
 
                 var relacion = _amistadServicio.EliminarAmistad(
-                    usuarioA.idUsuario,
-                    usuarioB.idUsuario);
+                    primerUsuario.idUsuario,
+                    segundoUsuario.idUsuario);
 
-                string normA = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioA.Nombre_Usuario,
-                    nombreA);
+                string nombrePrimerUsuarioNormalizado = 
+                    EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
+                        primerUsuario.Nombre_Usuario,
+                        nombrePrimerUsuario);
 
-                string normB = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioB.Nombre_Usuario,
-                    nombreB);
+                string nombreSegundoUsuarioNormalizado = 
+                    EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
+                        segundoUsuario.Nombre_Usuario,
+                        nombreSegundoUsuario);
 
                 return new ResultadoEliminacionAmistad
                 {
                     Relacion = relacion,
-                    NombreANormalizado = normA,
-                    NombreBNormalizado = normB
+                    NombrePrimerUsuarioNormalizado = nombrePrimerUsuarioNormalizado,
+                    NombreSegundoUsuarioNormalizado = nombreSegundoUsuarioNormalizado
                 };
             }
         }
