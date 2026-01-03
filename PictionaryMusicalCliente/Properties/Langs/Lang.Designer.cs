@@ -2212,20 +2212,20 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Has sido expulsado de la sala..
-        /// </summary>
-        public static string expulsarJugadorTextoFuisteExpulsado {
-            get {
-                return ResourceManager.GetString("expulsarJugadorTextoFuisteExpulsado", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Te expulsamos indefinidamente del juego por mala conducta..
         /// </summary>
         public static string expulsarJugadorTextoFuisteBaneado {
             get {
                 return ResourceManager.GetString("expulsarJugadorTextoFuisteBaneado", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Has sido expulsado de la sala..
+        /// </summary>
+        public static string expulsarJugadorTextoFuisteExpulsado {
+            get {
+                return ResourceManager.GetString("expulsarJugadorTextoFuisteExpulsado", resourceCulture);
             }
         }
         

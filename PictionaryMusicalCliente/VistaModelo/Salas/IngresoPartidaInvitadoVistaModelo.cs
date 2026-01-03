@@ -329,10 +329,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void MostrarError(string mensaje)
         {
             RegistrarError(mensaje);
-            string mensajeLocalizado = _localizador.Localizar(
-                mensaje,
-                Lang.errorTextoNoEncuentraPartida);
-            NotificarError(mensajeLocalizado);
+            NotificarError(mensaje);
         }
 
         private static void RegistrarError(string mensaje)

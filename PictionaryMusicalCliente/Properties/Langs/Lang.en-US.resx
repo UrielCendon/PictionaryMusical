@@ -682,7 +682,7 @@
     <value>There was an error while signing in.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>There was a problem with the server, your session expired or the server is no longer available. Please logging in again.</value>
+    <value>There was a problem with the server, your session expired or the server is no longer available. Please try logging in again.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>We couldn't show your profile due to a problem obtaining your information.</value>
@@ -890,9 +890,6 @@
   </data>
   <data name="errorTextoUsuarioBaneado" xml:space="preserve">
     <value>You have been banned from the game for misconduct.</value>
-  </data>
-  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
-    <value>You have been permanently banned from the game for misconduct.</value>
   </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>Could not establish connection with the server.</value>
@@ -1235,5 +1232,8 @@
   </data>
   <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
     <value>Could not establish connection with the server, check your internet connection. You have been redirected to the login screen.</value>
+  </data>
+  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
+    <value>You have been permanently banned from the game for misconduct.</value>
   </data>
 </root>

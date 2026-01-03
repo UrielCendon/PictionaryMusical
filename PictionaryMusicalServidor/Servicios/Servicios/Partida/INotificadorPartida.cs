@@ -66,6 +66,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             ResultadoPartidaDTO resultado);
 
         /// <summary>
+        /// Notifica a todos los jugadores que deben limpiar el lienzo.
+        /// </summary>
+        /// <param name="idSala">Identificador de la sala.</param>
+        /// <param name="callbacks">Diccionario de callbacks de jugadores.</param>
+        void NotificarLimpiarLienzo(
+            string idSala,
+            Dictionary<string, ICursoPartidaManejadorCallback> callbacks);
+
+        /// <summary>
         /// Evento disparado cuando un callback debe ser removido.
         /// </summary>
         event Action<string, string> CallbackInvalido;

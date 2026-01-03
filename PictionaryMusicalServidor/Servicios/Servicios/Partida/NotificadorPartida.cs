@@ -101,6 +101,29 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 callback => callback.NotificarFinPartida(resultado));
         }
 
+        /// <summary>
+        /// Notifica a todos los jugadores que deben limpiar el lienzo.
+        /// </summary>
+        public void NotificarLimpiarLienzo(
+            string idSala,
+            Dictionary<string, ICursoPartidaManejadorCallback> callbacks)
+        {
+            var trazoLimpiar = new TrazoDTO
+            {
+                PuntosX = new double[0],
+                PuntosY = new double[0],
+                ColorHex = string.Empty,
+                Grosor = 0,
+                EsBorrado = true,
+                EsLimpiarTodo = true
+            };
+
+            NotificarATodos(
+                idSala,
+                callbacks,
+                callback => callback.NotificarTrazoRecibido(trazoLimpiar));
+        }
+
         private void NotificarATodos(
             string idSala,
             Dictionary<string, ICursoPartidaManejadorCallback> callbacks,
