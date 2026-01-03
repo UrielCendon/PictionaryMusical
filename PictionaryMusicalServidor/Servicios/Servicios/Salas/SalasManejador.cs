@@ -447,6 +447,51 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         }
 
         /// <summary>
+        /// Banea a un jugador de una sala por exceso de reportes.
+        /// Es una accion del sistema, no requiere permisos de anfitrion.
+        /// </summary>
+        /// <param name="codigoSala">Codigo identificador de la sala.</param>
+        /// <param name="nombreJugadorABanear">Nombre del jugador a banear.</param>
+        public void BanearJugador(string codigoSala, string nombreJugadorABanear)
+        {
+            try
+            {
+                if (!EntradaComunValidador.EsCodigoSalaValido(codigoSala))
+                {
+                    return;
+                }
+
+                SalaInternaManejador sala;
+                if (!_salas.TryGetValue(codigoSala.Trim(), out sala))
+                {
+                    return;
+                }
+
+                _logger.InfoFormat(
+                    "Baneando jugador de sala '{0}' por exceso de reportes.",
+                    codigoSala.Trim());
+
+                sala.BanearJugador(nombreJugadorABanear.Trim());
+
+                if (sala.DebeEliminarse)
+                {
+                    SalaInternaManejador salaRemovida;
+                    _salas.TryRemove(codigoSala.Trim(), out salaRemovida);
+                }
+
+                _notificador.NotificarListaSalasATodos();
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn(
+                    string.Format(
+                        "Error al banear jugador de sala '{0}'.",
+                        codigoSala),
+                    excepcion);
+            }
+        }
+
+        /// <summary>
         /// Obtiene una sala por su codigo identificador.
         /// </summary>
         /// <param name="codigoSala">Codigo identificador de la sala.</param>

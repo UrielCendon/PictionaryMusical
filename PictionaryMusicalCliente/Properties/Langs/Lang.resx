@@ -882,6 +882,9 @@
   <data name="errorTextoUsuarioBaneado" xml:space="preserve">
     <value>Tu cuenta ha sido suspendida por mala conducta.</value>
   </data>
+  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
+    <value>Te expulsamos indefinidamente del juego por mala conducta.</value>
+  </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>No fue posible establecer la conexión con el servidor.</value>
   </data>

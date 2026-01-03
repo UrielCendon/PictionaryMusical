@@ -110,23 +110,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                 }
                 else
                 {
-                    salasManejador.ExpulsarJugador(
-                        sala.Codigo,
-                        sala.Creador,
-                        nombreUsuario);
+                    salasManejador.BanearJugador(sala.Codigo, nombreUsuario);
                 }
             }
             catch (FaultException excepcion)
             {
                 _logger.Warn(string.Format(
-                    "No se pudo expulsar a {0} de la sala {1}.",
+                    "No se pudo banear a {0} de la sala {1}.",
                     nombreUsuario,
                     sala?.Codigo), excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(string.Format(
-                    "Error inesperado al expulsar a {0} de la sala {1}.",
+                    "Error inesperado al banear a {0} de la sala {1}.",
                     nombreUsuario,
                     sala?.Codigo), excepcion);
             }

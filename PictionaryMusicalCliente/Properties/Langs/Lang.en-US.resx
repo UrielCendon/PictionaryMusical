@@ -891,6 +891,9 @@
   <data name="errorTextoUsuarioBaneado" xml:space="preserve">
     <value>You have been banned from the game for misconduct.</value>
   </data>
+  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
+    <value>You have been permanently banned from the game for misconduct.</value>
+  </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>Could not establish connection with the server.</value>
   </data>

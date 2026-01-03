@@ -27,6 +27,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         event EventHandler<string> JugadorExpulsado;
 
         /// <summary>
+        /// Notifica cuando un participante es baneado por exceso de reportes.
+        /// </summary>
+        event EventHandler<string> JugadorBaneado;
+
+        /// <summary>
         /// Notifica cuando la sala es cancelada por la salida del anfitrion.
         /// </summary>
         event EventHandler<string> SalaCancelada;

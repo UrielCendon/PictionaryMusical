@@ -354,9 +354,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _eventosManejador.JugadorSeUnio += ManejarJugadorSeUnio;
             _eventosManejador.JugadorSalio += ManejarJugadorSalio;
             _eventosManejador.JugadorExpulsado += ManejarJugadorExpulsado;
+            _eventosManejador.JugadorBaneado += ManejarJugadorBaneado;
             _eventosManejador.SalaActualizada += ManejarSalaActualizada;
             _eventosManejador.SalaCanceladaPorAnfitrion += ManejarSalaCanceladaPorAnfitrion;
             _eventosManejador.ExpulsionPropia += ManejarExpulsionPropia;
+            _eventosManejador.BaneoPropio += ManejarBaneoPropio;
         }
 
         private void InicializarEstadoInicial()
@@ -1675,6 +1677,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             Navegar(destino);
             _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteExpulsado);
+        }
+
+        private void ManejarBaneoPropio()
+        {
+            if (_expulsionNavegada)
+            {
+                return;
+            }
+
+            _expulsionNavegada = true;
+            _eventosManejador.MarcarSalaCancelada();
+
+            _aplicacionCerrando = true;
+            Navegar(DestinoNavegacion.InicioSesion);
+            _avisoServicio.Mostrar(Lang.expulsarJugadorTextoFuisteBaneado);
+        }
+
+        private void ManejarJugadorBaneado(string nombreJugador)
+        {
+            ManejarJugadorSalio(nombreJugador);
         }
 
         private void ReiniciarPuntajesJugadores()

@@ -157,6 +157,38 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
         }
 
+        /// <summary>
+        /// Notifica a todos los integrantes que un jugador fue baneado por reportes.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreBaneado">Nombre del jugador baneado.</param>
+        /// <param name="salaActualizada">Estado actualizado de la sala.</param>
+        public void NotificarBaneo(
+            string codigoSala, 
+            string nombreBaneado,
+            SalaDTO salaActualizada)
+        {
+            _logger.InfoFormat(
+                "Notificando baneo de jugador en sala '{0}'.",
+                codigoSala);
+
+            var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
+            foreach (var callback in todosLosDestinatarios)
+            {
+                NotificarJugadorBaneadoSeguro(callback, codigoSala, nombreBaneado);
+            }
+
+            var destinatarios = ObtenerDestinatariosExcluyendo(nombreBaneado);
+            foreach (var callback in destinatarios)
+            {
+                NotificarSalaActualizadaSeguro(callback, salaActualizada);
+            }
+
+            _logger.InfoFormat(
+                "Baneo notificado a todos los clientes en sala '{0}'.",
+                codigoSala);
+        }
+
         private List<ISalasManejadorCallback> ObtenerDestinatariosExcluyendo(
             string usuarioExcluido)
         {
@@ -329,6 +361,41 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
         }
 
+        private static void NotificarJugadorBaneadoSeguro(
+            ISalasManejadorCallback callback, 
+            string codigoSala, 
+            string nombreBaneado)
+        {
+            try
+            {
+                callback.NotificarJugadorBaneado(codigoSala, nombreBaneado);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, 
+                    excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, 
+                    excepcion);
+            }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, 
+                    excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, 
+                    excepcion);
+            }
+        }
+
         /// <summary>
         /// Implementacion del patron Null Object para evitar referencias nulas en callbacks.
         /// </summary>
@@ -340,6 +407,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             public void NotificarSalaActualizada(SalaDTO sala) { }
             public void NotificarJugadorExpulsado(string codigoSala, string nombreJugador) { }
             public void NotificarSalaCancelada(string codigoSala) { }
+            public void NotificarJugadorBaneado(string codigoSala, string nombreJugador) { }
         }
     }
 }

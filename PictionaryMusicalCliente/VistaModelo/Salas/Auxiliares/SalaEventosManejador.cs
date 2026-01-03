@@ -58,6 +58,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         public event Action<string> JugadorExpulsado;
 
         /// <summary>
+        /// Evento cuando un jugador es baneado por reportes.
+        /// </summary>
+        public event Action<string> JugadorBaneado;
+
+        /// <summary>
         /// Evento cuando la sala es actualizada.
         /// </summary>
         public event Action<DTOs.SalaDTO> SalaActualizada;
@@ -71,6 +76,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// Evento cuando el usuario actual es expulsado.
         /// </summary>
         public event Action ExpulsionPropia;
+
+        /// <summary>
+        /// Evento cuando el usuario actual es baneado por reportes.
+        /// </summary>
+        public event Action BaneoPropio;
 
         /// <summary>
         /// Obtiene si la sala fue cancelada.
@@ -101,6 +111,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             _salasServicio.JugadorSeUnio += SalasServicio_JugadorSeUnio;
             _salasServicio.JugadorSalio += SalasServicio_JugadorSalio;
             _salasServicio.JugadorExpulsado += SalasServicio_JugadorExpulsado;
+            _salasServicio.JugadorBaneado += SalasServicio_JugadorBaneado;
             _salasServicio.SalaActualizada += SalasServicio_SalaActualizada;
             _salasServicio.SalaCancelada += SalasServicio_SalaCancelada;
         }
@@ -110,6 +121,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             _salasServicio.JugadorSeUnio -= SalasServicio_JugadorSeUnio;
             _salasServicio.JugadorSalio -= SalasServicio_JugadorSalio;
             _salasServicio.JugadorExpulsado -= SalasServicio_JugadorExpulsado;
+            _salasServicio.JugadorBaneado -= SalasServicio_JugadorBaneado;
             _salasServicio.SalaActualizada -= SalasServicio_SalaActualizada;
             _salasServicio.SalaCancelada -= SalasServicio_SalaCancelada;
         }
@@ -182,6 +194,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             });
         }
 
+        private void SalasServicio_JugadorBaneado(
+            object remitente, 
+            string nombreJugador)
+        {
+            EjecutarEnDispatcher(() =>
+            {
+                if (EsUsuarioActual(nombreJugador))
+                {
+                    ManejarBaneoPropio();
+                }
+                else
+                {
+                    JugadorBaneado?.Invoke(nombreJugador);
+                }
+            });
+        }
+
         private void SalasServicio_SalaActualizada(
             object remitente, 
             DTOs.SalaDTO sala)
@@ -230,6 +259,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
             _expulsionProcesada = true;
             ExpulsionPropia?.Invoke();
+        }
+
+        private void ManejarBaneoPropio()
+        {
+            if (_expulsionProcesada)
+            {
+                return;
+            }
+
+            _expulsionProcesada = true;
+            BaneoPropio?.Invoke();
         }
 
         private void CancelarSalaPorAnfitrion()

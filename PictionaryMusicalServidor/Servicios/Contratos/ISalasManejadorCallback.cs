@@ -53,5 +53,13 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// <param name="codigoSala">Codigo identificador de la sala cancelada.</param>
         [OperationContract(IsOneWay = true)]
         void NotificarSalaCancelada(string codigoSala);
+
+        /// <summary>
+        /// Notifica al cliente cuando un jugador es baneado por exceso de reportes.
+        /// </summary>
+        /// <param name="codigoSala">Codigo identificador de la sala.</param>
+        /// <param name="nombreJugador">Nombre del jugador baneado.</param>
+        [OperationContract(IsOneWay = true)]
+        void NotificarJugadorBaneado(string codigoSala, string nombreJugador);
     }
 }

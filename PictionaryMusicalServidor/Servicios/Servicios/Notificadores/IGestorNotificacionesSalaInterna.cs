@@ -50,5 +50,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// Notifica a todos los integrantes que la sala ha sido cancelada.
         /// </summary>
         void NotificarCancelacion(string codigoSala);
+
+        /// <summary>
+        /// Notifica a todos los integrantes que un jugador fue baneado por reportes.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreBaneado">Nombre del jugador baneado.</param>
+        /// <param name="salaActualizada">Estado actualizado de la sala.</param>
+        void NotificarBaneo(
+            string codigoSala, 
+            string nombreBaneado,
+            SalaDTO salaActualizada);
     }
 }

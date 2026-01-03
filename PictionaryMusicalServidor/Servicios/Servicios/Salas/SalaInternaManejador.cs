@@ -162,6 +162,35 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
         }
 
+        /// <summary>
+        /// Banea a un jugador de la sala por exceso de reportes.
+        /// No requiere validacion de permisos ya que es una accion del sistema.
+        /// </summary>
+        /// <param name="nombreJugadorABanear">Nombre del jugador a banear.</param>
+        public void BanearJugador(string nombreJugadorABanear)
+        {
+            lock (_sincrono)
+            {
+                if (!_jugadores.Contains(nombreJugadorABanear))
+                {
+                    return;
+                }
+
+                _jugadores.Remove(nombreJugadorABanear);
+                _gestorNotificaciones.Remover(nombreJugadorABanear);
+
+                _gestorNotificaciones.NotificarBaneo(
+                    Codigo, 
+                    nombreJugadorABanear, 
+                    ConvertirADto());
+
+                _logger.InfoFormat(
+                    "Sala '{0}': Jugador '{1}' baneado por reportes y notificado.",
+                    Codigo, 
+                    nombreJugadorABanear);
+            }
+        }
+
         private void ValidarCapacidad()
         {
             if (_jugadores.Count >= MaximoJugadores)

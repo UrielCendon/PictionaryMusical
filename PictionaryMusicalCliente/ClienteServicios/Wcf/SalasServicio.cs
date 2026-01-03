@@ -61,6 +61,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public event EventHandler<string> JugadorExpulsado;
 
         /// <summary>
+        /// Evento disparado cuando un jugador es baneado por exceso de reportes.
+        /// </summary>
+        public event EventHandler<string> JugadorBaneado;
+
+        /// <summary>
         /// Evento disparado cuando la sala es cancelada por el anfitrion.
         /// </summary>
         public event EventHandler<string> SalaCancelada;
@@ -361,6 +366,14 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public void NotificarJugadorExpulsado(string codigoSala, string nombreJugador)
         {
             JugadorExpulsado?.Invoke(this, nombreJugador);
+        }
+
+        /// <summary>
+        /// Callback: Notifica localmente que alguien fue baneado por reportes.
+        /// </summary>
+        public void NotificarJugadorBaneado(string codigoSala, string nombreJugador)
+        {
+            JugadorBaneado?.Invoke(this, nombreJugador);
         }
 
         /// <summary>
