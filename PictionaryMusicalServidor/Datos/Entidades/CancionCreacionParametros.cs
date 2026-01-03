@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Datos.Entidades
+﻿namespace PictionaryMusicalServidor.Datos.Entidades
 {
     /// <summary>
     /// Encapsula los datos necesarios para crear una nueva cancion en el catalogo.

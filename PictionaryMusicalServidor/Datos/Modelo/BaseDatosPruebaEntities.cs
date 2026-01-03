@@ -1,4 +1,4 @@
-namespace Datos.Modelo
+﻿namespace Datos.Modelo
 {
     /// <summary>
     /// Representa el contexto de la base de datos extendido para la aplicacion.

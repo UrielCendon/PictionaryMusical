@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Datos.Entidades
+﻿namespace PictionaryMusicalServidor.Datos.Entidades
 {
     /// <summary>
     /// Representa la informacion de una cancion disponible para las rondas del juego.

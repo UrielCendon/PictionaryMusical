@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Contiene los nombres normalizados resultantes de la aceptacion de una solicitud.

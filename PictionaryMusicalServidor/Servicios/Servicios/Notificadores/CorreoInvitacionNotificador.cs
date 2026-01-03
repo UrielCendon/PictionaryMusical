@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -79,7 +79,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
             string saludo = esIngles
                 ? "Hello!"
-                : "¡Hola!";
+                : "Â¡Hola!";
 
             string mensajeBienvenida = esIngles
                 ? "You have been invited to a Musical Pictionary game."
@@ -95,7 +95,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
             string mensajeDespedida = esIngles
                 ? "See you in the game!"
-                : "¡Nos vemos en el juego!";
+                : "Â¡Nos vemos en el juego!";
 
             var cuerpoHtml = new StringBuilder();
 

@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
+﻿namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Representa el estado de un jugador dentro de una partida en memoria.

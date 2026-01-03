@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
+﻿namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
 {
     /// <summary>
     /// Contiene los parametros necesarios para enviar una notificacion de codigo de verificacion.

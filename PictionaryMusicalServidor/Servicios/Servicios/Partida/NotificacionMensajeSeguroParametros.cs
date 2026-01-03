@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 {
     /// <summary>
     /// Contiene los parametros necesarios para notificar un mensaje de forma segura.

@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Datos.Constantes
+﻿namespace PictionaryMusicalServidor.Datos.Constantes
 {
     /// <summary>
     /// Clase estatica que contiene los mensajes de error utilizados en la capa de datos.

@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using log4net.Config;
@@ -11,7 +11,7 @@ using log4net.Config;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("HostServidor")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("Copyright Â©  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

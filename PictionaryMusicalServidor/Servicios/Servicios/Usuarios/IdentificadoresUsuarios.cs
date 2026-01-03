@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 {
     /// <summary>
     /// Contiene los identificadores de usuarios involucrados en un reporte.

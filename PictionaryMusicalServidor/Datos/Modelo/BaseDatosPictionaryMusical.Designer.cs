@@ -1,4 +1,4 @@
-// La generacion de codigo T4 esta habilitada para el modelo 'C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\BaseDatosPictionaryMusical.edmx'. 
+﻿// La generacion de codigo T4 esta habilitada para el modelo 'C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\BaseDatosPictionaryMusical.edmx'. 
 // Para habilitar la generacion de codigo heredada, cambie el valor de la propiedad del disenador 'Estrategia de generacion de codigo'
 // por 'ObjectContext heredado'. Esta propiedad esta disponible en la ventana Propiedades cuando se abre
 // el modelo en el disenador.

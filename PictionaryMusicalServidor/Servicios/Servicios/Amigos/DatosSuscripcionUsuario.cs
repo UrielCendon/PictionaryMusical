@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Contiene los datos de un usuario para suscripcion a notificaciones.

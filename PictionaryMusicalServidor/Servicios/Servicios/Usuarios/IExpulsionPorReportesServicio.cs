@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 {
     /// <summary>
     /// Interfaz para el servicio de expulsion de jugadores por limite de reportes.

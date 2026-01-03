@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Interfaz para el servicio de operaciones de amistad en base de datos.

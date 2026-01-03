@@ -1,4 +1,4 @@
-namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
 {
     /// <summary>
     /// Mensajes de error centralizados para evitar repeticion de cadenas de texto.
