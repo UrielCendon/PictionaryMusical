@@ -88,9 +88,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                     return;
                 }
 
-                foreach (var dto in solicitudesDTO)
+                foreach (var solicitudDto in solicitudesDTO)
                 {
-                    NotificarSolicitudActualizada(nombreNormalizado, dto);
+                    NotificarSolicitudActualizada(nombreNormalizado, solicitudDto);
                 }
             }
             catch (DataException excepcion)
