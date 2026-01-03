@@ -114,10 +114,7 @@
     <Compile Include="Servicios\Usuarios\IExpulsionPorReportesServicio.cs" />
     <Compile Include="Servicios\Usuarios\IdentificadoresUsuarios.cs" />
     <Compile Include="Servicios\Usuarios\ReportesManejador.cs" />
-    <Compile Include="Servicios\Utilidades\ActualizadorClasificacionPartida.cs" />
-    <Compile Include="Servicios\Utilidades\CallbackEjecucionParametros.cs" />
     <Compile Include="Servicios\Utilidades\CallbacksCompartidos.cs" />
-    <Compile Include="Servicios\Utilidades\GestorCallbacksPartida.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />
     <Compile Include="Contratos\IVerificacionRegistroServicio.cs" />
     <Compile Include="LogicaNegocio\ControladorPartida.cs" />
@@ -193,12 +190,8 @@
     <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\ICodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\GeneradorAleatorio.cs" />
-    <Compile Include="Servicios\Utilidades\IGestorCallbacksPartida.cs" />
-    <Compile Include="Servicios\Utilidades\INotificadorEventosPartida.cs" />
     <Compile Include="Servicios\Utilidades\IRepositorioFactoria.cs" />
     <Compile Include="Servicios\Utilidades\ManejadorCallback.cs" />
-    <Compile Include="Servicios\Utilidades\NotificacionRondaParametros.cs" />
-    <Compile Include="Servicios\Utilidades\NotificadorEventosPartida.cs" />
     <Compile Include="Servicios\Utilidades\RepositorioFactoria.cs" />
     <Compile Include="Servicios\Autenticacion\VerificacionRegistroServicio.cs" />
   </ItemGroup>

@@ -98,16 +98,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         }
 
         /// <summary>
-        /// Verifica si existe un callback registrado para un usuario.
-        /// </summary>
-        /// <param name="nombreUsuario">Nombre del usuario.</param>
-        /// <returns>True si el callback existe, false en caso contrario.</returns>
-        public bool ExisteCallback(string nombreUsuario)
-        {
-            return _suscripciones.ContainsKey(nombreUsuario);
-        }
-
-        /// <summary>
         /// Obtiene el callback actual del contexto de operacion.
         /// </summary>
         /// <returns>Callback del contexto actual.</returns>
@@ -128,45 +118,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
 
             throw new FaultException(MensajesError.Cliente.ErrorContextoOperacion);
-        }
-
-        /// <summary>
-        /// Ejecuta una accion de notificacion con manejo automatico de errores de comunicacion.
-        /// </summary>
-        /// <param name="nombreUsuario">Nombre del usuario a notificar.</param>
-        /// <param name="accionNotificacion">Accion de notificacion a ejecutar.</param>
-        public void Notificar(string nombreUsuario, Action<TCallback> accionNotificacion)
-        {
-            TCallback callback = ObtenerCallback(nombreUsuario);
-            if (callback == null)
-            {
-                return;
-            }
-
-            try
-            {
-                accionNotificacion(callback);
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Error(
-                    "Error de comunicacion al notificar cliente. Desuscribiendo.",
-                    excepcion);
-                Desuscribir(nombreUsuario);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error("Timeout al notificar cliente. Desuscribiendo.", excepcion);
-                Desuscribir(nombreUsuario);
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaComunicacionWCF, excepcion);
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaComunicacionWCF, excepcion);
-            }
         }
     }
 }

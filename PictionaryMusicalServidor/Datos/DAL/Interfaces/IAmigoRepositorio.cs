@@ -32,7 +32,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
         /// </summary>
         /// <param name="usuarioAId">Identificador del primer usuario.</param>
         /// <param name="usuarioBId">Identificador del segundo usuario.</param>
-        /// <returns>Relacion de amistad encontrada o null si no existe.</returns>
+        /// <returns>Relacion de amistad encontrada.</returns>
+        /// <exception cref="KeyNotFoundException">Se lanza si no existe relacion entre los 
+        /// usuarios.</exception>
         Amigo ObtenerRelacion(int usuarioAId, int usuarioBId);
 
         /// <summary>

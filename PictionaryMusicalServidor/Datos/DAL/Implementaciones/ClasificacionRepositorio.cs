@@ -41,16 +41,16 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                var clasificacion = new Clasificacion
+                var nuevaClasificacion = new Clasificacion
                 {
                     Puntos_Ganados = 0,
                     Rondas_Ganadas = 0
                 };
 
-                _contexto.Clasificacion.Add(clasificacion);
+                _contexto.Clasificacion.Add(nuevaClasificacion);
                 _contexto.SaveChanges();
 
-                return clasificacion;
+                return nuevaClasificacion;
             }
             catch (DbUpdateException excepcion)
             {
@@ -92,11 +92,11 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
         {
             try
             {
-                var jugador = _contexto.Jugador
+                var jugadorEncontrado = _contexto.Jugador
                     .Include(jugadorEntidad => jugadorEntidad.Clasificacion)
                     .FirstOrDefault(jugadorEntidad => jugadorEntidad.idJugador == jugadorId);
 
-                if (jugador?.Clasificacion == null)
+                if (jugadorEncontrado?.Clasificacion == null)
                 {
                     _logger.WarnFormat(
                         MensajesErrorDatos.Clasificacion.ClasificacionNoEncontrada,
@@ -104,13 +104,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     return false;
                 }
 
-                jugador.Clasificacion.Puntos_Ganados =
-                    (jugador.Clasificacion.Puntos_Ganados ?? 0) + puntosObtenidos;
+                jugadorEncontrado.Clasificacion.Puntos_Ganados =
+                    (jugadorEncontrado.Clasificacion.Puntos_Ganados ?? 0) + puntosObtenidos;
 
                 if (ganoPartida)
                 {
-                    jugador.Clasificacion.Rondas_Ganadas =
-                        (jugador.Clasificacion.Rondas_Ganadas ?? 0) + 1;
+                    jugadorEncontrado.Clasificacion.Rondas_Ganadas =
+                        (jugadorEncontrado.Clasificacion.Rondas_Ganadas ?? 0) + 1;
                 }
 
                 _contexto.SaveChanges();
@@ -118,31 +118,39 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (DbUpdateException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
             }
             catch (EntityException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
             }
             catch (DataException excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                string mensaje = string.Format(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion);
-                _logger.Error(mensaje, excepcion);
-                throw new BaseDatosExcepcion(mensaje, excepcion);
+                _logger.Error(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
+                    excepcion);
             }
         }
 
