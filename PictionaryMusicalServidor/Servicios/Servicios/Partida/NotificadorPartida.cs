@@ -36,31 +36,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         /// <summary>
         /// Notifica a todos los jugadores que un jugador adivino.
         /// </summary>
-        public void NotificarJugadorAdivino(
-            string idSala,
-            Dictionary<string, ICursoPartidaManejadorCallback> callbacks,
-            string jugador,
-            int puntos)
+        public void NotificarJugadorAdivino(NotificacionJugadorAdivinoParametros parametros)
         {
             NotificarATodos(
-                idSala,
-                callbacks,
-                callback => callback.NotificarJugadorAdivino(jugador, puntos));
+                parametros.IdSala,
+                parametros.Callbacks,
+                callback => callback.NotificarJugadorAdivino(
+                    parametros.NombreJugador,
+                    parametros.Puntos));
         }
 
         /// <summary>
         /// Notifica a todos los jugadores un mensaje de chat.
         /// </summary>
-        public void NotificarMensajeChat(
-            string idSala,
-            Dictionary<string, ICursoPartidaManejadorCallback> callbacks,
-            string jugador,
-            string mensaje)
+        public void NotificarMensajeChat(NotificacionMensajeChatParametros parametros)
         {
             NotificarATodos(
-                idSala,
-                callbacks,
-                callback => callback.NotificarMensajeChat(jugador, mensaje));
+                parametros.IdSala,
+                parametros.Callbacks,
+                callback => callback.NotificarMensajeChat(
+                    parametros.NombreJugador,
+                    parametros.Mensaje));
         }
 
         /// <summary>
@@ -120,78 +116,81 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
             foreach (var par in copiaCallbacks)
             {
-                NotificarCallbackSeguro(par.Value, par.Key, idSala, accion);
+                var parametrosCallback = new NotificacionCallbackParametros
+                {
+                    Callback = par.Value,
+                    IdJugador = par.Key,
+                    IdSala = idSala,
+                    Accion = accion
+                };
+                NotificarCallbackSeguro(parametrosCallback);
             }
         }
 
-        private void NotificarCallbackSeguro(
-            ICursoPartidaManejadorCallback callback,
-            string idJugador,
-            string idSala,
-            Action<ICursoPartidaManejadorCallback> accion)
+        private void NotificarCallbackSeguro(NotificacionCallbackParametros parametros)
         {
             try
             {
-                if (!EsCanalActivo(callback))
+                if (!EsCanalActivo(parametros.Callback))
                 {
                     _logger.WarnFormat(
                         "Canal inactivo para jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala);
-                    DispararCallbackInvalido(idSala, idJugador);
+                        parametros.IdJugador,
+                        parametros.IdSala);
+                    DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
                     return;
                 }
-                accion(callback);
+                parametros.Accion(parametros.Callback);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Warn(
                     string.Format(
                         "Canal desechado para jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala),
+                        parametros.IdJugador,
+                        parametros.IdSala),
                     excepcion);
-                DispararCallbackInvalido(idSala, idJugador);
+                DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
             }
             catch (CommunicationObjectFaultedException excepcion)
             {
                 _logger.Warn(
                     string.Format(
                         "Canal en falta para jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala),
+                        parametros.IdJugador,
+                        parametros.IdSala),
                     excepcion);
-                DispararCallbackInvalido(idSala, idJugador);
+                DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Warn(
                     string.Format(
                         "Error comunicacion con jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala),
+                        parametros.IdJugador,
+                        parametros.IdSala),
                     excepcion);
-                DispararCallbackInvalido(idSala, idJugador);
+                DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(
                     string.Format(
                         "Timeout con jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala),
+                        parametros.IdJugador,
+                        parametros.IdSala),
                     excepcion);
-                DispararCallbackInvalido(idSala, idJugador);
+                DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
                     string.Format(
                         "Error inesperado con jugador {0} en sala {1}. Removiendo.",
-                        idJugador,
-                        idSala),
+                        parametros.IdJugador,
+                        parametros.IdSala),
                     excepcion);
-                DispararCallbackInvalido(idSala, idJugador);
+                DispararCallbackInvalido(parametros.IdSala, parametros.IdJugador);
             }
         }
 

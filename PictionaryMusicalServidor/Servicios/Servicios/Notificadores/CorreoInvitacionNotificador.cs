@@ -59,7 +59,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
         private ConfiguracionSmtp ObtenerConfiguracionSmtp()
         {
-            var config = new ConfiguracionSmtp
+            var configuracionSmtp = new ConfiguracionSmtp
             {
                 Remitente = ObtenerConfiguracion("CorreoRemitente", "Correo.Remitente.Direccion"),
                 Contrasena = ObtenerConfiguracion("CorreoPassword", "Correo.Smtp.Contrasena"),
@@ -69,12 +69,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 SslString = ObtenerConfiguracion("CorreoSsl", "Correo.Smtp.HabilitarSsl")
             };
 
-            if (string.IsNullOrWhiteSpace(config.Usuario))
+            if (string.IsNullOrWhiteSpace(configuracionSmtp.Usuario))
             {
-                config.Usuario = config.Remitente;
+                configuracionSmtp.Usuario = configuracionSmtp.Remitente;
             }
 
-            return config;
+            return configuracionSmtp;
         }
 
         private static string ObtenerAsunto(string idiomaNormalizado)
@@ -90,26 +90,35 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 : asuntoConfigurado;
         }
 
-        private static async Task<bool> EjecutarEnvioSmtpAsync(string destinatario, string asunto, 
-            string cuerpo, ConfiguracionSmtp config)
+        private static async Task<bool> EjecutarEnvioSmtpAsync(
+            string destinatario,
+            string asunto, 
+            string cuerpo,
+            ConfiguracionSmtp configuracionSmtp)
         {
             try
             {
-                using (var mensaje = new MailMessage(config.Remitente, destinatario, asunto, 
+                using (var mensaje = new MailMessage(
+                    configuracionSmtp.Remitente,
+                    destinatario,
+                    asunto, 
                     cuerpo))
                 {
                     mensaje.IsBodyHtml = true;
                     mensaje.BodyEncoding = Encoding.UTF8;
                     mensaje.SubjectEncoding = Encoding.UTF8;
 
-                    using (var clienteSmtp = new SmtpClient(config.Host, config.Puerto))
+                    using (var clienteSmtp = new SmtpClient(
+                        configuracionSmtp.Host,
+                        configuracionSmtp.Puerto))
                     {
-                        clienteSmtp.EnableSsl = config.HabilitarSsl;
+                        clienteSmtp.EnableSsl = configuracionSmtp.HabilitarSsl;
 
-                        if (!string.IsNullOrWhiteSpace(config.Contrasena))
+                        if (!string.IsNullOrWhiteSpace(configuracionSmtp.Contrasena))
                         {
-                            clienteSmtp.Credentials = new NetworkCredential(config.Usuario, 
-                                config.Contrasena);
+                            clienteSmtp.Credentials = new NetworkCredential(
+                                configuracionSmtp.Usuario, 
+                                configuracionSmtp.Contrasena);
                         }
 
                         await clienteSmtp

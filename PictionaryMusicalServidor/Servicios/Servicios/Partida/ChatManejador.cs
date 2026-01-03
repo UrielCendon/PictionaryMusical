@@ -471,45 +471,51 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
             foreach (var cliente in clientesANotificar)
             {
-                NotificarMensajeSeguro(idSala, cliente, nombreJugador, mensaje);
+                var parametrosMensaje = new NotificacionMensajeSeguroParametros
+                {
+                    IdSala = idSala,
+                    Cliente = cliente,
+                    NombreJugador = nombreJugador,
+                    Mensaje = mensaje
+                };
+                NotificarMensajeSeguro(parametrosMensaje);
             }
         }
 
         private static void NotificarMensajeSeguro(
-            string idSala,
-            ClienteChat cliente,
-            string nombreJugador,
-            string mensaje)
+            NotificacionMensajeSeguroParametros parametros)
         {
             try
             {
-                cliente.Callback.RecibirMensaje(nombreJugador, mensaje);
+                parametros.Cliente.Callback.RecibirMensaje(
+                    parametros.NombreJugador,
+                    parametros.Mensaje);
             }
             catch (CommunicationException excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorComunicacionChat, 
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
         }
 
