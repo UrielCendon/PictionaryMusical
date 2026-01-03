@@ -94,7 +94,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private static void RegistrarLogResultado(
+        private void RegistrarLogResultado(
             DTOs.ResultadoRegistroCuentaDTO resultado,
             string correo)
         {

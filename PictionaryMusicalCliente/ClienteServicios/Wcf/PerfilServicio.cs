@@ -141,7 +141,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private static void RegistrarLogActualizacion(
+        private void RegistrarLogActualizacion(
             DTOs.ResultadoOperacionDTO resultado,
             int usuarioId)
         {

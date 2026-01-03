@@ -18,7 +18,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private readonly SonidoManejador _sonidoManejador;
-        private readonly string _nombreAmigo;
 
         /// <summary>
         /// Inicializa el ViewModel para confirmar la eliminacion de un amigo.
@@ -39,7 +38,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
         {
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
-            _nombreAmigo = nombreAmigo;
 
             MensajeConfirmacion = CrearMensajeConfirmacion(nombreAmigo);
 

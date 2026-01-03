@@ -171,13 +171,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             }
         }
 
-        private async Task<DTOs.UsuarioDTO> ObtenerPerfilAmigoAsync(int usuarioId)
-        {
-            return await _perfilServicio
-                .ObtenerPerfilAsync(usuarioId)
-                .ConfigureAwait(true);
-        }
-
         private bool ValidarPerfil(DTOs.UsuarioDTO perfil, int usuarioId)
         {
             if (perfil == null || string.IsNullOrWhiteSpace(perfil.Correo))
