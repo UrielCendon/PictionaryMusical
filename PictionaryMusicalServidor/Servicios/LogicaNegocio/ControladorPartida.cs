@@ -124,6 +124,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public event Action<ResultadoPartidaDTO> FinPartida;
 
         /// <summary>
+        /// Evento que notifica que se debe limpiar el lienzo.
+        /// Se dispara al iniciar una nueva ronda y cuando termina la transicion entre turnos.
+        /// </summary>
+        public event Action LimpiarLienzo;
+
+        /// <summary>
         /// Indica si la partida ya llego a su estado finalizado.
         /// </summary>
         public bool EstaFinalizada
@@ -176,7 +182,14 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="id">Identificador de conexion del jugador.</param>
         public void RemoverJugador(string id)
         {
+            _logger.InfoFormat("Iniciando remocion de jugador con ID: {0}", id);
             var resultado = ProcesarRemocionJugador(id);
+            _logger.InfoFormat(
+                "Resultado remocion jugador {0}: DebeCancelar={1}, DebeAvanzar={2}, DebeAvanzarDirecto={3}",
+                id,
+                resultado.DebeCancelar,
+                resultado.DebeAvanzar,
+                resultado.DebeAvanzarDirecto);
             EjecutarAccionPostRemocion(resultado);
         }
 
@@ -189,8 +202,17 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
                 if (!_gestorJugadores.Remover(id, out eraDibujante))
                 {
+                    _logger.WarnFormat(
+                        "No se pudo remover jugador {0}: no existe en la lista de jugadores",
+                        id);
                     return ResultadoRemocionJugador.SinAccion();
                 }
+
+                _logger.InfoFormat(
+                    "Jugador {0} removido exitosamente. EraAnfitrion={1}, EraDibujante={2}",
+                    id,
+                    eraAnfitrion,
+                    eraDibujante);
 
                 return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
             }
@@ -452,6 +474,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
             else
             {
+                LimpiarLienzo?.Invoke();
                 InicioRonda?.Invoke(rondaDto);
             }
         }
@@ -464,13 +487,21 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void ManejarRetardoTemporizador(Task tarea)
         {
+            bool debeLimpiar = false;
+
             lock (_sincronizacion)
             {
                 if (_estadoActual == EstadoPartida.Jugando)
                 {
                     _enTransicionRonda = false;
                     _gestorTiempos.IniciarRonda();
+                    debeLimpiar = true;
                 }
+            }
+
+            if (debeLimpiar)
+            {
+                LimpiarLienzo?.Invoke();
             }
         }
 

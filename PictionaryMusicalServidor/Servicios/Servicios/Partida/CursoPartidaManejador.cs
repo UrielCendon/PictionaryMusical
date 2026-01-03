@@ -230,6 +230,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 ManejarFinPartida(idSala, resultado, controlador);
             };
+
+            controlador.LimpiarLienzo += delegate()
+            {
+                ManejarLimpiarLienzo(idSala);
+            };
         }
 
         private void ManejarPartidaIniciada(string idSala)
@@ -417,6 +422,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
+        private void ManejarLimpiarLienzo(string idSala)
+        {
+            var callbacks = ObtenerCallbacksSala(idSala);
+            if (callbacks != null)
+            {
+                _notificadorPartida.NotificarLimpiarLienzo(idSala, callbacks);
+            }
+        }
+
         private void ManejarFinPartida(
             string idSala,
             ResultadoPartidaDTO resultado,
@@ -517,20 +531,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         private static void RemoverCallback(string idSala, string idJugador)
         {
+            ControladorPartida controladorARemover = null;
+            bool callbackRemovido = false;
+
             lock (_sincronizacion)
             {
                 Dictionary<string, ICursoPartidaManejadorCallback> callbacks;
                 if (_callbacksPorSala.TryGetValue(idSala, out callbacks))
                 {
-                    callbacks.Remove(idJugador);
+                    callbackRemovido = callbacks.Remove(idJugador);
                 }
 
                 ControladorPartida controlador;
                 if (_partidasActivas.TryGetValue(idSala, out controlador)
                     && !controlador.EstaFinalizada)
                 {
-                    controlador.RemoverJugador(idJugador);
+                    controladorARemover = controlador;
                 }
+            }
+
+            if (controladorARemover != null)
+            {
+                _logger.InfoFormat(
+                    "Removiendo jugador {0} de sala {1}. Callback removido: {2}",
+                    idJugador,
+                    idSala,
+                    callbackRemovido);
+                controladorARemover.RemoverJugador(idJugador);
             }
         }
 
