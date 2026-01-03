@@ -222,7 +222,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             _jugadores.Clear();
             _gestorNotificaciones.Limpiar();
             DebeEliminarse = true;
-            _logger.Info(MensajesError.Log.SalaCanceladaSalidaAnfitrion);
+            _logger.Info(MensajesError.Bitacora.SalaCanceladaSalidaAnfitrion);
         }
     }
 }

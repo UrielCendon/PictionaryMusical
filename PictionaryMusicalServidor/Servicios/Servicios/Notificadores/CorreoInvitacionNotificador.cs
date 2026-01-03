@@ -39,7 +39,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             var configuracion = ObtenerConfiguracionSmtp();
             if (!configuracion.EsValida)
             {
-                _logger.Error(MensajesError.Log.ConfiguracionCorreoInvalida);
+                _logger.Error(MensajesError.Bitacora.ConfiguracionCorreoInvalida);
                 return false;
             }
 
@@ -122,27 +122,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (SmtpException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorSmtpEnviarCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorSmtpEnviarCorreo, excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaEnviarCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaEnviarCorreo, excepcion);
                 return false;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Error(MensajesError.Log.ArgumentosInvalidosCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ArgumentosInvalidosCorreo, excepcion);
                 return false;
             }
             catch (FormatException excepcion)
             {
-                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
+                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
+                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
                 return false;
             }
         }

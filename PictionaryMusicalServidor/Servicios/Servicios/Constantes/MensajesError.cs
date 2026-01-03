@@ -69,7 +69,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string CorreoRegistroInvalido = 
                 "Ingresa un correo electronico valido (maximo 50 caracteres).";
             public const string ContrasenaRegistroInvalida = 
-                "La contrasena debe tener entre 8 y 15 caracteres, incluir una mayuscula, un numero y un caracter especial.";
+                "La contrasena debe tener entre 8 y 15 caracteres, incluir una mayuscula, " +
+                "un numero y un caracter especial.";
 
             public const string ErrorObtenerPerfil = 
                 "No pudimos cargar tu perfil. Intenta mas tarde.";
@@ -271,11 +272,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
         }
 
         /// <summary>
-        /// Mensajes para registro de errores en log.
+        /// Mensajes para registro de errores en bitacora.
         /// Contienen detalles tecnicos para depuracion sin datos personales.
         /// Solo se permiten IDs de usuario, nunca nombres, correos u otros datos personales.
         /// </summary>
-        public static class Log
+        public static class Bitacora
         {
             public const string ErrorNotificandoInicioRonda = 
                 "Error notificando inicio de ronda al jugador con id {0}.";
@@ -403,9 +404,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string ErrorInesperadoNotificarSalas = 
                 "Error inesperado al notificar la lista de salas a los suscriptores.";
             public const string ErrorComunicacionMasivaNotificarSalas = 
-                "Error de comunicacion al notificar masivamente. Eliminando suscripcion defectuosa.";
+                "Error de comunicacion al notificar masivamente. " +
+                "Eliminando suscripcion defectuosa.";
             public const string ErrorTimeoutMasivoNotificarSalas = 
-                "Timeout al notificar masivamente lista de salas. Eliminando suscripcion defectuosa.";
+                "Timeout al notificar masivamente lista de salas. " +
+                "Eliminando suscripcion defectuosa.";
             public const string ErrorCanalCerradoMasivoNotificarSalas = 
                 "Canal cerrado al notificar masivamente lista de salas.";
             public const string ErrorInesperadoMasivoNotificarSalas = 
@@ -541,7 +544,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Constantes
             public const string IdentificadorInvalidoListaAmigos = 
                 "Identificador invalido al actualizar la lista de amigos del usuario.";
             public const string ErrorDatosObtenerAmigos = 
-                "Error de datos al obtener lista de amigos. Fallo en la consulta de amigos del usuario.";
+                "Error de datos al obtener lista de amigos. " +
+                "Fallo en la consulta de amigos del usuario.";
 
             public const string ErrorNotificarCallback = 
                 "Error al notificar callback de partida.";

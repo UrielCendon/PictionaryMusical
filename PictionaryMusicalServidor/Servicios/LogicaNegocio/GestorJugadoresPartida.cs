@@ -121,12 +121,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 GeneradorAleatorio.MezclarLista(_ordenDibujantesBase);
             }
 
-            foreach (var id in _ordenDibujantesBase)
+            foreach (var identificador in _ordenDibujantesBase.Where(identificador => _jugadores.ContainsKey(identificador)))
             {
-                if (_jugadores.ContainsKey(id))
-                {
-                    _colaDibujantes.Enqueue(id);
-                }
+                _colaDibujantes.Enqueue(identificador);
             }
         }
 

@@ -62,32 +62,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionChat, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorUnirseChat);
             }
         }
@@ -126,32 +126,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionChat, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEnviarMensaje);
             }
         }
@@ -180,32 +180,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionChat, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosChat, excepcion);
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCanalCerradoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoChat, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSalirChat);
             }
         }

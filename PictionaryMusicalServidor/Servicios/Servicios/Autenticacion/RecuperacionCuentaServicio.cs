@@ -86,7 +86,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (BaseDatosExcepcion excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorBaseDatosBuscarUsuarioRecuperacion, 
+                    "Error de base de datos al buscar usuario para proceso de " +
+                    "recuperacion de cuenta.",
                     excepcion);
                 return CrearFalloSolicitud(
                     MensajesError.Cliente.ErrorBaseDatosRecuperacion);
@@ -256,14 +257,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!enviado)
             {
-                _logger.Error(MensajesError.Log.ErrorEnviarCorreoRecuperacion);
-                return (false, null, null);
+                _logger.Error(
+                    "Error al enviar correo electronico con codigo de recuperacion de cuenta.");
+                return (false, string.Empty, new SolicitudRecuperacionPendiente());
             }
 
             return (true, token, pendiente);
         }
 
-        private static void AlmacenarSolicitud(string token, SolicitudRecuperacionPendiente pendiente)
+        private static void AlmacenarSolicitud(
+            string token,
+            SolicitudRecuperacionPendiente pendiente)
         {
             _solicitudesRecuperacion[token] = pendiente;
         }
@@ -332,8 +336,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 pendiente.Expira = expiracionAnterior;
                 pendiente.Confirmado = confirmadoAnterior;
 
-                _logger.Error(MensajesError.Log.ErrorReenviarCorreoRecuperacion);
-                return CrearFalloReenvio(MensajesError.Cliente.ErrorReenviarCodigoRecuperacion);
+                _logger.Error(
+                    "Error al reenviar correo electronico con codigo de recuperacion.");
+                return CrearFalloReenvio(
+                    MensajesError.Cliente.ErrorReenviarCodigoRecuperacion);
             }
 
             return new ResultadoSolicitudCodigoDTO
@@ -407,17 +413,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 token,
                 out pendiente))
             {
-                return (false, null, MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
+                return (false, new SolicitudRecuperacionPendiente(),
+                    MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 SolicitudRecuperacionPendiente solicitudDescartada;
                 _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
-                return (false, null, MensajesError.Cliente.SolicitudRecuperacionInvalida);
+                return (false, new SolicitudRecuperacionPendiente(),
+                    MensajesError.Cliente.SolicitudRecuperacionInvalida);
             }
 
-            return (true, pendiente, null);
+            return (true, pendiente, string.Empty);
         }
 
         private ResultadoOperacionDTO EjecutarCambioContrasena(
@@ -442,18 +450,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarContrasena, excepcion);
-                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+                _logger.Error(
+                    "Error de entidad al actualizar contrasena en base de datos.",
+                    excepcion);
+                return CrearFalloOperacion(
+                    MensajesError.Cliente.ErrorActualizarContrasena);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarContrasena, excepcion);
-                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+                _logger.Error(
+                    "Error de datos al actualizar contrasena del usuario.",
+                    excepcion);
+                return CrearFalloOperacion(
+                    MensajesError.Cliente.ErrorActualizarContrasena);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarContrasena, excepcion);
-                return CrearFalloOperacion(MensajesError.Cliente.ErrorActualizarContrasena);
+                _logger.Error(
+                    "Error inesperado al actualizar contrasena del usuario.",
+                    excepcion);
+                return CrearFalloOperacion(
+                    MensajesError.Cliente.ErrorActualizarContrasena);
             }
         }
 

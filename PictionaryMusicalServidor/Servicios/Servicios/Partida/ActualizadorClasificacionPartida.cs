@@ -70,7 +70,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
             if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
             {
-                _logger.Info(MensajesError.Log.PartidaFinalizadaSinClasificacion);
+                _logger.Info(MensajesError.Bitacora.PartidaFinalizadaSinClasificacion);
                 return;
             }
 
@@ -82,28 +82,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizarClasificaciones, excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizarClasificaciones, excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizarClasificaciones, excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarClasificaciones, excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoActualizarClasificaciones, 
+                    MensajesError.Bitacora.ErrorInesperadoActualizarClasificaciones, 
                     excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }

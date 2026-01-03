@@ -85,25 +85,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosObtenerClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosObtenerClasificacion, excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosObtenerClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosObtenerClasificacion, excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaObtenerClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaObtenerClasificacion, excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoObtenerClasificacion, excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }

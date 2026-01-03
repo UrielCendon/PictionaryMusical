@@ -167,27 +167,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (SmtpException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorSmtpEnviarCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorSmtpEnviarCorreo, excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaEnviarCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaEnviarCorreo, excepcion);
                 return false;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Error(MensajesError.Log.ArgumentosInvalidosCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ArgumentosInvalidosCorreo, excepcion);
                 return false;
             }
             catch (FormatException excepcion)
             {
-                _logger.Error(MensajesError.Log.FormatoCorreoInvalido, excepcion);
+                _logger.Error(MensajesError.Bitacora.FormatoCorreoInvalido, excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo, excepcion);
                 return false;
             }
         }

@@ -28,7 +28,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 if (string.IsNullOrWhiteSpace(conexion))
                 {
                     _logger.Warn(
-                        MensajesError.Log.CadenaConexionVacia);
+                        MensajesError.Bitacora.CadenaConexionVacia);
                     return new BaseDatosPruebaEntities();
                 }
 
@@ -36,13 +36,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorConstruirContextoBaseDatos, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorConstruirContextoBaseDatos, excepcion);
                 throw new DataException(
                     "No se pudo establecer la conexion con la base de datos.", excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoCrearContexto, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoCrearContexto, excepcion);
                 throw new DataException(
                     "No se pudo establecer la conexion con la base de datos.", excepcion);
             }

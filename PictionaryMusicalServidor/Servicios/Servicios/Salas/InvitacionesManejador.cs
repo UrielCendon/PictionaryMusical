@@ -92,43 +92,43 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionInvitacion, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionInvitacion, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosInvitacion, excepcion);
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.DatosInvalidos);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.OperacionInvalidaInvitacion, excepcion);
+                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaInvitacion, excepcion);
                 return CrearFallo(
                     excepcion.Message ?? MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInvitacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosInvitacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorProcesarInvitacion);
             }
             catch (RegexMatchTimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutValidacionCorreo, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutValidacionCorreo, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
             catch (AggregateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoInvitacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoInvitacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoInvitacion, excepcion);
                 return CrearFallo(MensajesError.Cliente.ErrorInesperadoInvitacion);
             }
         }

@@ -116,14 +116,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <summary>
         /// Elimina la relacion de amistad entre dos usuarios.
         /// </summary>
-        /// <param name="idPrimerUsuario">Identificador del primer usuario en la relacion.</param>
-        /// <param name="idSegundoUsuario">Identificador del segundo usuario en la relacion.</param>
+        /// <param name="usuarioAId">Identificador del primer usuario en la relacion.</param>
+        /// <param name="usuarioBId">Identificador del segundo usuario en la relacion.</param>
         /// <returns>La relacion de amistad que fue eliminada.</returns>
         /// <exception cref="InvalidOperationException">Se lanza si los usuarios son el mismo o la
         /// relacion no existe.</exception>
-        public Amigo EliminarAmistad(int idPrimerUsuario, int idSegundoUsuario)
+        public Amigo EliminarAmistad(int usuarioAId, int usuarioBId)
         {
-            if (idPrimerUsuario == idSegundoUsuario)
+            if (usuarioAId == usuarioBId)
             {
                 throw new InvalidOperationException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -131,7 +131,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             using (var contexto = _contextoFactoria.CrearContexto())
             {
                 var repositorioAmigos = _repositorioFactoria.CrearAmigoRepositorio(contexto);
-                var relacion = repositorioAmigos.ObtenerRelacion(idPrimerUsuario, idSegundoUsuario);
+                var relacion = repositorioAmigos.ObtenerRelacion(usuarioAId, usuarioBId);
 
                 if (relacion == null)
                 {

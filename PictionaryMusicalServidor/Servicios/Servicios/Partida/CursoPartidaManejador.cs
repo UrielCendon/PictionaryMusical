@@ -106,7 +106,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 callback);
 
             _logger.InfoFormat(
-                MensajesError.Log.JugadorSuscritoPartida,
+                MensajesError.Bitacora.JugadorSuscritoPartida,
                 suscripcion.IdJugador.Trim(),
                 suscripcion.IdSala.Trim());
         }
@@ -122,7 +122,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             EntradaComunValidador.ValidarIdSala(idSala);
 
             _logger.InfoFormat(
-                MensajesError.Log.InicioPartidaSolicitado,
+                MensajesError.Bitacora.InicioPartidaSolicitado,
                 idSala.Trim(),
                 idJugadorSolicitante?.Trim());
 
@@ -339,17 +339,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Log.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Log.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Log.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (Exception excepcion)
@@ -429,7 +429,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoObtenerJugadoresClasificacion,
+                    MensajesError.Bitacora.ErrorInesperadoObtenerJugadoresClasificacion,
                     excepcion);
                 return new List<JugadorPartida>();
             }
@@ -451,7 +451,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private void ManejarCallbackInvalido(string idSala, string idJugador)
+        private static void ManejarCallbackInvalido(string idSala, string idJugador)
         {
             RemoverCallback(idSala, idJugador);
         }

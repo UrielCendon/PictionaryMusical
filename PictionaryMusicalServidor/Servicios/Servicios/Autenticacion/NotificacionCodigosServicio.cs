@@ -63,17 +63,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (AggregateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
+                _logger.Error(
+                    "Error critico al enviar notificacion de codigo de verificacion por correo.",
+                    excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
+                _logger.Error(
+                    "Operacion invalida al enviar notificacion de codigo de verificacion.",
+                    excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCriticoEnviarNotificacionCodigo, excepcion);
+                _logger.Error(
+                    "Error inesperado al enviar notificacion de codigo de verificacion.",
+                    excepcion);
                 return false;
             }
         }

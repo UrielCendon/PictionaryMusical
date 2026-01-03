@@ -113,37 +113,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ValidacionFallidaReporte, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ValidacionFallidaReporte, excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosReporte, excepcion);
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosReporte, excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.OperacionInvalidaReporte, excepcion);
+                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaReporte, excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Warn(MensajesError.Log.UsuariosNoEncontradosReporte, excepcion);
+                _logger.Warn(MensajesError.Bitacora.UsuariosNoEncontradosReporte, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.UsuariosNoEncontrados);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosReporte, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosReporte, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosReporte, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosReporte, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoReporte, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoReporte, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
         }
@@ -175,22 +175,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ReporteUsuariosNoRegistrados, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ReporteUsuariosNoRegistrados, excepcion);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosReporte, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosReporte, excepcion);
                 throw;
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosReporte, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosReporte, excepcion);
                 throw;
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorObtenerIdUsuariosReporte, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorObtenerIdUsuariosReporte, excepcion);
                 throw;
             }
         }

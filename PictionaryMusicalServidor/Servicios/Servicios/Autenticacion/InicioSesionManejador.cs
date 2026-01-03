@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!SonCredencialesValidas(credenciales))
             {
-                _logger.Warn(MensajesError.Log.IntentoInicioSesionFormatoInvalido);
+                _logger.Warn(MensajesError.Bitacora.IntentoInicioSesionFormatoInvalido);
                 return CrearRespuestaDatosInvalidos();
             }
 
@@ -77,27 +77,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
         }
@@ -134,14 +134,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 usuario = ObtenerUsuarioPorCredencial(contexto, identificador);
             }
-            catch (Datos.Excepciones.BaseDatosExcepcion ex)
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, ex);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorBaseDatosInicioSesion,
+                    excepcion);
                 return CrearErrorGenerico();
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException excepcion)
             {
-                _logger.Warn(MensajesError.Log.InicioSesionUsuarioNoEncontrado, ex);
+                _logger.Warn(
+                    MensajesError.Bitacora.InicioSesionUsuarioNoEncontrado,
+                    excepcion);
                 return new ResultadoInicioSesionDTO
                 {
                     CuentaEncontrada = false,
@@ -151,7 +155,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!VerificarContrasena(credenciales.Contrasena, usuario.Contrasena))
             {
-                _logger.Warn(MensajesError.Log.InicioSesionContrasenaIncorrecta);
+                _logger.Warn(MensajesError.Bitacora.InicioSesionContrasenaIncorrecta);
 
                 return new ResultadoInicioSesionDTO
                 {
@@ -163,7 +167,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             if (UsuarioAlcanzoLimiteReportes(contexto, usuario.idUsuario))
             {
                 _logger.WarnFormat(
-                    "Usuario con id {0} bloqueado por superar limite de reportes.",
+                    "Usuario con identificador {0} bloqueado por superar limite de reportes.",
                     usuario.idUsuario);
 
                 return new ResultadoInicioSesionDTO
@@ -175,7 +179,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
 
             _logger.InfoFormat(
-                "Inicio de sesion exitoso para usuario con id {0}.",
+                "Inicio de sesion exitoso para usuario con identificador {0}.",
                 usuario.idUsuario);
 
             return new ResultadoInicioSesionDTO
@@ -230,14 +234,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    "Usuario no encontrado por nombre, se intentara buscar por correo.",
+                    string.Format(
+                        "Usuario no encontrado por nombre '{0}', se intentara buscar por correo electronico.",
+                        identificador),
                     excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al buscar usuario por nombre, intentando por correo.",
+                    string.Format(
+                        "Error inesperado al buscar usuario por nombre '{0}', intentando por correo electronico.",
+                        identificador),
                     excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
@@ -262,7 +270,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (usuario == null)
             {
-                throw new KeyNotFoundException("Usuario no encontrado por correo.");
+                throw new KeyNotFoundException(
+                    string.Format(
+                        "Usuario no encontrado por correo electronico: {0}",
+                        correo));
             }
             return usuario;
         }
