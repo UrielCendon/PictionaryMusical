@@ -56,7 +56,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             IOperacionAmistadServicio operacionAmistadServicio,
             INotificadorListaAmigos notificadorLista)
         {
-            var validatedAmistadServicio = amistadServicio ??
+            var servicioAmistadValidado = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
 
             _operacionAmistadServicio = operacionAmistadServicio ??
@@ -68,12 +68,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _manejadorCallback = new ManejadorCallback<IAmigosManejadorCallback>(
                 StringComparer.OrdinalIgnoreCase);
 
-            _notificador = new NotificadorAmigos(_manejadorCallback, validatedAmistadServicio);
+            _notificador = new NotificadorAmigos(
+                _manejadorCallback, 
+                servicioAmistadValidado);
         }
 
         /// <summary>
         /// Suscribe un usuario para recibir notificaciones de solicitudes de amistad.
-        /// Normaliza el nombre de usuario, registra el callback y notifica solicitudes pendientes.
+        /// Normaliza el nombre de usuario, registra el callback y notifica solicitudes 
+        /// pendientes.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario a suscribir.</param>
         public void Suscribir(string nombreUsuario)
@@ -94,30 +97,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "No se pudo conectar a la base de datos al suscribir " +
-                        "al usuario '{0}' a notificaciones de amistad.",
-                        nombreUsuario),
+                    "Fallo la conexion a la base de datos al suscribir " +
+                    "al usuario con identificador relacionado.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Los datos del usuario '{0}' son inconsistentes " +
-                        "al intentar suscribirlo a notificaciones de amistad.",
-                        nombreUsuario),
+                    "Los datos del usuario son inconsistentes " +
+                    "al intentar suscribirlo a notificaciones de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Ocurrio un error desconocido al suscribir al usuario '{0}' " +
-                        "a notificaciones de amistad.",
-                        nombreUsuario),
+                    "Ocurrio un error desconocido al suscribir al usuario " +
+                    "a notificaciones de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
             }
@@ -170,41 +167,30 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "El usuario emisor '{0}' o receptor '{1}' no existe en la base de datos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "El usuario emisor o receptor no existe en la base de datos " +
+                    "al intentar enviar solicitud de amistad.",
                     excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "No se encontro al usuario receptor '{0}' al enviar solicitud desde '{1}'.",
-                        nombreUsuarioReceptor,
-                        nombreUsuarioEmisor),
+                    "No se encontro al usuario receptor al enviar solicitud de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.UsuariosEspecificadosNoExisten);
             }
             catch (FaultException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "La validacion fallo al enviar solicitud de amistad de '{0}' a '{1}'.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "La validacion fallo al enviar solicitud de amistad.",
                     excepcion);
                 throw;
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "No se puede crear la solicitud de '{0}' a '{1}': " +
-                        "ya existe una relacion o se intento enviar solicitud a si mismo.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "No se puede crear la solicitud de amistad: " +
+                    "ya existe una relacion o se intento enviar solicitud a si mismo.",
                     excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorAlmacenarSolicitud);
@@ -212,55 +198,38 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (ArgumentException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "Los datos proporcionados para la solicitud de amistad " +
-                        "de '{0}' a '{1}' son invalidos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Los datos proporcionados para la solicitud de amistad son invalidos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "No se pudo guardar la solicitud de amistad de '{0}' hacia '{1}' " +
-                        "debido a un conflicto en la base de datos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "No se pudo guardar la solicitud de amistad " +
+                    "debido a un conflicto en la base de datos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "La conexion a la base de datos fallo al crear " +
-                        "la solicitud de amistad de '{0}' a '{1}'.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "La conexion a la base de datos fallo al crear " +
+                    "la solicitud de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Los datos de la solicitud de '{0}' hacia '{1}' " +
-                        "son invalidos o estan corruptos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Los datos de la solicitud de amistad " +
+                    "son invalidos o estan corruptos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Ocurrio un error inesperado al procesar la solicitud " +
-                        "de amistad de '{0}' a '{1}'.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Ocurrio un error inesperado al procesar la solicitud de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorAlmacenarSolicitud);
             }
@@ -293,11 +262,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "No se puede aceptar la solicitud de '{0}' por '{1}': " +
-                        "la solicitud no existe, ya fue aceptada o el receptor no corresponde.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "No se puede aceptar la solicitud de amistad: " +
+                    "la solicitud no existe, ya fue aceptada o el receptor no corresponde.",
                     excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorActualizarSolicitud);
@@ -305,54 +271,38 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (ArgumentException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "Los datos proporcionados para aceptar la solicitud " +
-                        "de '{0}' por '{1}' son invalidos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Los datos proporcionados para aceptar la solicitud son invalidos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "No se pudo actualizar la solicitud de amistad de '{0}' aceptada por '{1}' " +
-                        "debido a un conflicto en la base de datos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "No se pudo actualizar la solicitud de amistad " +
+                    "debido a un conflicto en la base de datos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "La conexion a la base de datos fallo al aceptar " +
-                        "la solicitud de '{0}' por parte de '{1}'.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "La conexion a la base de datos fallo al aceptar " +
+                    "la solicitud de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Los datos de la solicitud de '{0}' para '{1}' " +
-                        "son invalidos o estan corruptos.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Los datos de la solicitud de amistad " +
+                    "son invalidos o estan corruptos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Ocurrio un error inesperado al aceptar la solicitud de '{0}' por '{1}'.",
-                        nombreUsuarioEmisor,
-                        nombreUsuarioReceptor),
+                    "Ocurrio un error inesperado al aceptar la solicitud de amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorActualizarSolicitud);
             }
@@ -381,11 +331,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    string.Format(
-                        "No se puede eliminar la amistad entre '{0}' y '{1}': " +
-                        "la relacion no existe o se intento eliminar con el mismo usuario.",
-                        nombreUsuarioA,
-                        nombreUsuarioB),
+                    "No se puede eliminar la amistad: " +
+                    "la relacion no existe o se intento eliminar con el mismo usuario.",
                     excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.RelacionAmistadNoExiste);
@@ -393,43 +340,29 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "No se pudo eliminar la amistad entre '{0}' y '{1}' " +
-                        "debido a un conflicto en la base de datos.",
-                        nombreUsuarioA,
-                        nombreUsuarioB),
+                    "No se pudo eliminar la amistad " +
+                    "debido a un conflicto en la base de datos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "La conexion a la base de datos fallo al eliminar " +
-                        "la amistad entre '{0}' y '{1}'.",
-                        nombreUsuarioA,
-                        nombreUsuarioB),
+                    "La conexion a la base de datos fallo al eliminar la amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Los datos de la amistad entre '{0}' y '{1}' " +
-                        "son invalidos o estan corruptos.",
-                        nombreUsuarioA,
-                        nombreUsuarioB),
+                    "Los datos de la amistad son invalidos o estan corruptos.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    string.Format(
-                        "Ocurrio un error inesperado al eliminar la amistad entre '{0}' y '{1}'.",
-                        nombreUsuarioA,
-                        nombreUsuarioB),
+                    "Ocurrio un error inesperado al eliminar la amistad.",
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -437,7 +370,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
         private void RegistrarCallback(string nombreUsuario, string nombreNormalizado)
         {
-            var callback = ManejadorCallback<IAmigosManejadorCallback>.ObtenerCallbackActual();
+            var callback = 
+                ManejadorCallback<IAmigosManejadorCallback>.ObtenerCallbackActual();
             _manejadorCallback.Suscribir(nombreNormalizado, callback);
 
             if (!string.Equals(
@@ -451,7 +385,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _manejadorCallback.ConfigurarEventosCanal(nombreNormalizado);
         }
 
-        private void NotificarSolicitudNueva(ResultadoCreacionSolicitud resultado,
+        private void NotificarSolicitudNueva(
+            ResultadoCreacionSolicitud resultado,
             DatosNotificacionSolicitud datosNotificacion)
         {
             string nombreEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(

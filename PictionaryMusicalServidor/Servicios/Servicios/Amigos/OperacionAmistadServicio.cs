@@ -127,18 +127,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     usuarioEmisor.idUsuario,
                     usuarioReceptor.idUsuario);
 
-                string normEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioEmisor.Nombre_Usuario,
-                    nombreEmisor);
+                string nombreNormalizadoEmisor = 
+                    EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
+                        usuarioEmisor.Nombre_Usuario,
+                        nombreEmisor);
 
-                string normReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
-                    usuarioReceptor.Nombre_Usuario,
-                    nombreReceptor);
+                string nombreNormalizadoReceptor = 
+                    EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
+                        usuarioReceptor.Nombre_Usuario,
+                        nombreReceptor);
 
                 return new ResultadoAceptacionSolicitud
                 {
-                    NombreNormalizadoEmisor = normEmisor,
-                    NombreNormalizadoReceptor = normReceptor
+                    NombreNormalizadoEmisor = nombreNormalizadoEmisor,
+                    NombreNormalizadoReceptor = nombreNormalizadoReceptor
                 };
             }
         }
