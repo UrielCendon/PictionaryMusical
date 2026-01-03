@@ -97,32 +97,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ValidacionEntidadFallidaRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.ValidacionEntidadFallidaRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizacionBDRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizacionBDRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoRegistro, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoRegistro, excepcion);
                 return CrearFalloRegistro(MensajesError.Cliente.ErrorRegistrarCuenta);
             }
         }
@@ -203,7 +203,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         {
             if (!_verificacionServicio.EstaVerificacionConfirmada(nuevaCuenta))
             {
-                _logger.Warn(MensajesError.Log.IntentoRegistroSinVerificacion);
+                _logger.Warn(MensajesError.Bitacora.IntentoRegistroSinVerificacion);
                 return false;
             }
             return true;
@@ -221,7 +221,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (usuarioRegistrado || correoRegistrado)
             {
-                _logger.Warn(MensajesError.Log.RegistroDuplicadoDetectado);
+                _logger.Warn(MensajesError.Bitacora.RegistroDuplicadoDetectado);
                 return true;
             }
 

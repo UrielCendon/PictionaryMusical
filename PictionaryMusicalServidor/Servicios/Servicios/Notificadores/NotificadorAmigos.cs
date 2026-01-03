@@ -43,7 +43,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn(MensajesError.Log.ErrorNotificarSolicitudActualizada, excepcion);
+                    _logger.Warn(MensajesError.Bitacora.ErrorNotificarSolicitudActualizada, excepcion);
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn(MensajesError.Log.ErrorNotificarAmistadEliminada, excepcion);
+                    _logger.Warn(MensajesError.Bitacora.ErrorNotificarAmistadEliminada, excepcion);
                 }
             }
         }

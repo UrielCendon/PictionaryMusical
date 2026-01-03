@@ -76,32 +76,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorObtenerListaAmigosNotificacion, 
+                _logger.Warn(MensajesError.Bitacora.ErrorObtenerListaAmigosNotificacion, 
                     excepcion);
             }
             catch (ArgumentOutOfRangeException excepcion)
             {
                 _logger.Warn(
-                    MensajesError.Log.IdentificadorInvalidoListaAmigos, excepcion);
+                    MensajesError.Bitacora.IdentificadorInvalidoListaAmigos, excepcion);
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.DatosInvalidosActualizarListaAmigos, 
+                _logger.Warn(MensajesError.Bitacora.DatosInvalidosActualizarListaAmigos, 
                     excepcion);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorDatosObtenerAmigos, 
+                    MensajesError.Bitacora.ErrorDatosObtenerAmigos, 
                     excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.OperacionInvalidaListaAmigos, excepcion);
+                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaListaAmigos, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorInesperadoListaAmigos, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoListaAmigos, excepcion);
             }
         }
 
@@ -121,7 +121,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn(MensajesError.Log.ErrorNotificarListaAmigosActualizada, excepcion);
+                    _logger.Warn(MensajesError.Bitacora.ErrorNotificarListaAmigosActualizada, excepcion);
                 }
             }
         }

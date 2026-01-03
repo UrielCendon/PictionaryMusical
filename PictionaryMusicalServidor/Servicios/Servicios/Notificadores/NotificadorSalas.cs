@@ -83,22 +83,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             catch (CommunicationException excepcion)
             {
                 _logger.Warn(
-                    MensajesError.Log.ErrorComunicacionNotificarSalas, 
+                    MensajesError.Bitacora.ErrorComunicacionNotificarSalas, 
                     excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarSalas, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarSalas, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorCanalCerradoNotificarSalas, excepcion);
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarSalas, excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoNotificarSalas, excepcion);
+                    MensajesError.Bitacora.ErrorInesperadoNotificarSalas, excepcion);
             }
         }
 
@@ -119,7 +119,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (CommunicationException excepcion)
                 {
                     _logger.Warn(
-                        MensajesError.Log.ErrorComunicacionMasivaNotificarSalas,
+                        MensajesError.Bitacora.ErrorComunicacionMasivaNotificarSalas,
                         excepcion);
                     ISalasManejadorCallback valorDescartado;
                     _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
@@ -127,7 +127,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (TimeoutException excepcion)
                 {
                     _logger.Warn(
-                        MensajesError.Log.ErrorTimeoutMasivoNotificarSalas,
+                        MensajesError.Bitacora.ErrorTimeoutMasivoNotificarSalas,
                         excepcion);
                     ISalasManejadorCallback valorDescartado;
                     _suscripciones.TryRemove(suscripcion.Key, out valorDescartado);
@@ -135,12 +135,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 catch (ObjectDisposedException excepcion)
                 {
                     _logger.Error(
-                        MensajesError.Log.ErrorCanalCerradoMasivoNotificarSalas, excepcion);
+                        MensajesError.Bitacora.ErrorCanalCerradoMasivoNotificarSalas, excepcion);
                 }
                 catch (Exception excepcion)
                 {
                     _logger.Error(
-                        MensajesError.Log.ErrorInesperadoMasivoNotificarSalas, excepcion);
+                        MensajesError.Bitacora.ErrorInesperadoMasivoNotificarSalas, excepcion);
                 }
             }
         }

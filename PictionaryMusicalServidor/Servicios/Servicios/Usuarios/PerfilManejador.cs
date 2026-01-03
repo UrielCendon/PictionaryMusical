@@ -66,32 +66,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ArgumentoInvalidoObtenerPerfil, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ArgumentoInvalidoObtenerPerfil, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.OperacionInvalidaObtenerPerfil, excepcion);
+                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaObtenerPerfil, excepcion);
                 throw new FaultException(excepcion.Message);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizacionObtenerPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizacionObtenerPerfil, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosObtenerPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosObtenerPerfil, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosObtenerPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosObtenerPerfil, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoObtenerPerfil, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerPerfil);
             }
         }
@@ -112,7 +112,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 
                 EjecutarActualizacionEnBD(solicitud);
 
-                _logger.Info(MensajesError.Log.PerfilActualizadoExitosamente);
+                _logger.Info(MensajesError.Bitacora.PerfilActualizadoExitosamente);
 
                 return new ResultadoOperacionDTO
                 {
@@ -122,42 +122,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ArgumentoInvalidoActualizarPerfil, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ArgumentoInvalidoActualizarPerfil, excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.OperacionInvalidaActualizarPerfil, excepcion);
+                _logger.Warn(MensajesError.Bitacora.OperacionInvalidaActualizarPerfil, excepcion);
                 return CrearResultadoFallo(excepcion.Message);
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ValidacionEntidadActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ValidacionEntidadActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DbUpdateConcurrencyException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorConcurrenciaActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorConcurrenciaActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizacionBDActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizacionBDActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarPerfil, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoActualizarPerfil, excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }

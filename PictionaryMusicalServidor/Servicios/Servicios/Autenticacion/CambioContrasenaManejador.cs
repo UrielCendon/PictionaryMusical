@@ -68,7 +68,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (ArgumentNullException excepcion)
             {
                 _logger.Warn(
-                    MensajesError.Log.ArgumentoNuloSolicitarCodigoRecuperacion, excepcion);
+                    MensajesError.Bitacora.ArgumentoNuloSolicitarCodigoRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -78,7 +78,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (EntityException excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorBaseDatosSolicitarRecuperacion, excepcion);
+                    MensajesError.Bitacora.ErrorBaseDatosSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -87,7 +87,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosSolicitarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -96,7 +96,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoSolicitarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoSolicitarRecuperacion, excepcion);
                 return new ResultadoSolicitudRecuperacionDTO
                 {
                     CodigoEnviado = false,
@@ -126,7 +126,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ArgumentoNuloReenviarRecuperacion, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ArgumentoNuloReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -135,7 +135,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosReenviarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -144,7 +144,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosReenviarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -153,7 +153,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoReenviarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoReenviarRecuperacion, excepcion);
                 return new ResultadoSolicitudCodigoDTO
                 {
                     CodigoEnviado = false,
@@ -184,7 +184,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ArgumentoNuloConfirmarRecuperacion, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ArgumentoNuloConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -194,7 +194,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosConfirmarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -204,7 +204,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosConfirmarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -214,7 +214,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoConfirmarRecuperacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoConfirmarRecuperacion, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -244,7 +244,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (ArgumentNullException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ArgumentoNuloActualizarContrasena, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ArgumentoNuloActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -254,7 +254,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DbEntityValidationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ValidacionEntidadActualizarContrasena, excepcion);
+                _logger.Error(MensajesError.Bitacora.ValidacionEntidadActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -265,7 +265,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorActualizacionBDContrasena, excepcion);
+                    MensajesError.Bitacora.ErrorActualizacionBDContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -275,7 +275,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosActualizarContrasena, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosActualizarContrasena, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -285,7 +285,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarContrasenaManejador, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarContrasenaManejador, excepcion);
 
                 return new ResultadoOperacionDTO
                 {
@@ -296,7 +296,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoActualizarContrasenaManejador,
+                    MensajesError.Bitacora.ErrorInesperadoActualizarContrasenaManejador,
                     excepcion);
 
                 return new ResultadoOperacionDTO

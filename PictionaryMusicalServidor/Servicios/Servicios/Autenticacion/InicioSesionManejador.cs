@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!SonCredencialesValidas(credenciales))
             {
-                _logger.Warn(MensajesError.Log.IntentoInicioSesionFormatoInvalido);
+                _logger.Warn(MensajesError.Bitacora.IntentoInicioSesionFormatoInvalido);
                 return CrearRespuestaDatosInvalidos();
             }
 
@@ -77,27 +77,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorBaseDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorBaseDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.OperacionInvalidaInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.OperacionInvalidaInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoInicioSesion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoInicioSesion, excepcion);
                 return CrearErrorGenerico();
             }
         }
@@ -137,14 +137,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorBaseDatosInicioSesion,
+                    MensajesError.Bitacora.ErrorBaseDatosInicioSesion,
                     excepcion);
                 return CrearErrorGenerico();
             }
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    MensajesError.Log.InicioSesionUsuarioNoEncontrado,
+                    MensajesError.Bitacora.InicioSesionUsuarioNoEncontrado,
                     excepcion);
                 return new ResultadoInicioSesionDTO
                 {
@@ -155,7 +155,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!VerificarContrasena(credenciales.Contrasena, usuario.Contrasena))
             {
-                _logger.Warn(MensajesError.Log.InicioSesionContrasenaIncorrecta);
+                _logger.Warn(MensajesError.Bitacora.InicioSesionContrasenaIncorrecta);
 
                 return new ResultadoInicioSesionDTO
                 {

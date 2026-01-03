@@ -59,7 +59,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
         }
 
-        private void ExpulsarDeSalasActivas(string nombreUsuario)
+        private static void ExpulsarDeSalasActivas(string nombreUsuario)
         {
             var salas = SalasManejador.ObtenerListaSalas();
             if (salas == null || salas.Count == 0)
@@ -87,7 +87,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
         }
 
-        private void ExpulsarDeSalaIndividual(
+        private static void ExpulsarDeSalaIndividual(
             SalaDTO sala, 
             string nombreUsuario)
         {

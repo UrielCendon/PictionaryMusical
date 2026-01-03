@@ -207,19 +207,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
             }
         }
 
@@ -234,19 +234,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
             }
         }
 
@@ -260,19 +260,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
             }
         }
 
@@ -287,19 +287,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
             }
         }
 
@@ -313,19 +313,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
             }
         }
 

@@ -69,7 +69,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             AlmacenarSolicitud(generacion.Token, generacion.Solicitud);
 
-            _logger.Info(MensajesError.Log.CodigoVerificacionGenerado);
+            _logger.Info(MensajesError.Bitacora.CodigoVerificacionGenerado);
 
             return new ResultadoSolicitudCodigoDTO
             {
@@ -105,7 +105,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorReenviarCodigoVerificacion,
+                    MensajesError.Bitacora.ErrorReenviarCodigoVerificacion,
                     excepcion);
                 return CrearFalloReenvio(
                     MensajesError.Cliente.ErrorReenviarCodigoVerificacion);
@@ -140,7 +140,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 SolicitudCodigoPendiente solicitudDescartada;
                 _solicitudes.TryRemove(confirmacion.TokenCodigo, out solicitudDescartada);
 
-                _logger.Info(MensajesError.Log.VerificacionConfirmadaExitosamente);
+                _logger.Info(MensajesError.Bitacora.VerificacionConfirmadaExitosamente);
 
                 return new ResultadoRegistroCuentaDTO { RegistroExitoso = true };
             }
@@ -213,7 +213,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
                 if (usuarioRegistrado || correoRegistrado)
                 {
-                    _logger.Warn(MensajesError.Log.RegistroDuplicadoIntentado);
+                    _logger.Warn(MensajesError.Bitacora.RegistroDuplicadoIntentado);
 
                     var resultado = new ResultadoSolicitudCodigoDTO
                     {
@@ -225,7 +225,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                     return (false, resultado);
                 }
             }
-            return (true, null);
+            return (true, new ResultadoSolicitudCodigoDTO());
         }
 
         private (bool Exito, string Token, SolicitudCodigoPendiente Solicitud)
@@ -247,8 +247,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             if (!enviado)
             {
-                _logger.Error(MensajesError.Log.ErrorEnviarCodigoVerificacion);
-                return (false, null, null);
+                _logger.Error(MensajesError.Bitacora.ErrorEnviarCodigoVerificacion);
+                return (false, string.Empty, new SolicitudCodigoPendiente());
             }
 
             var solicitud = new SolicitudCodigoPendiente
@@ -287,7 +287,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             SolicitudCodigoPendiente existente;
             if (!_solicitudes.TryGetValue(token, out existente))
             {
-                _logger.Warn(MensajesError.Log.TokenNoEncontradoExpirado);
+                _logger.Warn(MensajesError.Bitacora.TokenNoEncontradoExpirado);
                 throw new KeyNotFoundException(
                     "La solicitud de verificacion pendiente no existe o ha expirado.");
             }
@@ -320,7 +320,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 existente.Codigo = codigoAnterior;
                 existente.Expira = expiracionAnterior;
 
-                _logger.Error(MensajesError.Log.ErrorReenviarCodigoVerificacion);
+                _logger.Error(MensajesError.Bitacora.ErrorReenviarCodigoVerificacion);
 
                 return CrearFalloReenvio(
                     MensajesError.Cliente.ErrorReenviarCodigoVerificacion);
@@ -372,7 +372,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 return (false, MensajesError.Cliente.CodigoVerificacionIncorrecto);
             }
 
-            return (true, null);
+            return (true, string.Empty);
         }
 
         private static void RegistrarConfirmacion(SolicitudCodigoPendiente pendiente)

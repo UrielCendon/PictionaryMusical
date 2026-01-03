@@ -29,7 +29,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         private readonly INotificadorAmigos _notificador;
         private readonly INotificadorListaAmigos _notificadorListaAmigos;
         private readonly IOperacionAmistadServicio _operacionAmistadServicio;
-        private readonly IAmistadServicio _amistadServicio;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
@@ -57,7 +56,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             IOperacionAmistadServicio operacionAmistadServicio,
             INotificadorListaAmigos notificadorLista)
         {
-            _amistadServicio = amistadServicio ??
+            var validatedAmistadServicio = amistadServicio ??
                 throw new ArgumentNullException(nameof(amistadServicio));
 
             _operacionAmistadServicio = operacionAmistadServicio ??
@@ -69,7 +68,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _manejadorCallback = new ManejadorCallback<IAmigosManejadorCallback>(
                 StringComparer.OrdinalIgnoreCase);
 
-            _notificador = new NotificadorAmigos(_manejadorCallback, _amistadServicio);
+            _notificador = new NotificadorAmigos(_manejadorCallback, validatedAmistadServicio);
         }
 
         /// <summary>

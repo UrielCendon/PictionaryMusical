@@ -101,13 +101,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (!_salas.TryAdd(codigo, sala))
                 {
                     _logger.WarnFormat(
-                        MensajesError.Log.ErrorConcurrenciaCrearSala,
+                        MensajesError.Bitacora.ErrorConcurrenciaCrearSala,
                         codigo);
                     throw new FaultException(MensajesError.Cliente.ErrorCrearSala);
                 }
 
                 _logger.InfoFormat(
-                    MensajesError.Log.SalaCreadaExito,
+                    MensajesError.Bitacora.SalaCreadaExito,
                     codigo);
 
                 _notificador.NotificarListaSalasATodos();
@@ -116,27 +116,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionCrearSala, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionCrearSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutCrearSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCanalCerradoCrearSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCanalCerradoCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoCrearSala, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoCrearSala, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoCrearSala);
             }
         }
@@ -179,7 +179,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                     notificar: true);
 
                 _logger.InfoFormat(
-                    MensajesError.Log.UsuarioUnidoSala,
+                    MensajesError.Bitacora.UsuarioUnidoSala,
                     codigoSala.Trim());
 
                 _notificador.NotificarListaSalasATodos();
@@ -188,32 +188,32 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionUnirse, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionUnirse, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorOperacionUnirse, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorOperacionUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionUnirse, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutUnirse, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCanalCerradoUnirse, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCanalCerradoUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoUnirse, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoUnirse, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoUnirse);
             }
         }
@@ -232,12 +232,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorOperacionInvalidaObtenerSalas, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorOperacionInvalidaObtenerSalas, excepcion);
                 return new List<SalaDTO>();
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoObtenerSalas, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoObtenerSalas, excepcion);
                 return new List<SalaDTO>();
             }
         }
@@ -270,23 +270,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionAbandonar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionAbandonar, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorOperacionAbandonar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorOperacionAbandonar, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorOperacionAbandonar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorOperacionAbandonar, excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorOperacionInvalida);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorInesperadoAbandonar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoAbandonar, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoAbandonar);
             }
         }
@@ -326,22 +326,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorSuscripcionListaSalas, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorSuscripcionListaSalas, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorComunicacionSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorComunicacionSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorTimeoutSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorTimeoutSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorInesperadoSuscripcion, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoSuscripcion);
             }
         }
@@ -359,19 +359,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCancelarSuscripcion, excepcion);
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCancelarSuscripcion, excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCancelarSuscripcion, excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorCancelarSuscripcion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorCancelarSuscripcion, excepcion);
             }
         }
 
@@ -406,13 +406,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 _logger.InfoFormat(
-                    MensajesError.Log.ExpulsandoJugador,
+                    MensajesError.Bitacora.ExpulsandoJugador,
                     codigoSala.Trim());
 
                 sala.ExpulsarJugador(nombreHost.Trim(), nombreJugadorAExpulsar.Trim());
 
                 _logger.InfoFormat(
-                    MensajesError.Log.JugadorExpulsadoExito,
+                    MensajesError.Bitacora.JugadorExpulsadoExito,
                     codigoSala.Trim());
 
                 if (sala.DebeEliminarse)
@@ -425,23 +425,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorValidacionExpulsar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorValidacionExpulsar, excepcion);
                 throw;
             }
             catch (ArgumentException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorOperacionExpulsar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorOperacionExpulsar, excepcion);
                 throw new FaultException(MensajesError.Cliente.DatosInvalidos);
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorOperacionExpulsar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorOperacionExpulsar, excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(MensajesError.Log.ErrorInesperadoExpulsar, excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoExpulsar, excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorInesperadoExpulsar);
             }
         }
@@ -502,7 +502,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
             }
 
-            _logger.Error(MensajesError.Log.ErrorGenerarCodigoSala);
+            _logger.Error(MensajesError.Bitacora.ErrorGenerarCodigoSala);
             throw new FaultException(MensajesError.Cliente.ErrorGenerarCodigo);
         }
     }

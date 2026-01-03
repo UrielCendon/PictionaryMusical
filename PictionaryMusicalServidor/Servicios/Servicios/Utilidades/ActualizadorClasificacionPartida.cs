@@ -88,7 +88,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
             if (!string.IsNullOrWhiteSpace(resultado.Mensaje))
             {
-                _logger.Info(MensajesError.Log.PartidaFinalizadaSinClasificacion);
+                _logger.Info(MensajesError.Bitacora.PartidaFinalizadaSinClasificacion);
                 return false;
             }
 
@@ -106,23 +106,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorObtenerJugadoresClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorObtenerJugadoresClasificacion, excepcion);
                 return new List<JugadorPartida>();
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorObtenerJugadoresClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorObtenerJugadoresClasificacion, excepcion);
                 return new List<JugadorPartida>();
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosObtenerJugadoresClasificacion, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosObtenerJugadoresClasificacion, excepcion);
                 return new List<JugadorPartida>();
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoObtenerJugadoresClasificacion, 
+                    MensajesError.Bitacora.ErrorInesperadoObtenerJugadoresClasificacion, 
                     excepcion);
                 return new List<JugadorPartida>();
             }
@@ -158,20 +158,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizarClasificaciones, excepcion);
             }
             catch (EntityException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorActualizarClasificaciones, excepcion);
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorDatosActualizarClasificaciones, excepcion);
+                _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarClasificaciones, excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    MensajesError.Log.ErrorInesperadoActualizarClasificaciones, 
+                    MensajesError.Bitacora.ErrorInesperadoActualizarClasificaciones, 
                     excepcion);
             }
         }
@@ -196,28 +196,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             catch (DbUpdateException excepcion)
             {
                 _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
+                    MensajesError.Bitacora.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }
             catch (EntityException excepcion)
             {
                 _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
+                    MensajesError.Bitacora.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }
             catch (DataException excepcion)
             {
                 _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
+                    MensajesError.Bitacora.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }
             catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
-                    MensajesError.Log.ErrorActualizarClasificacionJugador, 
+                    MensajesError.Bitacora.ErrorActualizarClasificacionJugador, 
                     jugadorId, 
                     excepcion);
             }

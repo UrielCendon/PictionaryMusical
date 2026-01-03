@@ -259,7 +259,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 _logger.Error(
                     "Error al enviar correo electronico con codigo de recuperacion de cuenta.");
-                return (false, null, null);
+                return (false, string.Empty, new SolicitudRecuperacionPendiente());
             }
 
             return (true, token, pendiente);
@@ -413,17 +413,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 token,
                 out pendiente))
             {
-                return (false, null, MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
+                return (false, new SolicitudRecuperacionPendiente(),
+                    MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
             if (pendiente.Expira < DateTime.UtcNow)
             {
                 SolicitudRecuperacionPendiente solicitudDescartada;
                 _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
-                return (false, null, MensajesError.Cliente.SolicitudRecuperacionInvalida);
+                return (false, new SolicitudRecuperacionPendiente(),
+                    MensajesError.Cliente.SolicitudRecuperacionInvalida);
             }
 
-            return (true, pendiente, null);
+            return (true, pendiente, string.Empty);
         }
 
         private ResultadoOperacionDTO EjecutarCambioContrasena(
