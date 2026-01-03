@@ -1,4 +1,5 @@
 ﻿using log4net;
+using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
@@ -290,11 +291,27 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 "Error de servicio durante la creacion de cuenta: {0}",
                 excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                ? excepcion.Message
-                : Lang.errorTextoRegistrarCuentaMasTarde;
+            string mensaje = ObtenerMensajeErrorCreacion(excepcion);
             MostrarMensaje?.Invoke(mensaje);
             EstaProcesando = false;
+        }
+
+        private string ObtenerMensajeErrorCreacion(Exception excepcion)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return ConectividadRedMonitor.Instancia.HayConexion
+                        ? Lang.errorTextoServidorSinDisponibilidad
+                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                }
+            }
+
+            return !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoRegistrarCuentaMasTarde;
         }
 
         private ResultadoValidacionCuenta ValidarEntradas()

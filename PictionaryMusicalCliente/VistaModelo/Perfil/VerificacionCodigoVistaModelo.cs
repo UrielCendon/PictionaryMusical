@@ -1,4 +1,5 @@
 ﻿using log4net;
+using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
@@ -247,9 +248,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                     excepcion.Message);
                 _sonidoManejador.ReproducirError();
                 MarcarCodigoInvalido?.Invoke(true);
-                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                    ? excepcion.Message
-                    : Lang.errorTextoVerificarCodigo;
+                string mensaje = ObtenerMensajeErrorVerificacion(
+                    excepcion, 
+                    Lang.errorTextoVerificarCodigo);
                 _avisoServicio.Mostrar(mensaje);
                 EstaVerificando = false;
             });
@@ -435,9 +436,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                     "Excepcion de servicio al reenviar codigo: {0}",
                     excepcion.Message);
                 _sonidoManejador.ReproducirError();
-                string mensaje = !string.IsNullOrWhiteSpace(excepcion.Message)
-                    ? excepcion.Message
-                    : Lang.errorTextoSolicitarNuevoCodigo;
+                string mensaje = ObtenerMensajeErrorVerificacion(
+                    excepcion, 
+                    Lang.errorTextoSolicitarNuevoCodigo);
                 _avisoServicio.Mostrar(mensaje);
             });
         }
@@ -571,6 +572,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         {
             _temporizadorReenvio.Stop();
             _temporizadorExpiracion.Stop();
+        }
+
+        private static string ObtenerMensajeErrorVerificacion(
+            Exception excepcion, 
+            string mensajePredeterminado)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return ConectividadRedMonitor.Instancia.HayConexion
+                        ? Lang.errorTextoServidorSinDisponibilidad
+                        : Lang.errorTextoServidorNoDisponibleSinInternet;
+                }
+            }
+
+            return !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : mensajePredeterminado;
         }
     }
 }

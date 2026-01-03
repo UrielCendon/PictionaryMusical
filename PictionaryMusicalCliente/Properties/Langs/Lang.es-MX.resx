@@ -579,7 +579,7 @@ aciertan o cuando se acaba el tiempo.
     <value>No fue posible enviar el código de verificación. Intente más tarde.</value>
   </data>
   <data name="errorTextoProcesarSolicitudVerificacion" xml:space="preserve">
-    <value>No fue posible procesar la solicitud de verificación.</value>
+    <value>No fue posible procesar la solicitud de verificación debido a un problema con el servicio, intenta más tarde.</value>
   </data>
   <data name="avisoTextoCodigoEnviado" xml:space="preserve">
     <value>Se envió un código de verificación a tu correo electrónico.</value>
@@ -594,7 +594,7 @@ aciertan o cuando se acaba el tiempo.
     <value>Los datos de la cuenta no están disponibles.</value>
   </data>
   <data name="errorTextoRegistrarCuentaMasTarde" xml:space="preserve">
-    <value>No se pudo registrar la cuenta. Intente más tarde.</value>
+    <value>No se pudo completar el registro de la cuenta debido a un problema con el servicio. Intente de nuevo más tarde.</value>
   </data>
   <data name="errorTextoCredencialesIncorrectas" xml:space="preserve">
     <value>Credenciales incorrectas.</value>

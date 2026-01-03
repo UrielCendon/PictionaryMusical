@@ -1906,7 +1906,7 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde..
+        ///   Busca una cadena traducida similar a Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente iniciar sesión de nuevo..
         /// </summary>
         public static string errorTextoServidorNoDisponible {
             get {

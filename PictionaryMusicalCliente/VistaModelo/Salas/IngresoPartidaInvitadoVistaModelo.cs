@@ -393,19 +393,25 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             catch (ServicioExcepcion excepcion)
             {
                 _logger.Error("Excepcion de servicio al intentar unirse como invitado.", excepcion);
-                string mensaje;
-                if (string.IsNullOrWhiteSpace(excepcion?.Message))
-                {
-                    mensaje = Lang.errorTextoNoEncuentraPartida;
-                }
-                else
-                {
-                    mensaje = excepcion.Message;
-                }
-
+                string mensaje = ObtenerMensajeErrorUnionInvitado(excepcion);
                 _sonidoManejador.ReproducirError();
                 return ResultadoUnionInvitado.Error(mensaje);
             }
+        }
+
+        private static string ObtenerMensajeErrorUnionInvitado(ServicioExcepcion excepcion)
+        {
+            if (excepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                excepcion.Tipo == TipoErrorServicio.Comunicacion)
+            {
+                return ConectividadRedMonitor.Instancia.HayConexion
+                    ? Lang.errorTextoServidorSinDisponibilidad
+                    : Lang.errorTextoServidorNoDisponibleSinInternet;
+            }
+
+            return !string.IsNullOrWhiteSpace(excepcion.Message)
+                ? excepcion.Message
+                : Lang.errorTextoNoEncuentraPartida;
         }
 
         private static bool SalaLlena(DTOs.SalaDTO sala)
