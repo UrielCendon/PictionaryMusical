@@ -114,8 +114,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         public void NotificarExpulsion(ExpulsionNotificacionParametros parametros)
         {
             _logger.InfoFormat(
-                "Notificando expulsion de '{0}' en sala '{1}' a todos los clientes.",
-                parametros.NombreExpulsado, parametros.CodigoSala);
+                "Notificando expulsion en sala '{0}' a todos los clientes.",
+                parametros.CodigoSala);
 
             var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
             foreach (var callback in todosLosDestinatarios)
@@ -141,8 +141,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
 
             _logger.InfoFormat(
-                "Expulsion de '{0}' notificada a todos los clientes en sala '{1}'.",
-                parametros.NombreExpulsado, parametros.CodigoSala);
+                "Expulsion notificada a todos los clientes en sala '{0}'.",
+                parametros.CodigoSala);
         }
 
         /// <summary>
@@ -163,16 +163,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             lock (_sincronizacion)
             {
                 var resultado = new List<ISalasManejadorCallback>();
-                foreach (var callbackRegistrado in _callbacks)
+                foreach (var parCallbackRegistrado in _callbacks)
                 {
                     bool esUsuarioExcluido = string.Equals(
-                        callbackRegistrado.Key,
+                        parCallbackRegistrado.Key,
                         usuarioExcluido,
                         StringComparison.OrdinalIgnoreCase);
 
                     if (!esUsuarioExcluido)
                     {
-                        resultado.Add(callbackRegistrado.Value);
+                        resultado.Add(parCallbackRegistrado.Value);
                     }
                 }
                 return resultado;

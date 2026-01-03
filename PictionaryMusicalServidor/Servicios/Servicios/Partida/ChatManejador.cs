@@ -239,8 +239,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             string nombreJugador,
             IChatManejadorCallback callback)
         {
-            var clienteExistente = clientesSala.FirstOrDefault(c =>
-                string.Equals(c.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase));
+            var clienteExistente = clientesSala.FirstOrDefault(clienteActual =>
+                string.Equals(clienteActual.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase));
 
             if (clienteExistente != null)
             {
@@ -257,8 +257,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             string nombreJugador)
         {
             return clientesSala
-                .Where(c => !string.Equals(
-                    c.NombreJugador, 
+                .Where(clienteActual => !string.Equals(
+                    clienteActual.NombreJugador, 
                     nombreJugador, 
                     StringComparison.OrdinalIgnoreCase))
                 .ToList();
@@ -286,25 +286,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn("Error de comunicacion con cliente. Removiendo callback.", excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionChat, 
+                    excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al notificar cliente. Removiendo callback.", excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    "Error inesperado al notificar cliente. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
@@ -383,25 +385,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn("Error de comunicacion con cliente. Removiendo callback.", excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionChat, 
+                    excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al notificar cliente. Removiendo callback.", excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    "Error inesperado al notificar cliente. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
@@ -483,25 +487,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn("Error de comunicacion con cliente. Removiendo callback.", excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionChat, 
+                    excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn("Timeout al notificar cliente. Removiendo callback.", excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
-                    "Operacion invalida en canal WCF. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    "Error inesperado al notificar cliente. Removiendo callback.",
+                    MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
                 RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
             }

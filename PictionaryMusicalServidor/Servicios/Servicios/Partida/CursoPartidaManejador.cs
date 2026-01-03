@@ -247,7 +247,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             ControladorPartida controlador)
         {
             var jugadoresEstado = controlador.ObtenerJugadores();
-            var dibujante = jugadoresEstado.FirstOrDefault(j => j.EsDibujante);
+            var dibujante = jugadoresEstado.FirstOrDefault(
+                jugadorActual => jugadorActual.EsDibujante);
             string nombreDibujante = dibujante?.NombreUsuario ?? string.Empty;
 
             List<KeyValuePair<string, ICursoPartidaManejadorCallback>> callbacks;
@@ -287,8 +288,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             string nombreDibujante,
             Datos.Entidades.Cancion cancionActual)
         {
-            var datosJugador = jugadoresEstado.FirstOrDefault(j =>
-                string.Equals(j.IdConexion, idJugador, StringComparison.OrdinalIgnoreCase));
+            var datosJugador = jugadoresEstado.FirstOrDefault(jugadorActual =>
+                string.Equals(
+                    jugadorActual.IdConexion, 
+                    idJugador, 
+                    StringComparison.OrdinalIgnoreCase));
 
             bool esDibujante = datosJugador?.EsDibujante ?? false;
 
@@ -354,9 +358,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error inesperado al notificar jugador {0}: {1}",
-                    idJugador,
+                _logger.Error(
+                    string.Format(
+                        MensajesError.Bitacora.ErrorNotificandoInicioRonda,
+                        idJugador),
                     excepcion);
                 RemoverCallback(idSala, idJugador);
             }
@@ -541,28 +546,36 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             catch (CommunicationException excepcion)
             {
                 _logger.Warn(
-                    string.Format("Error de comunicacion al obtener configuracion de sala {0}.", idSala),
+                    string.Format(
+                        "Error de comunicacion al obtener configuracion de sala {0}.",
+                        idSala),
                     excepcion);
                 return CrearConfiguracionPorDefecto();
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(
-                    string.Format("Timeout al obtener configuracion de sala {0}.", idSala),
+                    string.Format(
+                        "Timeout al obtener configuracion de sala {0}.",
+                        idSala),
                     excepcion);
                 return CrearConfiguracionPorDefecto();
             }
             catch (ObjectDisposedException excepcion)
             {
                 _logger.Warn(
-                    string.Format("Canal cerrado al obtener configuracion de sala {0}.", idSala),
+                    string.Format(
+                        "Canal cerrado al obtener configuracion de sala {0}.",
+                        idSala),
                     excepcion);
                 return CrearConfiguracionPorDefecto();
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    string.Format("Error inesperado al obtener configuracion de sala {0}.", idSala),
+                    string.Format(
+                        "Error inesperado al obtener configuracion de sala {0}.",
+                        idSala),
                     excepcion);
                 return CrearConfiguracionPorDefecto();
             }
