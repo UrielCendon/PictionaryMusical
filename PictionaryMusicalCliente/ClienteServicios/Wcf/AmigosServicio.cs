@@ -25,6 +25,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly IWcfClienteFabrica _fabricaClientes; 
         private readonly ISolicitudesAmistadAdministrador _administradorSolicitudes;
         private readonly IManejadorErrorServicio _manejadorError;
+        private volatile bool _desechado = false;
 
         private PictionaryServidorServicioAmigos.AmigosManejadorClient _cliente;
         private string _usuarioSuscrito;
@@ -221,6 +222,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// </summary>
         public void Dispose()
         {
+            if (_desechado)
+            {
+                return;
+            }
+
+            _desechado = true;
             Dispose(liberando: true);
             GC.SuppressFinalize(this);
         }
@@ -229,10 +236,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.SolicitudAmistadDTO solicitud,
             Func<DTOs.SolicitudAmistadDTO, string, bool> accionActualizacion)
         {
-            if (!EsSolicitudValida(solicitud)) return;
+            if (!EsSolicitudValida(solicitud))
+            {
+                return;
+            }
 
             string usuarioActual = _usuarioSuscrito;
-            if (string.IsNullOrWhiteSpace(usuarioActual)) return;
+            if (string.IsNullOrWhiteSpace(usuarioActual))
+            {
+                return;
+            }
 
             bool modificada = accionActualizacion(solicitud, usuarioActual);
             if (modificada)
@@ -244,6 +257,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private async Task EjecutarOperacionAsync(
             Func<PictionaryServidorServicioAmigos.AmigosManejadorClient, Task> operacion)
         {
+            if (_desechado)
+            {
+                return;
+            }
+
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -277,19 +295,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (FaultException excepcion)
             {
-                await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
+                ManejarErrorOperacion(excepcion, cliente, esTemporal);
             }
             catch (CommunicationException excepcion)
             {
-                await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
+                ManejarErrorOperacion(excepcion, cliente, esTemporal);
             }
             catch (TimeoutException excepcion)
             {
-                await ManejarErrorOperacionAsync(excepcion, cliente, esTemporal);
+                ManejarErrorOperacion(excepcion, cliente, esTemporal);
             }
         }
 
-        private async Task ManejarErrorOperacionAsync(
+        private void ManejarErrorOperacion(
             Exception excepcion,
             ICommunicationObject cliente,
             bool esTemporal)
@@ -385,12 +403,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (excepcion is FaultException fault)
             {
+                _logger.WarnFormat(
+                    "Modulo: AmigosServicio - Falla controlada del servidor.");
                 string mensaje = _manejadorError.ObtenerMensaje(fault, mensajeDefault);
                 throw new ServicioExcepcion(TipoErrorServicio.FallaServicio, mensaje, excepcion);
             }
 
             if (excepcion is TimeoutException)
             {
+                _logger.ErrorFormat(
+                    "Modulo: AmigosServicio - Tiempo de espera agotado. " +
+                    "El servidor no respondio a tiempo.");
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
                     Lang.errorTextoServidorNoDisponible,
@@ -399,12 +422,18 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             if (EsErrorComunicacion(excepcion))
             {
+                _logger.ErrorFormat(
+                    "Modulo: AmigosServicio - Error de comunicacion. " +
+                    "El servidor puede no estar disponible o hay problemas de conectividad.");
                 throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
                     Lang.errorTextoServidorNoDisponible,
                     excepcion);
             }
 
+            _logger.ErrorFormat(
+                "Modulo: AmigosServicio - Error desconocido. Tipo: {0}.",
+                excepcion.GetType().Name);
             throw new ServicioExcepcion(TipoErrorServicio.Desconocido, mensajeDefault, excepcion);
         }
 
@@ -511,6 +540,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
         private async Task EjecutarEnSeccionCriticaAsync(Func<Task> accion)
         {
+            if (_desechado)
+            {
+                return;
+            }
+
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -541,7 +575,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private static void ValidarNombreUsuario(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre))
+            {
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombre));
+            }
         }
 
         private static bool EsSolicitudValida(DTOs.SolicitudAmistadDTO s)

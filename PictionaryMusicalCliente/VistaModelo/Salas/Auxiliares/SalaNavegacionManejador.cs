@@ -91,6 +91,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         private void NavegarAInicioSesion()
         {
             _usuarioSesion.Limpiar();
+            App.ReinicializarServiciosConexion();
 
             var dependenciasBase = new VistaModeloBaseDependencias(
                 _ventana,

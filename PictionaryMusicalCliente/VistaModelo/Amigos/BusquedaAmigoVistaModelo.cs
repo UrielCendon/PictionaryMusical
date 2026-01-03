@@ -212,10 +212,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             string usuarioActual,
             string nombreAmigo)
         {
-            _logger.InfoFormat(
-                "Enviando solicitud de amistad de {0} a {1}",
-                usuarioActual,
-                nombreAmigo);
+            _logger.Info("Enviando solicitud de amistad.");
 
             await _amigosServicio.EnviarSolicitudAsync(
                 usuarioActual,

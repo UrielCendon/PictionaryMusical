@@ -96,8 +96,29 @@ namespace PictionaryMusicalCliente
             MusicaManejador?.Dispose();
             SonidoManejador?.Dispose();
             AmigosServicio?.Dispose();
+            ListaAmigosServicio?.Dispose();
 
             base.OnExit(e);
+        }
+
+        /// <summary>
+        /// Reinicializa los servicios que mantienen conexiones duplex con el servidor.
+        /// Debe llamarse cuando se detecta una desconexion y el usuario regresa al inicio de sesion.
+        /// Esto permite que el cliente pueda volver a conectarse sin reiniciar toda la aplicacion.
+        /// </summary>
+        public static void ReinicializarServiciosConexion()
+        {
+            ListaAmigosServicio?.Dispose();
+            AmigosServicio?.Dispose();
+            SalasServicio?.Dispose();
+
+            ListaAmigosServicio = new ListaAmigosServicio(ManejadorError, WcfFabrica);
+
+            AmigosServicio = new AmigosServicio(
+                new SolicitudesAmistadAdministrador(), ManejadorError, WcfFabrica);
+
+            SalasServicio = new SalasServicio(WcfFabrica, ManejadorError);
+            FabricaSalas = () => new SalasServicio(WcfFabrica, ManejadorError);
         }
 
         private static void InicializarServicios()

@@ -312,10 +312,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
         private void ManejarErrorExpulsion(string nombreJugador, Exception excepcion)
         {
-            _logger.ErrorFormat(
-                "Error al expulsar jugador {0}.",
-                nombreJugador,
-                excepcion);
+            _logger.Error("Error al expulsar jugador de la sala.", excepcion);
             _dependencias.SonidoManejador.ReproducirError();
             _dependencias.AvisoServicio.Mostrar(
                 excepcion.Message ?? Lang.errorTextoExpulsarJugador);
@@ -397,10 +394,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
         private void ManejarErrorReporte(string nombreJugador, Exception excepcion)
         {
-            _logger.ErrorFormat(
-                "Error al reportar jugador {0}.",
-                nombreJugador,
-                excepcion);
+            _logger.Error("Error al reportar jugador.", excepcion);
             _dependencias.SonidoManejador.ReproducirError();
             string mensajeLocalizado = _dependencias.LocalizadorServicio.Localizar(
                 excepcion.Message,

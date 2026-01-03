@@ -31,6 +31,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
         {
             ValidarParametrosEntrada(cliente, operacion);
 
+            string nombreCliente = typeof(TClient).Name;
+            
             try
             {
                 TResult resultado = await operacion(cliente).ConfigureAwait(false);
@@ -39,6 +41,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             }
             catch (ObjectDisposedException)
             {
+                _logger.ErrorFormat(
+                    "Modulo: {0} - Canal WCF desechado prematuramente. " +
+                    "Posible perdida de conexion con el servidor.",
+                    nombreCliente);
                 ForzarAbortoCliente(cliente);
                 throw;
             }
@@ -49,11 +55,19 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
             }
             catch (CommunicationException)
             {
+                _logger.ErrorFormat(
+                    "Modulo: {0} - Error de comunicacion WCF detectado. " +
+                    "El servidor puede no estar disponible o hubo perdida de conexion de red.",
+                    nombreCliente);
                 ForzarAbortoCliente(cliente);
                 throw;
             }
             catch (TimeoutException)
             {
+                _logger.ErrorFormat(
+                    "Modulo: {0} - Tiempo de espera agotado en operacion WCF. " +
+                    "El servidor no respondio a tiempo o hay problemas de conectividad.",
+                    nombreCliente);
                 ForzarAbortoCliente(cliente);
                 throw;
             }

@@ -419,8 +419,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void FinalizarRegistroExitoso(string usuario)
         {
-            _logger.InfoFormat("Cuenta creada exitosamente para usuario: {0}",
-                usuario);
+            _logger.Info("Cuenta creada exitosamente.");
             _sonidoManejador.ReproducirNotificacion();
             MostrarMensaje?.Invoke(Lang.crearCuentaTextoExitosoMensaje);
             RegistroExitoso = true;

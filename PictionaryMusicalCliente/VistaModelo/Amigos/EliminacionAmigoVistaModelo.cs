@@ -86,9 +86,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
 
         private void RegistrarConfirmacion()
         {
-            _logger.InfoFormat(
-                "Usuario eliminó al amigo: {0}",
-                _nombreAmigo);
+            _logger.Info("Usuario confirmo eliminacion de amigo.");
         }
 
         private void ConfirmarYCerrar()

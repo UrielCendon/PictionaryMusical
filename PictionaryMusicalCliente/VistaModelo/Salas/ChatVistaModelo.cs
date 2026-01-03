@@ -179,9 +179,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private static void RegistrarEnvioIntentoFallido(string mensaje)
         {
-            _logger.WarnFormat(
-                "Enviando mensaje de chat (intento fallido): {0}",
-                mensaje);
+            _logger.Warn("Enviando mensaje de chat (intento fallido previo).");
         }
 
         private void MarcarAciertoRegistrado()

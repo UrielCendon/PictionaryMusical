@@ -71,7 +71,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (FaultException excepcion)
             {
-                _logger.Warn("Error de logica servidor en inicio de sesion.", excepcion);
+                _logger.Warn("Modulo: InicioSesionServicio - Falla controlada del servidor.", 
+                    excepcion);
                 string mensaje = _manejadorError.ObtenerMensaje(
                     excepcion,
                     Lang.errorTextoServidorInicioSesion);
@@ -79,7 +80,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("Error WCF en inicio de sesion.", excepcion);
+                _logger.Error(
+                    "Modulo: InicioSesionServicio - Error de comunicacion WCF. " +
+                    "El servidor puede no estar disponible o hay problemas de conectividad.", 
+                    excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
                     Lang.errorTextoServidorNoDisponible,
@@ -87,7 +91,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Error("Timeout en inicio de sesion.", excepcion);
+                _logger.Error(
+                    "Modulo: InicioSesionServicio - Tiempo de espera agotado. " +
+                    "El servidor no respondio a tiempo.", 
+                    excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.TiempoAgotado,
                     Lang.errorTextoServidorNoDisponible,
@@ -95,7 +102,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error("Operacion invalida en inicio de sesion.", excepcion);
+                _logger.Error(
+                    "Modulo: InicioSesionServicio - Operacion invalida.", 
+                    excepcion);
                 throw new ServicioExcepcion(
                     TipoErrorServicio.OperacionInvalida,
                     Lang.errorTextoErrorProcesarSolicitud,

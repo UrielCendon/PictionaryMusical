@@ -93,7 +93,10 @@ namespace PictionaryMusicalCliente.Utilidades
 
         private static void LimpiarReproductor(MediaPlayer reproductor)
         {
-            if (reproductor == null) return;
+            if (reproductor == null)
+            {
+                return;
+            }
 
             try
             {
@@ -102,7 +105,9 @@ namespace PictionaryMusicalCliente.Utilidades
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn("El reproductor no estaba en un estado valido para cerrarse.", excepcion);
+                _logger.Warn(
+                    "El reproductor no estaba en un estado valido para cerrarse.",
+                    excepcion);
             }
         }
 

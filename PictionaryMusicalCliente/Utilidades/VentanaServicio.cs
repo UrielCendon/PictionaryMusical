@@ -76,7 +76,10 @@ namespace PictionaryMusicalCliente.Utilidades
                 .Where(v => v.IsVisible && !(v is Vista.InicioSesion))
                 .ToList();
 
-            if (ventanasAbiertas == null) return;
+            if (ventanasAbiertas == null)
+            {
+                return;
+            }
 
             foreach (var ventana in ventanasAbiertas)
             {

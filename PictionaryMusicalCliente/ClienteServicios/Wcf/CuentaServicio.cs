@@ -100,8 +100,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (!resultado?.RegistroExitoso == true)
             {
-                _logger.WarnFormat("Registro fallido para: {0}. Razon: {1}",
-                    correo, resultado?.Mensaje);
+                _logger.WarnFormat(
+                    "Modulo: CuentaServicio - Registro de cuenta fallido. Razon: {0}",
+                    resultado?.Mensaje);
             }
         }
     }
