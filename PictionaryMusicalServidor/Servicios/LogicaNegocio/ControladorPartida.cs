@@ -188,15 +188,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <param name="id">Identificador de conexion del jugador.</param>
         public void RemoverJugador(string id)
         {
-            _logger.InfoFormat("Iniciando remocion de jugador con ID: {0}", id);
             string nombreUsuarioRemovido;
             var resultado = ProcesarRemocionJugador(id, out nombreUsuarioRemovido);
-            _logger.InfoFormat(
-                "Resultado remocion jugador {0}: DebeCancelar={1}, DebeAvanzar={2}, DebeAvanzarDirecto={3}",
-                id,
-                resultado.DebeCancelar,
-                resultado.DebeAvanzar,
-                resultado.DebeAvanzarDirecto);
             EjecutarAccionPostRemocion(resultado);
 
             if (!string.IsNullOrWhiteSpace(nombreUsuarioRemovido))
@@ -219,20 +212,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
                 if (!_gestorJugadores.Remover(id, out eraDibujante, out nombreUsuario))
                 {
-                    _logger.WarnFormat(
-                        "No se pudo remover jugador {0}: no existe en la lista de jugadores",
-                        id);
                     return ResultadoRemocionJugador.SinAccion();
                 }
 
                 nombreUsuarioRemovido = nombreUsuario;
 
-                _logger.InfoFormat(
-                    "Jugador {0} ({1}) removido exitosamente. EraAnfitrion={2}, EraDibujante={3}",
-                    id,
-                    nombreUsuario,
-                    eraAnfitrion,
-                    eraDibujante);
+                _logger.Info("Jugador removido de la partida.");
 
                 return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
             }
@@ -594,17 +579,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 if (_estadoActual == EstadoPartida.Finalizada)
                 {
-                    _logger.WarnFormat(
-                        "CancelarPartida ignorada - partida ya en estado Finalizada. " +
-                        "MensajeSolicitado: '{0}', RondaActual: {1}/{2}",
-                        mensajeCancelacion, _rondaActual, _totalRondas);
                     return;
                 }
 
                 _logger.WarnFormat(
-                    "Partida cancelada. Motivo: '{0}', RondaActual: {1}/{2}, " +
-                    "EstadoPrevio: {3}",
-                    mensajeCancelacion, _rondaActual, _totalRondas, _estadoActual);
+                    "Partida cancelada. Motivo: '{0}'.",
+                    mensajeCancelacion);
 
                 _estadoActual = EstadoPartida.Finalizada;
                 _gestorTiempos.DetenerTodo();

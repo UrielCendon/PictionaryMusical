@@ -1097,6 +1097,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             dispatcher.BeginInvoke(new Action(() =>
             {
+                _enTransicionRonda = true;
+                NotificarCambio(nameof(PuedeDibujar));
+
                 _temporizadores.DetenerTemporizador();
                 _temporizadores.DetenerOverlay();
                 LimpiarTrazos?.Invoke();

@@ -83,17 +83,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         }
 
         /// <summary>
-        /// Actualiza la lista de jugadores.
+        /// Actualiza la lista de jugadores preservando los puntajes existentes.
         /// </summary>
         /// <param name="jugadores">Lista de nombres de jugadores.</param>
         public void ActualizarJugadores(IEnumerable<string> jugadores)
         {
-            _jugadores.Clear();
-
             if (jugadores == null)
             {
+                _jugadores.Clear();
                 return;
             }
+
+            var puntajesExistentes = _jugadores.ToDictionary(
+                j => j.Nombre,
+                j => j.Puntos,
+                ComparadorJugadores);
+
+            _jugadores.Clear();
 
             var jugadoresUnicos = new HashSet<string>(ComparadorJugadores);
 
@@ -109,7 +115,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                     continue;
                 }
 
-                AgregarJugador(jugador);
+                int puntosPreservados = 0;
+                puntajesExistentes.TryGetValue(jugador, out puntosPreservados);
+
+                AgregarJugadorConPuntos(jugador, puntosPreservados);
 
                 if (jugadoresUnicos.Count >= MaximoJugadoresSala)
                 {
@@ -128,6 +137,16 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// <param name="nombreJugador">Nombre del jugador.</param>
         public void AgregarJugador(string nombreJugador)
         {
+            AgregarJugadorConPuntos(nombreJugador, 0);
+        }
+
+        /// <summary>
+        /// Agrega un jugador a la sala con puntos iniciales.
+        /// </summary>
+        /// <param name="nombreJugador">Nombre del jugador.</param>
+        /// <param name="puntos">Puntos iniciales del jugador.</param>
+        private void AgregarJugadorConPuntos(string nombreJugador, int puntos)
+        {
             var jugadorElemento = new JugadorElemento
             {
                 Nombre = nombreJugador,
@@ -137,7 +156,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 MostrarBotonReportar = PuedeReportarJugador(nombreJugador),
                 ReportarComando = new ComandoAsincrono(async _ =>
                     await EjecutarReportarJugadorAsync(nombreJugador)),
-                Puntos = 0
+                Puntos = puntos
             };
 
             _jugadores.Add(jugadorElemento);

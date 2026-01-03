@@ -599,10 +599,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             try
             {
-                _logger.WarnFormat(
-                    "Desconexion detectada del jugador en sala '{0}'. Removiendo de la sala.",
-                    codigoSala);
-
                 SalaInternaManejador sala;
                 if (!_salas.TryGetValue(codigoSala, out sala))
                 {
@@ -622,7 +618,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             catch (Exception excepcion)
             {
                 _logger.Warn(
-                    "Error al manejar desconexion de jugador en sala.",
+                    string.Format(
+                        "Error al remover jugador de sala '{0}'.",
+                        codigoSala),
                     excepcion);
             }
         }

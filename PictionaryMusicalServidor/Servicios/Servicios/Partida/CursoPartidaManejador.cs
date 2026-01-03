@@ -31,17 +31,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         {
             try
             {
-                _logger.InfoFormat(
-                    "Notificando desconexión del jugador en sala '{idSala}' a SalasManejador.", 
-                    idSala);
                 _salasManejador.NotificarDesconexionJugador(idSala, nombreUsuario);
             }
-            catch (Exception ex)
+            catch (Exception excepcion)
             {
-                _logger.ErrorFormat(
-                    "Error al notificar la desconexión del jugador en sala '{idSala}' a SalasManejador.", 
-                    idSala, 
-                    ex);
+                _logger.Error(
+                    string.Format(
+                        "Error al notificar desconexion de jugador en sala '{0}'.",
+                        idSala),
+                    excepcion);
             }
         }
         private const int TiempoRondaPorDefectoSegundos = 90;
