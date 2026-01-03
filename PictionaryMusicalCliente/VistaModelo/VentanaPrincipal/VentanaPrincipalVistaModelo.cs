@@ -445,7 +445,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             ReiniciarAplicacion();
             
             string mensaje = ConectividadRedMonitor.Instancia.HayConexion
-                ? Lang.errorTextoServidorNoDisponible
+                ? Lang.errorTextoSesionExpiradaGenerico
                 : Lang.errorTextoPerdidaConexionInternet;
             _ventana.MostrarError(mensaje);
         }

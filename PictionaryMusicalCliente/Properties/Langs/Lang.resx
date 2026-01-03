@@ -673,7 +673,7 @@
     <value>El servidor reportó un error al iniciar sesión.</value>
   </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
-    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente de nuevo más tarde.</value>
+    <value>No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta más tarde.</value>
   </data>
   <data name="errorTextoServidorObtenerPerfil" xml:space="preserve">
     <value>No pudimos cargar tu perfil. Intenta más tarde.</value>
@@ -1176,6 +1176,9 @@
   <data name="errorTextoErrorComunicacionGeneral" xml:space="preserve">
     <value>Ocurrió un error de comunicación. Verifica tu conexión e intenta de nuevo.</value>
   </data>
+  <data name="errorTextoSesionExpirada" xml:space="preserve">
+    <value>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</value>
+  </data>
   <data name="errorTextoTrazoDemasiadoGrande" xml:space="preserve">
     <value>El trazo es demasiado grande. Intenta con uno más pequeño y corto.</value>
   </data>
@@ -1208,5 +1211,20 @@
   </data>
   <data name="errorTextoRechazarSolicitudServicio" xml:space="preserve">
     <value>No se pudo rechazar la solicitud de amistad en este momento debido a un problema con el servicio.</value>
+  </data>
+  <data name="errorTextoServidorNoDisponibleSinInternet" xml:space="preserve">
+    <value>Hubo un problema de comunicación con el servidor, verifique su conexión a internet e intente de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoServidorSinDisponibilidad" xml:space="preserve">
+    <value>Hubo un problema con la disponibilidad del servidor, intente de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoSesionExpiradaGenerico" xml:space="preserve">
+    <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Se redirigió a la ventana de inicio de sesión.</value>
+  </data>
+  <data name="errorTextoInvitadoServidorCaido" xml:space="preserve">
+    <value>Hubo un problema con el servidor, este dejó de estar disponible o hubo mucho tiempo de inactividad. Se le redirigió a la ventana de inicio de sesión.</value>
+  </data>
+  <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
+    <value>No se pudo establecer conexión con el servidor, verifica tu conexión a internet. Se redirigió a la ventana de inicio de sesión.</value>
   </data>
 </root>
