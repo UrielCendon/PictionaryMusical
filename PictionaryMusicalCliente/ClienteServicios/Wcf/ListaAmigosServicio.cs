@@ -116,7 +116,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -156,7 +156,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -254,7 +254,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -287,6 +287,23 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             return _cliente != null &&
                    string.Equals(_usuarioSuscrito, usuario, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void LiberarSemaforoSeguro()
+        {
+            if (_desechado)
+            {
+                return;
+            }
+
+            try
+            {
+                _semaforo.Release();
+            }
+            catch (ObjectDisposedException)
+            {
+                // El semáforo ya fue disposed, ignorar
+            }
         }
 
         private async Task CancelarSuscripcionInternaAsync()

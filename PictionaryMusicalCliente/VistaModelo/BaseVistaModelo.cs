@@ -170,6 +170,10 @@ namespace PictionaryMusicalCliente.VistaModelo
             {
                 ManejarErrorServicioConDesconexion(excepcion, redirigirEnDesconexion);
             }
+            catch (ObjectDisposedException excepcion)
+            {
+                _logger.Debug("Recurso ya liberado durante la operacion.", excepcion);
+            }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Error("Operacion invalida.", excepcion);

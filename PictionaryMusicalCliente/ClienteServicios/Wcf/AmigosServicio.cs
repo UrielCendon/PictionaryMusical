@@ -276,7 +276,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
-                _semaforo.Release();
+                LiberarSemaforoSeguro();
             }
         }
 
@@ -592,7 +592,24 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             finally
             {
+                LiberarSemaforoSeguro();
+            }
+        }
+
+        private void LiberarSemaforoSeguro()
+        {
+            if (_desechado)
+            {
+                return;
+            }
+
+            try
+            {
                 _semaforo.Release();
+            }
+            catch (ObjectDisposedException)
+            {
+                // El semáforo ya fue disposed, ignorar
             }
         }
 
