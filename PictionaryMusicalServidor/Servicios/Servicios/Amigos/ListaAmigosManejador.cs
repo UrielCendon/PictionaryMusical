@@ -148,8 +148,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "Ocurrio un error desconocido al suscribir al usuario " +
-                        "'{0}' a la lista de amigos.",
+                        "Ocurrio un error desconocido al suscribir al usuario '{0}' " +
+                        "a la lista de amigos.",
                         nombreUsuario),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorSuscripcionAmigos);

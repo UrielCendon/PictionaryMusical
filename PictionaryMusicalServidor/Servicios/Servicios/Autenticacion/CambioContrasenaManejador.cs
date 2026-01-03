@@ -58,8 +58,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 var resultado = _recuperacionServicio.SolicitarCodigoRecuperacion(solicitud);
                 if (!resultado.CodigoEnviado)
                 {
-                    _logger.WarnFormat("Solicitud de recuperacion fallida para '{0}': {1}",
-                        solicitud.Identificador, 
+                    _logger.WarnFormat(
+                        "Solicitud de recuperacion fallida para identificador '{0}': {1}",
+                        solicitud.Identificador,
                         resultado.Mensaje);
                 }
                 return resultado;
@@ -118,7 +119,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 if (!resultado.CodigoEnviado)
                 {
                     _logger.WarnFormat(
-                        "Solicitud de reenvio de codigo fallida para el token. Mensaje: {0}",
+                        "Solicitud de reenvio de codigo fallida. Mensaje: {0}",
                         resultado.Mensaje);
                 }
                 return resultado;
@@ -236,7 +237,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 var resultado = _recuperacionServicio.ActualizarContrasena(solicitud);
                 if (!resultado.OperacionExitosa)
                 {
-                    _logger.Warn("No se pudo actualizar la contrasena mediante recuperacion.");
+                    _logger.Warn(
+                        "No se pudo actualizar la contrasena mediante proceso de recuperacion.");
                 }
                 return resultado;
             }
@@ -293,7 +295,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Log.ErrorInesperadoActualizarContrasenaManejador, excepcion);
+                _logger.Error(
+                    MensajesError.Log.ErrorInesperadoActualizarContrasenaManejador,
+                    excepcion);
 
                 return new ResultadoOperacionDTO
                 {

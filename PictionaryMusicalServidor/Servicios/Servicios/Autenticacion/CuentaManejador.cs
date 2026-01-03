@@ -261,7 +261,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 transaccion.Commit();
 
                 _logger.InfoFormat(
-                    "Cuenta creada exitosamente con usuario id {0} y jugador id {1}.",
+                    "Cuenta creada exitosamente. Usuario identificador: {0}, Jugador identificador: {1}.",
                     usuarioCreado.idUsuario,
                     jugador.idJugador);
             }

@@ -96,7 +96,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    "No se encontro la solicitud de verificacion para reenviar el codigo.",
+                    "No se encontro la solicitud de verificacion pendiente para " +
+                    "reenviar el codigo.",
                     excepcion);
                 return CrearFalloReenvio(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
@@ -146,7 +147,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(
-                    "No se encontro la solicitud de verificacion al confirmar codigo.",
+                    "No se encontro la solicitud de verificacion pendiente al confirmar codigo.",
                     excepcion);
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.SolicitudVerificacionNoEncontrada);
@@ -154,7 +155,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al confirmar codigo de verificacion.",
+                    "Error inesperado al confirmar codigo de verificacion para registro.",
                     excepcion);
                 return CrearFalloConfirmacion(
                     MensajesError.Cliente.ErrorConfirmarCodigo);
@@ -287,7 +288,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             if (!_solicitudes.TryGetValue(token, out existente))
             {
                 _logger.Warn(MensajesError.Log.TokenNoEncontradoExpirado);
-                throw new KeyNotFoundException("La solicitud de verificacion no existe.");
+                throw new KeyNotFoundException(
+                    "La solicitud de verificacion pendiente no existe o ha expirado.");
             }
             return existente;
         }

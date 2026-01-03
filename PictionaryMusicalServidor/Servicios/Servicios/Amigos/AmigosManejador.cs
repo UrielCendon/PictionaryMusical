@@ -116,8 +116,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "Ocurrio un error desconocido al suscribir al usuario " +
-                        "'{0}' a notificaciones de amistad.",
+                        "Ocurrio un error desconocido al suscribir al usuario '{0}' " +
+                        "a notificaciones de amistad.",
                         nombreUsuario),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorRecuperarSolicitudes);
@@ -172,8 +172,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Warn(
                     string.Format(
-                        "El usuario emisor '{0}' o receptor '{1}' " +
-                        "no existe en la base de datos.",
+                        "El usuario emisor '{0}' o receptor '{1}' no existe en la base de datos.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -183,8 +182,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Warn(
                     string.Format(
-                        "No se encontro al usuario receptor '{0}' " +
-                        "al enviar solicitud desde '{1}'.",
+                        "No se encontro al usuario receptor '{0}' al enviar solicitud desde '{1}'.",
                         nombreUsuarioReceptor,
                         nombreUsuarioEmisor),
                     excepcion);
@@ -194,8 +192,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Warn(
                     string.Format(
-                        "La validacion fallo al enviar solicitud de amistad " +
-                        "de '{0}' a '{1}'.",
+                        "La validacion fallo al enviar solicitud de amistad de '{0}' a '{1}'.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -206,8 +203,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 _logger.Warn(
                     string.Format(
                         "No se puede crear la solicitud de '{0}' a '{1}': " +
-                        "ya existe una relacion o se intento enviar " +
-                        "solicitud a si mismo.",
+                        "ya existe una relacion o se intento enviar solicitud a si mismo.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -229,8 +225,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "No se pudo guardar la solicitud de amistad de '{0}' " +
-                        "hacia '{1}' debido a un conflicto en la base de datos.",
+                        "No se pudo guardar la solicitud de amistad de '{0}' hacia '{1}' " +
+                        "debido a un conflicto en la base de datos.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -300,8 +296,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 _logger.Warn(
                     string.Format(
                         "No se puede aceptar la solicitud de '{0}' por '{1}': " +
-                        "la solicitud no existe, ya fue aceptada " +
-                        "o el receptor no corresponde.",
+                        "la solicitud no existe, ya fue aceptada o el receptor no corresponde.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -323,9 +318,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "No se pudo actualizar la solicitud de amistad de '{0}' " +
-                        "aceptada por '{1}' debido a un conflicto " +
-                        "en la base de datos.",
+                        "No se pudo actualizar la solicitud de amistad de '{0}' aceptada por '{1}' " +
+                        "debido a un conflicto en la base de datos.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -357,8 +351,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "Ocurrio un error inesperado al aceptar la solicitud " +
-                        "de '{0}' por '{1}'.",
+                        "Ocurrio un error inesperado al aceptar la solicitud de '{0}' por '{1}'.",
                         nombreUsuarioEmisor,
                         nombreUsuarioReceptor),
                     excepcion);
@@ -370,19 +363,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// Elimina la relacion de amistad entre dos usuarios.
         /// Elimina la amistad, notifica a ambos usuarios y actualiza sus listas de amigos.
         /// </summary>
-        /// <param name="nombrePrimerUsuario">Nombre del primer usuario.</param>
-        /// <param name="nombreSegundoUsuario">Nombre del segundo usuario.</param>
-        public void EliminarAmigo(string nombrePrimerUsuario, string nombreSegundoUsuario)
+        /// <param name="nombreUsuarioA">Nombre del primer usuario.</param>
+        /// <param name="nombreUsuarioB">Nombre del segundo usuario.</param>
+        public void EliminarAmigo(string nombreUsuarioA, string nombreUsuarioB)
         {
             try
             {
                 EntradaComunValidador.ValidarUsuariosInteraccion(
-                    nombrePrimerUsuario, 
-                    nombreSegundoUsuario);
+                    nombreUsuarioA, 
+                    nombreUsuarioB);
 
                 var resultado = _operacionAmistadServicio.EjecutarEliminacion(
-                    nombrePrimerUsuario,
-                    nombreSegundoUsuario);
+                    nombreUsuarioA,
+                    nombreUsuarioB);
 
                 EjecutarNotificacionesEliminacion(resultado);
             }
@@ -391,10 +384,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 _logger.Warn(
                     string.Format(
                         "No se puede eliminar la amistad entre '{0}' y '{1}': " +
-                        "la relacion no existe o se intento eliminar " +
-                        "con el mismo usuario.",
-                        nombrePrimerUsuario,
-                        nombreSegundoUsuario),
+                        "la relacion no existe o se intento eliminar con el mismo usuario.",
+                        nombreUsuarioA,
+                        nombreUsuarioB),
                     excepcion);
                 throw new FaultException(
                     excepcion.Message ?? MensajesError.Cliente.RelacionAmistadNoExiste);
@@ -405,8 +397,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     string.Format(
                         "No se pudo eliminar la amistad entre '{0}' y '{1}' " +
                         "debido a un conflicto en la base de datos.",
-                        nombrePrimerUsuario,
-                        nombreSegundoUsuario),
+                        nombreUsuarioA,
+                        nombreUsuarioB),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -416,8 +408,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     string.Format(
                         "La conexion a la base de datos fallo al eliminar " +
                         "la amistad entre '{0}' y '{1}'.",
-                        nombrePrimerUsuario,
-                        nombreSegundoUsuario),
+                        nombreUsuarioA,
+                        nombreUsuarioB),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -427,8 +419,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     string.Format(
                         "Los datos de la amistad entre '{0}' y '{1}' " +
                         "son invalidos o estan corruptos.",
-                        nombrePrimerUsuario,
-                        nombreSegundoUsuario),
+                        nombreUsuarioA,
+                        nombreUsuarioB),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
@@ -436,10 +428,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             {
                 _logger.Error(
                     string.Format(
-                        "Ocurrio un error inesperado al eliminar la amistad " +
-                        "entre '{0}' y '{1}'.",
-                        nombrePrimerUsuario,
-                        nombreSegundoUsuario),
+                        "Ocurrio un error inesperado al eliminar la amistad entre '{0}' y '{1}'.",
+                        nombreUsuarioA,
+                        nombreUsuarioB),
                     excepcion);
                 throw new FaultException(MensajesError.Cliente.ErrorEliminarAmistad);
             }
