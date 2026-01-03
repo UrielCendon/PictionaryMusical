@@ -584,6 +584,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             canal.Faulted += manejadorFaulted;
         }
 
+        /// <summary>
+        /// Notifica que un jugador se desconecto durante la partida y debe ser removido de la sala.
+        /// Este metodo es llamado desde CursoPartidaManejador cuando detecta una desconexion.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
+        public void NotificarDesconexionJugador(string codigoSala, string nombreUsuario)
+        {
+            ManejarDesconexionJugador(codigoSala, nombreUsuario);
+        }
+
         private void ManejarDesconexionJugador(string codigoSala, string nombreUsuario)
         {
             try

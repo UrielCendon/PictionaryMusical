@@ -130,6 +130,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public event Action LimpiarLienzo;
 
         /// <summary>
+        /// Evento que notifica cuando un jugador ha sido desconectado de la partida.
+        /// El parametro es el nombre de usuario del jugador desconectado.
+        /// </summary>
+        public event Action<string> JugadorDesconectado;
+
+        /// <summary>
         /// Indica si la partida ya llego a su estado finalizado.
         /// </summary>
         public bool EstaFinalizada
@@ -183,7 +189,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         public void RemoverJugador(string id)
         {
             _logger.InfoFormat("Iniciando remocion de jugador con ID: {0}", id);
-            var resultado = ProcesarRemocionJugador(id);
+            string nombreUsuarioRemovido;
+            var resultado = ProcesarRemocionJugador(id, out nombreUsuarioRemovido);
             _logger.InfoFormat(
                 "Resultado remocion jugador {0}: DebeCancelar={1}, DebeAvanzar={2}, DebeAvanzarDirecto={3}",
                 id,
@@ -191,16 +198,26 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 resultado.DebeAvanzar,
                 resultado.DebeAvanzarDirecto);
             EjecutarAccionPostRemocion(resultado);
+
+            if (!string.IsNullOrWhiteSpace(nombreUsuarioRemovido))
+            {
+                JugadorDesconectado?.Invoke(nombreUsuarioRemovido);
+            }
         }
 
-        private ResultadoRemocionJugador ProcesarRemocionJugador(string id)
+        private ResultadoRemocionJugador ProcesarRemocionJugador(
+            string id, 
+            out string nombreUsuarioRemovido)
         {
+            nombreUsuarioRemovido = null;
+
             lock (_sincronizacion)
             {
                 bool eraAnfitrion = _gestorJugadores.EsHost(id);
                 bool eraDibujante;
+                string nombreUsuario;
 
-                if (!_gestorJugadores.Remover(id, out eraDibujante))
+                if (!_gestorJugadores.Remover(id, out eraDibujante, out nombreUsuario))
                 {
                     _logger.WarnFormat(
                         "No se pudo remover jugador {0}: no existe en la lista de jugadores",
@@ -208,9 +225,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return ResultadoRemocionJugador.SinAccion();
                 }
 
+                nombreUsuarioRemovido = nombreUsuario;
+
                 _logger.InfoFormat(
-                    "Jugador {0} removido exitosamente. EraAnfitrion={1}, EraDibujante={2}",
+                    "Jugador {0} ({1}) removido exitosamente. EraAnfitrion={2}, EraDibujante={3}",
                     id,
+                    nombreUsuario,
                     eraAnfitrion,
                     eraDibujante);
 

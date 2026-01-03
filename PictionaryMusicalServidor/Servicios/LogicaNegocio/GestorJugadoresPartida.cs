@@ -80,11 +80,28 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <returns>True si el jugador fue eliminado correctamente, False si no existia.</returns>
         public bool Remover(string idConexion, out bool eraDibujante)
         {
+            string nombreUsuario;
+            return Remover(idConexion, out eraDibujante, out nombreUsuario);
+        }
+
+        /// <summary>
+        /// Elimina a un jugador de la partida y reorganiza la cola de turnos si es necesario.
+        /// </summary>
+        /// <param name="idConexion">Identificador del jugador a eliminar.</param>
+        /// <param name="eraDibujante">Parametro de salida que indica si el jugador eliminado 
+        /// tenia el turno de dibujo activo.</param>
+        /// <param name="nombreUsuario">Parametro de salida con el nombre del usuario removido.
+        /// </param>
+        /// <returns>True si el jugador fue eliminado correctamente, False si no existia.</returns>
+        public bool Remover(string idConexion, out bool eraDibujante, out string nombreUsuario)
+        {
             eraDibujante = false;
+            nombreUsuario = null;
             JugadorPartida jugador;
             if (_jugadores.TryGetValue(idConexion, out jugador))
             {
                 eraDibujante = jugador.EsDibujante;
+                nombreUsuario = jugador.NombreUsuario;
                 _jugadores.Remove(idConexion);
                 ReconstruirColaDibujantes(idConexion);
                 return true;

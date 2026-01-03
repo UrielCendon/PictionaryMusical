@@ -22,6 +22,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class CursoPartidaManejador : ICursoPartidaManejador
     {
+        /// <summary>
+        /// Maneja la desconexión de un jugador notificando a SalasManejador.
+        /// </summary>
+        /// <param name="idSala">Identificador de la sala.</param>
+        /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
+        private void ManejarJugadorDesconectado(string idSala, string nombreUsuario)
+        {
+            try
+            {
+                _logger.InfoFormat(
+                    "Notificando desconexión del jugador en sala '{idSala}' a SalasManejador.", 
+                    idSala);
+                _salasManejador.NotificarDesconexionJugador(idSala, nombreUsuario);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(
+                    "Error al notificar la desconexión del jugador en sala '{idSala}' a SalasManejador.", 
+                    idSala, 
+                    ex);
+            }
+        }
         private const int TiempoRondaPorDefectoSegundos = 90;
         private const int NumeroRondasPorDefecto = 3;
         private const string DificultadPorDefecto = "Media";
@@ -234,6 +256,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             controlador.LimpiarLienzo += delegate()
             {
                 ManejarLimpiarLienzo(idSala);
+            };
+
+            controlador.JugadorDesconectado += delegate(string nombreUsuario)
+            {
+                ManejarJugadorDesconectado(idSala, nombreUsuario);
             };
         }
 

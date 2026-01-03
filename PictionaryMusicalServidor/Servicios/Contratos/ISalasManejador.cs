@@ -90,5 +90,14 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// <param name="codigoSala">Codigo identificador de la sala.</param>
         [OperationContract]
         void MarcarPartidaComoFinalizada(string codigoSala);
+
+        /// <summary>
+        /// Notifica que un jugador se desconecto durante la partida y debe ser removido de la 
+        /// sala.
+        /// Este metodo es para uso interno del servidor, no debe ser llamado por clientes.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
+        void NotificarDesconexionJugador(string codigoSala, string nombreUsuario);
     }
 }
