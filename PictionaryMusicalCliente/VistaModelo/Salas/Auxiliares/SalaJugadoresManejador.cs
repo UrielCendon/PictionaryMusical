@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.ClienteServicios;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
@@ -262,10 +263,22 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 return false;
             }
 
-            return !string.Equals(
+            bool esElMismo = string.Equals(
                 nombreJugador,
                 _contexto.NombreUsuarioSesion,
                 StringComparison.OrdinalIgnoreCase);
+
+            if (esElMismo)
+            {
+                return false;
+            }
+
+            if (ValidadorEntrada.EsNombreInvitado(nombreJugador))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void NotificarCambioProgreso()

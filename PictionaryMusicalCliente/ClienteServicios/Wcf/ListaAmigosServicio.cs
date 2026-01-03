@@ -399,6 +399,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (canal != null)
             {
                 canal.Faulted += Canal_Faulted;
+                canal.Closed += Canal_Closed;
             }
         }
 
@@ -407,15 +408,55 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (canal != null)
             {
                 canal.Faulted -= Canal_Faulted;
+                canal.Closed -= Canal_Closed;
             }
         }
 
         private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
         {
-            _logger.Error("El canal de lista de amigos entro en estado Faulted.");
+            var canal = remitente as ICommunicationObject;
+            string razonDetallada = ObtenerRazonDesconexion(canal);
+            
+            _logger.ErrorFormat(
+                "Modulo: ListaAmigosServicio - El canal de lista de amigos fallo. " +
+                "Razon: {0}",
+                razonDetallada);
             
             LimpiarEstadoTrasDesconexion();
             CanalDesconectado?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Canal_Closed(object remitente, EventArgs argumentosEvento)
+        {
+            _logger.Info(
+                "Modulo: ListaAmigosServicio - Canal de lista de amigos cerrado normalmente.");
+        }
+
+        private static string ObtenerRazonDesconexion(ICommunicationObject canal)
+        {
+            if (canal == null)
+            {
+                return "Canal no disponible";
+            }
+
+            var clienteCanal = canal as IClientChannel;
+            if (clienteCanal?.RemoteAddress != null)
+            {
+                bool posibleServidorCaido = canal.State == CommunicationState.Faulted;
+                string direccionServidor = clienteCanal.RemoteAddress.Uri.ToString();
+
+                if (posibleServidorCaido)
+                {
+                    return string.Format(
+                        "Servidor posiblemente caido o inaccesible. " +
+                        "Direccion: {0}. " +
+                        "Causas probables: servidor cerrado, timeout por inactividad, " +
+                        "o perdida de conexion de red.",
+                        direccionServidor);
+                }
+            }
+
+            return string.Format("Estado del canal: {0}", canal.State);
         }
 
         private void LimpiarEstadoTrasDesconexion()

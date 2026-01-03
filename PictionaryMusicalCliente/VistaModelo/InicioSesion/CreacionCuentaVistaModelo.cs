@@ -339,6 +339,14 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             string primerMensajeError)
         {
             MostrarCamposInvalidos?.Invoke(camposInvalidos);
+            bool esErrorDuplicado = ActualizarErroresVisualesDeCampos(
+                camposInvalidos,
+                primerMensajeError);
+            
+            if (esErrorDuplicado)
+            {
+                return;
+            }
             
             string mensajeMostrar = camposInvalidos.Count > 1
                 ? Lang.errorTextoCamposInvalidosGenerico
@@ -346,6 +354,29 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             
             MostrarMensaje?.Invoke(mensajeMostrar ?? 
                 Lang.errorTextoCamposInvalidosGenerico);
+        }
+
+        private bool ActualizarErroresVisualesDeCampos(
+            List<string> camposInvalidos,
+            string primerMensajeError)
+        {
+            bool esErrorDuplicado = false;
+
+            if (camposInvalidos.Contains("Usuario") && 
+                primerMensajeError == Lang.errorTextoUsuarioEnUso)
+            {
+                MostrarErrorUsuario = true;
+                esErrorDuplicado = true;
+            }
+
+            if (camposInvalidos.Contains("Correo") && 
+                primerMensajeError == Lang.errorTextoCorreoEnUso)
+            {
+                MostrarErrorCorreo = true;
+                esErrorDuplicado = true;
+            }
+
+            return esErrorDuplicado;
         }
 
         private async Task EjecutarFlujoDeRegistroAsync(DTOs.NuevaCuentaDTO solicitud)

@@ -1,5 +1,7 @@
 ﻿using PictionaryMusicalCliente.Properties.Langs;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -12,6 +14,7 @@ namespace PictionaryMusicalCliente.Utilidades
     public static class ValidadorEntrada
     {
         private const int LongitudCodigoSala = 6;
+        private const string RecursoNombresInvitados = "invitadoNombres";
 
         private static readonly Regex CorreoRegex = new Regex(
             @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]" +
@@ -117,6 +120,66 @@ namespace PictionaryMusicalCliente.Utilidades
             }
 
             return CrearResultadoExitoso();
+        }
+
+        /// <summary>
+        /// Verifica si el nombre de usuario proporcionado corresponde a un 
+        /// nombre reservado para invitados.
+        /// </summary>
+        /// <param name="nombreUsuario">El nombre de usuario a verificar.</param>
+        /// <returns>True si es un nombre de invitado reservado, false de lo contrario.</returns>
+        public static bool EsNombreInvitado(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return false;
+            }
+
+            HashSet<string> nombresInvitados = ObtenerNombresInvitados();
+            return nombresInvitados.Contains(nombreUsuario.Trim());
+        }
+
+        /// <summary>
+        /// Obtiene el conjunto de nombres reservados para invitados 
+        /// de todos los idiomas configurados.
+        /// </summary>
+        /// <returns>
+        /// HashSet con los nombres de invitados (comparacion insensible a mayusculas).
+        /// </returns>
+        public static HashSet<string> ObtenerNombresInvitados()
+        {
+            var nombres = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            AgregarNombresDeCultura(nombres, CultureInfo.InvariantCulture);
+            AgregarNombresDeCultura(nombres, new CultureInfo("es-MX"));
+            AgregarNombresDeCultura(nombres, new CultureInfo("en-US"));
+
+            return nombres;
+        }
+
+        private static void AgregarNombresDeCultura(
+            HashSet<string> nombres,
+            CultureInfo cultura)
+        {
+            string recurso = Lang.ResourceManager.GetString(
+                RecursoNombresInvitados,
+                cultura);
+
+            if (string.IsNullOrWhiteSpace(recurso))
+            {
+                return;
+            }
+
+            string[] nombresCultura = recurso
+                .Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(n => n.Trim())
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToArray();
+
+            foreach (string nombre in nombresCultura)
+            {
+                nombres.Add(nombre);
+            }
         }
 
         private static DTOs.ResultadoOperacionDTO ValidarCampoObligatorio(
