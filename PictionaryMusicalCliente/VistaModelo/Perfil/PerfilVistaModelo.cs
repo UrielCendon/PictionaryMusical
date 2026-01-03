@@ -7,6 +7,7 @@ using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
+using PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares;
 using PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares;
 using System;
 using System.Collections.Generic;
@@ -628,40 +629,35 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private (bool EsValido, string MensajeError, List<string> CamposInvalidos)
             ValidarCamposPrincipales()
         {
-            var camposInvalidos = new List<string>();
-            string primerError = null;
+            var contexto = new ValidacionContexto();
 
             ValidarCampo(
                 ValidadorEntrada.ValidarNombre(Nombre?.Trim()),
                 nameof(Nombre),
-                camposInvalidos,
-                ref primerError);
+                contexto);
 
             ValidarCampo(
                 ValidadorEntrada.ValidarApellido(Apellido?.Trim()),
                 nameof(Apellido),
-                camposInvalidos,
-                ref primerError);
+                contexto);
 
             if (AvatarSeleccionadoId <= 0)
             {
-                camposInvalidos.Add("Avatar");
-                primerError ??= Lang.errorTextoSeleccionAvatarValido;
+                contexto.AgregarCampoInvalido("Avatar", Lang.errorTextoSeleccionAvatarValido);
             }
 
-            return (camposInvalidos.Count == 0, primerError, camposInvalidos);
+            return (contexto.CamposInvalidos.Count == 0, contexto.PrimerMensajeError, 
+                contexto.CamposInvalidos);
         }
 
         private static void ValidarCampo(
             DTOs.ResultadoOperacionDTO resultado,
             string nombreCampo,
-            List<string> invalidos,
-            ref string primerError)
+            ValidacionContexto contexto)
         {
             if (resultado?.OperacionExitosa != true)
             {
-                invalidos.Add(nombreCampo);
-                primerError ??= resultado?.Mensaje;
+                contexto.AgregarCampoInvalido(nombreCampo, resultado?.Mensaje);
             }
         }
 

@@ -5,6 +5,7 @@ using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -55,24 +56,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         public VerificacionCodigoVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
-            string descripcion,
-            string tokenCodigo,
-            ICodigoVerificacionServicio codigoVerificacionServicio,
-            IAvisoServicio avisoServicio,
-            SonidoManejador sonidoManejador)
+            VerificacionCodigoDependencias dependencias)
             : base(ventana, localizador)
         {
-            Descripcion = descripcion ?? 
-                throw new ArgumentNullException(nameof(descripcion));
-            _tokenCodigo = tokenCodigo ?? 
-                throw new ArgumentNullException(nameof(tokenCodigo));
-            _codigoVerificacionServicio = codigoVerificacionServicio ??
-                throw new ArgumentNullException(
-                    nameof(codigoVerificacionServicio));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
+
+            Descripcion = dependencias.Descripcion;
+            _tokenCodigo = dependencias.TokenCodigo;
+            _codigoVerificacionServicio = dependencias.CodigoVerificacionServicio;
+            _avisoServicio = dependencias.AvisoServicio;
+            _sonidoManejador = dependencias.SonidoManejador;
 
             VerificarCodigoComando = new ComandoAsincrono(EjecutarComandoVerificarCodigoAsync);
 

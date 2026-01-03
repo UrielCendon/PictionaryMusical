@@ -455,9 +455,12 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             string PrimerMensajeError) LimpiarYValidarEntradas()
         {
             LimpiarCamposTexto();
+
+            var datosCreacion = new DatosCreacionCuenta(
+                Usuario, Nombre, Apellido, Correo, Contrasena, AvatarSeleccionadoId);
             
             ResultadoValidacionCampos resultado = _validadorCuenta.ValidarCamposCreacion(
-                Usuario, Nombre, Apellido, Correo, Contrasena, AvatarSeleccionadoId);
+                datosCreacion);
 
             if (!resultado.EsValido)
             {

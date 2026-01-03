@@ -4,6 +4,7 @@ using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Vista;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.Perfil;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
@@ -82,14 +83,17 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             IAvisoServicio avisoServicio,
             SonidoManejador sonidoManejador)
         {
-            return new VerificacionCodigoVistaModelo(
-                App.VentanaServicio,
-                App.Localizador,
+            var dependencias = new VerificacionCodigoDependencias(
                 parametros.Descripcion,
                 parametros.TokenCodigo,
                 parametros.CodigoVerificacionServicio,
                 avisoServicio,
                 sonidoManejador);
+
+            return new VerificacionCodigoVistaModelo(
+                App.VentanaServicio,
+                App.Localizador,
+                dependencias);
         }
 
         private static void ConfigurarEventoVerificacionCompletada(

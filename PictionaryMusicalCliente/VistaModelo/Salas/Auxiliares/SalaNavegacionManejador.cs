@@ -116,15 +116,18 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
         private void NavegarAVentanaPrincipal()
         {
-            var principalVistaModelo = new VentanaPrincipalVistaModelo(
-                _ventana,
-                _localizador,
+            var dependencias = new VentanaPrincipalDependencias(
                 App.ServicioIdioma,
                 App.ListaAmigosServicio,
                 App.AmigosServicio,
                 App.SalasServicio,
                 _sonidoManejador,
                 _usuarioSesion);
+
+            var principalVistaModelo = new VentanaPrincipalVistaModelo(
+                _ventana,
+                _localizador,
+                dependencias);
             _ventana.MostrarVentana(principalVistaModelo);
         }
     }

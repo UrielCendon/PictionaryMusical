@@ -54,27 +54,21 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         public VentanaPrincipalVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
-            ILocalizacionServicio localizacionServicio,
-            IListaAmigosServicio listaAmigosServicio,
-            IAmigosServicio amigosServicio,
-            ISalasServicio salasServicio,
-            SonidoManejador sonidoManejador,
-            IUsuarioAutenticado usuarioSesion)
+            VentanaPrincipalDependencias dependencias)
             : base(ventana, localizador)
         {
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
 
-            _localizacion = localizacionServicio ??
-                throw new ArgumentNullException(nameof(localizacionServicio));
-            _listaAmigosServicio = listaAmigosServicio ??
-                throw new ArgumentNullException(nameof(listaAmigosServicio));
-            _amigosServicio = amigosServicio ??
-                throw new ArgumentNullException(nameof(amigosServicio));
-            _salasServicio = salasServicio ??
-                throw new ArgumentNullException(nameof(salasServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _usuarioSesion = usuarioSesion ??
-                throw new ArgumentNullException(nameof(usuarioSesion));
+            _localizacion = dependencias.LocalizacionServicio;
+            _listaAmigosServicio = dependencias.ListaAmigosServicio;
+            _amigosServicio = dependencias.AmigosServicio;
+            _salasServicio = dependencias.SalasServicio;
+            _sonidoManejador = dependencias.SonidoManejador;
+            _usuarioSesion = dependencias.UsuarioSesion;
+
             _listaAmigosServicio.ListaActualizada += ListaActualizada;
             _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
             _listaAmigosServicio.CanalDesconectado += CanalAmigos_Desconectado;

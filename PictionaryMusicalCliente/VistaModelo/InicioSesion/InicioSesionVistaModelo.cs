@@ -351,14 +351,17 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private IngresoPartidaInvitadoVistaModelo CrearVistaModeloIngresoInvitado(
             ISalasServicio salasServicio)
         {
-            return new IngresoPartidaInvitadoVistaModelo(
-                _ventana,
-                _localizador,
+            var dependencias = new IngresoPartidaInvitadoDependencias(
                 _localizacionServicio,
                 salasServicio,
                 _avisoServicio,
                 _sonidoManejador,
                 _generadorNombres);
+
+            return new IngresoPartidaInvitadoVistaModelo(
+                _ventana,
+                _localizador,
+                dependencias);
         }
 
         private void UnirseASalaComoInvitado(

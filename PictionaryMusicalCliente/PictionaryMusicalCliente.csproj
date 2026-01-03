@@ -244,11 +244,16 @@
     <Compile Include="VistaModelo\Amigos\InvitarAmigosVistaModelo.cs" />
     <Compile Include="VistaModelo\Amigos\SolicitudesVistaModelo.cs" />
     <Compile Include="VistaModelo\Dependencias\CreacionCuentaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\IngresoPartidaInvitadoDependencias.cs" />
     <Compile Include="VistaModelo\Dependencias\InicioSesionDependencias.cs" />
     <Compile Include="VistaModelo\Dependencias\InvitarAmigosDependencias.cs" />
     <Compile Include="VistaModelo\Dependencias\PerfilDependencias.cs" />
     <Compile Include="VistaModelo\Dependencias\SalaDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\VentanaPrincipalDependencias.cs" />
+    <Compile Include="VistaModelo\Dependencias\VerificacionCodigoDependencias.cs" />
     <Compile Include="VistaModelo\Dependencias\VistaModeloBaseDependencias.cs" />
+    <Compile Include="VistaModelo\InicioSesion\Auxiliares\DatosCreacionCuenta.cs" />
+    <Compile Include="VistaModelo\InicioSesion\Auxiliares\ValidacionContexto.cs" />
     <Compile Include="VistaModelo\Perfil\CambioContrasenaVistaModelo.cs" />
     <Compile Include="VistaModelo\Perfil\RedSocialItemVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ReportarJugadorVistaModelo.cs" />

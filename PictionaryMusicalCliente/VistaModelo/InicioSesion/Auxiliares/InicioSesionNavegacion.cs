@@ -57,15 +57,18 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         {
             App.MusicaManejador.Detener();
 
-            var principalVistaModelo = new VentanaPrincipal.VentanaPrincipalVistaModelo(
-                _ventana,
-                _localizador,
+            var dependencias = new VentanaPrincipalDependencias(
                 _localizacionServicio,
                 App.ListaAmigosServicio,
                 App.AmigosServicio,
                 App.SalasServicio,
                 _sonidoManejador,
                 _usuarioSesion);
+
+            var principalVistaModelo = new VentanaPrincipal.VentanaPrincipalVistaModelo(
+                _ventana,
+                _localizador,
+                dependencias);
 
             _ventana.MostrarVentana(principalVistaModelo);
             _ventana.CerrarVentana(vistaModeloActual);

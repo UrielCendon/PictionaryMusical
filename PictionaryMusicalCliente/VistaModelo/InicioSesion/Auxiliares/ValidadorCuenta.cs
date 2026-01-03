@@ -13,63 +13,47 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         /// <summary>
         /// Valida los campos para la creacion de una nueva cuenta.
         /// </summary>
-        /// <param name="usuario">Nombre de usuario.</param>
-        /// <param name="nombre">Nombre del usuario.</param>
-        /// <param name="apellido">Apellido del usuario.</param>
-        /// <param name="correo">Correo electronico.</param>
-        /// <param name="contrasena">Contrasena.</param>
-        /// <param name="avatarId">ID del avatar seleccionado.</param>
+        /// <param name="datos">Datos de creacion de cuenta a validar.</param>
         /// <returns>
         /// Resultado con campos invalidos y primer mensaje de error.
         /// </returns>
-        public ResultadoValidacionCampos ValidarCamposCreacion(
-            string usuario,
-            string nombre,
-            string apellido,
-            string correo,
-            string contrasena,
-            int avatarId)
+        public ResultadoValidacionCampos ValidarCamposCreacion(DatosCreacionCuenta datos)
         {
-            var camposInvalidos = new List<string>();
-            string primerMensajeError = null;
+            var contexto = new ValidacionContexto();
 
             ValidarCampo(
-                ValidadorEntrada.ValidarUsuario(usuario),
+                ValidadorEntrada.ValidarUsuario(datos.Usuario),
                 "Usuario",
-                camposInvalidos,
-                ref primerMensajeError);
+                contexto);
 
             ValidarCampo(
-                ValidadorEntrada.ValidarNombre(nombre),
+                ValidadorEntrada.ValidarNombre(datos.Nombre),
                 "Nombre",
-                camposInvalidos,
-                ref primerMensajeError);
+                contexto);
 
             ValidarCampo(
-                ValidadorEntrada.ValidarApellido(apellido),
+                ValidadorEntrada.ValidarApellido(datos.Apellido),
                 "Apellido",
-                camposInvalidos,
-                ref primerMensajeError);
+                contexto);
 
             ValidarCampo(
-                ValidadorEntrada.ValidarCorreo(correo),
+                ValidadorEntrada.ValidarCorreo(datos.Correo),
                 "Correo",
-                camposInvalidos,
-                ref primerMensajeError);
+                contexto);
 
             ValidarCampo(
-                ValidadorEntrada.ValidarContrasena(contrasena),
+                ValidadorEntrada.ValidarContrasena(datos.Contrasena),
                 "Contrasena",
-                camposInvalidos,
-                ref primerMensajeError);
+                contexto);
 
-            if (avatarId <= 0)
+            if (datos.AvatarId <= 0)
             {
-                camposInvalidos.Add("Avatar");
-                primerMensajeError ??= Lang.errorTextoSeleccionAvatarValido;
+                contexto.AgregarCampoInvalido("Avatar", Lang.errorTextoSeleccionAvatarValido);
             }
 
-            return new ResultadoValidacionCampos(camposInvalidos, primerMensajeError);
+            return new ResultadoValidacionCampos(
+                contexto.CamposInvalidos, 
+                contexto.PrimerMensajeError);
         }
 
         /// <summary>
@@ -102,13 +86,11 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         private static void ValidarCampo(
             DTOs.ResultadoOperacionDTO resultado,
             string nombreCampo,
-            List<string> invalidos,
-            ref string primerError)
+            ValidacionContexto contexto)
         {
             if (resultado?.OperacionExitosa != true)
             {
-                invalidos.Add(nombreCampo);
-                primerError ??= resultado?.Mensaje;
+                contexto.AgregarCampoInvalido(nombreCampo, resultado?.Mensaje);
             }
         }
     }

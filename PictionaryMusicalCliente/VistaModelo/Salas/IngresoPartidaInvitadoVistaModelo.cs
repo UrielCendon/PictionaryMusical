@@ -6,6 +6,7 @@ using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.Utilidades.Resultados;
+using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,23 +53,19 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         public IngresoPartidaInvitadoVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
-            ILocalizacionServicio localizacionServicio,
-            ISalasServicio salasServicio,
-            IAvisoServicio avisoServicio,
-            SonidoManejador sonidoManejador,
-            INombreInvitadoGenerador nombreInvitadoGenerador)
+            IngresoPartidaInvitadoDependencias dependencias)
             : base(ventana, localizador)
         {
-            _localizacionServicio = localizacionServicio ??
-                throw new ArgumentNullException(nameof(localizacionServicio));
-            _salasServicio = salasServicio ??
-                throw new ArgumentNullException(nameof(salasServicio));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
-            _sonidoManejador = sonidoManejador ??
-                throw new ArgumentNullException(nameof(sonidoManejador));
-            _nombreInvitadoGenerador = nombreInvitadoGenerador ??
-                throw new ArgumentNullException(nameof(nombreInvitadoGenerador));
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
+
+            _localizacionServicio = dependencias.LocalizacionServicio;
+            _salasServicio = dependencias.SalasServicio;
+            _avisoServicio = dependencias.AvisoServicio;
+            _sonidoManejador = dependencias.SonidoManejador;
+            _nombreInvitadoGenerador = dependencias.NombreInvitadoGenerador;
 
             UnirseSalaComando = new ComandoAsincrono(
                 EjecutarComandoUnirseSalaAsync,
