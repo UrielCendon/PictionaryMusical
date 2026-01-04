@@ -141,7 +141,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
             {
                 _logger.Error("Error de comunicacion al obtener amigos.", excepcion);
-                throw;
+                throw new ServicioExcepcion(
+                    excepcion.Tipo,
+                    excepcion.Message,
+                    excepcion);
             }
             catch (ServicioExcepcion excepcion)
             {
@@ -205,7 +208,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
             {
                 _logger.Error("Error de comunicacion al enviar correo.", excepcion);
-                throw;
+                throw new ServicioExcepcion(
+                    excepcion.Tipo,
+                    excepcion.Message,
+                    excepcion);
             }
             catch (ServicioExcepcion excepcion)
             {
