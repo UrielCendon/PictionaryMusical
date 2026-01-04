@@ -296,11 +296,15 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private string ObtenerMensajeErrorCreacion(Exception excepcion)
         {
-            if (excepcion is ServicioExcepcion servicioExcepcion &&
-                (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
-                 servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion))
+            if (excepcion is ServicioExcepcion servicioExcepcion)
             {
-                return Lang.errorTextoServidorSinDisponibilidad;
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return Lang.errorTextoServidorSinDisponibilidad;
+                }
+
+                return servicioExcepcion.Message ?? Lang.errorTextoRegistrarCuentaMasTarde;
             }
 
             return _localizador.Localizar(

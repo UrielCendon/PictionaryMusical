@@ -231,7 +231,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 return repositorio.ObtenerPorNombreConJugador(nombreUsuario);
             }
-            catch (BaseDatosExcepcion)
+            catch (BaseDatosExcepcion excepcion) 
+                when (excepcion.InnerException is KeyNotFoundException)
             {
                 return null;
             }
@@ -245,7 +246,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 return repositorio.ObtenerPorCorreo(correo);
             }
-            catch (BaseDatosExcepcion)
+            catch (BaseDatosExcepcion excepcion) 
+                when (excepcion.InnerException is KeyNotFoundException)
             {
                 return null;
             }

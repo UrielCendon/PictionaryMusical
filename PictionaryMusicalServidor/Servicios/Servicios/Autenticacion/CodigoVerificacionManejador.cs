@@ -292,6 +292,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
                 return resultado;
             }
+            catch (FaultException)
+            {
+                throw;
+            }
             catch (ArgumentNullException excepcion)
             {
                 _logger.Warn(

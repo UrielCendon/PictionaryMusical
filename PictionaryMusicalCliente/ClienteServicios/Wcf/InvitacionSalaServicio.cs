@@ -216,7 +216,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             catch (ServicioExcepcion excepcion)
             {
                 _logger.Error("Error de servicio al enviar correo.", excepcion);
-                return InvitacionCorreoResultado.Fallo(Lang.errorTextoEnviarInvitacion);
+                string mensaje = excepcion.Message ?? Lang.errorTextoEnviarInvitacion;
+                return InvitacionCorreoResultado.Fallo(mensaje);
             }
         }
     }

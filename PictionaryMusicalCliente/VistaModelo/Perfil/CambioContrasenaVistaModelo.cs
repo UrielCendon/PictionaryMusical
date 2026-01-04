@@ -1,4 +1,5 @@
-﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+﻿using PictionaryMusicalCliente.ClienteServicios;
+using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
@@ -263,10 +264,26 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
                 "Excepcion de servicio al actualizar contrasena: {0}",
                 excepcion.Message);
             _sonidoManejador.ReproducirError();
-            string mensaje = _localizador.Localizar(
+            string mensaje = ObtenerMensajeErrorCambio(excepcion);
+            _avisoServicio.Mostrar(mensaje);
+        }
+
+        private string ObtenerMensajeErrorCambio(Exception excepcion)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return Lang.errorTextoServidorSinDisponibilidad;
+                }
+
+                return servicioExcepcion.Message ?? Lang.errorTextoActualizarContrasena;
+            }
+
+            return _localizador.Localizar(
                 excepcion.Message,
                 Lang.errorTextoActualizarContrasena);
-            _avisoServicio.Mostrar(mensaje);
         }
 
         private List<string> ValidarEntradas()

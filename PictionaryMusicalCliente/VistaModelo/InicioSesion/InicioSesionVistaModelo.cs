@@ -447,11 +447,15 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private string ObtenerMensajeErrorInicioSesion(Exception excepcion)
         {
-            if (excepcion is ServicioExcepcion servicioExcepcion &&
-                (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
-                 servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion))
+            if (excepcion is ServicioExcepcion servicioExcepcion)
             {
-                return Lang.errorTextoServidorSinDisponibilidad;
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return Lang.errorTextoServidorSinDisponibilidad;
+                }
+
+                return servicioExcepcion.Message ?? Lang.errorTextoInicioSesionServicio;
             }
 
             return _localizador.Localizar(
@@ -619,11 +623,15 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private string ObtenerMensajeErrorRecuperacion(Exception excepcion)
         {
-            if (excepcion is ServicioExcepcion servicioExcepcion &&
-                (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
-                 servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion))
+            if (excepcion is ServicioExcepcion servicioExcepcion)
             {
-                return Lang.errorTextoServidorSinDisponibilidad;
+                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
+                {
+                    return Lang.errorTextoServidorSinDisponibilidad;
+                }
+
+                return servicioExcepcion.Message ?? Lang.errorTextoCuentaNoRegistrada;
             }
 
             return _localizador.Localizar(

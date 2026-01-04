@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
@@ -93,6 +94,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 var pendiente = ObtenerSolicitudPendiente(solicitud.TokenCodigo);
                 return ProcesarReenvioCodigo(solicitud.TokenCodigo, pendiente);
+            }
+            catch (FaultException)
+            {
+                throw;
             }
             catch (KeyNotFoundException excepcion)
             {

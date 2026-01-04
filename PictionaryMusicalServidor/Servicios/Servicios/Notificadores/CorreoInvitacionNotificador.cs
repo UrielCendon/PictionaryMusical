@@ -88,7 +88,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
             string saludo = esIngles
                 ? "Hello!"
-                : "Â¡Hola!";
+                : "¡Hola!";
 
             string mensajeBienvenida = esIngles
                 ? "You have been invited to a Musical Pictionary game."
@@ -104,7 +104,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
             string mensajeDespedida = esIngles
                 ? "See you in the game!"
-                : "Â¡Nos vemos en el juego!";
+                : "¡Nos vemos en el juego!";
 
             var cuerpoHtml = new StringBuilder();
 
