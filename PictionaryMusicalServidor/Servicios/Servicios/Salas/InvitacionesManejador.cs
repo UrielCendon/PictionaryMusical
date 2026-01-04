@@ -1,5 +1,6 @@
 ﻿using log4net;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Excepciones;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
@@ -157,20 +158,31 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             string correo,
             IEnumerable<string> jugadoresSala)
         {
-            using (var contexto = _contextoFactoria.CrearContexto())
+            try
             {
-                IUsuarioRepositorio repositorio = 
-                    _repositorioFactoria.CrearUsuarioRepositorio(contexto);
-                var usuario = await repositorio.ObtenerPorCorreoAsync(correo);
-
-                if (string.IsNullOrWhiteSpace(usuario?.Nombre_Usuario))
+                using (var contexto = _contextoFactoria.CrearContexto())
                 {
-                    return false;
-                }
+                    IUsuarioRepositorio repositorio = 
+                        _repositorioFactoria.CrearUsuarioRepositorio(contexto);
+                    var usuario = await repositorio.ObtenerPorCorreoAsync(correo);
 
-                return jugadoresSala.Contains(
-                    usuario.Nombre_Usuario,
-                    StringComparer.OrdinalIgnoreCase);
+                    if (string.IsNullOrWhiteSpace(usuario?.Nombre_Usuario))
+                    {
+                        return false;
+                    }
+
+                    return jugadoresSala.Contains(
+                        usuario.Nombre_Usuario,
+                        StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            catch (BaseDatosExcepcion)
+            {
+                return false;
+            }
+            catch (KeyNotFoundException)
+            {
+                return false;
             }
         }
 

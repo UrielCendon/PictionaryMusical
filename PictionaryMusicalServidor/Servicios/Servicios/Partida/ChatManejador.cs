@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Servicios.Autenticacion;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
@@ -289,26 +290,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorComunicacionChat, 
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
         }
 
@@ -388,26 +389,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorComunicacionChat, 
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
-                RemoverClienteSinNotificar(idSala, cliente.NombreJugador);
+                RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
         }
 
@@ -496,27 +497,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorComunicacionChat, 
                     excepcion);
-                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
+                RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ErrorTimeoutChat, excepcion);
-                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
+                RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorCanalCerradoChat,
                     excepcion);
-                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
+                RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
                 _logger.Warn(
                     MensajesError.Bitacora.ErrorInesperadoChat,
                     excepcion);
-                RemoverClienteSinNotificar(parametros.IdSala, parametros.Cliente.NombreJugador);
+                RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
+        }
+
+        /// <summary>
+        /// Remueve un cliente del chat y elimina su sesión cuando se detecta
+        /// que el cliente está inalcanzable (error de comunicación o timeout).
+        /// </summary>
+        /// <param name="idSala">Identificador de la sala.</param>
+        /// <param name="nombreJugador">Nombre del jugador a remover.</param>
+        private static void RemoverClienteInalcanzable(string idSala, string nombreJugador)
+        {
+            RemoverClienteSinNotificar(idSala, nombreJugador);
+            
+            _logger.Info(
+                "Eliminando sesión por cliente inalcanzable en chat.");
+            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreJugador);
         }
 
         private static void RemoverClienteSinNotificar(string idSala, string nombreJugador)
