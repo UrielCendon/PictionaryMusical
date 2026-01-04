@@ -87,7 +87,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
             return new TerminacionSesionVistaModelo(
                 App.VentanaServicio,
                 App.Localizador,
-                App.UsuarioGlobal);
+                App.UsuarioGlobal,
+                App.InicioSesionServicio);
         }
 
         private void ConfigurarCallbackCierreSesion(

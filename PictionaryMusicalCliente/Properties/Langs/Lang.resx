@@ -1230,4 +1230,7 @@
   <data name="errorTextoLimiteFrecuenciaCorreo" xml:space="preserve">
     <value>Se acaba de enviar un correo a esta dirección. Debes esperar 1 minuto para enviar otro.</value>
   </data>
+  <data name="errorTextoSesionDuplicada" xml:space="preserve">
+    <value>Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde.</value>
+  </data>
 </root>

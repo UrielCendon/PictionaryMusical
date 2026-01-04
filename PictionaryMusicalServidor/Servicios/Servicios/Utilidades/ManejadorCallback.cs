@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.ServiceModel;
 using log4net;
+using PictionaryMusicalServidor.Servicios.Servicios.Autenticacion;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
@@ -42,6 +43,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
         /// <summary>
         /// Configura eventos de canal para limpieza automatica de suscripcion.
+        /// Solo libera la sesion del usuario cuando el canal falla (Faulted),
+        /// no cuando se cierra normalmente (Closed), ya que el cierre normal
+        /// puede ocurrir durante navegacion entre vistas.
         /// </summary>
         /// <param name="nombreUsuario">Nombre del usuario.</param>
         public void ConfigurarEventosCanal(string nombreUsuario)
@@ -59,13 +63,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
                 manejadorFaulted = delegate(object remitente, EventArgs argumentos)
                 {
-                    _logger.Warn("Canal fallado (Faulted). Desuscribiendo cliente.");
-                    Desuscribir(nombreUsuario);
+                    _logger.Warn("Canal fallado (Faulted). Desuscribiendo cliente y eliminando sesion.");
+                    LimpiarSesionYDesuscribir(nombreUsuario);
                 };
 
                 canal.Closed += manejadorClosed;
                 canal.Faulted += manejadorFaulted;
             }
+        }
+
+        private void LimpiarSesionYDesuscribir(string nombreUsuario)
+        {
+            Desuscribir(nombreUsuario);
+            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
         }
 
         /// <summary>

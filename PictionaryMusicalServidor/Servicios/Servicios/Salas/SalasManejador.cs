@@ -6,6 +6,7 @@ using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Autenticacion;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
@@ -570,7 +571,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             {
                 canal.Closed -= manejadorClosed;
                 canal.Faulted -= manejadorFaulted;
-                ManejarDesconexionJugador(codigoSala, nombreUsuario);
+                ManejarSalidaJugadorSala(codigoSala, nombreUsuario);
             };
 
             manejadorFaulted = delegate(object remitente, EventArgs argumentos)
@@ -587,18 +588,59 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         /// <summary>
         /// Notifica que un jugador se desconecto durante la partida y debe ser removido de la sala.
         /// Este metodo es llamado desde CursoPartidaManejador cuando detecta una desconexion.
+        /// No elimina la sesion global ya que puede ser una salida voluntaria.
         /// </summary>
         /// <param name="codigoSala">Codigo de la sala.</param>
         /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
         public void NotificarDesconexionJugador(string codigoSala, string nombreUsuario)
         {
-            ManejarDesconexionJugador(codigoSala, nombreUsuario);
+            ManejarSalidaJugadorSala(codigoSala, nombreUsuario);
         }
 
+        /// <summary>
+        /// Remueve al jugador de la sala sin eliminar su sesion global.
+        /// Se usa para cierres de canal normales (navegacion, salida voluntaria).
+        /// </summary>
+        private void ManejarSalidaJugadorSala(string codigoSala, string nombreUsuario)
+        {
+            try
+            {
+                SalaInternaManejador sala;
+                if (!_salas.TryGetValue(codigoSala, out sala))
+                {
+                    return;
+                }
+
+                sala.RemoverJugador(nombreUsuario);
+
+                if (sala.DebeEliminarse)
+                {
+                    SalaInternaManejador salaRemovida;
+                    _salas.TryRemove(codigoSala, out salaRemovida);
+                }
+
+                _notificador.NotificarListaSalasATodos();
+            }
+            catch (Exception excepcion)
+            {
+                _logger.Warn(
+                    string.Format(
+                        "Error al remover jugador de sala '{0}'.",
+                        codigoSala),
+                    excepcion);
+            }
+        }
+
+        /// <summary>
+        /// Maneja la desconexion inesperada de un jugador (canal Faulted).
+        /// Elimina la sesion global y remueve al jugador de la sala.
+        /// </summary>
         private void ManejarDesconexionJugador(string codigoSala, string nombreUsuario)
         {
             try
             {
+                SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
+
                 SalaInternaManejador sala;
                 if (!_salas.TryGetValue(codigoSala, out sala))
                 {

@@ -114,6 +114,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 return;
             }
 
+            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
             _logger.Info("Sesion cerrada correctamente.");
         }
 
@@ -192,6 +193,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 };
             }
 
+            if (!SesionUsuarioManejador.Instancia.IntentarRegistrarSesion(
+                usuario.idUsuario, 
+                usuario.Nombre_Usuario))
+            {
+                _logger.Warn(
+                    MensajesError.Bitacora.IntentoDuplicadoSesion);
+
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    CuentaEncontrada = true,
+                    Mensaje = MensajesError.Cliente.SesionDuplicada
+                };
+            }
+
             _logger.Info(
                 "Inicio de sesion exitoso.");
 
@@ -244,8 +260,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 when (excepcion.InnerException is KeyNotFoundException)
             {
                 _logger.Info(
-                    "Usuario no encontrado por nombre, se intentara buscar por " +
-                    "correo electronico.");
+                    "Usuario no encontrado por nombre, se intentara buscar por correo electronico.");
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
             catch (Exception excepcion)

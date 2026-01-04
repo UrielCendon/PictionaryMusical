@@ -112,6 +112,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     = () => Recursos.Lang.errorTextoUsuarioBaneado,
                 ["Usuario o contrasena incorrectos."]
                     = () => Recursos.Lang.errorTextoCredencialesIncorrectas,
+                ["SesionDuplicada"]
+                    = () => Recursos.Lang.errorTextoSesionDuplicada,
                 ["Algunos datos no son correctos. Por favor, revisa la informacion ingresada."]
                     = () => Recursos.Lang.errorTextoErrorProcesarSolicitud,
 

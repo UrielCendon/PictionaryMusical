@@ -21,10 +21,20 @@
   <wsdl:message name="IInicioSesionManejador_IniciarSesion_OutputMessage">
     <wsdl:part name="parameters" element="tns:IniciarSesionResponse" />
   </wsdl:message>
+  <wsdl:message name="IInicioSesionManejador_CerrarSesion_InputMessage">
+    <wsdl:part name="parameters" element="tns:CerrarSesion" />
+  </wsdl:message>
+  <wsdl:message name="IInicioSesionManejador_CerrarSesion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CerrarSesionResponse" />
+  </wsdl:message>
   <wsdl:portType name="IInicioSesionManejador">
     <wsdl:operation name="IniciarSesion">
       <wsdl:input wsaw:Action="http://tempuri.org/IInicioSesionManejador/IniciarSesion" message="tns:IInicioSesionManejador_IniciarSesion_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/IInicioSesionManejador/IniciarSesionResponse" message="tns:IInicioSesionManejador_IniciarSesion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CerrarSesion">
+      <wsdl:input wsaw:Action="http://tempuri.org/IInicioSesionManejador/CerrarSesion" message="tns:IInicioSesionManejador_CerrarSesion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IInicioSesionManejador/CerrarSesionResponse" message="tns:IInicioSesionManejador_CerrarSesion_OutputMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="BasicHttpBinding_IInicioSesionManejador" type="tns:IInicioSesionManejador">
@@ -38,12 +48,30 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="CerrarSesion">
+      <soap:operation soapAction="http://tempuri.org/IInicioSesionManejador/CerrarSesion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="NetTcpBinding_IInicioSesionManejador" type="tns:IInicioSesionManejador">
     <wsp:PolicyReference URI="#NetTcpBinding_IInicioSesionManejador_policy" />
     <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
     <wsdl:operation name="IniciarSesion">
       <soap12:operation soapAction="http://tempuri.org/IInicioSesionManejador/IniciarSesion" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CerrarSesion">
+      <soap12:operation soapAction="http://tempuri.org/IInicioSesionManejador/CerrarSesion" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

@@ -3,6 +3,7 @@ using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using log4net;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 
@@ -16,6 +17,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IUsuarioAutenticado _usuarioSesion;
+        private readonly IInicioSesionServicio _inicioSesionServicio;
 
         /// <summary>
         /// Obtiene o establece la accion a ejecutar para cerrar sesion y navegar.
@@ -29,16 +31,20 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         /// <param name="ventana">Servicio de ventanas.</param>
         /// <param name="localizador">Servicio de localizacion.</param>
         /// <param name="usuarioSesion">Usuario autenticado actual.</param>
+        /// <param name="inicioSesionServicio">Servicio de inicio de sesion.</param>
         public TerminacionSesionVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
-            IUsuarioAutenticado usuarioSesion)
+            IUsuarioAutenticado usuarioSesion,
+            IInicioSesionServicio inicioSesionServicio)
             : base(ventana, localizador)
         {
             _usuarioSesion = usuarioSesion 
                 ?? throw new ArgumentNullException(nameof(usuarioSesion));
+            _inicioSesionServicio = inicioSesionServicio
+                ?? throw new ArgumentNullException(nameof(inicioSesionServicio));
 
-            AceptarComando = new ComandoDelegado(EjecutarComandoAceptar);
+            AceptarComando = new ComandoAsincrono(EjecutarComandoAceptarAsync);
             CancelarComando = new ComandoDelegado(EjecutarComandoCancelar);
         }
 
@@ -52,9 +58,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
         /// </summary>
         public ICommand CancelarComando { get; }
 
-        private void EjecutarComandoAceptar(object parametro)
+        private async Task EjecutarComandoAceptarAsync(object parametro)
         {
-            EjecutarAceptar();
+            await EjecutarAceptarAsync().ConfigureAwait(true);
         }
 
         private void EjecutarComandoCancelar(object parametro)
@@ -62,12 +68,24 @@ namespace PictionaryMusicalCliente.VistaModelo.Sesion
             EjecutarCancelar();
         }
 
-        private void EjecutarAceptar()
+        private async Task EjecutarAceptarAsync()
         {
             RegistrarConfirmacionCierreSesion();
+            await CerrarSesionEnServidorAsync().ConfigureAwait(true);
             _usuarioSesion.Limpiar();
             EjecutarCierreSesionYNavegacion?.Invoke();
             _ventana.CerrarVentana(this);
+        }
+
+        private async Task CerrarSesionEnServidorAsync()
+        {
+            string nombreUsuario = _usuarioSesion.NombreUsuario;
+
+            if (!string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                await _inicioSesionServicio.CerrarSesionAsync(nombreUsuario)
+                    .ConfigureAwait(false);
+            }
         }
 
         private static void RegistrarConfirmacionCierreSesion()

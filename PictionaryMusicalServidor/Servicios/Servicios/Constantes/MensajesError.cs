@@ -60,6 +60,8 @@
                 "No pudimos completar tu registro. Por favor, intenta mas tarde.";
             public const string ErrorInicioSesion = 
                 "No pudimos iniciar sesion. Por favor, intenta mas tarde.";
+            public const string SesionDuplicada = 
+                "SesionDuplicada";
             public const string UsuarioRegistroInvalido = 
                 "El nombre de usuario es obligatorio y debe tener maximo 50 caracteres.";
             public const string NombreRegistroInvalido = 
@@ -619,6 +621,12 @@
                 "Inicio de sesion fallido. Usuario no encontrado.";
             public const string InicioSesionContrasenaIncorrecta = 
                 "Inicio de sesion fallido. Contrasena incorrecta.";
+            public const string SesionRegistradaUsuario = 
+                "Sesion registrada correctamente para usuario con id {0}.";
+            public const string IntentoDuplicadoSesion = 
+                "Intento de inicio de sesion duplicado para usuario con id {0}.";
+            public const string SesionEliminadaUsuario = 
+                "Sesion eliminada para usuario con id {0}.";
 
             public const string ValidacionEntidadFallidaRegistro = 
                 "Validacion de entidad fallida durante el registro.";

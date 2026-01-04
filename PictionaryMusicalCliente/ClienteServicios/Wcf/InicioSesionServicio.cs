@@ -112,22 +112,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private static void CerrarCliente(object cliente)
-        {
-            if (cliente is ICommunicationObject canal && canal.State == CommunicationState.Opened)
-            {
-                canal.Close();
-            }
-        }
-
-        private static void AbortarCliente(object cliente)
-        {
-            if (cliente is ICommunicationObject canal)
-            {
-                canal.Abort();
-            }
-        }
-
         private void ProcesarResultadoSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
             if (resultado == null)
@@ -166,7 +150,70 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             else
             {
-                _logger.Warn("Log in fallido: Credenciales incorrectas o cuenta no encontrada.");
+                _logger.Warn("Inicio sesion fallido: Credenciales incorrectas o cuenta no encontrada.");
+            }
+        }
+
+        /// <summary>
+        /// Cierra la sesion activa del usuario en el servidor.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario cuya sesion se cerrara.</param>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
+        public async Task CerrarSesionAsync(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                _logger.Warn("Intento de cerrar sesion con nombre de usuario vacio.");
+                return;
+            }
+
+            PictionaryServidorServicioInicioSesion.IInicioSesionManejador cliente = null;
+
+            try
+            {
+                cliente = _fabricaClientes.CrearClienteInicioSesion();
+                await cliente.CerrarSesionAsync(nombreUsuario).ConfigureAwait(false);
+                CerrarClienteSiAbierto(cliente);
+                _logger.Info("Sesion cerrada correctamente en el servidor.");
+            }
+            catch (CommunicationException excepcion)
+            {
+                AbortarCliente(cliente);
+                _logger.Warn(
+                    "Modulo: InicioSesionServicio - Error de comunicacion al cerrar sesion. " +
+                    "La sesion sera liberada por timeout.",
+                    excepcion);
+            }
+            catch (TimeoutException excepcion)
+            {
+                AbortarCliente(cliente);
+                _logger.Warn(
+                    "Modulo: InicioSesionServicio - Timeout al cerrar sesion. " +
+                    "La sesion sera liberada por timeout.",
+                    excepcion);
+            }
+            catch (Exception excepcion)
+            {
+                AbortarCliente(cliente);
+                _logger.Error(
+                    "Modulo: InicioSesionServicio - Error inesperado al cerrar sesion.",
+                    excepcion);
+            }
+        }
+
+        private static void CerrarClienteSiAbierto(object cliente)
+        {
+            if (cliente is ICommunicationObject canal && canal.State == CommunicationState.Opened)
+            {
+                canal.Close();
+            }
+        }
+
+        private static void AbortarCliente(object cliente)
+        {
+            if (cliente is ICommunicationObject canal)
+            {
+                canal.Abort();
             }
         }
     }

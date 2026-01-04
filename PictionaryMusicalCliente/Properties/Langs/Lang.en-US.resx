@@ -1239,4 +1239,7 @@
   <data name="errorTextoLimiteFrecuenciaCorreo" xml:space="preserve">
     <value>An email was just sent to this address. You must wait 1 minute before sending another.</value>
   </data>
+  <data name="errorTextoSesionDuplicada" xml:space="preserve">
+    <value>There is a player with that session active at the moment, please try again later.</value>
+  </data>
 </root>

@@ -1980,9 +1980,9 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         /// <summary>
         ///   Busca una cadena traducida similar a Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde..
         /// </summary>
-        public static string errorTextoSesionActivaExistente {
+        public static string errorTextoSesionDuplicada {
             get {
-                return ResourceManager.GetString("errorTextoSesionActivaExistente", resourceCulture);
+                return ResourceManager.GetString("errorTextoSesionDuplicada", resourceCulture);
             }
         }
         
