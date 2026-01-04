@@ -404,9 +404,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return Lang.errorTextoServidorSinDisponibilidad;
             }
 
-            return _localizador.Localizar(
-                excepcion.Message,
-                Lang.errorTextoNoEncuentraPartida);
+            return excepcion.Message;
         }
 
         private static bool SalaLlena(DTOs.SalaDTO sala)
