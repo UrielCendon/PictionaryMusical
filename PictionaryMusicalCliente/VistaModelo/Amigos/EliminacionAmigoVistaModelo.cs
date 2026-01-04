@@ -82,7 +82,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Amigos
             ConfirmarYCerrar();
         }
 
-        private void RegistrarConfirmacion()
+        private static void RegistrarConfirmacion()
         {
             _logger.Info("Usuario confirmo eliminacion de amigo.");
         }

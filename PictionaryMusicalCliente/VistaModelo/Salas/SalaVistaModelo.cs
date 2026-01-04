@@ -203,7 +203,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void ManejarDesconexionConVerificacionInternet(string mensajeServidorCaido)
         {
             string mensaje;
-            if (ConectividadRedMonitor.Instancia.HayConexion)
+            if (ConectividadRedMonitor.HayConexion)
             {
                 mensaje = _esInvitado
                     ? Lang.errorTextoSesionExpiradaGenerico
@@ -839,7 +839,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             });
         }
 
-        private void CanalPartida_Closed(object remitente, EventArgs argumentosEvento)
+        private static void CanalPartida_Closed(object remitente, EventArgs argumentosEvento)
         {
             _logger.Info("El canal de comunicacion con el servidor fue cerrado.");
         }
@@ -907,11 +907,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 await MostrarInvitarAmigos(resultado.VistaModelo).ConfigureAwait(true);
             }
-        }
-
-        private void MostrarMensajeAviso(string mensaje)
-        {
-            _avisoServicio.Mostrar(mensaje);
         }
 
         private void EjecutarAbrirAjustes()
@@ -1846,12 +1841,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void EjecutarSalidaPartidaConfirmada()
         {
-            var destino = ObtenerDestinoSegunSesion();
-            if (destino == DestinoNavegacion.InicioSesion)
-            {
-                _aplicacionCerrando = true;
-            }
-            Navegar(destino);
+            NavegarSegunSesion();
         }
     }
 }

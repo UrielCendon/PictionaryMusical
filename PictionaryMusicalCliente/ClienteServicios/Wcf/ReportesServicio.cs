@@ -52,7 +52,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     cliente => cliente.ReportarJugadorAsync(reporte)
                 ).ConfigureAwait(false);
 
-                ProcesarResultadoReporte(resultado, reporte);
+                ProcesarResultadoReporte(resultado);
                 return resultado;
             }
             catch (FaultException excepcion)
@@ -90,8 +90,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         }
 
         private void ProcesarResultadoReporte(
-            DTOs.ResultadoOperacionDTO resultado,
-            DTOs.ReporteJugadorDTO reporte)
+            DTOs.ResultadoOperacionDTO resultado)
         {
             if (resultado != null)
             {

@@ -141,7 +141,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             await EjecutarEliminarAmigoAsync(parametro as DTOs.AmigoDTO);
         }
 
-        private bool ValidarParametroAmigoDTO(object parametro)
+        private static bool ValidarParametroAmigoDTO(object parametro)
         {
             return parametro is DTOs.AmigoDTO;
         }
@@ -372,7 +372,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private async Task CargarListaAmigosInicialAsync()
         {
-            IReadOnlyList<DTOs.AmigoDTO> listaActual = _listaAmigosServicio.ListaActual;
             EjecutarEnDispatcher(ActualizarAmigosConListaActual);
             await Task.CompletedTask;
         }
@@ -441,7 +440,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
             
-            string mensaje = ConectividadRedMonitor.Instancia.HayConexion
+            string mensaje = ConectividadRedMonitor.HayConexion
                 ? Lang.errorTextoSesionExpiradaGenerico
                 : Lang.errorTextoPerdidaConexionInternet;
             _ventana.MostrarError(mensaje);
@@ -767,7 +766,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 _ventana,
                 _localizador,
                 App.ClasificacionServicio,
-                App.AvisoServicio,
                 _sonidoManejador);
             clasificacionVistaModelo.SolicitarReinicioSesion = EjecutarReinicioAplicacion;
             _ventana.MostrarVentanaDialogo(clasificacionVistaModelo);

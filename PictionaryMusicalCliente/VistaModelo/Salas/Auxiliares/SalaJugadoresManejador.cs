@@ -334,15 +334,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             }
             catch (ServicioExcepcion excepcion)
             {
-                ManejarErrorExpulsion(nombreJugador, excepcion);
+                ManejarErrorExpulsion(excepcion);
             }
             catch (ArgumentException excepcion)
             {
-                ManejarErrorExpulsion(nombreJugador, excepcion);
+                ManejarErrorExpulsion(excepcion);
             }
         }
 
-        private void ManejarErrorExpulsion(string nombreJugador, Exception excepcion)
+        private void ManejarErrorExpulsion(Exception excepcion)
         {
             _logger.Error("Error al expulsar jugador de la sala.", excepcion);
             _dependencias.SonidoManejador.ReproducirError();
@@ -377,11 +377,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             }
             catch (ServicioExcepcion excepcion)
             {
-                ManejarErrorReporte(nombreJugador, excepcion);
+                ManejarErrorReporte(excepcion);
             }
             catch (ArgumentException excepcion)
             {
-                ManejarErrorReporte(nombreJugador, excepcion);
+                ManejarErrorReporte(excepcion);
             }
         }
 
@@ -424,7 +424,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             }
         }
 
-        private void ManejarErrorReporte(string nombreJugador, Exception excepcion)
+        private void ManejarErrorReporte(Exception excepcion)
         {
             _logger.Error("Error al reportar jugador.", excepcion);
             _dependencias.SonidoManejador.ReproducirError();

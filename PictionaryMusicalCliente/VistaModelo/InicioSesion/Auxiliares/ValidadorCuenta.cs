@@ -17,7 +17,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion.Auxiliares
         /// <returns>
         /// Resultado con campos invalidos y primer mensaje de error.
         /// </returns>
-        public ResultadoValidacionCampos ValidarCamposCreacion(DatosCreacionCuenta datos)
+        public static ResultadoValidacionCampos ValidarCamposCreacion(DatosCreacionCuenta datos)
         {
             var contexto = new ValidacionContexto();
 

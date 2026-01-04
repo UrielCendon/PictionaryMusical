@@ -57,7 +57,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     c => c.RegistrarCuentaAsync(solicitud)
                 ).ConfigureAwait(false);
 
-                RegistrarLogResultado(resultado, solicitud.Correo);
+                RegistrarLogResultado(resultado);
                 return resultado;
             }
             catch (FaultException excepcion)
@@ -94,9 +94,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
-        private void RegistrarLogResultado(
-            DTOs.ResultadoRegistroCuentaDTO resultado,
-            string correo)
+        private static void RegistrarLogResultado(
+            DTOs.ResultadoRegistroCuentaDTO resultado)
         {
             if (!resultado?.RegistroExitoso == true)
             {

@@ -443,7 +443,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             CanalDesconectado?.Invoke(this, EventArgs.Empty);
         }
 
-        private void Canal_Closed(object remitente, EventArgs argumentosEvento)
+        private static void Canal_Closed(object remitente, EventArgs argumentosEvento)
         {
             _logger.Info(
                 "Modulo: ListaAmigosServicio - Canal de lista de amigos cerrado normalmente.");

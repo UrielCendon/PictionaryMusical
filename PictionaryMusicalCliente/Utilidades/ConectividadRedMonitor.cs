@@ -46,7 +46,7 @@ namespace PictionaryMusicalCliente.Utilidades
         /// <summary>
         /// Indica si actualmente hay conexión de red disponible.
         /// </summary>
-        public bool HayConexion => NetworkInterface.GetIsNetworkAvailable();
+        public static bool HayConexion => NetworkInterface.GetIsNetworkAvailable();
 
         private void OnCambioDisponibilidadRed(
             object remitente, 

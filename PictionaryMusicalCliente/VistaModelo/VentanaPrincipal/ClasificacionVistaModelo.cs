@@ -18,8 +18,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
     public class ClasificacionVistaModelo : BaseVistaModelo
     {
         private readonly SonidoManejador _sonidoManejador;
-        private readonly IAvisoServicio _avisoServicio;
-
         private readonly IClasificacionServicio _clasificacionServicio;
         private IReadOnlyList<DTOs.ClasificacionUsuarioDTO> _clasificacionOriginal;
         private ObservableCollection<DTOs.ClasificacionUsuarioDTO> _clasificacion;
@@ -33,20 +31,16 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <param name="localizador">Servicio de localizacion.</param>
         /// <param name="clasificacionServicio">Servicio para obtener los datos del ranking.
         /// </param>
-        /// <param name="avisoServicio">Servicio de avisos.</param>
         /// <param name="sonidoManejador">Servicio de sonido.</param>
         public ClasificacionVistaModelo(
             IVentanaServicio ventana,
             ILocalizadorServicio localizador,
             IClasificacionServicio clasificacionServicio,
-            IAvisoServicio avisoServicio,
             SonidoManejador sonidoManejador)
             : base(ventana, localizador)
         {
             _clasificacionServicio = clasificacionServicio ??
                 throw new ArgumentNullException(nameof(clasificacionServicio));
-            _avisoServicio = avisoServicio ??
-                throw new ArgumentNullException(nameof(avisoServicio));
             _sonidoManejador = sonidoManejador ??
                 throw new ArgumentNullException(nameof(sonidoManejador));
 

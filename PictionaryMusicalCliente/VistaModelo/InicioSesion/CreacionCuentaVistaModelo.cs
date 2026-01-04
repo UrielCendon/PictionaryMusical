@@ -39,7 +39,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private readonly SonidoManejador _sonidoManejador;
         private readonly ICatalogoAvatares _catalogoAvatares;
         private readonly IAvisoServicio _avisoServicio;
-        private readonly ValidadorCuenta _validadorCuenta;
 
         private string _usuario;
         private string _nombre;
@@ -81,7 +80,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
                 dependencias.VerificacionCodigoDialogoServicio;
             _catalogoAvatares = dependencias.CatalogoAvatares;
             _localizacionServicio = dependencias.LocalizacionServicio;
-            _validadorCuenta = new ValidadorCuenta();
 
             CrearCuentaComando = new ComandoAsincrono(
                 EjecutarComandoCrearCuentaAsync, 
@@ -298,13 +296,11 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private string ObtenerMensajeErrorCreacion(Exception excepcion)
         {
-            if (excepcion is ServicioExcepcion servicioExcepcion)
+            if (excepcion is ServicioExcepcion servicioExcepcion &&
+                (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
+                 servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion))
             {
-                if (servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
-                    servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion)
-                {
-                    return Lang.errorTextoServidorSinDisponibilidad;
-                }
+                return Lang.errorTextoServidorSinDisponibilidad;
             }
 
             return _localizador.Localizar(
@@ -440,7 +436,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
             if (registroExitoso)
             {
-                FinalizarRegistroExitoso(solicitud.Usuario);
+                FinalizarRegistroExitoso();
             }
             else
             {
@@ -448,7 +444,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
         }
 
-        private void FinalizarRegistroExitoso(string usuario)
+        private void FinalizarRegistroExitoso()
         {
             _logger.Info("Cuenta creada exitosamente.");
             _sonidoManejador.ReproducirNotificacion();
@@ -489,7 +485,7 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             var datosCreacion = new DatosCreacionCuenta(
                 Usuario, Nombre, Apellido, Correo, Contrasena, AvatarSeleccionadoId);
             
-            ResultadoValidacionCampos resultado = _validadorCuenta.ValidarCamposCreacion(
+            ResultadoValidacionCampos resultado = ValidadorCuenta.ValidarCamposCreacion(
                 datosCreacion);
 
             if (!resultado.EsValido)
