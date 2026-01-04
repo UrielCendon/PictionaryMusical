@@ -36,18 +36,45 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// Usa CallbacksCompartidos para asegurar que las notificaciones lleguen
         /// a todos los clientes suscritos en ListaAmigosManejador.
         /// </summary>
-        public AmigosManejador() : this(
-            new AmistadServicio(),
-            new OperacionAmistadServicio(),
-            new NotificadorListaAmigos(
-                CallbacksCompartidos.ListaAmigos,
-                new AmistadServicio(),
-                new RepositorioFactoria()),
-            new NotificadorAmigos(
-                new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase),
-                new AmistadServicio()),
-            new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase),
-            new ProveedorCallback<IAmigosManejadorCallback>())
+        public AmigosManejador() : this(CrearDependenciasPorDefecto())
+        {
+        }
+
+        private static (IAmistadServicio, IOperacionAmistadServicio, INotificadorListaAmigos,
+            INotificadorAmigos, IManejadorCallback<IAmigosManejadorCallback>,
+            IProveedorCallback<IAmigosManejadorCallback>) CrearDependenciasPorDefecto()
+        {
+            var amistadServicio = new AmistadServicio();
+            var manejadorCallback = 
+                new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase);
+            
+            return (
+                amistadServicio,
+                new OperacionAmistadServicio(),
+                new NotificadorListaAmigos(
+                    CallbacksCompartidos.ListaAmigos,
+                    amistadServicio,
+                    new RepositorioFactoria()),
+                new NotificadorAmigos(manejadorCallback, amistadServicio),
+                manejadorCallback,
+                new ProveedorCallback<IAmigosManejadorCallback>()
+            );
+        }
+
+        private AmigosManejador(
+            (IAmistadServicio amistadServicio, 
+             IOperacionAmistadServicio operacionAmistadServicio,
+             INotificadorListaAmigos notificadorLista,
+             INotificadorAmigos notificadorAmigos,
+             IManejadorCallback<IAmigosManejadorCallback> manejadorCallback,
+             IProveedorCallback<IAmigosManejadorCallback> proveedorCallback) dependencias)
+            : this(
+                dependencias.amistadServicio,
+                dependencias.operacionAmistadServicio,
+                dependencias.notificadorLista,
+                dependencias.notificadorAmigos,
+                dependencias.manejadorCallback,
+                dependencias.proveedorCallback)
         {
         }
 
