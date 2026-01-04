@@ -170,9 +170,9 @@ namespace PictionaryMusicalCliente.VistaModelo
             {
                 ManejarErrorServicioConDesconexion(excepcion, redirigirEnDesconexion);
             }
-            catch (ObjectDisposedException)
+            catch (ObjectDisposedException excepcion)
             {
-                _logger.Info("Operacion cancelada por objeto dispuesto.");
+                _logger.Info("Operacion cancelada por objeto dispuesto.", excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
