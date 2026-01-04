@@ -93,11 +93,21 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
 
         /// <summary>
         /// Notifica que un jugador se desconecto durante la partida y debe ser removido de la 
-        /// sala.
+        /// sala. No elimina la sesion global del usuario.
         /// Este metodo es para uso interno del servidor, no debe ser llamado por clientes.
         /// </summary>
         /// <param name="codigoSala">Codigo de la sala.</param>
         /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
         void NotificarDesconexionJugador(string codigoSala, string nombreUsuario);
+
+        /// <summary>
+        /// Notifica que un jugador perdio la conexion (error de comunicacion, timeout, etc.)
+        /// y debe ser removido de la sala. Tambien elimina su sesion global.
+        /// Este metodo es para uso interno del servidor cuando se detecta que el cliente
+        /// ya no es alcanzable.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
+        void NotificarClienteInalcanzable(string codigoSala, string nombreUsuario);
     }
 }

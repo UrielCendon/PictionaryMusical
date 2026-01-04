@@ -17,6 +17,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         /// <summary>
         /// Evento disparado cuando un callback debe ser removido por error de comunicacion.
+        /// Esto indica que el cliente ya no es alcanzable (desconexion, timeout, etc.)
+        /// y su sesion debe ser eliminada.
         /// </summary>
         public event Action<string, string> CallbackInvalido;
 

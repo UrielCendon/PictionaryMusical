@@ -288,6 +288,20 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
+        /// <summary>
+        /// Obtiene el nombre de usuario de un jugador por su identificador de conexion.
+        /// </summary>
+        /// <param name="idConexion">Identificador de conexion del jugador.</param>
+        /// <returns>Nombre de usuario o null si no existe.</returns>
+        public string ObtenerNombreUsuarioPorId(string idConexion)
+        {
+            lock (_sincronizacion)
+            {
+                var jugador = _gestorJugadores.Obtener(idConexion);
+                return jugador?.NombreUsuario;
+            }
+        }
+
         private ResultadoRemocionJugador ProcesarRemocionJugador(string id, out string nombreUsuarioRemovido)
         {
             nombreUsuarioRemovido = null;

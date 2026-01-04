@@ -598,6 +598,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         }
 
         /// <summary>
+        /// Notifica que un jugador perdio la conexion (error de comunicacion, timeout, etc.)
+        /// y debe ser removido de la sala. Tambien elimina su sesion global porque el cliente
+        /// ya no es alcanzable.
+        /// </summary>
+        /// <param name="codigoSala">Codigo de la sala.</param>
+        /// <param name="nombreUsuario">Nombre del usuario desconectado.</param>
+        public void NotificarClienteInalcanzable(string codigoSala, string nombreUsuario)
+        {
+            ManejarDesconexionJugador(codigoSala, nombreUsuario);
+        }
+
+        /// <summary>
         /// Remueve al jugador de la sala sin eliminar su sesion global.
         /// Se usa para cierres de canal normales (navegacion, salida voluntaria).
         /// </summary>

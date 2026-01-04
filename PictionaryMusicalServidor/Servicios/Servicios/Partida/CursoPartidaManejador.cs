@@ -525,9 +525,69 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void ManejarCallbackInvalido(string idSala, string idJugador)
+        private void ManejarCallbackInvalido(string idSala, string idJugador)
         {
-            RemoverCallback(idSala, idJugador);
+            string nombreUsuario = RemoverCallbackYObtenerNombre(idSala, idJugador);
+            
+            if (!string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                try
+                {
+                    _salasManejador.NotificarClienteInalcanzable(idSala, nombreUsuario);
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Error(
+                        string.Format(
+                            "Error al notificar cliente inalcanzable en sala '{0}'.",
+                            idSala),
+                        excepcion);
+                }
+            }
+        }
+
+        private static string RemoverCallbackYObtenerNombre(string idSala, string idJugador)
+        {
+            ControladorPartida controladorARemover = null;
+            string nombreUsuario = null;
+            bool callbackRemovido = false;
+            bool partidaActiva = false;
+            bool partidaFinalizada = false;
+
+            lock (_sincronizacion)
+            {
+                Dictionary<string, ICursoPartidaManejadorCallback> callbacks;
+                if (_callbacksPorSala.TryGetValue(idSala, out callbacks))
+                {
+                    callbackRemovido = callbacks.Remove(idJugador);
+                }
+
+                if (callbackRemovido)
+                {
+                    ControladorPartida controlador;
+                    partidaActiva = _partidasActivas.TryGetValue(idSala, out controlador);
+                    if (partidaActiva)
+                    {
+                        partidaFinalizada = controlador.EstaFinalizada;
+                        if (!partidaFinalizada)
+                        {
+                            controladorARemover = controlador;
+                        }
+                    }
+                }
+            }
+
+            if (controladorARemover != null)
+            {
+                _logger.InfoFormat(
+                    "Removiendo jugador {0} de sala {1} por cliente inalcanzable.",
+                    idJugador,
+                    idSala);
+                nombreUsuario = controladorARemover.ObtenerNombreUsuarioPorId(idJugador);
+                controladorARemover.RemoverJugador(idJugador);
+            }
+
+            return nombreUsuario;
         }
 
         private static void RegistrarCallback(
