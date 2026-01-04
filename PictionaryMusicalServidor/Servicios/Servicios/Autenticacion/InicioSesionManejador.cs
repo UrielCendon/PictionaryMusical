@@ -258,25 +258,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 return BuscarPorNombreUsuario(contexto, identificador);
             }
-            catch (Datos.Excepciones.BaseDatosExcepcion)
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
+                when (excepcion.InnerException is KeyNotFoundException)
             {
-                throw;
-            }
-            catch (KeyNotFoundException excepcion)
-            {
-                _logger.Warn(
+                _logger.Info(
                     "Usuario no encontrado por nombre, se intentara buscar por " +
-                    "correo electronico.",
-                    excepcion);
+                    "correo electronico.");
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al buscar usuario por nombre, " +
-                    "intentando por correo electronico.",
+                    "Error inesperado al buscar usuario por nombre.",
                     excepcion);
-                return BuscarPorCorreoElectronico(contexto, identificador);
+                throw;
             }
         }
 
@@ -293,16 +288,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             BaseDatosPruebaEntities contexto,
             string correo)
         {
-            IUsuarioRepositorio repositorio = 
-                _repositorioFactoria.CrearUsuarioRepositorio(contexto);
-            Usuario usuario = repositorio.ObtenerPorCorreo(correo);
-
-            if (usuario == null)
+            try
+            {
+                IUsuarioRepositorio repositorio = 
+                    _repositorioFactoria.CrearUsuarioRepositorio(contexto);
+                return repositorio.ObtenerPorCorreo(correo);
+            }
+            catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
+                when (excepcion.InnerException is KeyNotFoundException)
             {
                 throw new KeyNotFoundException(
-                    "Usuario no encontrado por correo electronico.");
+                    "Usuario no encontrado por correo electronico.",
+                    excepcion);
             }
-            return usuario;
         }
 
         private static UsuarioDTO MapearUsuario(Usuario usuario)

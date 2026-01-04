@@ -197,13 +197,13 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 }
 
                 throw new KeyNotFoundException(
-                    MensajesErrorDatos.Usuario.UsuarioNoExiste);
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerUsuario, excepcion);
+                _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
             catch (DbUpdateException excepcion)
@@ -279,7 +279,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (usuarioEncontrado == null)
                 {
-                    _logger.Warn(
+                    _logger.Info(
                         "Busqueda de usuario por correo no arrojo resultados.");
                     throw new KeyNotFoundException(
                         MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
@@ -289,9 +289,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, excepcion);
+                _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
             catch (DbUpdateException excepcion)
@@ -360,7 +360,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (usuarioEncontrado == null)
                 {
-                    _logger.Warn(
+                    _logger.Info(
                         "Busqueda asincrona de usuario por correo no arrojo resultados.");
                     throw new KeyNotFoundException(
                         MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
@@ -370,9 +370,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Error(MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, excepcion);
+                _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
             catch (DbUpdateException excepcion)
@@ -439,7 +439,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (usuarioEncontrado == null)
                 {
-                    _logger.WarnFormat(
+                    _logger.InfoFormat(
                         "No se encontro usuario con id {0} al obtener con redes sociales.",
                         idUsuario);
                     throw new KeyNotFoundException(
@@ -450,9 +450,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, excepcion);
+                _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
             catch (DbUpdateException excepcion)
@@ -581,7 +581,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 if (usuarioEncontrado == null)
                 {
-                    _logger.Warn(
+                    _logger.Info(
                         "Busqueda de usuario con datos de jugador no arrojo resultados.");
                     throw new KeyNotFoundException(
                         MensajesErrorDatos.Usuario.UsuarioNoEncontrado);
@@ -591,9 +591,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, excepcion);
+                _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
             catch (DbUpdateException excepcion)

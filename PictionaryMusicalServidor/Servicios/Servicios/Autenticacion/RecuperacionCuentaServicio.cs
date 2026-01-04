@@ -219,7 +219,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 string idNormalizado = EntradaComunValidador.NormalizarTexto(identificador);
 
                 return IntentarBuscarPorNombre(repositorio, idNormalizado)
-                    ?? repositorio.ObtenerPorCorreo(idNormalizado);
+                    ?? IntentarBuscarPorCorreo(repositorio, idNormalizado);
             }
         }
 
@@ -231,9 +231,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             {
                 return repositorio.ObtenerPorNombreConJugador(nombreUsuario);
             }
-            catch (KeyNotFoundException)
+            catch (BaseDatosExcepcion)
             {
-                //Se 
+                return null;
+            }
+        }
+
+        private static Usuario IntentarBuscarPorCorreo(
+            IUsuarioRepositorio repositorio, 
+            string correo)
+        {
+            try
+            {
+                return repositorio.ObtenerPorCorreo(correo);
+            }
+            catch (BaseDatosExcepcion)
+            {
                 return null;
             }
         }
