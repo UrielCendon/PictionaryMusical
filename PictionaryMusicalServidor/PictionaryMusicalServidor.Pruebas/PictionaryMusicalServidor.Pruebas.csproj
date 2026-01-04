@@ -84,6 +84,8 @@
     <Compile Include="Datos\Utilidades\ConexionPruebas.cs" />
     <Compile Include="Datos\Utilidades\GeneradorAleatorioDatosPruebas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicios\Amigos\AmistadServicioPruebas.cs" />
+    <Compile Include="Servicios\Amigos\OperacionAmistadServicioPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\GestorJugadoresPartidaPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\GestorTiemposPartidaPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\ValidadorAdivinanzaPruebas.cs" />
