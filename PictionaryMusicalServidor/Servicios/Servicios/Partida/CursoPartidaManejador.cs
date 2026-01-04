@@ -558,6 +558,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         {
             ControladorPartida controladorARemover = null;
             bool callbackRemovido = false;
+            bool partidaActiva = false;
+            bool partidaFinalizada = false;
 
             lock (_sincronizacion)
             {
@@ -570,10 +572,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 if (callbackRemovido)
                 {
                     ControladorPartida controlador;
-                    if (_partidasActivas.TryGetValue(idSala, out controlador)
-                        && !controlador.EstaFinalizada)
+                    partidaActiva = _partidasActivas.TryGetValue(idSala, out controlador);
+                    if (partidaActiva)
                     {
-                        controladorARemover = controlador;
+                        partidaFinalizada = controlador.EstaFinalizada;
+                        if (!partidaFinalizada)
+                        {
+                            controladorARemover = controlador;
+                        }
                     }
                 }
             }
@@ -585,13 +591,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                     idJugador,
                     idSala);
                 controladorARemover.RemoverJugador(idJugador);
-            }
-            else if (!callbackRemovido)
-            {
-                _logger.DebugFormat(
-                    "Callback de jugador {0} en sala {1} ya fue removido previamente.",
-                    idJugador,
-                    idSala);
             }
         }
 

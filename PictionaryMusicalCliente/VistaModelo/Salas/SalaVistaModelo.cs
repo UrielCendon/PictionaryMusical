@@ -218,6 +218,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             ManejarDesconexionCritica(mensaje);
         }
 
+        /// <summary>
+        /// Maneja una desconexion detectada desde un dialogo hijo.
+        /// </summary>
+        /// <param name="mensaje">Mensaje de la desconexion.</param>
+        public void ManejarDesconexionDesdeDialogo(string mensaje)
+        {
+            ManejarDesconexionConVerificacionInternet(mensaje);
+        }
+
         private void AbortarCanalPartidaSiNecesario()
         {
             try
@@ -337,6 +346,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _jugadoresManejador.SolicitarDatosReporte = SolicitarDatosReporte;
             _jugadoresManejador.EstablecerObtenerJuegoIniciado(ObtenerJuegoIniciado);
             _jugadoresManejador.ProgresoRondaCambiado += ManejarProgresoRondaCambiado;
+            _jugadoresManejador.DesconexionDetectada += ManejarDesconexionDesdeJugadoresManejador;
+        }
+
+        private void ManejarDesconexionDesdeJugadoresManejador(string mensaje)
+        {
+            ManejarDesconexionConVerificacionInternet(mensaje);
         }
 
         private bool ObtenerJuegoIniciado()
@@ -869,43 +884,63 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private async Task EjecutarInvitarCorreoAsync()
         {
-            var resultado = await _invitacionSalaServicio
-                .InvitarPorCorreoAsync(_codigoSala, CorreoInvitacion)
-                .ConfigureAwait(true);
-
-            if (resultado.Exitoso)
+            try
             {
-                _sonidoManejador.ReproducirNotificacion();
-                _avisoServicio.Mostrar(resultado.Mensaje);
-                CorreoInvitacion = string.Empty;
-                return;
-            }
+                var resultado = await _invitacionSalaServicio
+                    .InvitarPorCorreoAsync(_codigoSala, CorreoInvitacion)
+                    .ConfigureAwait(true);
 
-            _sonidoManejador.ReproducirError();
-            _avisoServicio.Mostrar(resultado.Mensaje);
+                if (resultado.Exitoso)
+                {
+                    _sonidoManejador.ReproducirNotificacion();
+                    _avisoServicio.Mostrar(resultado.Mensaje);
+                    CorreoInvitacion = string.Empty;
+                    return;
+                }
+
+                _sonidoManejador.ReproducirError();
+                _avisoServicio.Mostrar(resultado.Mensaje);
+            }
+            catch (ServicioExcepcion excepcion) when (
+                excepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
+            {
+                _logger.Error("Error de conexion al invitar por correo.", excepcion);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
+            }
         }
 
         private async Task EjecutarInvitarAmigosAsync()
         {
-            var parametros = new InvitacionAmigosParametros(
-                _codigoSala,
-                _nombreUsuarioSesion,
-                _invitacionesManejador.AmigosInvitados);
-
-            var resultado = await _invitacionSalaServicio
-                .ObtenerInvitacionAmigosAsync(parametros)
-                .ConfigureAwait(true);
-
-            if (!resultado.Exitoso)
+            try
             {
-                _sonidoManejador.ReproducirError();
-                _avisoServicio.Mostrar(resultado.Mensaje);
-                return;
+                var parametros = new InvitacionAmigosParametros(
+                    _codigoSala,
+                    _nombreUsuarioSesion,
+                    _invitacionesManejador.AmigosInvitados);
+
+                var resultado = await _invitacionSalaServicio
+                    .ObtenerInvitacionAmigosAsync(parametros)
+                    .ConfigureAwait(true);
+
+                if (!resultado.Exitoso)
+                {
+                    _sonidoManejador.ReproducirError();
+                    _avisoServicio.Mostrar(resultado.Mensaje);
+                    return;
+                }
+
+                if (MostrarInvitarAmigos != null && resultado.VistaModelo != null)
+                {
+                    await MostrarInvitarAmigos(resultado.VistaModelo).ConfigureAwait(true);
+                }
             }
-
-            if (MostrarInvitarAmigos != null && resultado.VistaModelo != null)
+            catch (ServicioExcepcion excepcion) when (
+                excepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
             {
-                await MostrarInvitarAmigos(resultado.VistaModelo).ConfigureAwait(true);
+                _logger.Error("Error de conexion al obtener amigos para invitar.", excepcion);
+                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
             }
         }
 

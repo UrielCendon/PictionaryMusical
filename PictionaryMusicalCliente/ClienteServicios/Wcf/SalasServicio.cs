@@ -1,5 +1,6 @@
 ﻿using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
+using PictionaryMusicalCliente.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +117,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 var sala = await cliente.CrearSalaAsync(nombreCreador, configuracion)
                     .ConfigureAwait(false);
 
-                _logger.InfoFormat("Sala creada. Codigo: {1}", sala.Codigo);
+                _logger.InfoFormat("Sala creada. Codigo: {0}", sala.Codigo);
                 return sala;
             }
             catch (FaultException excepcion)
@@ -231,6 +232,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             string nombreJugadorAExpulsar)
         {
             ValidarExpulsion(codigoSala, nombreHost, nombreJugadorAExpulsar);
+            VerificarConexionRed();
 
             if (_desechado)
             {
@@ -616,6 +618,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             if (string.IsNullOrWhiteSpace(jugador))
             {
                 throw new ArgumentException("Jugador a expulsar obligatorio.", nameof(jugador));
+            }
+        }
+
+        private static void VerificarConexionRed()
+        {
+            if (!ConectividadRedMonitor.HayConexion)
+            {
+                throw new ServicioExcepcion(
+                    TipoErrorServicio.Comunicacion,
+                    Lang.errorTextoServidorNoDisponible);
             }
         }
 

@@ -172,7 +172,7 @@ namespace PictionaryMusicalCliente.VistaModelo
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Debug("Recurso ya liberado durante la operacion.", excepcion);
+                _logger.Info("Operacion cancelada por objeto dispuesto.", excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
