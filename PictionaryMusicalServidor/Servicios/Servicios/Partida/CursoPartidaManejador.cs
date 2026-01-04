@@ -1,5 +1,6 @@
 ﻿using log4net;
 using PictionaryMusicalServidor.Datos;
+using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
@@ -43,6 +44,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
         private const int TiempoRondaPorDefectoSegundos = 90;
+        private const int TiempoTransicionPorDefectoSegundos = 5;
         private const int NumeroRondasPorDefecto = 3;
         private const string DificultadPorDefecto = "Media";
 
@@ -69,7 +71,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         /// </summary>
         public CursoPartidaManejador() : this(
             new SalasManejador(),
-            new CatalogoCanciones(),
+            new CatalogoCanciones(new GeneradorAleatorioDatos()),
             new NotificadorPartida(),
             new ActualizadorClasificacionPartida())
         {
@@ -187,14 +189,28 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 }
 
                 var configuracion = ObtenerConfiguracionSala(idSala);
-                var gestorJugadores = new GestorJugadoresPartida();
+                var generadorAleatorio = new GeneradorAleatorioDatos();
+                var gestorJugadores = new GestorJugadoresPartida(generadorAleatorio);
+                var proveedorFecha = new ProveedorFecha();
+
+                int tiempoRonda = configuracion?.TiempoPorRondaSegundos ?? TiempoRondaPorDefectoSegundos;
+                var gestorTiempos = new GestorTiemposPartida(
+                    tiempoRonda,
+                    TiempoTransicionPorDefectoSegundos,
+                    proveedorFecha);
+
+                var validadorAdivinanza = new ValidadorAdivinanza(_catalogoCanciones, gestorTiempos);
+                var proveedorTiempo = new ProveedorTiempo();
 
                 var controlador = new ControladorPartida(
-                    configuracion?.TiempoPorRondaSegundos ?? TiempoRondaPorDefectoSegundos,
+                    tiempoRonda,
                     configuracion?.Dificultad ?? DificultadPorDefecto,
                     configuracion?.NumeroRondas ?? NumeroRondasPorDefecto,
                     _catalogoCanciones,
-                    gestorJugadores);
+                    gestorJugadores,
+                    gestorTiempos,
+                    validadorAdivinanza,
+                    proveedorTiempo);
 
                 if (!string.IsNullOrWhiteSpace(configuracion?.IdiomaCanciones))
                 {

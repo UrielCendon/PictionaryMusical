@@ -3,6 +3,7 @@ using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security;
@@ -11,9 +12,7 @@ using System.Threading.Tasks;
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
-    /// Controlador principal (Orquestador) que coordina el flujo de la partida.
-    /// Delega la logica especifica a los gestores de jugadores y tiempos, manteniendo la 
-    /// coherencia del estado global.
+    /// Controla el flujo de una partida, incluyendo rondas, turnos y eventos del juego.
     /// </summary>
     public class ControladorPartida
     {
@@ -23,13 +22,15 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private const string RolDibujante = "Dibujante";
         private const int LimitePalabrasMensaje = 150;
         private const int TiempoOverlayClienteSegundos = 5;
+        private const int MilisegundosPorSegundo = 1000;
 
         private readonly object _sincronizacion = new object();
 
         private readonly ICatalogoCanciones _catalogoCanciones;
-        private readonly GestorJugadoresPartida _gestorJugadores;
-        private readonly GestorTiemposPartida _gestorTiempos;
-        private readonly ValidadorAdivinanza _validadorAdivinanza;
+        private readonly IGestorJugadoresPartida _gestorJugadores;
+        private readonly IGestorTiemposPartida _gestorTiempos;
+        private readonly IValidadorAdivinanza _validadorAdivinanza;
+        private readonly IProveedorTiempo _proveedorTiempo;
         private readonly HashSet<int> _cancionesUsadas;
 
         private readonly int _duracionRondaSegundos;
@@ -44,23 +45,83 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private bool _enTransicionRonda;
 
         /// <summary>
+        /// Evento disparado cuando la partida inicia.
+        /// </summary>
+        public event Action PartidaIniciada;
+
+        /// <summary>
+        /// Evento disparado al comenzar una nueva ronda con los datos correspondientes.
+        /// </summary>
+        public event Action<RondaDTO> InicioRonda;
+
+        /// <summary>
+        /// Evento disparado cuando un jugador adivina correctamente.
+        /// Parametros: nombre del jugador, puntos obtenidos.
+        /// </summary>
+        public event Action<string, int> JugadorAdivino;
+
+        /// <summary>
+        /// Evento disparado cuando se recibe un mensaje de chat.
+        /// Parametros: nombre del jugador, mensaje.
+        /// </summary>
+        public event Action<string, string> MensajeChatRecibido;
+
+        /// <summary>
+        /// Evento disparado cuando se recibe un trazo del dibujante.
+        /// </summary>
+        public event Action<TrazoDTO> TrazoRecibido;
+
+        /// <summary>
+        /// Evento disparado al finalizar una ronda.
+        /// Parametro: indica si termino por tiempo agotado.
+        /// </summary>
+        public event Action<bool> FinRonda;
+
+        /// <summary>
+        /// Evento disparado cuando la partida finaliza.
+        /// </summary>
+        public event Action<ResultadoPartidaDTO> FinPartida;
+
+        /// <summary>
+        /// Evento disparado para limpiar el lienzo de dibujo.
+        /// </summary>
+        public event Action LimpiarLienzo;
+
+        /// <summary>
+        /// Evento disparado cuando un jugador se desconecta.
+        /// Parametro: nombre del usuario desconectado.
+        /// </summary>
+        public event Action<string> JugadorDesconectado;
+
+        /// <summary>
         /// Inicializa una nueva instancia del controlador de partida.
         /// </summary>
-        /// <param name="tiempoRonda">Tiempo limite en segundos por ronda.</param>
-        /// <param name="dificultad">Nivel de dificultad de la partida (facil, medio, dificil).
-        /// </param>
+        /// <param name="tiempoRonda">Duracion de cada ronda en segundos.</param>
+        /// <param name="dificultad">Nivel de dificultad de la partida.</param>
         /// <param name="totalRondas">Numero total de rondas a jugar.</param>
-        /// <param name="catalogo">Servicio de catalogo de canciones inyectado.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Se lanza si el tiempo o las rondas son 
-        /// invalidos.</exception>
-        /// <exception cref="ArgumentNullException">Se lanza si el catalogo es nulo.</exception>
-        public ControladorPartida(int tiempoRonda, string dificultad, int totalRondas, 
-            ICatalogoCanciones catalogo, GestorJugadoresPartida gestorJugadores)
+        /// <param name="catalogo">Catalogo de canciones disponibles.</param>
+        /// <param name="gestorJugadores">Gestor de jugadores de la partida.</param>
+        /// <param name="gestorTiempos">Gestor de temporizadores.</param>
+        /// <param name="validadorAdivinanza">Validador de intentos de adivinanza.</param>
+        /// <param name="proveedorTiempo">Proveedor de operaciones de tiempo.</param>
+        /// <exception cref="ArgumentOutOfRangeException">Si tiempoRonda o totalRondas son menores
+        /// o iguales a cero.</exception>
+        /// <exception cref="ArgumentException">Si dificultad es nula o vacia.</exception>
+        /// <exception cref="ArgumentNullException">Si alguna dependencia es nula.</exception>
+        public ControladorPartida(
+            int tiempoRonda,
+            string dificultad,
+            int totalRondas,
+            ICatalogoCanciones catalogo,
+            IGestorJugadoresPartida gestorJugadores,
+            IGestorTiemposPartida gestorTiempos,
+            IValidadorAdivinanza validadorAdivinanza,
+            IProveedorTiempo proveedorTiempo)
         {
             if (tiempoRonda <= 0 || totalRondas <= 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(tiempoRonda), 
+                    nameof(tiempoRonda),
                     "El tiempo de ronda y el número total de rondas deben ser mayores que cero.");
             }
 
@@ -69,18 +130,16 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 throw new ArgumentException(nameof(dificultad));
             }
 
-            _catalogoCanciones = catalogo ??
-                throw new ArgumentNullException(nameof(catalogo));
-
-            _gestorJugadores = gestorJugadores ??
-                throw new ArgumentNullException(nameof(gestorJugadores));
+            _catalogoCanciones = catalogo ?? throw new ArgumentNullException(nameof(catalogo));
+            _gestorJugadores = gestorJugadores ?? throw new ArgumentNullException(nameof(gestorJugadores));
+            _gestorTiempos = gestorTiempos ?? throw new ArgumentNullException(nameof(gestorTiempos));
+            _validadorAdivinanza = validadorAdivinanza ?? throw new ArgumentNullException(nameof(validadorAdivinanza));
+            _proveedorTiempo = proveedorTiempo ?? throw new ArgumentNullException(nameof(proveedorTiempo));
 
             _duracionRondaSegundos = tiempoRonda;
             _dificultad = dificultad.Trim();
             _totalRondas = totalRondas;
 
-            _gestorTiempos = new GestorTiemposPartida(tiempoRonda, TiempoOverlayClienteSegundos);
-            _validadorAdivinanza = new ValidadorAdivinanza(_catalogoCanciones, _gestorTiempos);
             _cancionesUsadas = new HashSet<int>();
             _estadoActual = EstadoPartida.EnSalaEspera;
 
@@ -88,55 +147,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Evento que se dispara cuando la partida cambia al estado Jugando.
-        /// </summary>
-        public event Action PartidaIniciada;
-
-        /// <summary>
-        /// Evento que notifica el inicio de una nueva ronda con sus datos correspondientes.
-        /// </summary>
-        public event Action<RondaDTO> InicioRonda;
-
-        /// <summary>
-        /// Evento que notifica cuando un jugador ha acertado la cancion.
-        /// </summary>
-        public event Action<string, int> JugadorAdivino;
-
-        /// <summary>
-        /// Evento que retransmite un mensaje de chat publico a los clientes.
-        /// </summary>
-        public event Action<string, string> MensajeChatRecibido;
-
-        /// <summary>
-        /// Evento que retransmite los datos de un trazo de dibujo.
-        /// </summary>
-        public event Action<TrazoDTO> TrazoRecibido;
-
-        /// <summary>
-        /// Evento que notifica la finalizacion de una ronda.
-        /// El parametro indica si fue por tiempo agotado (true) o por otra razon (false).
-        /// </summary>
-        public event Action<bool> FinRonda;
-
-        /// <summary>
-        /// Evento que notifica el fin de la partida y envia los resultados finales.
-        /// </summary>
-        public event Action<ResultadoPartidaDTO> FinPartida;
-
-        /// <summary>
-        /// Evento que notifica que se debe limpiar el lienzo.
-        /// Se dispara al iniciar una nueva ronda y cuando termina la transicion entre turnos.
-        /// </summary>
-        public event Action LimpiarLienzo;
-
-        /// <summary>
-        /// Evento que notifica cuando un jugador ha sido desconectado de la partida.
-        /// El parametro es el nombre de usuario del jugador desconectado.
-        /// </summary>
-        public event Action<string> JugadorDesconectado;
-
-        /// <summary>
-        /// Indica si la partida ya llego a su estado finalizado.
+        /// Indica si la partida ha finalizado.
         /// </summary>
         public bool EstaFinalizada
         {
@@ -150,9 +161,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Configura el idioma que se utilizara para seleccionar las canciones.
+        /// Configura el idioma de las canciones para la partida.
         /// </summary>
-        /// <param name="idioma">Nombre del idioma (Ej. Espanol, Ingles).</param>
+        /// <param name="idioma">Codigo del idioma (Espanol, Ingles, Mixto).</param>
         public void ConfigurarIdiomaCanciones(string idioma)
         {
             lock (_sincronizacion)
@@ -162,13 +173,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Intenta agregar un nuevo jugador a la partida.
+        /// Agrega un jugador a la partida.
         /// </summary>
-        /// <param name="id">Identificador de conexion.</param>
-        /// <param name="nombre">Nombre de usuario.</param>
-        /// <param name="esHost">Indica si es el creador de la partida.</param>
-        /// <exception cref="InvalidOperationException">Se lanza si la partida ya ha iniciado.
-        /// </exception>
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <param name="nombre">Nombre de usuario del jugador.</param>
+        /// <param name="esHost">Indica si el jugador es el anfitrion.</param>
+        /// <exception cref="InvalidOperationException">Si la partida ya inicio.</exception>
         public void AgregarJugador(string id, string nombre, bool esHost)
         {
             lock (_sincronizacion)
@@ -183,9 +193,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Remueve a un jugador y maneja la logica de desconexion (cancelacion o avance de turno).
+        /// Remueve un jugador de la partida y maneja las consecuencias.
         /// </summary>
-        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <param name="id">Identificador de conexion del jugador a remover.</param>
         public void RemoverJugador(string id)
         {
             string nombreUsuarioRemovido;
@@ -198,115 +208,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private ResultadoRemocionJugador ProcesarRemocionJugador(
-            string id, 
-            out string nombreUsuarioRemovido)
-        {
-            nombreUsuarioRemovido = null;
-
-            lock (_sincronizacion)
-            {
-                bool eraAnfitrion = _gestorJugadores.EsHost(id);
-                bool eraDibujante;
-                string nombreUsuario;
-
-                if (!_gestorJugadores.Remover(id, out eraDibujante, out nombreUsuario))
-                {
-                    return ResultadoRemocionJugador.SinAccion();
-                }
-
-                nombreUsuarioRemovido = nombreUsuario;
-
-                _logger.Info("Jugador removido de la partida.");
-
-                return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
-            }
-        }
-
-        private ResultadoRemocionJugador DeterminarAccionPostRemocion(
-            bool eraAnfitrion, 
-            bool eraDibujante)
-        {
-            if (_estadoActual != EstadoPartida.Jugando)
-            {
-                return ResultadoRemocionJugador.SinAccion();
-            }
-
-            if (!_gestorJugadores.HaySuficientesJugadores)
-            {
-                string mensaje = eraAnfitrion
-                    ? MensajesError.Cliente.PartidaCanceladaHostSalio
-                    : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
-                return ResultadoRemocionJugador.Cancelar(mensaje);
-            }
-
-            if (eraDibujante)
-            {
-                return _enTransicionRonda 
-                    ? ResultadoRemocionJugador.AvanzarRondaDirecto() 
-                    : ResultadoRemocionJugador.AvanzarRonda();
-            }
-
-            if (_gestorJugadores.TodosAdivinaron())
-            {
-                return ResultadoRemocionJugador.AvanzarRonda();
-            }
-
-            return ResultadoRemocionJugador.SinAccion();
-        }
-
-        private void EjecutarAccionPostRemocion(ResultadoRemocionJugador resultado)
-        {
-            if (resultado.DebeCancelar)
-            {
-                CancelarPartida(resultado.MensajeCancelacion);
-            }
-            else if (resultado.DebeAvanzarDirecto)
-            {
-                PrepararSiguienteRonda();
-            }
-            else if (resultado.DebeAvanzar)
-            {
-                FinalizarRondaActual();
-            }
-        }
-
-        private sealed class ResultadoRemocionJugador
-        {
-            public bool DebeCancelar { get; private set; }
-            public bool DebeAvanzar { get; private set; }
-            public bool DebeAvanzarDirecto { get; private set; }
-            public string MensajeCancelacion { get; private set; }
-
-            public static ResultadoRemocionJugador SinAccion()
-            {
-                return new ResultadoRemocionJugador();
-            }
-
-            public static ResultadoRemocionJugador Cancelar(string mensaje)
-            {
-                return new ResultadoRemocionJugador
-                {
-                    DebeCancelar = true,
-                    MensajeCancelacion = mensaje
-                };
-            }
-
-            public static ResultadoRemocionJugador AvanzarRonda()
-            {
-                return new ResultadoRemocionJugador { DebeAvanzar = true };
-            }
-
-            public static ResultadoRemocionJugador AvanzarRondaDirecto()
-            {
-                return new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
-            }
-        }
-
         /// <summary>
-        /// Inicia el flujo de juego de la partida.
+        /// Inicia la partida si se cumplen las condiciones.
         /// </summary>
-        /// <param name="idSolicitante">ID del usuario que solicita el inicio.</param>
+        /// <param name="idSolicitante">Identificador del jugador que solicita iniciar.</param>
+        /// <exception cref="InvalidOperationException">Si la partida ya inicio o faltan 
+        /// jugadores.</exception>
+        /// <exception cref="SecurityException">Si el solicitante no es el anfitrion.</exception>
         public void IniciarPartida(string idSolicitante)
         {
             lock (_sincronizacion)
@@ -320,9 +228,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Procesa un mensaje de chat, verificando si es un intento de adivinanza o charla normal.
+        /// Procesa un mensaje enviado por un jugador.
         /// </summary>
-        /// <param name="id">ID del emisor.</param>
+        /// <param name="id">Identificador de conexion del jugador.</param>
         /// <param name="mensaje">Contenido del mensaje.</param>
         public void ProcesarMensaje(string id, string mensaje)
         {
@@ -351,16 +259,16 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Procesa y retransmite un trazo de dibujo si proviene del dibujante actual.
+        /// Procesa un trazo enviado por el dibujante.
         /// </summary>
-        /// <param name="id">ID del emisor.</param>
-        /// <param name="trazo">Objeto de transferencia con datos del trazo.</param>
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <param name="trazo">Datos del trazo a dibujar.</param>
         public void ProcesarTrazo(string id, TrazoDTO trazo)
         {
             lock (_sincronizacion)
             {
                 var jugador = _gestorJugadores.Obtener(id);
-                if (_estadoActual == EstadoPartida.Jugando && !_enTransicionRonda 
+                if (_estadoActual == EstadoPartida.Jugando && !_enTransicionRonda
                     && jugador != null && jugador.EsDibujante)
                 {
                     TrazoRecibido?.Invoke(trazo);
@@ -369,13 +277,80 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Obtiene una copia segura de la lista de jugadores actuales en la partida.
+        /// Obtiene una copia de la lista de jugadores actuales.
         /// </summary>
+        /// <returns>Coleccion de jugadores en la partida.</returns>
         public IEnumerable<JugadorPartida> ObtenerJugadores()
         {
             lock (_sincronizacion)
             {
                 return _gestorJugadores.ObtenerCopiaLista();
+            }
+        }
+
+        private ResultadoRemocionJugador ProcesarRemocionJugador(string id, out string nombreUsuarioRemovido)
+        {
+            nombreUsuarioRemovido = null;
+            lock (_sincronizacion)
+            {
+                bool eraAnfitrion = _gestorJugadores.EsHost(id);
+                bool eraDibujante;
+                string nombreUsuario;
+
+                if (!_gestorJugadores.Remover(id, out eraDibujante, out nombreUsuario))
+                {
+                    return ResultadoRemocionJugador.SinAccion();
+                }
+
+                nombreUsuarioRemovido = nombreUsuario;
+                _logger.Info("Jugador removido de la partida.");
+                return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
+            }
+        }
+
+        private ResultadoRemocionJugador DeterminarAccionPostRemocion(bool eraAnfitrion, bool eraDibujante)
+        {
+            if (_estadoActual != EstadoPartida.Jugando)
+            {
+                return ResultadoRemocionJugador.SinAccion();
+            }
+
+            if (!_gestorJugadores.HaySuficientesJugadores)
+            {
+                string mensaje = eraAnfitrion
+                    ? MensajesError.Cliente.PartidaCanceladaHostSalio
+                    : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
+                return ResultadoRemocionJugador.Cancelar(mensaje);
+            }
+
+            if (eraDibujante)
+            {
+                return _enTransicionRonda
+                    ? ResultadoRemocionJugador.AvanzarRondaDirecto()
+                    : ResultadoRemocionJugador.AvanzarRonda();
+            }
+
+            if (_gestorJugadores.TodosAdivinaron())
+            {
+                return ResultadoRemocionJugador.AvanzarRonda();
+            }
+
+            return ResultadoRemocionJugador.SinAccion();
+        }
+
+        private void EjecutarAccionPostRemocion(ResultadoRemocionJugador resultado)
+        {
+            if (resultado.DebeCancelar)
+            {
+                CancelarPartida(resultado.MensajeCancelacion);
+            }
+            else if (resultado.DebeAvanzarDirecto)
+            {
+                PrepararSiguienteRonda();
+            }
+            else if (resultado.DebeAvanzar)
+            {
+                FinalizarRondaActual();
             }
         }
 
@@ -385,10 +360,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             {
                 throw new InvalidOperationException(MensajesError.Cliente.PartidaYaIniciada);
             }
+
             if (!_gestorJugadores.HaySuficientesJugadores)
             {
                 throw new InvalidOperationException(MensajesError.Cliente.FaltanJugadores);
             }
+
             if (!_gestorJugadores.EsHost(id))
             {
                 throw new SecurityException(MensajesError.Cliente.SoloHost);
@@ -403,13 +380,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             lock (_sincronizacion)
             {
-                if (ValidadorAdivinanza.JugadorPuedeAdivinar(jugador, _estadoActual))
+                if (_validadorAdivinanza.JugadorPuedeAdivinar(jugador, _estadoActual))
                 {
-                    acierto = _validadorAdivinanza.VerificarAcierto(
-                        _cancionActualId, mensaje, out puntos);
+                    acierto = _validadorAdivinanza.VerificarAcierto(_cancionActualId, mensaje, out puntos);
                     if (acierto)
                     {
-                        ValidadorAdivinanza.RegistrarAcierto(jugador, puntos);
+                        _validadorAdivinanza.RegistrarAcierto(jugador, puntos);
                         finRonda = _gestorJugadores.TodosAdivinaron();
                     }
                 }
@@ -445,10 +421,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
                 if (!_gestorJugadores.QuedanDibujantesPendientes())
                 {
-                    if (_rondaActual >= _totalRondas)
-                    {
-                        finJuego = true;
-                    }
+                    if (_rondaActual >= _totalRondas) finJuego = true;
                     else
                     {
                         _rondaActual++;
@@ -459,11 +432,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 if (!finJuego)
                 {
                     _gestorJugadores.SeleccionarSiguienteDibujante();
-                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, 
-                        _cancionesUsadas);
+                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, _cancionesUsadas);
                     _cancionActualId = cancion.Id;
                     _cancionesUsadas.Add(cancion.Id);
-
                     rondaDto = CrearRondaDto(cancion);
                     IniciarTemporizadorRondaConRetardo();
                 }
@@ -486,14 +457,13 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void IniciarTemporizadorRondaConRetardo()
         {
-            Task.Delay(TiempoOverlayClienteSegundos * 1000).
-                ContinueWith(ManejarRetardoTemporizador);
+            _proveedorTiempo.Retrasar(TiempoOverlayClienteSegundos * MilisegundosPorSegundo)
+                .ContinueWith(ManejarRetardoTemporizador);
         }
 
         private void ManejarRetardoTemporizador(Task tarea)
         {
             bool debeLimpiar = false;
-
             lock (_sincronizacion)
             {
                 if (_estadoActual == EstadoPartida.Jugando)
@@ -518,10 +488,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 {
                     return;
                 }
+
                 if (_rondaFinalizadaPorAciertos && !forzarPorAciertos)
                 {
                     return;
                 }
+
                 _gestorTiempos.DetenerTodo();
                 _enTransicionRonda = true;
             }
@@ -533,7 +505,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private void FinalizarRondaAnticipada()
         {
             bool yaFinalizada;
-
             lock (_sincronizacion)
             {
                 yaFinalizada = _rondaFinalizadaPorAciertos;
@@ -551,9 +522,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             bool esFin = false;
             lock (_sincronizacion)
             {
-                if (_estadoActual == EstadoPartida.Finalizada ||
-                    (_rondaActual >= _totalRondas && 
-                    !_gestorJugadores.QuedanDibujantesPendientes()))
+                bool sinDibujantes = !_gestorJugadores.QuedanDibujantesPendientes();
+                bool rondasCompletadas = _rondaActual >= _totalRondas && sinDibujantes;
+
+                if (_estadoActual == EstadoPartida.Finalizada || rondasCompletadas)
                 {
                     _estadoActual = EstadoPartida.Finalizada;
                     esFin = true;
@@ -574,7 +546,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private void CancelarPartida(string mensajeCancelacion)
         {
             bool debeNotificar = false;
-
             lock (_sincronizacion)
             {
                 if (_estadoActual == EstadoPartida.Finalizada)
@@ -582,10 +553,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return;
                 }
 
-                _logger.WarnFormat(
-                    "Partida cancelada. Motivo: '{0}'.",
-                    mensajeCancelacion);
-
+                _logger.WarnFormat("Partida cancelada. Motivo: '{0}'.", mensajeCancelacion);
                 _estadoActual = EstadoPartida.Finalizada;
                 _gestorTiempos.DetenerTodo();
                 debeNotificar = true;
@@ -593,9 +561,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (debeNotificar)
             {
-                string mensajeFinal = mensajeCancelacion
-                    ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
-
+                string mensajeFinal = mensajeCancelacion ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
                 FinPartida?.Invoke(new ResultadoPartidaDTO
                 {
                     Clasificacion = _gestorJugadores.GenerarClasificacion(),
@@ -606,10 +572,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void NotificarFinPartida()
         {
-            FinPartida?.Invoke(new ResultadoPartidaDTO
-            {
-                Clasificacion = _gestorJugadores.GenerarClasificacion()
-            });
+            FinPartida?.Invoke(new ResultadoPartidaDTO { Clasificacion = _gestorJugadores.GenerarClasificacion() });
         }
 
         private void SuscribirEventosTiempo()
@@ -625,31 +588,49 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private static bool EsMensajeInvalido(string id, string mensaje)
         {
-            return string.IsNullOrWhiteSpace(id) ||
-                   string.IsNullOrWhiteSpace(mensaje) ||
-                   mensaje.Split(' ').Length > LimitePalabrasMensaje;
+            if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(mensaje))
+            {
+                return true;
+            }
+
+            return mensaje.Split(' ').Length > LimitePalabrasMensaje;
         }
 
         private RondaDTO CrearRondaDto(Cancion cancion)
         {
-            string genero = null, artista = null;
+            string genero = null;
+            string artista = null;
+
             if (_dificultad.Equals("facil", StringComparison.OrdinalIgnoreCase))
             {
                 artista = cancion.Artista;
             }
+
             if (!_dificultad.Equals("dificil", StringComparison.OrdinalIgnoreCase))
             {
                 genero = cancion.Genero;
             }
 
-            return new RondaDTO
-            {
-                IdCancion = cancion.Id,
-                Rol = RolDibujante,
-                PistaArtista = artista,
-                PistaGenero = genero,
-                TiempoSegundos = _duracionRondaSegundos
+            return new RondaDTO 
+            { 
+                IdCancion = cancion.Id, 
+                Rol = RolDibujante, 
+                PistaArtista = artista, 
+                PistaGenero = genero, 
+                TiempoSegundos = _duracionRondaSegundos 
             };
+        }
+
+        private sealed class ResultadoRemocionJugador
+        {
+            public bool DebeCancelar { get; private set; }
+            public bool DebeAvanzar { get; private set; }
+            public bool DebeAvanzarDirecto { get; private set; }
+            public string MensajeCancelacion { get; private set; }
+            public static ResultadoRemocionJugador SinAccion() => new ResultadoRemocionJugador();
+            public static ResultadoRemocionJugador Cancelar(string mensaje) => new ResultadoRemocionJugador { DebeCancelar = true, MensajeCancelacion = mensaje };
+            public static ResultadoRemocionJugador AvanzarRonda() => new ResultadoRemocionJugador { DebeAvanzar = true };
+            public static ResultadoRemocionJugador AvanzarRondaDirecto() => new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
         }
     }
 }

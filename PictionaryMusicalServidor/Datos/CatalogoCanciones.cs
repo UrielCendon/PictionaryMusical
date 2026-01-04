@@ -1,13 +1,14 @@
-﻿using System;
+﻿using log4net;
+using PictionaryMusicalServidor.Datos.Constantes;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Entidades;
+using PictionaryMusicalServidor.Datos.Excepciones;
+using PictionaryMusicalServidor.Datos.Utilidades;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using log4net;
-using PictionaryMusicalServidor.Datos.Constantes;
-using PictionaryMusicalServidor.Datos.Entidades;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using PictionaryMusicalServidor.Datos.Utilidades;
 
 namespace PictionaryMusicalServidor.Datos
 {
@@ -20,6 +21,7 @@ namespace PictionaryMusicalServidor.Datos
         private const string IdiomaEspanol = "Espanol";
         private const string IdiomaIngles = "Ingles";
         private static readonly ILog _logger = LogManager.GetLogger(typeof(CatalogoCanciones));
+        private readonly IGeneradorAleatorio _generadorAleatorio;
         private static readonly Dictionary<int, Cancion> _canciones = new Dictionary<int, Cancion>
         {
             { 1, CrearCancion(new CancionCreacionParametros { 
@@ -266,6 +268,19 @@ namespace PictionaryMusicalServidor.Datos
         };
 
         /// <summary>
+        /// Inicializa una nueva instancia de <see cref="CatalogoCanciones"/>.
+        /// </summary>
+        /// <param name="generadorAleatorio">Generador de numeros aleatorios para seleccionar
+        /// canciones.</param>
+        /// <exception cref="ArgumentNullException">Se lanza cuando el generador es nulo.
+        /// </exception>
+        public CatalogoCanciones(IGeneradorAleatorio generadorAleatorio)
+        {
+            _generadorAleatorio = generadorAleatorio ??
+                throw new ArgumentNullException(nameof(generadorAleatorio));
+        }
+
+        /// <summary>
         /// Obtiene una cancion aleatoria segun el idioma solicitado y excluyendo los 
         /// identificadores proporcionados.
         /// </summary>
@@ -304,7 +319,7 @@ namespace PictionaryMusicalServidor.Datos
                         MensajesErrorDatos.Cancion.CancionesNoDisponibles);
                 }
 
-                return SeleccionarAleatorio(candidatos);
+                return _generadorAleatorio.SeleccionarAleatorio(candidatos);
             }
             catch (CancionNoDisponibleExcepcion excepcion)
             {
@@ -455,10 +470,7 @@ namespace PictionaryMusicalServidor.Datos
                 idiomaNormalizado);
         }
 
-        private static Cancion SeleccionarAleatorio(List<Cancion> candidatos)
-        {
-            return GeneradorAleatorioDatos.SeleccionarAleatorio(candidatos);
-        }
+
 
         private static string NormalizarTexto(string texto)
         {

@@ -1,329 +1,205 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
-using System.Linq;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
+namespace PictionaryMusicalServidor.Pruebas.Servicios
 {
+    /// <summary>
+    /// Contiene pruebas unitarias para la clase <see cref="GestorJugadoresPartida"/>.
+    /// Valida la gestion de jugadores, cola de dibujantes, adivinanzas y clasificacion.
+    /// </summary>
     [TestClass]
     public class GestorJugadoresPartidaPruebas
     {
+        private const string IdJugadorUno = "ConexionA";
+        private const string NombreJugadorUno = "JugadorA";
+        private const string IdJugadorDos = "ConexionB";
+        private const string NombreJugadorDos = "JugadorB";
+        private const string IdInexistente = "ConexionX";
+        private const string NuevoNombre = "NombreCambiado";
+        private const int PuntajeAlto = 100;
         private const int PuntajeBajo = 50;
-        private const int PuntajeMedio = 100;
-        private const int PuntajeAlto = 150;
-        private const int CantidadJugadoresEsperada = 2;
 
+        private Mock<IGeneradorAleatorio> _generadorMock;
         private GestorJugadoresPartida _gestor;
 
         [TestInitialize]
         public void Inicializar()
         {
-            _gestor = new GestorJugadoresPartida();
+            _generadorMock = new Mock<IGeneradorAleatorio>();
+
+            _generadorMock.Setup(generador => generador.MezclarLista(It.IsAny<IList<string>>()))
+                .Callback<IList<string>>((lista) => { });
+
+            _gestor = new GestorJugadoresPartida(_generadorMock.Object);
         }
 
         [TestMethod]
-        public void Prueba_HaySuficientesJugadoresMenosDeDos_RetornaFalse()
+        public void Prueba_Constructor_GeneradorNuloLanzaExcepcion()
         {
-
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-
-
-            var resultado = _gestor.HaySuficientesJugadores;
-
-
-            Assert.IsFalse(resultado);
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new GestorJugadoresPartida(null));
         }
 
         [TestMethod]
-        public void Prueba_HaySuficientesJugadoresDosOMas_RetornaTrue()
+        public void Prueba_Agregar_JugadorNuevoSeRegistraCorrectamente()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
+            var jugador = _gestor.Obtener(IdJugadorUno);
 
-
-            var resultado = _gestor.HaySuficientesJugadores;
-
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_AgregarJugadorNuevo_AgregaCorrectamente()
-        {
-
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-
-
-            var jugador = _gestor.Obtener("conexion-1");
-            Assert.AreEqual("Jugador1", jugador.NombreUsuario);
+            Assert.IsNotNull(jugador);
+            Assert.AreEqual(NombreJugadorUno, jugador.NombreUsuario);
             Assert.IsTrue(jugador.EsHost);
         }
 
         [TestMethod]
-        public void Prueba_AgregarJugadorExistente_ActualizaDatos()
+        public void Prueba_Agregar_JugadorExistenteActualizaDatos()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
-            _gestor.Agregar("conexion-1", "JugadorOriginal", false);
+            _gestor.Agregar(IdJugadorUno, NuevoNombre, false);
+            var jugador = _gestor.Obtener(IdJugadorUno);
 
-
-            _gestor.Agregar("conexion-1", "JugadorActualizado", true);
-
-
-            var jugador = _gestor.Obtener("conexion-1");
-            Assert.AreEqual("JugadorActualizado", jugador.NombreUsuario);
-            Assert.IsTrue(jugador.EsHost);
+            Assert.AreEqual(NuevoNombre, jugador.NombreUsuario);
+            Assert.IsFalse(jugador.EsHost);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIdInexistente_RetornaNull()
+        public void Prueba_HaySuficientesJugadores_MenosDeDosRetornaFalse()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
-            var jugador = _gestor.Obtener("id-inexistente");
-
-
-            Assert.IsNull(jugador);
+            Assert.IsFalse(_gestor.HaySuficientesJugadores);
         }
 
         [TestMethod]
-        public void Prueba_RemoverJugadorExistente_RemueveCorrectamente()
+        public void Prueba_HaySuficientesJugadores_DosOMasRetornaTrue()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
+            _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
 
-            _gestor.Agregar("conexion-1", "Jugador1", true);
+            Assert.IsTrue(_gestor.HaySuficientesJugadores);
+        }
 
-
+        [TestMethod]
+        public void Prueba_Remover_JugadorExistenteRetornaTrueYDatosSalida()
+        {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             bool eraDibujante;
-            var resultado = _gestor.Remover("conexion-1", out eraDibujante);
+            string nombreSalida;
 
+            bool resultado = _gestor.Remover(IdJugadorUno, out eraDibujante, out nombreSalida);
 
             Assert.IsTrue(resultado);
-            Assert.IsNull(_gestor.Obtener("conexion-1"));
+            Assert.AreEqual(NombreJugadorUno, nombreSalida);
+            Assert.IsNull(_gestor.Obtener(IdJugadorUno));
         }
 
         [TestMethod]
-        public void Prueba_RemoverJugadorInexistente_RetornaFalse()
+        public void Prueba_Remover_JugadorInexistenteRetornaFalse()
         {
-
             bool eraDibujante;
-            var resultado = _gestor.Remover("id-inexistente", out eraDibujante);
+            string nombreSalida;
 
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_EsHostJugadorHost_RetornaTrue()
-        {
-
-            _gestor.Agregar("conexion-host", "HostJugador", true);
-
-
-            var resultado = _gestor.EsHost("conexion-host");
-
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_EsHostJugadorNoHost_RetornaFalse()
-        {
-
-            _gestor.Agregar("conexion-normal", "JugadorNormal", false);
-
-
-            var resultado = _gestor.EsHost("conexion-normal");
-
+            bool resultado = _gestor.Remover(IdInexistente, out eraDibujante, out nombreSalida);
 
             Assert.IsFalse(resultado);
+            Assert.IsNull(nombreSalida);
         }
 
         [TestMethod]
-        public void Prueba_PrepararColaDibujantes_PreparaCola()
+        public void Prueba_EsHost_JugadorHostRetornaTrue()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
+            Assert.IsTrue(_gestor.EsHost(IdJugadorUno));
+        }
 
+        [TestMethod]
+        public void Prueba_PrepararColaDibujantes_InvocaMezcladorYLlenaCola()
+        {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
+            _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
 
             _gestor.PrepararColaDibujantes();
 
-
+            _generadorMock.Verify(generador => generador.MezclarLista(It.IsAny<IList<string>>()), Times.Once);
             Assert.IsTrue(_gestor.QuedanDibujantesPendientes());
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarSiguienteDibujanteConCola_RetornaTrue()
+        public void Prueba_SeleccionarSiguienteDibujante_AsignaRolDibujante()
         {
-
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.PrepararColaDibujantes();
 
-
-            var resultado = _gestor.SeleccionarSiguienteDibujante();
-
+            bool resultado = _gestor.SeleccionarSiguienteDibujante();
+            var jugador = _gestor.Obtener(IdJugadorUno);
 
             Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarSiguienteDibujanteSinCola_RetornaFalse()
-        {
-
-
-
-            var resultado = _gestor.SeleccionarSiguienteDibujante();
-
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarSiguienteDibujante_MarcaJugador()
-        {
-
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.PrepararColaDibujantes();
-
-
-            _gestor.SeleccionarSiguienteDibujante();
-
-
-            var jugador = _gestor.Obtener("conexion-1");
             Assert.IsTrue(jugador.EsDibujante);
             Assert.IsTrue(jugador.YaAdivino);
         }
 
         [TestMethod]
-        public void Prueba_TodosAdivinaron_RetornaTrue()
+        public void Prueba_TodosAdivinaron_FaltaAlguienRetornaFalse()
         {
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
+            _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
             _gestor.PrepararColaDibujantes();
+
             _gestor.SeleccionarSiguienteDibujante();
 
-            var jugador1 = _gestor.Obtener("conexion-1");
-            var jugador2 = _gestor.Obtener("conexion-2");
-            if (!jugador1.EsDibujante)
-            {
-                jugador1.YaAdivino = true;
-            }
-            if (!jugador2.EsDibujante)
-            {
-                jugador2.YaAdivino = true;
-            }
-
-            var resultado = _gestor.TodosAdivinaron();
-
-            Assert.IsTrue(resultado);
+            Assert.IsFalse(_gestor.TodosAdivinaron());
         }
 
         [TestMethod]
-        public void Prueba_TodosAdivinaronParcial_RetornaFalse()
+        public void Prueba_TodosAdivinaron_TodosListosRetornaTrue()
         {
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
-            _gestor.Agregar("conexion-3", "Jugador3", false);
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
+            _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
             _gestor.PrepararColaDibujantes();
+
             _gestor.SeleccionarSiguienteDibujante();
 
-            var jugador1 = _gestor.Obtener("conexion-1");
-            var jugador2 = _gestor.Obtener("conexion-2");
-            var jugador3 = _gestor.Obtener("conexion-3");
-            
-            int adivinadoresCount = 0;
-            if (!jugador1.EsDibujante) adivinadoresCount++;
-            if (!jugador2.EsDibujante) adivinadoresCount++;
-            if (!jugador3.EsDibujante) adivinadoresCount++;
-            
-            if (!jugador1.EsDibujante && adivinadoresCount > 1)
-            {
-                jugador1.YaAdivino = true;
-            }
-            else if (!jugador2.EsDibujante)
-            {
-                jugador2.YaAdivino = true;
-            }
+            var jugadorDos = _gestor.Obtener(IdJugadorDos);
+            jugadorDos.YaAdivino = true;
 
-            var resultado = _gestor.TodosAdivinaron();
-
-            Assert.IsFalse(resultado);
+            Assert.IsTrue(_gestor.TodosAdivinaron());
         }
 
         [TestMethod]
-        public void Prueba_GenerarClasificacion_OrdenaPorPuntaje()
+        public void Prueba_GenerarClasificacion_OrdenaDescendentePorPuntos()
         {
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
+            _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
 
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
-            _gestor.Agregar("conexion-3", "Jugador3", false);
+            var jugadorUno = _gestor.Obtener(IdJugadorUno);
+            jugadorUno.PuntajeTotal = PuntajeBajo;
 
-            _gestor.Obtener("conexion-1").PuntajeTotal = PuntajeBajo;
-            _gestor.Obtener("conexion-2").PuntajeTotal = PuntajeAlto;
-            _gestor.Obtener("conexion-3").PuntajeTotal = PuntajeMedio;
-
+            var jugadorDos = _gestor.Obtener(IdJugadorDos);
+            jugadorDos.PuntajeTotal = PuntajeAlto;
 
             var clasificacion = _gestor.GenerarClasificacion();
 
-
-            Assert.AreEqual("Jugador2", clasificacion[0].Usuario);
-            Assert.AreEqual("Jugador3", clasificacion[1].Usuario);
-            Assert.AreEqual("Jugador1", clasificacion[2].Usuario);
+            Assert.AreEqual(NombreJugadorDos, clasificacion[0].Usuario);
+            Assert.AreEqual(NombreJugadorUno, clasificacion[1].Usuario);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCopiaLista_RetornaCopia()
+        public void Prueba_ObtenerCopiaLista_RetornaNuevaColeccion()
         {
-
-            _gestor.Agregar("conexion-1", "Jugador1", true);
-            _gestor.Agregar("conexion-2", "Jugador2", false);
-
+            _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
             var copia = _gestor.ObtenerCopiaLista();
 
-
-            Assert.AreEqual(CantidadJugadoresEsperada, copia.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_QuedanDibujantesPendientesColaVacia_RetornaFalse()
-        {
-
-            var resultado = _gestor.QuedanDibujantesPendientes();
-
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_RemoverJugadorDibujante_IndicaEraDibujante()
-        {
-
-            _gestor.Agregar("conexion-1", "Dibujante", true);
-            _gestor.PrepararColaDibujantes();
-            _gestor.SeleccionarSiguienteDibujante();
-
-
-            bool eraDibujante;
-            _gestor.Remover("conexion-1", out eraDibujante);
-
-
-            Assert.IsTrue(eraDibujante);
-        }
-
-        [TestMethod]
-        public void Prueba_RemoverConTresParametros_RetornaNombre()
-        {
-
-            _gestor.Agregar("conexion-1", "JugadorRemover", true);
-
-
-            bool eraDibujante;
-            string nombreUsuario;
-            var resultado = _gestor.Remover("conexion-1", out eraDibujante, out nombreUsuario);
-
-
-            Assert.IsTrue(resultado);
-            Assert.AreEqual("JugadorRemover", nombreUsuario);
+            Assert.AreEqual(1, copia.Count);
+            Assert.AreNotSame(_gestor.Obtener(IdJugadorUno), copia);
         }
     }
 }

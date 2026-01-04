@@ -1,88 +1,86 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
+namespace PictionaryMusicalServidor.Pruebas.Servicios
 {
+    /// <summary>
+    /// Contiene pruebas unitarias para la clase <see cref="JugadorPartida"/>.
+    /// Valida la copia de datos y la representacion en cadena del jugador.
+    /// </summary>
     [TestClass]
     public class JugadorPartidaPruebas
     {
-        private const string NombreUsuarioPrueba = "TestUser";
-        private const string IdConexionPrueba = "conexion-123";
-        private const int PuntajeAlto = 500;
+        private const string NombreUsuarioPrueba = "UsuarioTest";
+        private const string IdConexionPrueba = "Conexion123";
+        private const bool EsHostVerdadero = true;
+        private const bool EsDibujanteFalso = false;
+        private const bool YaAdivinoVerdadero = true;
         private const int PuntajeInicial = 100;
-        private const int PuntajeModificado = 999;
-        private const int PuntajeVisualizacion = 250;
+
+        private const string FormatoToStringEsperado = "Nombre: {0}, Conexion: {1}, " +
+            "Host: {2}, Dibujante: {3}, Puntaje: {4}";
 
         [TestMethod]
-        public void Prueba_CopiarDatosBasicos_CopiaPropiedades()
+        public void Prueba_CopiarDatosBasicos_CreaNuevaInstanciaConMismosValores()
         {
-
             var jugadorOriginal = new JugadorPartida
             {
                 NombreUsuario = NombreUsuarioPrueba,
                 IdConexion = IdConexionPrueba,
-                EsHost = true,
-                EsDibujante = true,
-                YaAdivino = true,
-                PuntajeTotal = PuntajeAlto
-            };
-
-
-            var copia = jugadorOriginal.CopiarDatosBasicos();
-
-
-            Assert.AreEqual(NombreUsuarioPrueba, copia.NombreUsuario);
-            Assert.AreEqual(IdConexionPrueba, copia.IdConexion);
-            Assert.IsTrue(copia.EsHost);
-            Assert.IsTrue(copia.EsDibujante);
-            Assert.IsTrue(copia.YaAdivino);
-            Assert.AreEqual(PuntajeAlto, copia.PuntajeTotal);
-        }
-
-        [TestMethod]
-        public void Prueba_CopiarDatosBasicosModificado_NoAfectaOriginal()
-        {
-            const string NombreOriginal = "Original";
-            const string NombreModificado = "Modificado";
-
-            var jugadorOriginal = new JugadorPartida
-            {
-                NombreUsuario = NombreOriginal,
+                EsHost = EsHostVerdadero,
+                EsDibujante = EsDibujanteFalso,
+                YaAdivino = YaAdivinoVerdadero,
                 PuntajeTotal = PuntajeInicial
             };
 
+            var copiaJugador = jugadorOriginal.CopiarDatosBasicos();
 
-            var copia = jugadorOriginal.CopiarDatosBasicos();
-            copia.NombreUsuario = NombreModificado;
-            copia.PuntajeTotal = PuntajeModificado;
+            Assert.AreNotSame(jugadorOriginal, copiaJugador);
+            Assert.AreEqual(jugadorOriginal.NombreUsuario, copiaJugador.NombreUsuario);
+            Assert.AreEqual(jugadorOriginal.IdConexion, copiaJugador.IdConexion);
+            Assert.AreEqual(jugadorOriginal.EsHost, copiaJugador.EsHost);
+            Assert.AreEqual(jugadorOriginal.EsDibujante, copiaJugador.EsDibujante);
+            Assert.AreEqual(jugadorOriginal.YaAdivino, copiaJugador.YaAdivino);
+            Assert.AreEqual(jugadorOriginal.PuntajeTotal, copiaJugador.PuntajeTotal);
+        }
 
+        [TestMethod]
+        public void Prueba_CopiarDatosBasicos_ModificarCopiaNoAfectaOriginal()
+        {
+            var jugadorOriginal = new JugadorPartida
+            {
+                PuntajeTotal = PuntajeInicial
+            };
 
-            Assert.AreEqual(NombreOriginal, jugadorOriginal.NombreUsuario);
+            var copiaJugador = jugadorOriginal.CopiarDatosBasicos();
+            copiaJugador.PuntajeTotal = 0;
+
             Assert.AreEqual(PuntajeInicial, jugadorOriginal.PuntajeTotal);
         }
 
         [TestMethod]
-        public void Prueba_ToString_ContieneInformacionJugador()
+        public void Prueba_ToString_DevuelveFormatoCorrecto()
         {
-            const string NombreJugadorTest = "JugadorTest";
-            const string IdConexion = "id-001";
-            const string PuntajeEsperadoTexto = "250";
-
             var jugador = new JugadorPartida
             {
-                NombreUsuario = NombreJugadorTest,
-                IdConexion = IdConexion,
-                EsHost = true,
-                EsDibujante = false,
-                PuntajeTotal = PuntajeVisualizacion
+                NombreUsuario = NombreUsuarioPrueba,
+                IdConexion = IdConexionPrueba,
+                EsHost = EsHostVerdadero,
+                EsDibujante = EsDibujanteFalso,
+                PuntajeTotal = PuntajeInicial
             };
 
+            string resultadoEsperado = string.Format(
+                FormatoToStringEsperado,
+                NombreUsuarioPrueba,
+                IdConexionPrueba,
+                EsHostVerdadero,
+                EsDibujanteFalso,
+                PuntajeInicial);
 
-            var resultado = jugador.ToString();
+            var resultadoObtenido = jugador.ToString();
 
-
-            StringAssert.Contains(resultado, NombreJugadorTest);
-            StringAssert.Contains(resultado, PuntajeEsperadoTexto);
+            Assert.AreEqual(resultadoEsperado, resultadoObtenido);
         }
     }
 }

@@ -26,6 +26,11 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Contratos\ISalasManejadorCallback.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Contratos\ISalasManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\GestorTiemposPartida.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IGestorJugadoresPartida.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IGestorTiemposPartida.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IProveedorTiempo.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IValidadorAdivinanza.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\ProveedorTiempo.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\BaneoNotificacionParametros.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\ExpulsionNotificacionParametros.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\NotificacionCallbackParametros.cs
@@ -89,6 +94,7 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\INotificadorPartida.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\NotificadorPartida.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\InicioSesionManejador.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\SesionesActivasRegistro.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\CambioContrasenaManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\ChatManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\GestorNotificacionesSalaInterna.cs

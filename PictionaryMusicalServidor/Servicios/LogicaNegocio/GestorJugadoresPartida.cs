@@ -1,58 +1,68 @@
-﻿using System;
+﻿using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
-    /// Gestiona la coleccion de jugadores, los turnos de dibujo y el calculo de puntuaciones 
-    /// dentro de una partida.
+    /// Gestiona los jugadores de una partida, incluyendo la cola de dibujantes,
+    /// puntajes y estados de cada jugador.
     /// </summary>
-    public class GestorJugadoresPartida
+    public class GestorJugadoresPartida : IGestorJugadoresPartida
     {
+        private const int MinimoJugadoresRequeridos = 2;
+
         private readonly Dictionary<string, JugadorPartida> _jugadores;
         private readonly Queue<string> _colaDibujantes;
+        private readonly IGeneradorAleatorio _generadorAleatorio;
         private List<string> _ordenDibujantesBase;
 
         /// <summary>
         /// Inicializa una nueva instancia del gestor de jugadores.
         /// </summary>
-        public GestorJugadoresPartida()
+        /// <param name="generadorAleatorio">Generador para mezclar el orden de dibujantes.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Se lanza si generadorAleatorio es nulo.
+        /// </exception>
+        public GestorJugadoresPartida(IGeneradorAleatorio generadorAleatorio)
         {
+            _generadorAleatorio = generadorAleatorio ??
+                throw new ArgumentNullException(nameof(generadorAleatorio));
             _jugadores = new Dictionary<string, JugadorPartida>(StringComparer.Ordinal);
             _colaDibujantes = new Queue<string>();
             _ordenDibujantesBase = null;
         }
 
         /// <summary>
-        /// Indica si existe la cantidad minima necesaria de jugadores para jugar (al menos 2).
+        /// Indica si hay suficientes jugadores para iniciar una partida.
         /// </summary>
         public bool HaySuficientesJugadores
         {
-            get { return _jugadores.Count >= 2; }
+            get { return _jugadores.Count >= MinimoJugadoresRequeridos; }
         }
 
         /// <summary>
-        /// Agrega un jugador a la coleccion o actualiza sus datos si ya existe.
+        /// Agrega un jugador o actualiza sus datos si ya existe.
         /// </summary>
-        /// <param name="idConexion">Identificador de conexion del jugador.</param>
-        /// <param name="nombre">Nombre de usuario visible.</param>
-        /// <param name="esHost">Indica si el jugador es el anfitrion de la partida.</param>
-        public void Agregar(string idConexion, string nombre, bool esHost)
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <param name="nombre">Nombre de usuario del jugador.</param>
+        /// <param name="esHost">Indica si el jugador es el anfitrion de la sala.</param>
+        public void Agregar(string id, string nombre, bool esHost)
         {
-            if (_jugadores.ContainsKey(idConexion))
+            if (_jugadores.ContainsKey(id))
             {
-                var existente = _jugadores[idConexion];
+                var existente = _jugadores[id];
                 existente.NombreUsuario = nombre;
                 existente.EsHost = esHost;
                 return;
             }
 
-            _jugadores.Add(idConexion, new JugadorPartida
+            _jugadores.Add(id, new JugadorPartida
             {
-                IdConexion = idConexion,
+                IdConexion = id,
                 NombreUsuario = nombre,
                 EsHost = esHost,
                 PuntajeTotal = 0
@@ -60,24 +70,24 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Obtiene la informacion de un jugador especifico por su ID de conexion.
+        /// Obtiene un jugador por su identificador de conexion.
         /// </summary>
-        /// <param name="idConexion">Identificador de conexion a buscar.</param>
-        /// <returns>La instancia del jugador o null si no se encuentra.</returns>
-        public JugadorPartida Obtener(string idConexion)
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <returns>El jugador encontrado o null si no existe.</returns>
+        public JugadorPartida Obtener(string id)
         {
             JugadorPartida jugador;
-            _jugadores.TryGetValue(idConexion, out jugador);
+            _jugadores.TryGetValue(id, out jugador);
             return jugador;
         }
 
         /// <summary>
-        /// Elimina a un jugador de la partida y reorganiza la cola de turnos si es necesario.
+        /// Remueve un jugador de la partida.
         /// </summary>
-        /// <param name="idConexion">Identificador del jugador a eliminar.</param>
-        /// <param name="eraDibujante">Parametro de salida que indica si el jugador eliminado 
-        /// tenia el turno de dibujo activo.</param>
-        /// <returns>True si el jugador fue eliminado correctamente, False si no existia.</returns>
+        /// <param name="idConexion">Identificador de conexion del jugador.</param>
+        /// <param name="eraDibujante">Salida que indica si el jugador era el dibujante actual.
+        /// </param>
+        /// <returns>True si el jugador fue removido, false si no existia.</returns>
         public bool Remover(string idConexion, out bool eraDibujante)
         {
             string nombreUsuario;
@@ -85,39 +95,38 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Elimina a un jugador de la partida y reorganiza la cola de turnos si es necesario.
+        /// Remueve un jugador de la partida y obtiene su informacion.
         /// </summary>
-        /// <param name="idConexion">Identificador del jugador a eliminar.</param>
-        /// <param name="eraDibujante">Parametro de salida que indica si el jugador eliminado 
-        /// tenia el turno de dibujo activo.</param>
-        /// <param name="nombreUsuario">Parametro de salida con el nombre del usuario removido.
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <param name="eraDibujante">Salida que indica si el jugador era el dibujante actual.
         /// </param>
-        /// <returns>True si el jugador fue eliminado correctamente, False si no existia.</returns>
-        public bool Remover(string idConexion, out bool eraDibujante, out string nombreUsuario)
+        /// <param name="nombreUsuario">Salida con el nombre del usuario removido.</param>
+        /// <returns>True si el jugador fue removido, false si no existia.</returns>
+        public bool Remover(string id, out bool eraDibujante, out string nombreUsuario)
         {
             eraDibujante = false;
             nombreUsuario = null;
             JugadorPartida jugador;
-            if (_jugadores.TryGetValue(idConexion, out jugador))
+            if (_jugadores.TryGetValue(id, out jugador))
             {
                 eraDibujante = jugador.EsDibujante;
                 nombreUsuario = jugador.NombreUsuario;
-                _jugadores.Remove(idConexion);
-                ReconstruirColaDibujantes(idConexion);
+                _jugadores.Remove(id);
+                ReconstruirColaDibujantes(id);
                 return true;
             }
             return false;
         }
 
         /// <summary>
-        /// Verifica si un jugador especifico es el anfitrion de la partida.
+        /// Verifica si un jugador es el anfitrion de la sala.
         /// </summary>
-        /// <param name="idConexion">Identificador de conexion a verificar.</param>
-        /// <returns>True si el jugador es Host, False en caso contrario.</returns>
-        public bool EsHost(string idConexion)
+        /// <param name="id">Identificador de conexion del jugador.</param>
+        /// <returns>True si es anfitrion, false en caso contrario.</returns>
+        public bool EsHost(string id)
         {
             JugadorPartida jugador;
-            if (_jugadores.TryGetValue(idConexion, out jugador))
+            if (_jugadores.TryGetValue(id, out jugador))
             {
                 return jugador.EsHost;
             }
@@ -125,8 +134,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Inicializa y aleatoriza la cola de turnos para los dibujantes al inicio de 
-        /// una ronda general. El orden se mantiene constante durante todas las rondas.
+        /// Prepara la cola de dibujantes mezclando el orden de los jugadores.
         /// </summary>
         public void PrepararColaDibujantes()
         {
@@ -135,21 +143,19 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             if (_ordenDibujantesBase == null)
             {
                 _ordenDibujantesBase = new List<string>(_jugadores.Keys);
-                GeneradorAleatorio.MezclarLista(_ordenDibujantesBase);
+                _generadorAleatorio.MezclarLista(_ordenDibujantesBase);
             }
 
-            foreach (var identificador in _ordenDibujantesBase.Where(identificador => _jugadores.ContainsKey(identificador)))
+            foreach (var identificador in _ordenDibujantesBase.Where(id => _jugadores.ContainsKey(id)))
             {
                 _colaDibujantes.Enqueue(identificador);
             }
         }
 
         /// <summary>
-        /// Selecciona al siguiente dibujante de la cola y actualiza los estados de los jugadores 
-        /// para el nuevo turno.
+        /// Selecciona al siguiente dibujante de la cola.
         /// </summary>
-        /// <returns>True si se pudo seleccionar un dibujante, False si la cola esta vacia.
-        /// </returns>
+        /// <returns>True si se asigno un dibujante, false si la cola esta vacia.</returns>
         public bool SeleccionarSiguienteDibujante()
         {
             ReiniciarEstadoRondaJugadores();
@@ -169,9 +175,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Verifica si todos los jugadores (excepto el dibujante) han acertado la palabra.
+        /// Verifica si todos los jugadores (excepto el dibujante) han adivinado.
         /// </summary>
-        /// <returns>True si todos han adivinado, False si falta alguno.</returns>
+        /// <returns>True si todos adivinaron, false en caso contrario.</returns>
         public bool TodosAdivinaron()
         {
             var adivinadores = new List<JugadorPartida>();
@@ -199,9 +205,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Genera la lista de clasificacion final ordenada por puntaje descendente.
+        /// Genera la clasificacion ordenada por puntaje descendente.
         /// </summary>
-        /// <returns>Lista de objetos DTO con la clasificacion.</returns>
+        /// <returns>Lista de clasificaciones ordenadas por puntos.</returns>
         public List<ClasificacionUsuarioDTO> GenerarClasificacion()
         {
             var clasificacion = new List<ClasificacionUsuarioDTO>();
@@ -214,7 +220,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 });
             }
 
-            clasificacion.Sort(delegate(ClasificacionUsuarioDTO a, ClasificacionUsuarioDTO b)
+            clasificacion.Sort(delegate (ClasificacionUsuarioDTO a, ClasificacionUsuarioDTO b)
             {
                 return b.Puntos.CompareTo(a.Puntos);
             });
@@ -223,10 +229,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Obtiene una copia de seguridad de la lista actual de jugadores para evitar 
-        /// modificaciones externas no controladas.
+        /// Obtiene una copia de la lista de jugadores.
         /// </summary>
-        /// <returns>Coleccion de jugadores.</returns>
+        /// <returns>Coleccion de solo lectura con copias de los jugadores.</returns>
         public IReadOnlyCollection<JugadorPartida> ObtenerCopiaLista()
         {
             var copia = new List<JugadorPartida>();
@@ -238,9 +243,9 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Verifica si aun quedan jugadores pendientes por dibujar en la ronda actual.
+        /// Indica si quedan dibujantes pendientes en la cola.
         /// </summary>
-        /// <returns>True si hay dibujantes en cola, False si esta vacia.</returns>
+        /// <returns>True si hay dibujantes pendientes, false en caso contrario.</returns>
         public bool QuedanDibujantesPendientes()
         {
             return _colaDibujantes.Count > 0;

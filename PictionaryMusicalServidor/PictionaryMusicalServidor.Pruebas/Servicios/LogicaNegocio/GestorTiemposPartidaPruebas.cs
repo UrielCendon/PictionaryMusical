@@ -1,132 +1,96 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
-using System.Threading;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
+namespace PictionaryMusicalServidor.Pruebas.Servicios
 {
+    /// <summary>
+    /// Contiene pruebas unitarias para la clase <see cref="GestorTiemposPartida"/>.
+    /// Valida el calculo de puntos segun tiempo restante y el control de rondas.
+    /// </summary>
     [TestClass]
     public class GestorTiemposPartidaPruebas
     {
-        private const int DuracionRondaSegundos = 60;
-        private const int DuracionTransicionSegundos = 5;
-        private const int DuracionRondaRapidaSegundos = 1;
-        private const int TiempoEsperaEventoMilisegundos = 1500;
-        private const int PuntosMinimosEsperados = 58;
+        private const int DuracionRonda = 60;
+        private const int DuracionTransicion = 5;
+        private readonly DateTime FechaInicio = new DateTime(2026, 1, 4, 12, 0, 0, DateTimeKind.Utc);
 
+        private Mock<IProveedorFecha> _proveedorFechaMock;
         private GestorTiemposPartida _gestor;
 
         [TestInitialize]
         public void Inicializar()
         {
-            _gestor = new GestorTiemposPartida(DuracionRondaSegundos, DuracionTransicionSegundos);
-        }
+            _proveedorFechaMock = new Mock<IProveedorFecha>();
+            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(FechaInicio);
 
-        [TestCleanup]
-        public void Limpiar()
-        {
-            _gestor?.Dispose();
+            _gestor = new GestorTiemposPartida(DuracionRonda, DuracionTransicion, _proveedorFechaMock.Object);
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempoRondaNoIniciada_RetornaCero()
+        public void Prueba_Constructor_ProveedorFechaNuloLanzaExcepcion()
         {
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new GestorTiemposPartida(DuracionRonda, DuracionTransicion, null));
+        }
 
-            var puntos = _gestor.CalcularPuntosPorTiempo();
-
+        [TestMethod]
+        public void Prueba_CalcularPuntosPorTiempo_RondaNoIniciadaRetornaCero()
+        {
+            int puntos = _gestor.CalcularPuntosPorTiempo();
 
             Assert.AreEqual(0, puntos);
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempoRondaIniciada_RetornaPuntosAltos()
+        public void Prueba_CalcularPuntosPorTiempo_InicioRondaRetornaTotal()
         {
-
             _gestor.IniciarRonda();
 
+            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(FechaInicio);
 
-            var puntos = _gestor.CalcularPuntosPorTiempo();
+            int puntos = _gestor.CalcularPuntosPorTiempo();
 
-
-            Assert.IsTrue(puntos >= PuntosMinimosEsperados);
+            Assert.AreEqual(DuracionRonda, puntos);
         }
 
         [TestMethod]
-        public void Prueba_IniciarRondaTiempoAgotado_DisparaEvento()
+        public void Prueba_CalcularPuntosPorTiempo_MitadDeTiempoRetornaMitadPuntos()
         {
-            var eventoRecibido = new ManualResetEvent(false);
-            var gestorRapido = new GestorTiemposPartida(
-                DuracionRondaRapidaSegundos, 
-                DuracionRondaRapidaSegundos);
-            bool eventoDisparado = false;
-            gestorRapido.TiempoRondaAgotado += () => 
-            {
-                eventoDisparado = true;
-                eventoRecibido.Set();
-            };
-
-
-            gestorRapido.IniciarRonda();
-            eventoRecibido.WaitOne(TiempoEsperaEventoMilisegundos);
-
-
-            Assert.IsTrue(eventoDisparado);
-
-            gestorRapido.Dispose();
-        }
-
-        [TestMethod]
-        public void Prueba_IniciarTransicionAgotada_DisparaEvento()
-        {
-            var eventoRecibido = new ManualResetEvent(false);
-            var gestorRapido = new GestorTiemposPartida(
-                DuracionTransicionSegundos, 
-                DuracionRondaRapidaSegundos);
-            bool eventoDisparado = false;
-            gestorRapido.TiempoTransicionAgotado += () => 
-            {
-                eventoDisparado = true;
-                eventoRecibido.Set();
-            };
-
-
-            gestorRapido.IniciarTransicion();
-            eventoRecibido.WaitOne(TiempoEsperaEventoMilisegundos);
-
-
-            Assert.IsTrue(eventoDisparado);
-
-            gestorRapido.Dispose();
-        }
-
-        [TestMethod]
-        public void Prueba_DetenerTodo_DetieneTemporalizadores()
-        {
-
             _gestor.IniciarRonda();
 
+            var fechaFutura = FechaInicio.AddSeconds(30);
+            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(fechaFutura);
 
+            int puntos = _gestor.CalcularPuntosPorTiempo();
+
+            Assert.AreEqual(30, puntos);
+        }
+
+        [TestMethod]
+        public void Prueba_CalcularPuntosPorTiempo_TiempoExcedidoNoRetornaNegativos()
+        {
+            _gestor.IniciarRonda();
+
+            var fechaFutura = FechaInicio.AddSeconds(DuracionRonda + 10);
+            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(fechaFutura);
+
+            int puntos = _gestor.CalcularPuntosPorTiempo();
+
+            Assert.AreEqual(0, puntos);
+        }
+
+        [TestMethod]
+        public void Prueba_DetenerTodo_DetieneCalculoPuntos()
+        {
+            _gestor.IniciarRonda();
             _gestor.DetenerTodo();
-            var puntosDetenido = _gestor.CalcularPuntosPorTiempo();
 
+            int puntos = _gestor.CalcularPuntosPorTiempo();
 
-            Assert.AreEqual(0, puntosDetenido);
-        }
-
-        [TestMethod]
-        public void Prueba_DisposeMultiple_NoLanzaExcepcion()
-        {
-
-            var gestorDispose = new GestorTiemposPartida(
-                DuracionRondaSegundos, 
-                DuracionTransicionSegundos);
-            gestorDispose.IniciarRonda();
-
-
-            gestorDispose.Dispose();
-            gestorDispose.Dispose();
-
-            int puntosDespuesDispose = gestorDispose.CalcularPuntosPorTiempo();
-            Assert.AreEqual(0, puntosDespuesDispose);
+            Assert.AreEqual(0, puntos);
         }
     }
 }

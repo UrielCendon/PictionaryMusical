@@ -1,107 +1,84 @@
-using System;
+﻿using System;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
+namespace PictionaryMusicalServidor.Pruebas.Datos
 {
     /// <summary>
-    /// Pruebas unitarias para la clase Conexion.
-    /// Verifica la construccion de cadenas de conexion para Entity Framework.
+    /// Contiene pruebas unitarias para la clase <see cref="Conexion"/>.
+    /// Valida la construccion correcta de cadenas de conexion a partir de variables de entorno.
     /// </summary>
     [TestClass]
     public class ConexionPruebas
     {
-        private const string NombreVariableServidor = "BD_SERVIDOR";
-        private const string NombreVariableUsuario = "BD_USUARIO";
-        private const string NombreVariableContrasena = "BD_CONTRASENA";
-        private const string ServidorLocalhost = "localhost";
-        private const string ServidorEjemplo = "miservidor.ejemplo.com";
-        private const string MetadataCsdl = "BaseDatosPictionaryMusical.csdl";
+        private const string VariableServidor = "BD_SERVIDOR";
+        private const string VariableUsuario = "BD_USUARIO";
+        private const string VariableContrasena = "BD_CONTRASENA";
+        private const string ValorServidor = "ServidorPrueba";
+        private const string ValorUsuario = "UsuarioPrueba";
+        private const string ValorContrasena = "ContrasenaPrueba";
+        private const string ValorLocalhost = "localhost";
         private const string NombreCatalogo = "BaseDatosPrueba";
-        private const string ProveedorSqlClient = "System.Data.SqlClient";
-
-        private string _servidorOriginal;
-        private string _usuarioOriginal;
-        private string _contrasenaOriginal;
-
-        [TestInitialize]
-        public void Inicializar()
-        {
-            _servidorOriginal = Environment.GetEnvironmentVariable(NombreVariableServidor);
-            _usuarioOriginal = Environment.GetEnvironmentVariable(NombreVariableUsuario);
-            _contrasenaOriginal = Environment.GetEnvironmentVariable(NombreVariableContrasena);
-        }
+        private const string ProveedorDatos = "System.Data.SqlClient";
+        private const string MetadatosModelo = 
+            "res://*/Modelo.BaseDatosPictionaryMusical.csdl|" +
+            "res://*/Modelo.BaseDatosPictionaryMusical.ssdl|" +
+            "res://*/Modelo.BaseDatosPictionaryMusical.msl";
 
         [TestCleanup]
-        public void Limpiar()
+        public void LimpiarVariablesEntorno()
         {
-            RestaurarVariableEntorno(NombreVariableServidor, _servidorOriginal);
-            RestaurarVariableEntorno(NombreVariableUsuario, _usuarioOriginal);
-            RestaurarVariableEntorno(NombreVariableContrasena, _contrasenaOriginal);
-        }
-
-        #region ObtenerConexion
-
-        [TestMethod]
-        public void Prueba_ObtenerConexionSinVariables_UsaLocalhost()
-        {
-            Environment.SetEnvironmentVariable(NombreVariableServidor, null);
-
-            string conexion = Conexion.ObtenerConexion();
-
-            StringAssert.Contains(conexion, ServidorLocalhost);
+            Environment.SetEnvironmentVariable(VariableServidor, null);
+            Environment.SetEnvironmentVariable(VariableUsuario, null);
+            Environment.SetEnvironmentVariable(VariableContrasena, null);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexionConServidor_UsaServidorConfigurado()
+        public void Prueba_ObtenerConexion_VariablesConfiguradasRetornaCadenaCorrecta()
         {
-            Environment.SetEnvironmentVariable(NombreVariableServidor, ServidorEjemplo);
+            Environment.SetEnvironmentVariable(VariableServidor, ValorServidor);
+            Environment.SetEnvironmentVariable(VariableUsuario, ValorUsuario);
+            Environment.SetEnvironmentVariable(VariableContrasena, ValorContrasena);
 
-            string conexion = Conexion.ObtenerConexion();
+            var resultado = Conexion.ObtenerConexion();
+            var constructorEntidad = new EntityConnectionStringBuilder(resultado);
+            var cadenaProveedor = constructorEntidad.ProviderConnectionString;
+            var constructorSql = new SqlConnectionStringBuilder(cadenaProveedor);
 
-            StringAssert.Contains(conexion, ServidorEjemplo);
+            Assert.AreEqual(ProveedorDatos, constructorEntidad.Provider);
+            Assert.AreEqual(MetadatosModelo, constructorEntidad.Metadata);
+            Assert.AreEqual(ValorServidor, constructorSql.DataSource);
+            Assert.AreEqual(NombreCatalogo, constructorSql.InitialCatalog);
+            Assert.AreEqual(ValorUsuario, constructorSql.UserID);
+            Assert.AreEqual(ValorContrasena, constructorSql.Password);
+            Assert.IsTrue(constructorSql.MultipleActiveResultSets);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexionSiempre_ContieneMetadataEntityFramework()
+        public void Prueba_ObtenerConexion_ServidorNoConfiguradoUsaLocalhost()
         {
-            string conexion = Conexion.ObtenerConexion();
+            Environment.SetEnvironmentVariable(VariableServidor, null);
+            Environment.SetEnvironmentVariable(VariableUsuario, ValorUsuario);
+            Environment.SetEnvironmentVariable(VariableContrasena, ValorContrasena);
 
-            StringAssert.Contains(conexion, MetadataCsdl);
+            var resultado = Conexion.ObtenerConexion();
+            var constructorEntidad = new EntityConnectionStringBuilder(resultado);
+            var cadenaProveedor = constructorEntidad.ProviderConnectionString;
+            var constructorSql = new SqlConnectionStringBuilder(cadenaProveedor);
+
+            Assert.AreEqual(ValorLocalhost, constructorSql.DataSource);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexionSiempre_ContieneCatalogoCorrecto()
+        public void Prueba_ObtenerConexion_CredencialesNulasLanzaExcepcion()
         {
-            string conexion = Conexion.ObtenerConexion();
+            Environment.SetEnvironmentVariable(VariableServidor, ValorServidor);
+            Environment.SetEnvironmentVariable(VariableUsuario, null);
+            Environment.SetEnvironmentVariable(VariableContrasena, null);
 
-            StringAssert.Contains(conexion, NombreCatalogo);
+            Assert.ThrowsException<ArgumentNullException>(() => Conexion.ObtenerConexion());
         }
-
-        [TestMethod]
-        public void Prueba_ObtenerConexionSiempre_UsaProveedorSqlClient()
-        {
-            string conexion = Conexion.ObtenerConexion();
-
-            StringAssert.Contains(conexion, ProveedorSqlClient);
-        }
-
-        #endregion
-
-        #region Metodos Auxiliares
-
-        private static void RestaurarVariableEntorno(string nombre, string valorOriginal)
-        {
-            if (valorOriginal != null)
-            {
-                Environment.SetEnvironmentVariable(nombre, valorOriginal);
-            }
-            else
-            {
-                Environment.SetEnvironmentVariable(nombre, null);
-            }
-        }
-
-        #endregion
     }
 }

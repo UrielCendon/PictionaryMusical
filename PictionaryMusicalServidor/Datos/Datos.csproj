@@ -66,7 +66,9 @@
     <Compile Include="DAL\Implementaciones\UsuarioRepositorio.cs" />
     <Compile Include="DAL\Interfaces\IAmigoRepositorio.cs" />
     <Compile Include="DAL\Interfaces\IClasificacionRepositorio.cs" />
+    <Compile Include="Utilidades\IGeneradorAleatorio.cs" />
     <Compile Include="DAL\Interfaces\IJugadorRepositorio.cs" />
+    <Compile Include="Utilidades\IProveedorFecha.cs" />
     <Compile Include="DAL\Interfaces\IReporteRepositorio.cs" />
     <Compile Include="DAL\Interfaces\IUsuarioRepositorio.cs" />
     <Compile Include="Entidades\Cancion.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Utilidades\Conexion.cs" />
     <Compile Include="Utilidades\GeneradorAleatorioDatos.cs" />
     <Compile Include="CatalogoCanciones.cs" />
+    <Compile Include="Utilidades\ProveedorFecha.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

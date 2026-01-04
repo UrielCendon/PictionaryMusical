@@ -1,54 +1,73 @@
-﻿using PictionaryMusicalServidor.Datos;
-using System;
+﻿using System;
+using PictionaryMusicalServidor.Datos;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
-    /// Gestiona la logica de verificacion y registro de adivinanzas dentro de una partida.
+    /// Valida los intentos de adivinanza de los jugadores y gestiona el registro de aciertos.
     /// </summary>
-    public class ValidadorAdivinanza
+    public class ValidadorAdivinanza : IValidadorAdivinanza
     {
+        private const string PrefijoAciertoProtocolo = "ACIERTO:";
+        private const char SeparadorProtocolo = ':';
+        private const int MinimoPartesProtocolo = 3;
+        private const int IndicePuntosProtocolo = 2;
+
         private readonly ICatalogoCanciones _catalogoCanciones;
-        private readonly GestorTiemposPartida _gestorTiempos;
+        private readonly IGestorTiemposPartida _gestorTiempos;
 
         /// <summary>
         /// Inicializa una nueva instancia del validador de adivinanzas.
         /// </summary>
-        /// <param name="catalogoCanciones">Servicio de catalogo para validar respuestas.</param>
-        /// <param name="gestorTiempos">Gestor de tiempos para calcular puntos.</param>
+        /// <param name="catalogoCanciones">Catalogo para validar respuestas.</param>
+        /// <param name="gestorTiempos">Gestor para calcular puntos por tiempo.</param>
+        /// <exception cref="ArgumentNullException">Se lanza si alguna dependencia es nula.
+        /// </exception>
         public ValidadorAdivinanza(
-            ICatalogoCanciones catalogoCanciones, 
-            GestorTiemposPartida gestorTiempos)
+            ICatalogoCanciones catalogoCanciones,
+            IGestorTiemposPartida gestorTiempos)
         {
-            _catalogoCanciones = catalogoCanciones ?? 
+            _catalogoCanciones = catalogoCanciones ??
                 throw new ArgumentNullException(nameof(catalogoCanciones));
-            _gestorTiempos = gestorTiempos ?? 
+            _gestorTiempos = gestorTiempos ??
                 throw new ArgumentNullException(nameof(gestorTiempos));
         }
 
         /// <summary>
-        /// Verifica si un jugador puede intentar adivinar en el estado actual.
+        /// Determina si un jugador puede realizar un intento de adivinanza.
         /// </summary>
-        /// <param name="jugador">Jugador a verificar.</param>
+        /// <param name="jugador">Jugador que intenta adivinar.</param>
         /// <param name="estadoPartida">Estado actual de la partida.</param>
-        /// <returns>True si el jugador puede adivinar, False en caso contrario.</returns>
-        public static bool JugadorPuedeAdivinar(JugadorPartida jugador, EstadoPartida estadoPartida)
+        /// <returns>True si el jugador puede adivinar, false en caso contrario.</returns>
+        public bool JugadorPuedeAdivinar(JugadorPartida jugador, EstadoPartida estadoPartida)
         {
-            return estadoPartida == EstadoPartida.Jugando 
-                && !jugador.EsDibujante 
+            if (jugador == null)
+            {
+                return false;
+            }
+
+            return estadoPartida == EstadoPartida.Jugando
+                && !jugador.EsDibujante
                 && !jugador.YaAdivino;
         }
 
         /// <summary>
-        /// Verifica si el mensaje es una respuesta correcta y calcula los puntos.
+        /// Verifica si el mensaje corresponde a un acierto y calcula los puntos.
         /// </summary>
-        /// <param name="cancionId">ID de la cancion actual.</param>
-        /// <param name="mensaje">Mensaje con el intento de adivinanza.</param>
-        /// <param name="puntos">Puntos obtenidos si es correcto.</param>
-        /// <returns>True si la respuesta es correcta, False en caso contrario.</returns>
+        /// <param name="cancionId">Identificador de la cancion actual.</param>
+        /// <param name="mensaje">Mensaje enviado por el jugador.</param>
+        /// <param name="puntos">Puntos obtenidos si es acierto.</param>
+        /// <returns>True si el mensaje es correcto, false en caso contrario.</returns>
         public bool VerificarAcierto(int cancionId, string mensaje, out int puntos)
         {
             puntos = 0;
+            if (string.IsNullOrWhiteSpace(mensaje))
+            {
+                return false;
+            }
+
             bool esCorrecto = _catalogoCanciones.ValidarRespuesta(cancionId, mensaje);
 
             if (!esCorrecto && EsMensajeAciertoProtocolo(mensaje, out int puntosProtocolo))
@@ -69,29 +88,31 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// Registra un acierto para el jugador, actualizando su estado y puntaje.
         /// </summary>
         /// <param name="jugador">Jugador que acerto.</param>
-        /// <param name="puntos">Puntos a agregar.</param>
-        public static void RegistrarAcierto(JugadorPartida jugador, int puntos)
+        /// <param name="puntos">Puntos a sumar al puntaje total.</param>
+        /// <exception cref="ArgumentNullException">Se lanza si el jugador es nulo.</exception>
+        public void RegistrarAcierto(JugadorPartida jugador, int puntos)
         {
+            if (jugador == null)
+            {
+                throw new ArgumentNullException(nameof(jugador));
+            }
+
             jugador.YaAdivino = true;
             jugador.PuntajeTotal += puntos;
         }
 
-        /// <summary>
-        /// Verifica si el mensaje sigue el protocolo de acierto y extrae los puntos.
-        /// </summary>
-        /// <param name="mensaje">Mensaje a verificar.</param>
-        /// <param name="puntos">Puntos extraidos del mensaje.</param>
-        /// <returns>True si es un mensaje de protocolo valido, False en caso contrario.</returns>
-        public static bool EsMensajeAciertoProtocolo(string mensaje, out int puntos)
+        private static bool EsMensajeAciertoProtocolo(string mensaje, out int puntos)
         {
             puntos = 0;
-            if (!mensaje.StartsWith("ACIERTO:", StringComparison.OrdinalIgnoreCase))
+            if (!mensaje.StartsWith(PrefijoAciertoProtocolo, StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
 
-            var partes = mensaje.Split(':');
-            return partes.Length >= 3 && int.TryParse(partes[2], out puntos) && puntos > 0;
+            var partes = mensaje.Split(SeparadorProtocolo);
+            return partes.Length >= MinimoPartesProtocolo 
+                && int.TryParse(partes[IndicePuntosProtocolo], out puntos) 
+                && puntos > 0;
         }
     }
 }

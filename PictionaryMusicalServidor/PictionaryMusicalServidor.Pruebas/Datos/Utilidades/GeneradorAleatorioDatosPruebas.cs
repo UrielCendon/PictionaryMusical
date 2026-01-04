@@ -1,109 +1,99 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
+namespace PictionaryMusicalServidor.Pruebas.Datos
 {
     /// <summary>
-    /// Pruebas unitarias para la clase GeneradorAleatorioDatos.
-    /// Verifica la generacion de indices aleatorios y seleccion de elementos.
+    /// Contiene pruebas unitarias para la clase <see cref="GeneradorAleatorioDatos"/>.
+    /// Valida la generacion de indices aleatorios, seleccion de elementos y mezcla de listas.
     /// </summary>
     [TestClass]
     public class GeneradorAleatorioDatosPruebas
     {
-        private const int TamanoCero = 0;
-        private const int TamanoNegativo = -5;
-        private const int TamanoValido = 10;
-        private const int TamanoUno = 1;
-        private const int IndiceCero = 0;
-        private const string ElementoUnico = "unico";
-        private const int ElementoUno = 1;
-        private const int ElementoDos = 2;
-        private const int ElementoTres = 3;
-        private const int ElementoCuatro = 4;
-        private const int ElementoCinco = 5;
+        private const int TamanoColeccionValido = 10;
+        private const int TamanoColeccionCero = 0;
+        private const int TamanoColeccionNegativo = -5;
+        private const int IndiceMinimo = 0;
+        private const string ElementoUno = "A";
+        private const string ElementoDos = "B";
+        private const string ElementoTres = "C";
 
-        #region ObtenerIndiceAleatorio
+        private GeneradorAleatorioDatos _generador;
+
+        [TestInitialize]
+        public void Inicializar()
+        {
+            _generador = new GeneradorAleatorioDatos();
+        }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorioTamanoCero_LanzaArgumentOutOfRangeException()
+        public void Prueba_ObtenerIndiceAleatorio_TamanoValidoRetornaIndiceEnRango()
+        {
+            int resultado = _generador.ObtenerIndiceAleatorio(TamanoColeccionValido);
+
+            Assert.IsTrue(resultado >= IndiceMinimo);
+            Assert.IsTrue(resultado < TamanoColeccionValido);
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerIndiceAleatorio_TamanoCeroLanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoCero);
-            });
+                _generador.ObtenerIndiceAleatorio(TamanoColeccionCero));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorioTamanoNegativo_LanzaArgumentOutOfRangeException()
+        public void Prueba_ObtenerIndiceAleatorio_TamanoNegativoLanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoNegativo);
-            });
+                _generador.ObtenerIndiceAleatorio(TamanoColeccionNegativo));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorioTamanoValido_RetornaIndiceDentroRango()
+        public void Prueba_SeleccionarAleatorio_ListaValidaRetornaElementoDeLaLista()
         {
-            int indice = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoValido);
+            var listaDatos = new List<string> { ElementoUno, ElementoDos, ElementoTres };
 
-            Assert.IsTrue(indice >= IndiceCero && indice < TamanoValido);
+            var resultado = _generador.SeleccionarAleatorio(listaDatos);
+
+            CollectionAssert.Contains(listaDatos, resultado);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorioTamanoUno_RetornaCero()
-        {
-            int indice = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoUno);
-
-            Assert.AreEqual(IndiceCero, indice);
-        }
-
-        #endregion
-
-        #region SeleccionarAleatorio
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorioListaNula_LanzaArgumentNullException()
+        public void Prueba_SeleccionarAleatorio_ListaNulaLanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                GeneradorAleatorioDatos.SeleccionarAleatorio<string>(null);
-            });
+                _generador.SeleccionarAleatorio<string>(null));
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorioListaVacia_LanzaArgumentException()
+        public void Prueba_SeleccionarAleatorio_ListaVaciaLanzaExcepcion()
         {
-            var listaVacia = new List<string>();
+            var listaVacia = new List<int>();
 
             Assert.ThrowsException<ArgumentException>(() =>
-            {
-                GeneradorAleatorioDatos.SeleccionarAleatorio(listaVacia);
-            });
+                _generador.SeleccionarAleatorio(listaVacia));
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorioListaUnElemento_RetornaElemento()
+        public void Prueba_MezclarLista_ListaConElementosNoPierdeDatos()
         {
-            var lista = new List<string> { ElementoUnico };
+            var listaOriginal = new List<string> { ElementoUno, ElementoDos, ElementoTres };
+            var listaMezclada = new List<string>(listaOriginal);
 
-            string resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
+            _generador.MezclarLista(listaMezclada);
 
-            Assert.AreEqual(ElementoUnico, resultado);
+            Assert.AreEqual(listaOriginal.Count, listaMezclada.Count);
+            CollectionAssert.AreEquivalent(listaOriginal, listaMezclada);
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorioListaMultiplesElementos_RetornaElementoDeLista()
+        public void Prueba_MezclarLista_ListaNulaLanzaExcepcion()
         {
-            var lista = new List<int> { ElementoUno, ElementoDos, ElementoTres, ElementoCuatro, ElementoCinco };
-
-            int resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-
-            CollectionAssert.Contains(lista, resultado);
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                _generador.MezclarLista<string>(null));
         }
-
-        #endregion
     }
 }

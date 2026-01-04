@@ -104,6 +104,11 @@
     <Compile Include="Contratos\ISalasManejadorCallback.cs" />
     <Compile Include="Contratos\ISalasManejador.cs" />
     <Compile Include="LogicaNegocio\GestorTiemposPartida.cs" />
+    <Compile Include="LogicaNegocio\IGestorJugadoresPartida.cs" />
+    <Compile Include="LogicaNegocio\IGestorTiemposPartida.cs" />
+    <Compile Include="LogicaNegocio\IProveedorTiempo.cs" />
+    <Compile Include="LogicaNegocio\IValidadorAdivinanza.cs" />
+    <Compile Include="LogicaNegocio\ProveedorTiempo.cs" />
     <Compile Include="Servicios\Notificadores\BaneoNotificacionParametros.cs" />
     <Compile Include="Servicios\Notificadores\ExpulsionNotificacionParametros.cs" />
     <Compile Include="Servicios\Partida\NotificacionCallbackParametros.cs" />

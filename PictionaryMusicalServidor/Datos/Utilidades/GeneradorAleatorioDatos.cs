@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 
 namespace PictionaryMusicalServidor.Datos.Utilidades
 {
     /// <summary>
-    /// Clase utilitaria para generar valores aleatorios de forma thread-safe.
-    /// Proporciona metodos para generar indices aleatorios y seleccionar elementos de colecciones.
+    /// Implementacion utilitaria para generar valores aleatorios de forma thread-safe.
     /// </summary>
-    internal static class GeneradorAleatorioDatos
+    public class GeneradorAleatorioDatos : IGeneradorAleatorio
     {
-        private static readonly Random _random = new Random();
-        private static readonly object _bloqueo = new object();
+        private readonly Random _random;
+        private readonly object _bloqueo;
+
+        public GeneradorAleatorioDatos()
+        {
+            _random = new Random();
+            _bloqueo = new object();
+        }
 
         /// <summary>
         /// Genera un indice aleatorio valido para una coleccion del tamano especificado.
@@ -19,7 +25,7 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
         /// <returns>Indice aleatorio entre 0 y tamanoColeccion - 1.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Se lanza si tamanoColeccion es menor o 
         /// igual a 0.</exception>
-        public static int ObtenerIndiceAleatorio(int tamanoColeccion)
+        public int ObtenerIndiceAleatorio(int tamanoColeccion)
         {
             if (tamanoColeccion <= 0)
             {
@@ -40,7 +46,7 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
         /// <returns>Elemento aleatorio de la lista.</returns>
         /// <exception cref="ArgumentNullException">Se lanza si la lista es null.</exception>
         /// <exception cref="ArgumentException">Se lanza si la lista esta vacia.</exception>
-        public static T SeleccionarAleatorio<T>(IList<T> lista)
+        public T SeleccionarAleatorio<T>(IList<T> lista)
         {
             if (lista == null)
             {
@@ -54,6 +60,33 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
 
             int indice = ObtenerIndiceAleatorio(lista.Count);
             return lista[indice];
+        }
+
+        /// <summary>
+        /// Mezcla aleatoriamente los elementos de una lista (Algoritmo Fisher-Yates).
+        /// </summary>
+        /// <typeparam name="T">Tipo de elementos.</typeparam>
+        /// <param name="lista">Lista a mezclar.</param>
+        /// <exception cref="ArgumentNullException">Se lanza si la lista es nula.</exception>
+        public void MezclarLista<T>(IList<T> lista)
+        {
+            if (lista == null)
+            {
+                throw new ArgumentNullException(nameof(lista));
+            }
+
+            lock (_bloqueo)
+            {
+                int n = lista.Count;
+                while (n > 1)
+                {
+                    n--;
+                    int k = _random.Next(n + 1);
+                    T valor = lista[k];
+                    lista[k] = lista[n];
+                    lista[n] = valor;
+                }
+            }
         }
     }
 }
