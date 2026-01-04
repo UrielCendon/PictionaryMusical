@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Timers;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio

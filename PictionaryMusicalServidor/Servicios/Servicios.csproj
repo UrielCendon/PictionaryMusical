@@ -198,8 +198,11 @@
     <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificador.cs" />
     <Compile Include="Servicios\Notificadores\ICodigoVerificacionNotificador.cs" />
     <Compile Include="Servicios\Utilidades\GeneradorAleatorio.cs" />
+    <Compile Include="Servicios\Utilidades\IManejadorCallback.cs" />
+    <Compile Include="Servicios\Utilidades\IProveedorCallback.cs" />
     <Compile Include="Servicios\Utilidades\IRepositorioFactoria.cs" />
     <Compile Include="Servicios\Utilidades\ManejadorCallback.cs" />
+    <Compile Include="Servicios\Utilidades\ProveedorCallback.cs" />
     <Compile Include="Servicios\Utilidades\RepositorioFactoria.cs" />
     <Compile Include="Servicios\Autenticacion\VerificacionRegistroServicio.cs" />
   </ItemGroup>

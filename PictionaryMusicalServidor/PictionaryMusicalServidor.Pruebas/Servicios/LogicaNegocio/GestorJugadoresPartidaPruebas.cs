@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios
+namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="GestorJugadoresPartida"/>.

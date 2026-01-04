@@ -26,11 +26,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         private static readonly ILog _logger =
             LogManager.GetLogger(typeof(ListaAmigosManejador));
 
-        private readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
+        private readonly IManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
         private readonly IAmistadServicio _amistadServicio;
         private readonly INotificadorListaAmigos _notificador;
+        private readonly IProveedorCallback<IListaAmigosManejadorCallback> _proveedorCallback;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
@@ -44,7 +45,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             new NotificadorListaAmigos(
                 CallbacksCompartidos.ListaAmigos,
                 new AmistadServicio(),
-                new RepositorioFactoria()))
+                new RepositorioFactoria()),
+            CallbacksCompartidos.ListaAmigos,
+            new ProveedorCallback<IListaAmigosManejadorCallback>())
         {
         }
 
@@ -55,11 +58,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
         /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="notificador">Notificador de lista de amigos.</param>
+        /// <param name="manejadorCallback">Manejador de callbacks de lista de amigos.</param>
+        /// <param name="proveedorCallback">Proveedor de callback actual.</param>
         public ListaAmigosManejador(
             IContextoFactoria contextoFactoria,
             IRepositorioFactoria repositorioFactoria,
             IAmistadServicio amistadServicio,
-            INotificadorListaAmigos notificador)
+            INotificadorListaAmigos notificador,
+            IManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback,
+            IProveedorCallback<IListaAmigosManejadorCallback> proveedorCallback)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
@@ -69,8 +76,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 throw new ArgumentNullException(nameof(amistadServicio));
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
-
-            _manejadorCallback = CallbacksCompartidos.ListaAmigos;
+            _manejadorCallback = manejadorCallback ??
+                throw new ArgumentNullException(nameof(manejadorCallback));
+            _proveedorCallback = proveedorCallback ??
+                throw new ArgumentNullException(nameof(proveedorCallback));
         }
 
         /// <summary>
@@ -90,7 +99,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 var amigosActuales = ObtenerAmigosPorNombre(nombreUsuario);
 
                 IListaAmigosManejadorCallback callback =
-                    ManejadorCallback<IListaAmigosManejadorCallback>.ObtenerCallbackActual();
+                    _proveedorCallback.ObtenerCallbackActual();
 
                 _manejadorCallback.Suscribir(nombreUsuario, callback);
                 _manejadorCallback.ConfigurarEventosCanal(nombreUsuario);

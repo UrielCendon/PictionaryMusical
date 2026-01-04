@@ -2,9 +2,9 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios
+namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="GestorTiemposPartida"/>.
@@ -15,7 +15,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
     {
         private const int DuracionRonda = 60;
         private const int DuracionTransicion = 5;
-        private readonly DateTime FechaInicio = new DateTime(2026, 1, 4, 12, 0, 0, DateTimeKind.Utc);
+        private const int MitadDuracionRonda = 30;
+        private const int TiempoExcedenteSegundos = 10;
+        private readonly DateTime FechaInicio = 
+            new DateTime(2026, 1, 4, 12, 0, 0, DateTimeKind.Utc);
 
         private Mock<IProveedorFecha> _proveedorFechaMock;
         private GestorTiemposPartida _gestor;
@@ -24,9 +27,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         public void Inicializar()
         {
             _proveedorFechaMock = new Mock<IProveedorFecha>();
-            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(FechaInicio);
+            _proveedorFechaMock
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
+                .Returns(FechaInicio);
 
-            _gestor = new GestorTiemposPartida(DuracionRonda, DuracionTransicion, _proveedorFechaMock.Object);
+            _gestor = new GestorTiemposPartida(
+                DuracionRonda, 
+                DuracionTransicion, 
+                _proveedorFechaMock.Object);
         }
 
         [TestMethod]
@@ -49,7 +57,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         {
             _gestor.IniciarRonda();
 
-            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(FechaInicio);
+            _proveedorFechaMock
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
+                .Returns(FechaInicio);
 
             int puntos = _gestor.CalcularPuntosPorTiempo();
 
@@ -61,12 +71,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         {
             _gestor.IniciarRonda();
 
-            var fechaFutura = FechaInicio.AddSeconds(30);
-            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(fechaFutura);
+            var fechaFutura = FechaInicio.AddSeconds(MitadDuracionRonda);
+            _proveedorFechaMock
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
+                .Returns(fechaFutura);
 
             int puntos = _gestor.CalcularPuntosPorTiempo();
 
-            Assert.AreEqual(30, puntos);
+            Assert.AreEqual(MitadDuracionRonda, puntos);
         }
 
         [TestMethod]
@@ -74,8 +86,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         {
             _gestor.IniciarRonda();
 
-            var fechaFutura = FechaInicio.AddSeconds(DuracionRonda + 10);
-            _proveedorFechaMock.Setup(p => p.ObtenerFechaActualUtc()).Returns(fechaFutura);
+            var fechaFutura = FechaInicio.AddSeconds(DuracionRonda + TiempoExcedenteSegundos);
+            _proveedorFechaMock
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
+                .Returns(fechaFutura);
 
             int puntos = _gestor.CalcularPuntosPorTiempo();
 

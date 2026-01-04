@@ -25,10 +25,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AmigosManejador));
 
-        private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
+        private readonly IManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
         private readonly INotificadorAmigos _notificador;
         private readonly INotificadorListaAmigos _notificadorListaAmigos;
         private readonly IOperacionAmistadServicio _operacionAmistadServicio;
+        private readonly IProveedorCallback<IAmigosManejadorCallback> _proveedorCallback;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
@@ -41,7 +42,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             new NotificadorListaAmigos(
                 CallbacksCompartidos.ListaAmigos,
                 new AmistadServicio(),
-                new RepositorioFactoria()))
+                new RepositorioFactoria()),
+            new NotificadorAmigos(
+                new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase),
+                new AmistadServicio()),
+            new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase),
+            new ProveedorCallback<IAmigosManejadorCallback>())
         {
         }
 
@@ -51,13 +57,21 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="operacionAmistadServicio">Servicio de operaciones de amistad.</param>
         /// <param name="notificadorLista">Notificador de lista de amigos.</param>
+        /// <param name="notificadorAmigos">Notificador de eventos de amistad.</param>
+        /// <param name="manejadorCallback">Manejador de callbacks de amigos.</param>
+        /// <param name="proveedorCallback">Proveedor de callback actual.</param>
         public AmigosManejador(
             IAmistadServicio amistadServicio,
             IOperacionAmistadServicio operacionAmistadServicio,
-            INotificadorListaAmigos notificadorLista)
+            INotificadorListaAmigos notificadorLista,
+            INotificadorAmigos notificadorAmigos,
+            IManejadorCallback<IAmigosManejadorCallback> manejadorCallback,
+            IProveedorCallback<IAmigosManejadorCallback> proveedorCallback)
         {
-            var servicioAmistadValidado = amistadServicio ??
+            if (amistadServicio == null)
+            {
                 throw new ArgumentNullException(nameof(amistadServicio));
+            }
 
             _operacionAmistadServicio = operacionAmistadServicio ??
                 throw new ArgumentNullException(nameof(operacionAmistadServicio));
@@ -65,12 +79,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             _notificadorListaAmigos = notificadorLista ??
                 throw new ArgumentNullException(nameof(notificadorLista));
 
-            _manejadorCallback = new ManejadorCallback<IAmigosManejadorCallback>(
-                StringComparer.OrdinalIgnoreCase);
+            _notificador = notificadorAmigos ??
+                throw new ArgumentNullException(nameof(notificadorAmigos));
 
-            _notificador = new NotificadorAmigos(
-                _manejadorCallback, 
-                servicioAmistadValidado);
+            _manejadorCallback = manejadorCallback ??
+                throw new ArgumentNullException(nameof(manejadorCallback));
+
+            _proveedorCallback = proveedorCallback ??
+                throw new ArgumentNullException(nameof(proveedorCallback));
         }
 
         /// <summary>
@@ -370,8 +386,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
         private void RegistrarCallback(string nombreUsuario, string nombreNormalizado)
         {
-            var callback = 
-                ManejadorCallback<IAmigosManejadorCallback>.ObtenerCallbackActual();
+            var callback = _proveedorCallback.ObtenerCallbackActual();
             _manejadorCallback.Suscribir(nombreNormalizado, callback);
 
             if (!string.Equals(

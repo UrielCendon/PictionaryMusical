@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios
+namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="JugadorPartida"/>.

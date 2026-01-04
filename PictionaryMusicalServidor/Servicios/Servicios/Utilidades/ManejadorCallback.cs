@@ -11,7 +11,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// Gestiona el ciclo de vida de las suscripciones de callbacks.
     /// </summary>
     /// <typeparam name="TCallback">Tipo de callback a gestionar.</typeparam>
-    internal class ManejadorCallback<TCallback> where TCallback : class
+    internal class ManejadorCallback<TCallback> : IManejadorCallback<TCallback> 
+        where TCallback : class
     {
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(ManejadorCallback<TCallback>));

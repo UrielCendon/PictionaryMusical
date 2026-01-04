@@ -11,13 +11,18 @@ using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios
+namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
+    /// <summary>
+    /// Contiene pruebas unitarias para la clase <see cref="ControladorPartida"/>.
+    /// Valida el flujo de partida, inicio, mensajes y remoción de jugadores.
+    /// </summary>
     [TestClass]
     public class ControladorPartidaPruebas
     {
         private const int TiempoRonda = 30;
         private const int TotalRondas = 3;
+        private const int PuntosAdivinanza = 10;
         private const string DificultadMedia = "media";
         private const string IdHost = "host123";
         private const string NombreHost = "HostPlayer";
@@ -42,7 +47,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
             _validadorMock = new Mock<IValidadorAdivinanza>();
             _proveedorTiempoMock = new Mock<IProveedorTiempo>();
 
-            _proveedorTiempoMock.Setup(p => p.Retrasar(It.IsAny<int>()))
+            _proveedorTiempoMock
+                .Setup(proveedor => proveedor.Retrasar(It.IsAny<int>()))
                 .Returns(Task.CompletedTask);
 
             _controlador = new ControladorPartida(
@@ -60,10 +66,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         [TestMethod]
         public void Prueba_AgregarJugador_PartidaYaIniciadaLanzaExcepcion()
         {
-
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(true);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdHost)).Returns(true);
-            _catalogoMock.Setup(c => c.ObtenerCancionAleatoria(It.IsAny<string>(), It.IsAny<HashSet<int>>()))
+            _gestorJugadoresMock.Setup(gestor => gestor.HaySuficientesJugadores).Returns(true);
+            _gestorJugadoresMock.Setup(gestor => gestor.EsHost(IdHost)).Returns(true);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ObtenerCancionAleatoria(
+                    It.IsAny<string>(), 
+                    It.IsAny<HashSet<int>>()))
                 .Returns(new Cancion { Id = CancionId });
 
             _controlador.IniciarPartida(IdHost);
@@ -75,8 +83,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         [TestMethod]
         public void Prueba_IniciarPartida_NoHostLanzaExcepcion()
         {
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(true);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdJugador)).Returns(false);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.HaySuficientesJugadores)
+                .Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.EsHost(IdJugador))
+                .Returns(false);
 
             Assert.ThrowsException<SecurityException>(() =>
                 _controlador.IniciarPartida(IdJugador));
@@ -88,61 +100,103 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
             bool eventoDisparado = false;
             _controlador.PartidaIniciada += () => eventoDisparado = true;
 
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(true);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdHost)).Returns(true);
-            _catalogoMock.Setup(c => c.ObtenerCancionAleatoria(It.IsAny<string>(), It.IsAny<HashSet<int>>()))
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.HaySuficientesJugadores)
+                .Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.EsHost(IdHost))
+                .Returns(true);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ObtenerCancionAleatoria(
+                    It.IsAny<string>(), 
+                    It.IsAny<HashSet<int>>()))
                 .Returns(new Cancion { Id = CancionId });
 
             _controlador.IniciarPartida(IdHost);
 
             Assert.IsTrue(eventoDisparado);
-            _gestorJugadoresMock.Verify(g => g.SeleccionarSiguienteDibujante(), Times.Once);
-            _proveedorTiempoMock.Verify(p => p.Retrasar(It.IsAny<int>()), Times.Once);
+            _gestorJugadoresMock.Verify(
+                gestor => gestor.SeleccionarSiguienteDibujante(), 
+                Times.Once);
+            _proveedorTiempoMock.Verify(
+                proveedor => proveedor.Retrasar(It.IsAny<int>()), 
+                Times.Once);
         }
 
         [TestMethod]
         public void Prueba_ProcesarMensaje_AdivinanzaCorrectaDisparaEvento()
         {
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(true);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdHost)).Returns(true);
-            _catalogoMock.Setup(c => c.ObtenerCancionAleatoria(It.IsAny<string>(), It.IsAny<HashSet<int>>()))
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.HaySuficientesJugadores)
+                .Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.EsHost(IdHost))
+                .Returns(true);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ObtenerCancionAleatoria(
+                    It.IsAny<string>(), 
+                    It.IsAny<HashSet<int>>()))
                 .Returns(new Cancion { Id = CancionId });
             _controlador.IniciarPartida(IdHost);
 
             var jugador = new JugadorPartida { NombreUsuario = NombreJugador };
-            _gestorJugadoresMock.Setup(g => g.Obtener(IdJugador)).Returns(jugador);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.Obtener(IdJugador))
+                .Returns(jugador);
 
-            _validadorMock.Setup(v => v.JugadorPuedeAdivinar(jugador, EstadoPartida.Jugando)).Returns(true);
-            int puntos = 10;
-            _validadorMock.Setup(v => v.VerificarAcierto(It.IsAny<int>(), MensajeChat, out puntos)).Returns(true);
+            _validadorMock
+                .Setup(validador => validador.JugadorPuedeAdivinar(jugador, EstadoPartida.Jugando))
+                .Returns(true);
+            int puntos = PuntosAdivinanza;
+            _validadorMock
+                .Setup(validador => validador.VerificarAcierto(
+                    It.IsAny<int>(), 
+                    MensajeChat, 
+                    out puntos))
+                .Returns(true);
 
             bool acerto = false;
-            _controlador.JugadorAdivino += (u, p) => acerto = true;
+            _controlador.JugadorAdivino += (nombreUsuario, puntosObtenidos) => acerto = true;
 
             _controlador.ProcesarMensaje(IdJugador, MensajeChat);
 
             Assert.IsTrue(acerto);
-            _validadorMock.Verify(v => v.RegistrarAcierto(jugador, puntos), Times.Once);
+            _validadorMock.Verify(
+                validador => validador.RegistrarAcierto(jugador, puntos), 
+                Times.Once);
         }
 
         [TestMethod]
         public void Prueba_RemoverJugador_HostAbandonaCancelaPartida()
         {
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(true);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdHost)).Returns(true);
-            _catalogoMock.Setup(c => c.ObtenerCancionAleatoria(It.IsAny<string>(), It.IsAny<HashSet<int>>()))
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.HaySuficientesJugadores)
+                .Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.EsHost(IdHost))
+                .Returns(true);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ObtenerCancionAleatoria(
+                    It.IsAny<string>(), 
+                    It.IsAny<HashSet<int>>()))
                 .Returns(new Cancion { Id = CancionId });
             _controlador.IniciarPartida(IdHost);
 
             bool eraDibujante;
             string nombre = NombreHost;
-            _gestorJugadoresMock.Setup(g => g.Remover(IdHost, out eraDibujante, out nombre)).Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.Remover(IdHost, out eraDibujante, out nombre))
+                .Returns(true);
 
-            _gestorJugadoresMock.Setup(g => g.HaySuficientesJugadores).Returns(false);
-            _gestorJugadoresMock.Setup(g => g.EsHost(IdHost)).Returns(true);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.HaySuficientesJugadores)
+                .Returns(false);
+            _gestorJugadoresMock
+                .Setup(gestor => gestor.EsHost(IdHost))
+                .Returns(true);
 
             bool partidaFinalizada = false;
-            _controlador.FinPartida += (res) => partidaFinalizada = true;
+            _controlador.FinPartida += (resultado) => partidaFinalizada = true;
 
             _controlador.RemoverJugador(IdHost);
 

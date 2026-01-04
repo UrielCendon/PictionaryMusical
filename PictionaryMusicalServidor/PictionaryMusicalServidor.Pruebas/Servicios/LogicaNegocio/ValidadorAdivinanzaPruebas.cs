@@ -6,7 +6,7 @@ using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 
-namespace PictionaryMusicalServidor.Pruebas.Servicios
+namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="ValidadorAdivinanza"/>.
@@ -75,21 +75,29 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         [TestMethod]
         public void Prueba_VerificarAcierto_RespuestaCorrectaCalculaPuntosDelTiempo()
         {
-            _catalogoMock.Setup(c => c.ValidarRespuesta(IdCancion, MensajeCorrecto)).Returns(true);
-            _gestorTiemposMock.Setup(g => g.CalcularPuntosPorTiempo()).Returns(PuntosTiempo);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeCorrecto))
+                .Returns(true);
+            _gestorTiemposMock
+                .Setup(gestor => gestor.CalcularPuntosPorTiempo())
+                .Returns(PuntosTiempo);
 
             int puntos;
             bool resultado = _validador.VerificarAcierto(IdCancion, MensajeCorrecto, out puntos);
 
             Assert.IsTrue(resultado);
             Assert.AreEqual(PuntosTiempo, puntos);
-            _gestorTiemposMock.Verify(g => g.CalcularPuntosPorTiempo(), Times.Once);
+            _gestorTiemposMock.Verify(
+                gestor => gestor.CalcularPuntosPorTiempo(), 
+                Times.Once);
         }
 
         [TestMethod]
         public void Prueba_VerificarAcierto_RespuestaIncorrectaRetornaFalse()
         {
-            _catalogoMock.Setup(c => c.ValidarRespuesta(IdCancion, MensajeIncorrecto)).Returns(false);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeIncorrecto))
+                .Returns(false);
 
             int puntos;
             bool resultado = _validador.VerificarAcierto(IdCancion, MensajeIncorrecto, out puntos);
@@ -101,7 +109,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios
         [TestMethod]
         public void Prueba_VerificarAcierto_MensajeProtocoloValidoRetornaPuntosProtocolo()
         {
-            _catalogoMock.Setup(c => c.ValidarRespuesta(IdCancion, MensajeProtocolo)).Returns(false);
+            _catalogoMock
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeProtocolo))
+                .Returns(false);
 
             int puntos;
             bool resultado = _validador.VerificarAcierto(IdCancion, MensajeProtocolo, out puntos);

@@ -81,6 +81,10 @@
     <Compile Include="Datos\Utilidades\ConexionPruebas.cs" />
     <Compile Include="Datos\Utilidades\GeneradorAleatorioDatosPruebas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Servicios\Amigos\AmigosManejadorPrueba.cs" />
+    <Compile Include="Servicios\Amigos\AmistadServicioPrueba.cs" />
+    <Compile Include="Servicios\Amigos\ListaAmigosManejadorPrueba.cs" />
+    <Compile Include="Servicios\Amigos\OperacionAmistadServicioPrueba.cs" />
     <Compile Include="Servicios\LogicaNegocio\ControladorPartidaPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\GestorJugadoresPartidaPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\GestorTiemposPartidaPruebas.cs" />
@@ -102,7 +106,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Servicios\Amigos\" />
     <Folder Include="Servicios\Autenticacion\" />
     <Folder Include="Servicios\Notificadores\" />
     <Folder Include="Servicios\Partida\" />

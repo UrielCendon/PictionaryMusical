@@ -1,4 +1,4 @@
-﻿using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+﻿using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 using System;
