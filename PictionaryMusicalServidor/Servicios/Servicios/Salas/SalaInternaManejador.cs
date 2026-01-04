@@ -79,6 +79,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
         /// <summary>
         /// Intenta agregar un jugador a la sala y gestiona las notificaciones.
+        /// Las notificaciones se ejecutan fuera del lock para evitar deadlocks.
         /// </summary>
         /// <param name="nombreUsuario">Usuario a agregar.</param>
         /// <param name="callback">Canal de comunicacion del usuario.</param>
@@ -89,34 +90,42 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             ISalasManejadorCallback callback,
             bool notificar)
         {
+            SalaDTO resultado;
+            bool debeNotificar = false;
+
             lock (_sincrono)
             {
                 if (_jugadores.Contains(nombreUsuario))
                 {
                     _gestorNotificaciones.Registrar(nombreUsuario, callback);
-                    return ConvertirADto();
+                    return ConvertirADtoInterno();
                 }
 
                 ValidarCapacidad();
 
                 _jugadores.Add(nombreUsuario);
                 _gestorNotificaciones.Registrar(nombreUsuario, callback);
-
-                if (notificar)
-                {
-                    _gestorNotificaciones.NotificarIngreso(Codigo, nombreUsuario, ConvertirADto());
-                }
-
-                return ConvertirADto();
+                resultado = ConvertirADtoInterno();
+                debeNotificar = notificar;
             }
+
+            if (debeNotificar)
+            {
+                _gestorNotificaciones.NotificarIngreso(Codigo, nombreUsuario, resultado);
+            }
+
+            return resultado;
         }
 
         /// <summary>
         /// Remueve a un jugador de la sala y gestiona la logica de abandono.
+        /// Las notificaciones se ejecutan fuera del lock para evitar deadlocks.
         /// </summary>
         /// <param name="nombreUsuario">Usuario a remover.</param>
         public void RemoverJugador(string nombreUsuario)
         {
+            AccionPostRemocion accionPendiente;
+
             lock (_sincrono)
             {
                 if (!_jugadores.Contains(nombreUsuario))
@@ -125,18 +134,111 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 _jugadores.Remove(nombreUsuario);
-                ManejarLogicaSalida(nombreUsuario);
+                accionPendiente = PrepararAccionPostRemocion(nombreUsuario);
                 _gestorNotificaciones.Remover(nombreUsuario);
             }
+
+            EjecutarAccionPostRemocion(accionPendiente);
+        }
+
+        private AccionPostRemocion PrepararAccionPostRemocion(string nombreUsuario)
+        {
+            bool esAnfitrion = string.Equals(
+                nombreUsuario,
+                Creador,
+                StringComparison.OrdinalIgnoreCase);
+
+            if (PartidaFinalizada && esAnfitrion)
+            {
+                _gestorNotificaciones.Limpiar();
+                DebeEliminarse = true;
+                return new AccionPostRemocion { Tipo = TipoAccionRemocion.Ninguna };
+            }
+
+            var salaActualizada = ConvertirADtoInterno();
+
+            if (esAnfitrion)
+            {
+                _jugadores.Clear();
+                _gestorNotificaciones.Limpiar();
+                DebeEliminarse = true;
+                return new AccionPostRemocion
+                {
+                    Tipo = TipoAccionRemocion.CancelarSala,
+                    NombreUsuario = nombreUsuario,
+                    SalaActualizada = salaActualizada
+                };
+            }
+
+            if (_jugadores.Count == 0)
+            {
+                DebeEliminarse = true;
+            }
+
+            return new AccionPostRemocion
+            {
+                Tipo = TipoAccionRemocion.NotificarSalida,
+                NombreUsuario = nombreUsuario,
+                SalaActualizada = salaActualizada
+            };
+        }
+
+        private void EjecutarAccionPostRemocion(AccionPostRemocion accion)
+        {
+            switch (accion.Tipo)
+            {
+                case TipoAccionRemocion.NotificarSalida:
+                    _gestorNotificaciones.NotificarSalida(
+                        Codigo, 
+                        accion.NombreUsuario, 
+                        accion.SalaActualizada);
+                    break;
+                case TipoAccionRemocion.CancelarSala:
+                    _gestorNotificaciones.NotificarSalida(
+                        Codigo, 
+                        accion.NombreUsuario, 
+                        accion.SalaActualizada);
+                    _gestorNotificaciones.NotificarCancelacion(Codigo);
+                    _logger.Info(MensajesError.Bitacora.SalaCanceladaSalidaAnfitrion);
+                    break;
+            }
+        }
+
+        private SalaDTO ConvertirADtoInterno()
+        {
+            return new SalaDTO
+            {
+                Codigo = Codigo,
+                Creador = Creador,
+                Configuracion = Configuracion,
+                Jugadores = new List<string>(_jugadores)
+            };
+        }
+
+        private enum TipoAccionRemocion
+        {
+            Ninguna,
+            NotificarSalida,
+            CancelarSala
+        }
+
+        private struct AccionPostRemocion
+        {
+            public TipoAccionRemocion Tipo;
+            public string NombreUsuario;
+            public SalaDTO SalaActualizada;
         }
 
         /// <summary>
         /// Expulsa forzosamente a un jugador de la sala si el solicitante es el creador.
+        /// Las notificaciones se ejecutan fuera del lock para evitar deadlocks.
         /// </summary>
         /// <param name="nombreAnfitrion">Nombre de quien solicita la expulsion.</param>
         /// <param name="nombreJugadorAExpulsar">Nombre del jugador a expulsar.</param>
         public void ExpulsarJugador(string nombreAnfitrion, string nombreJugadorAExpulsar)
         {
+            ExpulsionNotificacionParametros parametrosExpulsion;
+
             lock (_sincrono)
             {
                 ValidarPermisosExpulsion(nombreAnfitrion, nombreJugadorAExpulsar);
@@ -147,28 +249,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 _jugadores.Remove(nombreJugadorAExpulsar);
                 _gestorNotificaciones.Remover(nombreJugadorAExpulsar);
 
-                var parametrosExpulsion = new ExpulsionNotificacionParametros
+                parametrosExpulsion = new ExpulsionNotificacionParametros
                 {
                     CodigoSala = Codigo,
                     NombreExpulsado = nombreJugadorAExpulsar,
                     CallbackExpulsado = callbackExpulsado,
-                    SalaActualizada = ConvertirADto()
+                    SalaActualizada = ConvertirADtoInterno()
                 };
-                _gestorNotificaciones.NotificarExpulsion(parametrosExpulsion);
-
-                _logger.InfoFormat(
-                    "Sala '{0}': Jugador expulsado y notificado exitosamente.",
-                    Codigo);
             }
+
+            _gestorNotificaciones.NotificarExpulsion(parametrosExpulsion);
+
+            _logger.InfoFormat(
+                "Sala '{0}': Jugador expulsado y notificado exitosamente.",
+                Codigo);
         }
 
         /// <summary>
         /// Banea a un jugador de la sala por exceso de reportes.
         /// No requiere validacion de permisos ya que es una accion del sistema.
+        /// Las notificaciones se ejecutan fuera del lock para evitar deadlocks.
         /// </summary>
         /// <param name="nombreJugadorABanear">Nombre del jugador a banear.</param>
         public void BanearJugador(string nombreJugadorABanear)
         {
+            BaneoNotificacionParametros parametrosBaneo;
+            bool debeBanear;
+
             lock (_sincrono)
             {
                 if (!_jugadores.Contains(nombreJugadorABanear))
@@ -182,13 +289,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 _jugadores.Remove(nombreJugadorABanear);
                 _gestorNotificaciones.Remover(nombreJugadorABanear);
 
-                var parametrosBaneo = new BaneoNotificacionParametros
+                parametrosBaneo = new BaneoNotificacionParametros
                 {
                     CodigoSala = Codigo,
                     NombreBaneado = nombreJugadorABanear,
                     CallbackBaneado = callbackBaneado,
-                    SalaActualizada = ConvertirADto()
+                    SalaActualizada = ConvertirADtoInterno()
                 };
+                debeBanear = true;
+            }
+
+            if (debeBanear)
+            {
                 _gestorNotificaciones.NotificarBaneo(parametrosBaneo);
 
                 _logger.InfoFormat(
@@ -221,43 +333,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             {
                 throw new FaultException(MensajesError.Cliente.SalaJugadorNoExiste);
             }
-        }
-
-        private void ManejarLogicaSalida(string nombreUsuario)
-        {
-            bool esAnfitrion = string.Equals(
-                nombreUsuario,
-                Creador,
-                StringComparison.OrdinalIgnoreCase);
-
-            if (PartidaFinalizada && esAnfitrion)
-            {
-                _gestorNotificaciones.Limpiar();
-                DebeEliminarse = true;
-                return;
-            }
-
-            var salaActualizada = ConvertirADto();
-
-            _gestorNotificaciones.NotificarSalida(Codigo, nombreUsuario, salaActualizada);
-
-            if (esAnfitrion)
-            {
-                CancelarSala();
-            }
-            else if (_jugadores.Count == 0)
-            {
-                DebeEliminarse = true;
-            }
-        }
-
-        private void CancelarSala()
-        {
-            _gestorNotificaciones.NotificarCancelacion(Codigo);
-            _jugadores.Clear();
-            _gestorNotificaciones.Limpiar();
-            DebeEliminarse = true;
-            _logger.Info(MensajesError.Bitacora.SalaCanceladaSalidaAnfitrion);
         }
     }
 }
