@@ -73,6 +73,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Datos\DAL\Utilidades\DbSetMockExtensiones.cs" />
+    <Compile Include="Datos\DAL\Utilidades\ContextoMockFabrica.cs" />
+    <Compile Include="Datos\DAL\Utilidades\EntidadesPruebaFabrica.cs" />
+    <Compile Include="Datos\DAL\Implementaciones\UsuarioRepositorioPruebas.cs" />
+    <Compile Include="Datos\DAL\Implementaciones\AmigoRepositorioPruebas.cs" />
+    <Compile Include="Datos\DAL\Implementaciones\JugadorRepositorioPruebas.cs" />
+    <Compile Include="Datos\DAL\Implementaciones\ClasificacionRepositorioPruebas.cs" />
+    <Compile Include="Datos\DAL\Implementaciones\ReporteRepositorioPruebas.cs" />
+    <Compile Include="Datos\Utilidades\GeneradorAleatorioDatosPruebas.cs" />
+    <Compile Include="Datos\Utilidades\ConexionPruebas.cs" />
+    <Compile Include="Datos\CatalogoCancionesPruebas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

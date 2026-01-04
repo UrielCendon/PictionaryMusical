@@ -14,6 +14,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
+// Permitir acceso a tipos internos desde el proyecto de pruebas
+[assembly: InternalsVisibleTo("PictionaryMusicalServidor.Pruebas")]
+
 // Si establece ComVisible en false, los tipos de este ensamblado no estaran visibles 
 // para los componentes COM.  Si es necesario obtener acceso a un tipo en este ensamblado desde 
 // COM, establezca el atributo ComVisible en true en este tipo.

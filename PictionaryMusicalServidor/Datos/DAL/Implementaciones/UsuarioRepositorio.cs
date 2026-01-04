@@ -201,10 +201,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             }
             catch (KeyNotFoundException excepcion)
             {
-                _logger.Warn(
-                    MensajesErrorDatos.Usuario.UsuarioNoEncontrado,
+                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerUsuario, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
                     excepcion);
-                throw;
             }
             catch (DbUpdateException excepcion)
             {
@@ -287,9 +287,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return usuarioEncontrado;
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
-                throw;
+                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
+                    excepcion);
             }
             catch (DbUpdateException excepcion)
             {
@@ -365,9 +368,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return usuarioEncontrado;
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
-                throw;
+                _logger.Error(MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
+                    excepcion);
             }
             catch (DbUpdateException excepcion)
             {
@@ -442,9 +448,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return usuarioEncontrado;
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
-                throw;
+                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
+                    excepcion);
             }
             catch (DbUpdateException excepcion)
             {
@@ -580,9 +589,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return usuarioEncontrado;
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException excepcion)
             {
-                throw;
+                _logger.Error(MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, excepcion);
+                throw new BaseDatosExcepcion(
+                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
+                    excepcion);
             }
             catch (DbUpdateException excepcion)
             {
