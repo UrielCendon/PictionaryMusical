@@ -12,10 +12,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
     /// </summary>
     public class AvisoServicio : IAvisoServicio
     {
+        private const int SegundosMinimoEntreMensajes = 2;
+
         private static readonly object _sincronizacion = new object();
         private static string _ultimoMensaje;
         private static DateTime _tiempoUltimoMensaje = DateTime.MinValue;
-        private static readonly TimeSpan TiempoMinimoEntreMensajes = TimeSpan.FromSeconds(2);
+        private static readonly TimeSpan TiempoMinimoEntreMensajes = 
+            TimeSpan.FromSeconds(SegundosMinimoEntreMensajes);
 
         /// <summary>
         /// Muestra un mensaje al usuario asegurando que se ejecute en el hilo principal.

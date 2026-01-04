@@ -100,7 +100,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
                 cambioContrasenaServicio).ConfigureAwait(true);
         }
 
-        private async static Task<(bool Exito, string Token, DTOs.ResultadoOperacionDTO Error)>
+        private static async Task<(bool Exito, string Token, DTOs.ResultadoOperacionDTO Error)>
             SolicitarCodigoRecuperacionAsync(
                 string identificador,
                 ICambioContrasenaServicio servicio)
@@ -240,7 +240,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             CambioContrasena ventana,
             TaskCompletionSource<DTOs.ResultadoOperacionDTO> tareaFinalizada)
         {
-            ventana.Closed += (_, __) =>
+            ventana.Closed += (remitente, argumentos) =>
             {
                 if (!tareaFinalizada.Task.IsCompleted)
                 {

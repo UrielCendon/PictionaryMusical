@@ -14,6 +14,8 @@ namespace PictionaryMusicalCliente.Utilidades
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const double VolumenPredeterminado = 0.5;
+        private const double ToleranciaComparacionVolumen = 0.0001;
+
         private readonly MediaPlayer _reproductor;
         private bool _desechado;
 
@@ -46,7 +48,7 @@ namespace PictionaryMusicalCliente.Utilidades
             set
             {
                 double ajustado = Math.Max(0, Math.Min(1, value));
-                if (Math.Abs(_reproductor.Volume - ajustado) < 0.0001)
+                if (Math.Abs(_reproductor.Volume - ajustado) < ToleranciaComparacionVolumen)
                 {
                     return;
                 }

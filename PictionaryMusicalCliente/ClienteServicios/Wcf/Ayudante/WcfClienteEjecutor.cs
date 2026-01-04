@@ -153,8 +153,6 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Ayudante
                 }
                 catch (Exception excepcion)
                 {
-                    // Ignorado de manera intencional: No se puede hacer nada para manejar
-                    // una excepcion al abortar, pero se registra como error.
                     _logger.Error("Error critico inesperado al abortar cliente WCF.", excepcion);
                 }
             }

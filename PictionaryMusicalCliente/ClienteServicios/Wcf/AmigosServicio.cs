@@ -490,8 +490,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (canal != null)
             {
-                canal.Faulted += Canal_Faulted;
-                canal.Closed += Canal_Closed;
+                canal.Faulted += Canal_Fallido;
+                canal.Closed += Canal_Cerrado;
             }
         }
 
@@ -499,12 +499,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         {
             if (canal != null)
             {
-                canal.Faulted -= Canal_Faulted;
-                canal.Closed -= Canal_Closed;
+                canal.Faulted -= Canal_Fallido;
+                canal.Closed -= Canal_Cerrado;
             }
         }
 
-        private void Canal_Faulted(object remitente, EventArgs argumentosEvento)
+        private void Canal_Fallido(object remitente, EventArgs argumentosEvento)
         {
             var canal = remitente as ICommunicationObject;
             string razonDetallada = ObtenerRazonDesconexion(canal);
@@ -517,7 +517,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             CanalDesconectado?.Invoke(this, EventArgs.Empty);
         }
 
-        private static void Canal_Closed(object remitente, EventArgs argumentosEvento)
+        private static void Canal_Cerrado(object remitente, EventArgs argumentosEvento)
         {
             _logger.Info(
                 "Modulo: AmigosServicio - Canal de amigos cerrado normalmente.");
@@ -602,7 +602,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (ObjectDisposedException)
             {
-                // El semáforo ya fue disposed, ignorar
+                _logger.Info("Semaforo ya dispuesto al liberar.");
             }
         }
 

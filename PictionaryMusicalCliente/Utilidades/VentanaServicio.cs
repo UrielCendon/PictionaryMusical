@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
@@ -19,6 +21,35 @@ namespace PictionaryMusicalCliente.Utilidades
     /// </summary>
     public class VentanaServicio : IVentanaServicio
     {
+        private static readonly ILog _logger = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private static readonly Dictionary<Type, Func<Window>> FabricasVentanas = 
+            new Dictionary<Type, Func<Window>>
+            {
+                [typeof(InicioSesionVistaModelo)] = () => new InicioSesion(),
+                [typeof(VentanaPrincipalVistaModelo)] = () => new VentanaPrincipal(),
+                [typeof(SalaVistaModelo)] = () => new Sala(),
+                [typeof(CreacionCuentaVistaModelo)] = () => new CreacionCuenta(),
+                [typeof(AjustesPartidaVistaModelo)] = () => new AjustesPartida(),
+                [typeof(AjustesVistaModelo)] = () => new Ajustes(),
+                [typeof(ConfirmacionSalirPartidaVistaModelo)] = () => 
+                    new ConfirmacionSalirPartida(),
+                [typeof(BusquedaAmigoVistaModelo)] = () => new BusquedaAmigo(),
+                [typeof(EliminacionAmigoVistaModelo)] = () => new EliminacionAmigo(),
+                [typeof(InvitarAmigosVistaModelo)] = () => new InvitarAmigos(),
+                [typeof(SolicitudesVistaModelo)] = () => new Solicitudes(),
+                [typeof(CambioContrasenaVistaModelo)] = () => new CambioContrasena(),
+                [typeof(PerfilVistaModelo)] = () => new Perfil(),
+                [typeof(SeleccionAvatarVistaModelo)] = () => new SeleccionAvatar(),
+                [typeof(VerificacionCodigoVistaModelo)] = () => new VerificacionCodigo(),
+                [typeof(ExpulsionJugadorVistaModelo)] = () => new ExpulsionJugador(),
+                [typeof(IngresoPartidaInvitadoVistaModelo)] = () => new IngresoPartidaInvitado(),
+                [typeof(ReportarJugadorVistaModelo)] = () => new ReportarJugador(),
+                [typeof(TerminacionSesionVistaModelo)] = () => new TerminacionSesion(),
+                [typeof(ClasificacionVistaModelo)] = () => new Clasificacion()
+            };
+
         /// <summary>
         /// Muestra una ventana no modal asociada a un ViewModel especifico.
         /// </summary>
@@ -89,7 +120,8 @@ namespace PictionaryMusicalCliente.Utilidades
                 }
                 catch (InvalidOperationException)
                 {
-                    // La ventana ya estaba cerrandose o cerrada
+                    _logger.Info(
+                        "No se pudo cerrar una ventana, ya estaba en proceso de cierre.");
                 }
             }
         }
@@ -142,52 +174,15 @@ namespace PictionaryMusicalCliente.Utilidades
 
         private static Window ResolverVentanaPorVistaModelo(object vistaModelo)
         {
-            switch (vistaModelo)
+            Type tipoVistaModelo = vistaModelo.GetType();
+
+            if (FabricasVentanas.TryGetValue(tipoVistaModelo, out Func<Window> fabricaVentana))
             {
-                case InicioSesionVistaModelo:
-                    return new InicioSesion();
-                case VentanaPrincipalVistaModelo:
-                    return new VentanaPrincipal();
-                case SalaVistaModelo:
-                    return new Sala();
-                case CreacionCuentaVistaModelo:
-                    return new CreacionCuenta();
-                case AjustesPartidaVistaModelo:
-                    return new AjustesPartida();
-                case AjustesVistaModelo:
-                    return new Ajustes();
-                case ConfirmacionSalirPartidaVistaModelo:
-                    return new ConfirmacionSalirPartida();
-                case BusquedaAmigoVistaModelo:
-                    return new BusquedaAmigo();
-                case EliminacionAmigoVistaModelo:
-                    return new EliminacionAmigo();
-                case InvitarAmigosVistaModelo:
-                    return new InvitarAmigos();
-                case SolicitudesVistaModelo:
-                    return new Solicitudes();
-                case CambioContrasenaVistaModelo:
-                    return new CambioContrasena();
-                case PerfilVistaModelo:
-                    return new Perfil();
-                case SeleccionAvatarVistaModelo:
-                    return new SeleccionAvatar();
-                case VerificacionCodigoVistaModelo:
-                    return new VerificacionCodigo();
-                case ExpulsionJugadorVistaModelo:
-                    return new ExpulsionJugador();
-                case IngresoPartidaInvitadoVistaModelo:
-                    return new IngresoPartidaInvitado();
-                case ReportarJugadorVistaModelo:
-                    return new ReportarJugador();
-                case TerminacionSesionVistaModelo:
-                    return new TerminacionSesion();
-                case ClasificacionVistaModelo:
-                    return new Clasificacion();
-                default:
-                    throw new InvalidOperationException(
-                        $"No existe vista registrada para {vistaModelo.GetType().Name}");
+                return fabricaVentana();
             }
+
+            throw new InvalidOperationException(
+                $"No existe vista registrada para {tipoVistaModelo.Name}");
         }
     }
 }

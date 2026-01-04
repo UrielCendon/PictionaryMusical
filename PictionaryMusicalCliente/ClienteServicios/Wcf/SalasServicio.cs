@@ -30,6 +30,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         private readonly object _salasBloqueo = new();
         private readonly List<DTOs.SalaDTO> _salas = new();
 
+        private const int MilisegundosEsperaSemaforo = 3000;
+        private const int MilisegundosEsperaCancelacion = 2000;
+
         private PictionaryServidorServicioSalas.SalasManejadorClient _cliente;
         private bool _suscrito;
 
@@ -424,7 +427,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
             _desechado = true;
 
-            bool lockTomado = _semaforo.Wait(3000);
+            bool lockTomado = _semaforo.Wait(MilisegundosEsperaSemaforo);
 
             try
             {
@@ -455,7 +458,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 try
                 {
                     Task.Run(async () =>
-                        await _cliente.CancelarSuscripcionListaSalasAsync()).Wait(2000);
+                        await _cliente.CancelarSuscripcionListaSalasAsync())
+                        .Wait(MilisegundosEsperaCancelacion);
                 }
                 catch (AggregateException excepcion)
                 {
@@ -542,7 +546,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
             catch (ObjectDisposedException)
             {
-                // El semáforo ya fue disposed, ignorar
+                _logger.Info("Semaforo ya dispuesto al liberar.");
             }
         }
 

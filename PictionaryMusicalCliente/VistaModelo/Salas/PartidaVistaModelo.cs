@@ -23,6 +23,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     {
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        private const double GrosorPredeterminado = 6;
+
         private readonly SonidoManejador _sonidoManejador;
         private readonly CancionManejador _cancionManejador;
         private readonly ICatalogoCanciones _catalogoCanciones;
@@ -97,7 +100,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private void InicializarEstadoInicial()
         {
             _numeroRondaActual = 0;
-            _grosor = 6;
+            _grosor = GrosorPredeterminado;
             _color = Colors.Black;
             _contador = 0;
             _textoContador = string.Empty;

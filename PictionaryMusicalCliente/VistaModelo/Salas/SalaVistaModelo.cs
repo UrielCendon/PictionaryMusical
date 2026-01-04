@@ -38,6 +38,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const int MaximoJugadoresSala = 4;
+        private const int SegundosCierreCanal = 2;
 
         private ISalasServicio _salasServicio;
         private IInvitacionSalaServicio _invitacionSalaServicio;
@@ -1807,7 +1808,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 {
                     try
                     {
-                        canal.Close(TimeSpan.FromSeconds(2));
+                        canal.Close(TimeSpan.FromSeconds(SegundosCierreCanal));
                         return true;
                     }
                     catch

@@ -130,7 +130,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             VerificacionCodigo ventana,
             TaskCompletionSource<DTOs.ResultadoRegistroCuentaDTO> finalizacion)
         {
-            ventana.Closed += (_, __) =>
+            ventana.Closed += (remitente, argumentos) =>
             {
                 if (!finalizacion.Task.IsCompleted)
                 {

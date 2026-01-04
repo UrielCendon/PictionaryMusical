@@ -14,6 +14,7 @@ namespace PictionaryMusicalCliente.Utilidades
     public static class ValidadorEntrada
     {
         private const int LongitudCodigoSala = 6;
+        private const int SegundosTimeoutRegex = 1;
         private const string RecursoNombresInvitados = "invitadoNombres";
 
         private static readonly Regex CorreoRegex = new Regex(
@@ -21,12 +22,12 @@ namespace PictionaryMusicalCliente.Utilidades
             @"(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" +
             @"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
-            TimeSpan.FromSeconds(1));
+            TimeSpan.FromSeconds(SegundosTimeoutRegex));
 
         private static readonly Regex ContrasenaRegex = new Regex(
-            @"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-\[\]{};:'"",.<>/?]).{8,15}$",
+            @"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-\[\]{};:'"",.\<>/?]).{8,15}$",
             RegexOptions.Compiled,
-            TimeSpan.FromSeconds(1));
+            TimeSpan.FromSeconds(SegundosTimeoutRegex));
 
         /// <summary>
         /// Valida que el nombre de usuario no este vacio.

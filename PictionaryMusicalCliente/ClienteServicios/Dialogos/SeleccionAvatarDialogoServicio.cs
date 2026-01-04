@@ -185,7 +185,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Dialogos
             Window ventana,
             TaskCompletionSource<ObjetoAvatar> finalizacion)
         {
-            ventana.Closed += (_, __) =>
+            ventana.Closed += (remitente, argumentos) =>
             {
                 if (!finalizacion.Task.IsCompleted)
                 {

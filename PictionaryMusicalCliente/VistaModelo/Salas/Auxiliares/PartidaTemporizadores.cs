@@ -9,6 +9,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
     /// </summary>
     public sealed class PartidaTemporizadores : IDisposable
     {
+        private const int SegundosIntervaloOverlay = 5;
+        private const int SegundosIntervaloAlarma = 5;
+        private const int SegundosIntervaloPrincipal = 1;
+
         private DispatcherTimer _capaMinutero;
         private DispatcherTimer _temporizadorAlarma;
         private DispatcherTimer _temporizador;
@@ -113,7 +117,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 DispatcherPriority.Normal, 
                 uiDispatcher)
             {
-                Interval = TimeSpan.FromSeconds(5)
+                Interval = TimeSpan.FromSeconds(SegundosIntervaloOverlay)
             };
             _capaMinutero.Tick += ManejarOverlayTick;
 
@@ -121,7 +125,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 DispatcherPriority.Normal, 
                 uiDispatcher)
             {
-                Interval = TimeSpan.FromSeconds(5)
+                Interval = TimeSpan.FromSeconds(SegundosIntervaloAlarma)
             };
             _temporizadorAlarma.Tick += ManejarAlarmaTick;
 
@@ -129,7 +133,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 DispatcherPriority.Normal, 
                 uiDispatcher)
             {
-                Interval = TimeSpan.FromSeconds(1)
+                Interval = TimeSpan.FromSeconds(SegundosIntervaloPrincipal)
             };
             _temporizador.Tick += ManejarTemporizadorTick;
         }

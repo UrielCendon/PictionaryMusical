@@ -27,7 +27,7 @@ namespace PictionaryMusicalCliente.Vista
             Closed += AlCerrarSala;
         }
 
-        private void AlCargarSala(object remitente, RoutedEventArgs e)
+        private void AlCargarSala(object remitente, RoutedEventArgs argumentosEvento)
         {
             if (DataContext is SalaVistaModelo vistaModelo)
             {
