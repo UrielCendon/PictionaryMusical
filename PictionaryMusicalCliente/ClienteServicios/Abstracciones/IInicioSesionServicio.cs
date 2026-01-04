@@ -16,5 +16,12 @@ namespace PictionaryMusicalCliente.ClienteServicios.Abstracciones
         /// <returns>El resultado del intento de inicio de sesion con el token o error.</returns>
         Task<DTOs.ResultadoInicioSesionDTO> IniciarSesionAsync(
             DTOs.CredencialesInicioSesionDTO solicitud);
+
+        /// <summary>
+        /// Cierra la sesion activa del usuario en el servidor.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario cuya sesion se cerrara.</param>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
+        Task CerrarSesionAsync(string nombreUsuario);
     }
 }

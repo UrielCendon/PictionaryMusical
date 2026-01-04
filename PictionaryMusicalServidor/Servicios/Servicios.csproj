@@ -167,6 +167,7 @@
     <Compile Include="Servicios\Partida\INotificadorPartida.cs" />
     <Compile Include="Servicios\Partida\NotificadorPartida.cs" />
     <Compile Include="Servicios\Autenticacion\InicioSesionManejador.cs" />
+    <Compile Include="Servicios\Autenticacion\SesionesActivasRegistro.cs" />
     <Compile Include="Servicios\Autenticacion\CambioContrasenaManejador.cs" />
     <Compile Include="Servicios\Partida\ChatManejador.cs" />
     <Compile Include="Servicios\Notificadores\GestorNotificacionesSalaInterna.cs" />

@@ -60,6 +60,8 @@
                 "No pudimos completar tu registro. Por favor, intenta mas tarde.";
             public const string ErrorInicioSesion = 
                 "No pudimos iniciar sesion. Por favor, intenta mas tarde.";
+            public const string SesionActivaExistente = 
+                "Ya existe una sesion activa con este usuario. Intenta mas tarde.";
             public const string UsuarioRegistroInvalido = 
                 "El nombre de usuario es obligatorio y debe tener maximo 50 caracteres.";
             public const string NombreRegistroInvalido = 

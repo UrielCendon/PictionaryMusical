@@ -98,12 +98,23 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
 
         private void NavegarAInicioSesion()
         {
+            CerrarSesionEnServidor();
             DetenerMusica();
             App.ReinicializarServiciosConexion();
             
             var vistaModelo = CrearInicioSesionVistaModelo();
             MostrarVentanaInicioSesion(vistaModelo);
             CerrarVentanasActuales();
+        }
+
+        private static async void CerrarSesionEnServidor()
+        {
+            string nombreUsuario = App.UsuarioGlobal?.NombreUsuario;
+            if (!string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                await App.InicioSesionServicio.CerrarSesionAsync(nombreUsuario)
+                    .ConfigureAwait(false);
+            }
         }
 
         private static void DetenerMusica()

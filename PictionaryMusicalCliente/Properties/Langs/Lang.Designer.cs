@@ -1978,6 +1978,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde..
+        /// </summary>
+        public static string errorTextoSesionActivaExistente {
+            get {
+                return ResourceManager.GetString("errorTextoSesionActivaExistente", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Se redirigió a la ventana de inicio de sesión..
         /// </summary>
         public static string errorTextoSesionExpiradaGenerico {

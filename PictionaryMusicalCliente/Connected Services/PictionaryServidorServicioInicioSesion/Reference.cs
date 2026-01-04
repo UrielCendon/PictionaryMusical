@@ -20,6 +20,12 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioInicioSesion {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInicioSesionManejador/IniciarSesion", ReplyAction="http://tempuri.org/IInicioSesionManejador/IniciarSesionResponse")]
         System.Threading.Tasks.Task<PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoInicioSesionDTO> IniciarSesionAsync(PictionaryMusicalServidor.Servicios.Contratos.DTOs.CredencialesInicioSesionDTO credenciales);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInicioSesionManejador/CerrarSesion", ReplyAction="http://tempuri.org/IInicioSesionManejador/CerrarSesionResponse")]
+        void CerrarSesion(string nombreUsuario);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IInicioSesionManejador/CerrarSesion", ReplyAction="http://tempuri.org/IInicioSesionManejador/CerrarSesionResponse")]
+        System.Threading.Tasks.Task CerrarSesionAsync(string nombreUsuario);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -55,6 +61,14 @@ namespace PictionaryMusicalCliente.PictionaryServidorServicioInicioSesion {
         
         public System.Threading.Tasks.Task<PictionaryMusicalServidor.Servicios.Contratos.DTOs.ResultadoInicioSesionDTO> IniciarSesionAsync(PictionaryMusicalServidor.Servicios.Contratos.DTOs.CredencialesInicioSesionDTO credenciales) {
             return base.Channel.IniciarSesionAsync(credenciales);
+        }
+        
+        public void CerrarSesion(string nombreUsuario) {
+            base.Channel.CerrarSesion(nombreUsuario);
+        }
+        
+        public System.Threading.Tasks.Task CerrarSesionAsync(string nombreUsuario) {
+            return base.Channel.CerrarSesionAsync(nombreUsuario);
         }
     }
 }

@@ -681,6 +681,9 @@
   <data name="errorTextoServidorInicioSesion" xml:space="preserve">
     <value>There was an error while signing in.</value>
   </data>
+  <data name="errorTextoSesionActivaExistente" xml:space="preserve">
+    <value>There is already an active session with this account, please try again later.</value>
+  </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
     <value>There was a problem with the server, your session expired or the server is no longer available. Please try logging in again.</value>
   </data>

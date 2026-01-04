@@ -102,6 +102,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
         }
 
+        /// <summary>
+        /// Cierra la sesion activa del usuario especificado.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario cuya sesion se cerrara.</param>
+        public void CerrarSesion(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                _logger.Warn("Intento de cerrar sesion con nombre de usuario vacio.");
+                return;
+            }
+
+            SesionesActivasRegistro.EliminarSesion(nombreUsuario);
+            _logger.Info("Sesion cerrada correctamente.");
+        }
+
         private static bool SonCredencialesValidas(CredencialesInicioSesionDTO credenciales)
         {
             string identificador = EntradaComunValidador.NormalizarTexto(
@@ -176,6 +192,23 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                     Mensaje = MensajesError.Cliente.UsuarioBaneadoPorReportes
                 };
             }
+
+            if (SesionesActivasRegistro.TieneSesionActiva(usuario.Nombre_Usuario))
+            {
+                _logger.WarnFormat(
+                    "Intento de inicio de sesion con usuario ID {0} que ya tiene sesion activa.",
+                    usuario.idUsuario);
+
+                return new ResultadoInicioSesionDTO
+                {
+                    InicioSesionExitoso = false,
+                    CuentaEncontrada = true,
+                    SesionActivaExistente = true,
+                    Mensaje = MensajesError.Cliente.SesionActivaExistente
+                };
+            }
+
+            SesionesActivasRegistro.RegistrarSesion(usuario.Nombre_Usuario);
 
             _logger.Info(
                 "Inicio de sesion exitoso.");

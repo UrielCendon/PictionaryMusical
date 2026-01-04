@@ -112,6 +112,65 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
         }
 
+        /// <summary>
+        /// Cierra la sesion activa del usuario en el servidor.
+        /// </summary>
+        /// <param name="nombreUsuario">Nombre del usuario cuya sesion se cerrara.</param>
+        /// <returns>Tarea que representa la operacion asincrona.</returns>
+        public async Task CerrarSesionAsync(string nombreUsuario)
+        {
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                _logger.Warn("Intento de cerrar sesion con nombre de usuario vacio.");
+                return;
+            }
+
+            PictionaryServidorServicioInicioSesion.IInicioSesionManejador cliente = null;
+            try
+            {
+                cliente = _fabricaClientes.CrearClienteInicioSesion();
+                await cliente.CerrarSesionAsync(nombreUsuario).ConfigureAwait(false);
+                _logger.Info("Sesion cerrada correctamente en el servidor.");
+                CerrarCliente(cliente);
+            }
+            catch (FaultException excepcion)
+            {
+                _logger.Warn("Error al cerrar sesion en el servidor.", excepcion);
+                AbortarCliente(cliente);
+            }
+            catch (CommunicationException excepcion)
+            {
+                _logger.Error("Error de comunicacion al cerrar sesion.", excepcion);
+                AbortarCliente(cliente);
+            }
+            catch (TimeoutException excepcion)
+            {
+                _logger.Error("Tiempo agotado al cerrar sesion.", excepcion);
+                AbortarCliente(cliente);
+            }
+            catch (InvalidOperationException excepcion)
+            {
+                _logger.Error("Operacion invalida al cerrar sesion.", excepcion);
+                AbortarCliente(cliente);
+            }
+        }
+
+        private static void CerrarCliente(object cliente)
+        {
+            if (cliente is ICommunicationObject canal && canal.State == CommunicationState.Opened)
+            {
+                canal.Close();
+            }
+        }
+
+        private static void AbortarCliente(object cliente)
+        {
+            if (cliente is ICommunicationObject canal)
+            {
+                canal.Abort();
+            }
+        }
+
         private void ProcesarResultadoSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
             if (resultado == null)

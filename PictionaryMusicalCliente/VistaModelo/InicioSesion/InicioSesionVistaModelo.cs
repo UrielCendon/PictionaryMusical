@@ -555,17 +555,30 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
 
         private void MostrarErrorInicioSesion(DTOs.ResultadoInicioSesionDTO resultado)
         {
-            string mensaje = resultado?.Mensaje;
+            string mensaje = ObtenerMensajeErrorSegunResultado(resultado);
+            _avisoServicio.Mostrar(mensaje);
+        }
 
-            if (string.IsNullOrWhiteSpace(mensaje))
+        private static string ObtenerMensajeErrorSegunResultado(
+            DTOs.ResultadoInicioSesionDTO resultado)
+        {
+            if (resultado?.SesionActivaExistente == true)
             {
-                mensaje = (resultado?.ContrasenaIncorrecta == true || 
-                    resultado?.CuentaEncontrada == false)
-                    ? Lang.errorTextoCredencialesIncorrectas
-                    : Lang.errorTextoInicioSesionServicio;
+                return Lang.errorTextoSesionActivaExistente;
             }
 
-            _avisoServicio.Mostrar(mensaje);
+            if (resultado?.ContrasenaIncorrecta == true || 
+                resultado?.CuentaEncontrada == false)
+            {
+                return Lang.errorTextoCredencialesIncorrectas;
+            }
+
+            if (!string.IsNullOrWhiteSpace(resultado?.Mensaje))
+            {
+                return resultado.Mensaje;
+            }
+
+            return Lang.errorTextoInicioSesionServicio;
         }
 
         private async Task RecuperarCuentaAsync()
