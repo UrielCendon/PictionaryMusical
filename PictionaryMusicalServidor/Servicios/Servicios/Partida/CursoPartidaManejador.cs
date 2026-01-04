@@ -592,16 +592,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                     idSala);
                 controladorARemover.RemoverJugador(idJugador);
             }
-            else
-            {
-                _logger.DebugFormat(
-                    "No se removio jugador {0} de sala {1}. CallbackRemovido={2}, PartidaActiva={3}, PartidaFinalizada={4}",
-                    idJugador,
-                    idSala,
-                    callbackRemovido,
-                    partidaActiva,
-                    partidaFinalizada);
-            }
         }
 
         private static ICursoPartidaManejadorCallback ObtenerCallbackActual()

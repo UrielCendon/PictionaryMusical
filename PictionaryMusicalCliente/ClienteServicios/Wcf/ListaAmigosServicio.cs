@@ -1,6 +1,7 @@
 ﻿using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -197,6 +198,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 throw new ArgumentException("Usuario obligatorio.", nameof(nombreUsuario));
             }
+
+            VerificarConexionRed();
 
             if (_desechado)
             {
@@ -566,6 +569,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 _amigos.Clear();
                 _amigos.AddRange(lista);
+            }
+        }
+
+        private static void VerificarConexionRed()
+        {
+            if (!ConectividadRedMonitor.HayConexion)
+            {
+                throw new ServicioExcepcion(
+                    TipoErrorServicio.Comunicacion,
+                    Lang.errorTextoServidorNoDisponible);
             }
         }
     }

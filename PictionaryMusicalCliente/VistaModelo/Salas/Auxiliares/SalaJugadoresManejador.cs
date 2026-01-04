@@ -429,10 +429,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
             else
             {
                 _dependencias.SonidoManejador.ReproducirError();
-                string mensajeLocalizado = _dependencias.LocalizadorServicio.Localizar(
-                    respuesta?.Mensaje,
-                    Lang.errorTextoReportarJugador);
-                _dependencias.AvisoServicio.Mostrar(mensajeLocalizado);
+                string mensaje = !string.IsNullOrWhiteSpace(respuesta?.Mensaje)
+                    ? respuesta.Mensaje
+                    : Lang.errorTextoReportarJugador;
+                _dependencias.AvisoServicio.Mostrar(mensaje);
             }
         }
 

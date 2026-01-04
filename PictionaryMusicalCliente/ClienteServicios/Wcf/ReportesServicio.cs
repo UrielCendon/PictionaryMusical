@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
 using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.ClienteServicios.Wcf
@@ -44,6 +45,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 throw new ArgumentNullException(nameof(reporte));
             }
+
+            VerificarConexionRed();
 
             try
             {
@@ -108,6 +111,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 _logger.WarnFormat(
                     "Modulo: ReportesServicio - No se pudo completar el reporte. Mensaje: {0}",
                     resultado?.Mensaje);
+            }
+        }
+
+        private static void VerificarConexionRed()
+        {
+            if (!ConectividadRedMonitor.HayConexion)
+            {
+                throw new ServicioExcepcion(
+                    TipoErrorServicio.Comunicacion,
+                    Lang.errorTextoServidorNoDisponible);
             }
         }
     }

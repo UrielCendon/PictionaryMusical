@@ -1,5 +1,6 @@
 ﻿using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.Properties.Langs;
+using PictionaryMusicalCliente.Utilidades;
 using System;
 using System.ServiceModel;
 using System.Threading.Tasks;
@@ -47,6 +48,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             string correoDestino)
         {
             ValidarDatosEntrada(codigoSala, correoDestino);
+            VerificarConexionRed();
 
             var solicitud = new DTOs.InvitacionSalaDTO
             {
@@ -115,6 +117,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             return System.Globalization.CultureInfo.CurrentUICulture.Name;
+        }
+
+        private static void VerificarConexionRed()
+        {
+            if (!ConectividadRedMonitor.HayConexion)
+            {
+                throw new ServicioExcepcion(
+                    TipoErrorServicio.Comunicacion,
+                    Lang.errorTextoServidorNoDisponible);
+            }
         }
     }
 }
