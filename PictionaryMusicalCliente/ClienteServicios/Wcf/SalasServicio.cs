@@ -116,7 +116,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                 var sala = await cliente.CrearSalaAsync(nombreCreador, configuracion)
                     .ConfigureAwait(false);
 
-                _logger.InfoFormat("Sala creada. Codigo: {1}", sala.Codigo);
+                _logger.InfoFormat("Sala creada. Codigo: {0}", sala.Codigo);
                 return sala;
             }
             catch (FaultException excepcion)

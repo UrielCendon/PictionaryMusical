@@ -110,6 +110,16 @@ namespace PictionaryMusicalCliente.Vista
                 return;
             }
 
+            string mensajeDesconexion = null;
+
+            void ManejarDesconexion(string mensaje)
+            {
+                mensajeDesconexion = mensaje;
+                App.VentanaServicio.CerrarVentana(vistaModelo);
+            }
+
+            vistaModelo.DesconexionDetectada += ManejarDesconexion;
+
             void MostrarVentana()
             {
                 App.VentanaServicio.MostrarVentanaDialogo(vistaModelo);
@@ -122,6 +132,14 @@ namespace PictionaryMusicalCliente.Vista
             else
             {
                 MostrarVentana();
+            }
+
+            vistaModelo.DesconexionDetectada -= ManejarDesconexion;
+
+            if (!string.IsNullOrEmpty(mensajeDesconexion) && 
+                DataContext is SalaVistaModelo salaVistaModelo)
+            {
+                salaVistaModelo.ManejarDesconexionDesdeDialogo(mensajeDesconexion);
             }
         }
 

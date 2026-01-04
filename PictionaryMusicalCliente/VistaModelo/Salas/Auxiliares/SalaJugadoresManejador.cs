@@ -67,6 +67,11 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         public event Action<int> ProgresoRondaCambiado;
 
         /// <summary>
+        /// Evento que se dispara cuando se detecta una desconexion durante una operacion.
+        /// </summary>
+        public event Action<string> DesconexionDetectada;
+
+        /// <summary>
         /// Obtiene la coleccion de jugadores.
         /// </summary>
         public ObservableCollection<JugadorElemento> Jugadores => _jugadores;
@@ -345,6 +350,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         private void ManejarErrorExpulsion(Exception excepcion)
         {
             _logger.Error("Error al expulsar jugador de la sala.", excepcion);
+
+            if (EsErrorDeConexion(excepcion))
+            {
+                DesconexionDetectada?.Invoke(Lang.errorTextoServidorNoDisponible);
+                return;
+            }
+
             _dependencias.SonidoManejador.ReproducirError();
             _dependencias.AvisoServicio.Mostrar(
                 excepcion.Message ?? Lang.errorTextoExpulsarJugador);
@@ -427,11 +439,29 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         private void ManejarErrorReporte(Exception excepcion)
         {
             _logger.Error("Error al reportar jugador.", excepcion);
+
+            if (EsErrorDeConexion(excepcion))
+            {
+                DesconexionDetectada?.Invoke(Lang.errorTextoServidorNoDisponible);
+                return;
+            }
+
             _dependencias.SonidoManejador.ReproducirError();
             string mensajeLocalizado = _dependencias.LocalizadorServicio.Localizar(
                 excepcion.Message,
                 Lang.errorTextoReportarJugador);
             _dependencias.AvisoServicio.Mostrar(mensajeLocalizado);
+        }
+
+        private static bool EsErrorDeConexion(Exception excepcion)
+        {
+            if (excepcion is ServicioExcepcion servicioExcepcion)
+            {
+                return servicioExcepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                       servicioExcepcion.Tipo == TipoErrorServicio.TiempoAgotado;
+            }
+
+            return false;
         }
     }
 }

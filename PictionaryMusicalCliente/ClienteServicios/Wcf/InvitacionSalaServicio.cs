@@ -136,6 +136,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
 
                 return InvitacionAmigosResultado.Exito(vistaModelo);
             }
+            catch (ServicioExcepcion excepcion) when (
+                excepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
+            {
+                _logger.Error("Error de comunicacion al obtener amigos.", excepcion);
+                throw;
+            }
             catch (ServicioExcepcion excepcion)
             {
                 _logger.Error("Error de servicio al obtener amigos.", excepcion);
@@ -192,6 +199,13 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     resultado?.Mensaje,
                     Lang.errorTextoEnviarInvitacion);
                 return InvitacionCorreoResultado.Fallo(mensajeLocalizado);
+            }
+            catch (ServicioExcepcion excepcion) when (
+                excepcion.Tipo == TipoErrorServicio.Comunicacion ||
+                excepcion.Tipo == TipoErrorServicio.TiempoAgotado)
+            {
+                _logger.Error("Error de comunicacion al enviar correo.", excepcion);
+                throw;
             }
             catch (ServicioExcepcion excepcion)
             {
