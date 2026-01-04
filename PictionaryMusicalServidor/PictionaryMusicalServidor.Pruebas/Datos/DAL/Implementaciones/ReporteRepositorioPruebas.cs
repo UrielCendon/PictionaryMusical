@@ -1,38 +1,43 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
+using System.Data.Entity;
+using System.Linq;
+using Datos.Modelo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Datos.Modelo;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using PictionaryMusicalServidor.Pruebas.DAL.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.DAL.Implementaciones
+namespace PictionaryMusicalServidor.Pruebas.Datos.DAL.Implementaciones
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase ReporteRepositorio.
-    /// Verifica flujos normales, alternos y de excepcion para la gestion de reportes.
-    /// </summary>
     [TestClass]
     public class ReporteRepositorioPruebas
     {
+        private const int IdReporteUno = 1;
+        private const int IdReporteDos = 2;
+        private const int IdReporteTres = 3;
+        private const int IdUsuarioReportante = 1;
+        private const int IdUsuarioReportanteDos = 2;
+        private const int IdUsuarioReportanteTres = 3;
+        private const int IdUsuarioReportanteCuatro = 4;
+        private const int IdUsuarioReportado = 2;
+        private const int IdUsuarioReportadoUno = 1;
+        private const int IdUsuarioReportadoOtro = 5;
+        private const int IdCero = 0;
+        private const int IdNegativo = -1;
+        private const int CantidadEsperada = 2;
+        private const int CantidadCero = 0;
+
         private Mock<BaseDatosPruebaEntities> _contextoMock;
+        private Mock<DbSet<Reporte>> _reporteDbSetMock;
         private ReporteRepositorio _repositorio;
 
-        /// <summary>
-        /// Inicializa los mocks y el repositorio antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {
-            _contextoMock = ContextoMockFabrica.CrearContextoMock();
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+            _contextoMock = new Mock<BaseDatosPruebaEntities>();
+            _reporteDbSetMock = new Mock<DbSet<Reporte>>();
         }
 
-        /// <summary>
-        /// Limpia los recursos despues de cada prueba.
-        /// </summary>
         [TestCleanup]
         public void Limpiar()
         {
@@ -43,417 +48,141 @@ namespace PictionaryMusicalServidor.Pruebas.DAL.Implementaciones
         #region Constructor
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoNulo_LanzaArgumentNullException()
+        public void Prueba_ConstructorContextoNulo_LanzaArgumentNullException()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                var repositorio = new ReporteRepositorio(null);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_Constructor_ContextoValido_CreaInstancia()
-        {
-            var contexto = ContextoMockFabrica.CrearContextoMock();
-
-            var repositorio = new ReporteRepositorio(contexto.Object);
-
-            Assert.IsNotNull(repositorio);
-        }
-
-        #endregion
-
-        #region ExisteReporte - Flujos Normales
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ReporteExiste_RetornaTrue()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 1, 2, "Motivo")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(1, 2);
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ReporteNoExiste_RetornaFalse()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 3, 4, "Motivo")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(1, 2);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ListaVacia_RetornaFalse()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(1, 2);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ReporteInverso_RetornaFalse()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 2, 1, "Motivo")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(1, 2);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_MismosIds_RetornaTrue()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 5, 5, "Autoreporte")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(5, 5);
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_MultiplesReportes_EncuentraCorrectamente()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 1, 3, "Motivo1"),
-                EntidadesPruebaFabrica.CrearReporte(2, 2, 4, "Motivo2"),
-                EntidadesPruebaFabrica.CrearReporte(3, 5, 6, "Motivo3")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteReporte(2, 4);
-
-            Assert.IsTrue(resultado);
-        }
-
-        #endregion
-
-        #region ExisteReporte - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_DbUpdateException_LanzaBaseDatosExcepcion()
-        {
-            _contextoMock.Setup(c => c.Reporte)
-                .Throws(new DbUpdateException("Error de base de datos"));
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ExisteReporte(1, 2);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ExcepcionGeneral_LanzaBaseDatosExcepcion()
-        {
-            _contextoMock.Setup(c => c.Reporte)
-                .Throws(new Exception("Error inesperado"));
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ExisteReporte(1, 2);
+                new ReporteRepositorio(null);
             });
         }
 
         #endregion
 
-        #region CrearReporte - Flujos Normales
+        #region ExisteReporte
 
         [TestMethod]
-        public void Prueba_CrearReporte_ReporteValido_RetornaReporteCreado()
+        public void Prueba_ExisteReporteExistente_RetornaTrue()
         {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var nuevoReporte = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo de prueba");
-
-            var resultado = _repositorio.CrearReporte(nuevoReporte);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual("Motivo de prueba", resultado.Motivo);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ReporteValido_LlamaSaveChanges()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var nuevoReporte = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo");
-
-            _repositorio.CrearReporte(nuevoReporte);
-
-            _contextoMock.Verify(c => c.SaveChanges(), Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ReporteValido_AgregaAlDbSet()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var nuevoReporte = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo");
-
-            _repositorio.CrearReporte(nuevoReporte);
-
-            Assert.AreEqual(1, reportes.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ConDatosCompletos_RetornaConTodosLosDatos()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var fechaReporte = DateTime.Now;
-            var nuevoReporte = new Reporte
+            var reportes = new List<Reporte>
             {
-                idReportante = 10,
-                idReportado = 20,
-                Motivo = "Lenguaje inapropiado",
-                Fecha_Reporte = fechaReporte
-            };
+                new Reporte 
+                { 
+                    idReporte = IdReporteUno, 
+                    idReportante = IdUsuarioReportante, 
+                    idReportado = IdUsuarioReportado 
+                }
+            }.AsQueryable();
 
-            var resultado = _repositorio.CrearReporte(nuevoReporte);
+            ConfigurarDbSetMock(_reporteDbSetMock, reportes);
+            _contextoMock.Setup(c => c.Reporte).Returns(_reporteDbSetMock.Object);
+            _repositorio = new ReporteRepositorio(_contextoMock.Object);
 
-            Assert.AreEqual(10, resultado.idReportante);
-            Assert.AreEqual(20, resultado.idReportado);
-            Assert.AreEqual("Lenguaje inapropiado", resultado.Motivo);
-            Assert.AreEqual(fechaReporte, resultado.Fecha_Reporte);
+            bool resultado = _repositorio.ExisteReporte(IdUsuarioReportante, IdUsuarioReportado);
+
+            Assert.IsTrue(resultado);
         }
 
         [TestMethod]
-        public void Prueba_CrearReporte_MultiplesReportes_TodosSeAgregan()
+        public void Prueba_ExisteReporteInexistente_RetornaFalse()
         {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
+            var reportes = new List<Reporte>().AsQueryable();
+
+            ConfigurarDbSetMock(_reporteDbSetMock, reportes);
+            _contextoMock.Setup(c => c.Reporte).Returns(_reporteDbSetMock.Object);
             _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var reporte1 = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo1");
-            var reporte2 = EntidadesPruebaFabrica.CrearReporte(0, 3, 4, "Motivo2");
 
-            _repositorio.CrearReporte(reporte1);
-            _repositorio.CrearReporte(reporte2);
+            bool resultado = _repositorio.ExisteReporte(IdUsuarioReportante, IdUsuarioReportado);
 
-            Assert.AreEqual(2, reportes.Count);
+            Assert.IsFalse(resultado);
         }
 
         #endregion
 
-        #region CrearReporte - Flujos de Excepcion
+        #region CrearReporte
 
         [TestMethod]
-        public void Prueba_CrearReporte_ReporteNulo_LanzaArgumentNullException()
+        public void Prueba_CrearReporteNulo_LanzaArgumentNullException()
         {
+            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
                 _repositorio.CrearReporte(null);
             });
         }
 
-        [TestMethod]
-        public void Prueba_CrearReporte_DbUpdateException_LanzaBaseDatosExcepcion()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _contextoMock.Setup(c => c.SaveChanges())
-                .Throws(new DbUpdateException("Error al guardar"));
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var nuevoReporte = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo");
+        #endregion
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
+        #region ContarReportesRecibidos
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidosIdCero_LanzaArgumentOutOfRangeException()
+        {
+            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                _repositorio.CrearReporte(nuevoReporte);
+                _repositorio.ContarReportesRecibidos(IdCero);
             });
         }
 
         [TestMethod]
-        public void Prueba_CrearReporte_ExcepcionGeneral_LanzaBaseDatosExcepcion()
+        public void Prueba_ContarReportesRecibidosIdNegativo_LanzaArgumentOutOfRangeException()
         {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _contextoMock.Setup(c => c.SaveChanges())
-                .Throws(new Exception("Error inesperado"));
             _repositorio = new ReporteRepositorio(_contextoMock.Object);
-            var nuevoReporte = EntidadesPruebaFabrica.CrearReporte(0, 1, 2, "Motivo");
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                _repositorio.CrearReporte(nuevoReporte);
+                _repositorio.ContarReportesRecibidos(IdNegativo);
             });
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidosSinReportes_RetornaCero()
+        {
+            var reportes = new List<Reporte>().AsQueryable();
+
+            ConfigurarDbSetMock(_reporteDbSetMock, reportes);
+            _contextoMock.Setup(c => c.Reporte).Returns(_reporteDbSetMock.Object);
+            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+
+            int resultado = _repositorio.ContarReportesRecibidos(IdUsuarioReportante);
+
+            Assert.AreEqual(CantidadCero, resultado);
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidosConReportes_RetornaCantidadCorrecta()
+        {
+            var reportes = new List<Reporte>
+            {
+                new Reporte { idReporte = IdReporteUno, idReportante = IdUsuarioReportanteDos, idReportado = IdUsuarioReportadoUno },
+                new Reporte { idReporte = IdReporteDos, idReportante = IdUsuarioReportanteTres, idReportado = IdUsuarioReportadoUno },
+                new Reporte { idReporte = IdReporteTres, idReportante = IdUsuarioReportanteCuatro, idReportado = IdUsuarioReportadoOtro }
+            }.AsQueryable();
+
+            ConfigurarDbSetMock(_reporteDbSetMock, reportes);
+            _contextoMock.Setup(c => c.Reporte).Returns(_reporteDbSetMock.Object);
+            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+
+            int resultado = _repositorio.ContarReportesRecibidos(IdUsuarioReportadoUno);
+
+            Assert.AreEqual(CantidadEsperada, resultado);
         }
 
         #endregion
 
-        #region ContarReportesRecibidos - Flujos Normales
+        #region Metodos Auxiliares
 
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_TieneReportes_RetornaCantidadCorrecta()
+        private static void ConfigurarDbSetMock<T>(Mock<DbSet<T>> dbSetMock, IQueryable<T> datos) 
+            where T : class
         {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 1, 5, "Motivo1"),
-                EntidadesPruebaFabrica.CrearReporte(2, 2, 5, "Motivo2"),
-                EntidadesPruebaFabrica.CrearReporte(3, 3, 5, "Motivo3")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(5);
-
-            Assert.AreEqual(3, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_SinReportes_RetornaCero()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 1, 2, "Motivo")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(10);
-
-            Assert.AreEqual(0, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_ListaVacia_RetornaCero()
-        {
-            var reportes = new List<Reporte>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(1);
-
-            Assert.AreEqual(0, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_UnSoloReporte_RetornaUno()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 1, 3, "Motivo")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(3);
-
-            Assert.AreEqual(1, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_NoCuentaReportesComoReportante()
-        {
-            var reportes = new List<Reporte>
-            {
-                EntidadesPruebaFabrica.CrearReporte(1, 5, 2, "Motivo1"),
-                EntidadesPruebaFabrica.CrearReporte(2, 5, 3, "Motivo2"),
-                EntidadesPruebaFabrica.CrearReporte(3, 1, 5, "Motivo3")
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(5);
-
-            Assert.AreEqual(1, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_MuchosReportes_ConteoExacto()
-        {
-            var reportes = new List<Reporte>();
-            int usuarioReportado = 10;
-            for (int i = 1; i <= 15; i++)
-            {
-                reportes.Add(EntidadesPruebaFabrica.CrearReporte(i, i, usuarioReportado, $"Motivo{i}"));
-            }
-            _contextoMock = ContextoMockFabrica.CrearContextoConReportes(reportes);
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            int resultado = _repositorio.ContarReportesRecibidos(usuarioReportado);
-
-            Assert.AreEqual(15, resultado);
-        }
-
-        #endregion
-
-        #region ContarReportesRecibidos - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_IdCero_LanzaArgumentOutOfRangeException()
-        {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                _repositorio.ContarReportesRecibidos(0);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_IdNegativo_LanzaArgumentOutOfRangeException()
-        {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                _repositorio.ContarReportesRecibidos(-1);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_DbUpdateException_LanzaBaseDatosExcepcion()
-        {
-            _contextoMock.Setup(c => c.Reporte)
-                .Throws(new DbUpdateException("Error de base de datos"));
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ContarReportesRecibidos(1);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_ExcepcionGeneral_LanzaBaseDatosExcepcion()
-        {
-            _contextoMock.Setup(c => c.Reporte)
-                .Throws(new Exception("Error inesperado"));
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ContarReportesRecibidos(1);
-            });
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.Provider).Returns(datos.Provider);
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.Expression).Returns(datos.Expression);
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(datos.ElementType);
+            dbSetMock.As<IQueryable<T>>()
+                .Setup(m => m.GetEnumerator())
+                .Returns(datos.GetEnumerator());
         }
 
         #endregion

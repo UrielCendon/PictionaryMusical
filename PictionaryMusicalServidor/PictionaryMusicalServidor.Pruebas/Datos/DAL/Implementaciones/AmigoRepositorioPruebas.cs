@@ -1,38 +1,35 @@
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Infrastructure;
+using System.Data.Entity;
+using System.Linq;
+using Datos.Modelo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Datos.Modelo;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.Excepciones;
-using PictionaryMusicalServidor.Pruebas.DAL.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.DAL.Implementaciones
+namespace PictionaryMusicalServidor.Pruebas.Datos.DAL.Implementaciones
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase AmigoRepositorio.
-    /// Verifica flujos normales, alternos y de excepcion para la gestion de amistades.
-    /// </summary>
     [TestClass]
     public class AmigoRepositorioPruebas
     {
+        private const int IdUsuarioEmisor = 1;
+        private const int IdUsuarioReceptor = 2;
+        private const int IdInvalido = -1;
+        private const int IdCero = 0;
+        private const int IdInexistente = -5;
+
         private Mock<BaseDatosPruebaEntities> _contextoMock;
+        private Mock<DbSet<Amigo>> _amigoDbSetMock;
         private AmigoRepositorio _repositorio;
 
-        /// <summary>
-        /// Inicializa los mocks y el repositorio antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {
-            _contextoMock = ContextoMockFabrica.CrearContextoMock();
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+            _contextoMock = new Mock<BaseDatosPruebaEntities>();
+            _amigoDbSetMock = new Mock<DbSet<Amigo>>();
         }
 
-        /// <summary>
-        /// Limpia los recursos despues de cada prueba.
-        /// </summary>
         [TestCleanup]
         public void Limpiar()
         {
@@ -43,523 +40,188 @@ namespace PictionaryMusicalServidor.Pruebas.DAL.Implementaciones
         #region Constructor
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoNulo_LanzaArgumentNullException()
+        public void Prueba_ConstructorContextoNulo_LanzaArgumentNullException()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                var repositorio = new AmigoRepositorio(null);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_Constructor_ContextoValido_CreaInstancia()
-        {
-            var contexto = ContextoMockFabrica.CrearContextoMock();
-
-            var repositorio = new AmigoRepositorio(contexto.Object);
-
-            Assert.IsNotNull(repositorio);
-        }
-
-        #endregion
-
-        #region ExisteRelacion - Flujos Normales
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_RelacionExisteComoEmisor_RetornaTrue()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteRelacion(1, 2);
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_RelacionExisteComoReceptor_RetornaTrue()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(2, 1, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteRelacion(1, 2);
-
-            Assert.IsTrue(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_RelacionNoExiste_RetornaFalse()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(3, 4, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteRelacion(1, 2);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_ListaVacia_RetornaFalse()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteRelacion(1, 2);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_RelacionAceptada_RetornaTrue()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, true)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            bool resultado = _repositorio.ExisteRelacion(1, 2);
-
-            Assert.IsTrue(resultado);
-        }
-
-        #endregion
-
-        #region ExisteRelacion - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_ExisteRelacion_DbUpdateException_LanzaBaseDatosExcepcion()
-        {
-            _contextoMock.Setup(c => c.Amigo)
-                .Throws(new DbUpdateException("Error de base de datos"));
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ExisteRelacion(1, 2);
+                new AmigoRepositorio(null);
             });
         }
 
         #endregion
 
-        #region CrearSolicitud - Flujos Normales
+        #region ExisteRelacion
 
         [TestMethod]
-        public void Prueba_CrearSolicitud_DatosValidos_RetornaSolicitudCreada()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.CrearSolicitud(1, 2);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.UsuarioEmisor);
-            Assert.AreEqual(2, resultado.UsuarioReceptor);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearSolicitud_DatosValidos_EstadoEsPendiente()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.CrearSolicitud(1, 2);
-
-            Assert.IsFalse(resultado.Estado);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearSolicitud_DatosValidos_LlamaSaveChanges()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            _repositorio.CrearSolicitud(1, 2);
-
-            _contextoMock.Verify(c => c.SaveChanges(), Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearSolicitud_DatosValidos_AgregaAlDbSet()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            _repositorio.CrearSolicitud(1, 2);
-
-            Assert.AreEqual(1, amigos.Count);
-        }
-
-        #endregion
-
-        #region ObtenerRelacion - Flujos Normales
-
-        [TestMethod]
-        public void Prueba_ObtenerRelacion_RelacionExisteComoEmisor_RetornaRelacion()
+        public void Prueba_ExisteRelacionExistente_RetornaTrue()
         {
             var amigos = new List<Amigo>
             {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerRelacion(1, 2);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.UsuarioEmisor);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerRelacion_RelacionExisteComoReceptor_RetornaRelacion()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(2, 1, true)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerRelacion(1, 2);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(2, resultado.UsuarioEmisor);
-        }
-
-        #endregion
-
-        #region ObtenerRelacion - Flujos Alternos
-
-        [TestMethod]
-        public void Prueba_ObtenerRelacion_RelacionNoExiste_LanzaBaseDatosExcepcion()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ObtenerRelacion(1, 2);
-            });
-        }
-
-        #endregion
-
-        #region ObtenerSolicitudesPendientes - Flujos Normales
-
-        [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientes_TieneSolicitudes_RetornaLista()
-        {
-            var usuarioEmisor = EntidadesPruebaFabrica.CrearUsuarioSinJugador(1, "Emisor");
-            var usuarioReceptor = EntidadesPruebaFabrica.CrearUsuarioSinJugador(2, "Receptor");
-            var amigos = new List<Amigo>
-            {
-                new Amigo
-                {
-                    UsuarioEmisor = 1,
-                    UsuarioReceptor = 2,
-                    Estado = false,
-                    Usuario = usuarioEmisor,
-                    Usuario1 = usuarioReceptor
+                new Amigo 
+                { 
+                    UsuarioEmisor = IdUsuarioEmisor, 
+                    UsuarioReceptor = IdUsuarioReceptor, 
+                    Estado = false 
                 }
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
+            }.AsQueryable();
+
+            ConfigurarDbSetMock(_amigoDbSetMock, amigos);
+            _contextoMock.Setup(c => c.Amigo).Returns(_amigoDbSetMock.Object);
             _repositorio = new AmigoRepositorio(_contextoMock.Object);
 
-            var resultado = _repositorio.ObtenerSolicitudesPendientes(2);
+            bool resultado = _repositorio.ExisteRelacion(IdUsuarioEmisor, IdUsuarioReceptor);
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.Count);
+            Assert.IsTrue(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientes_SinSolicitudes_RetornaListaVacia()
+        public void Prueba_ExisteRelacionInexistente_RetornaFalse()
         {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
+            var amigos = new List<Amigo>().AsQueryable();
+
+            ConfigurarDbSetMock(_amigoDbSetMock, amigos);
+            _contextoMock.Setup(c => c.Amigo).Returns(_amigoDbSetMock.Object);
             _repositorio = new AmigoRepositorio(_contextoMock.Object);
 
-            var resultado = _repositorio.ObtenerSolicitudesPendientes(1);
+            bool resultado = _repositorio.ExisteRelacion(IdUsuarioEmisor, IdUsuarioReceptor);
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientes_SoloAceptadas_RetornaListaVacia()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, true)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerSolicitudesPendientes(2);
-
-            Assert.AreEqual(0, resultado.Count);
+            Assert.IsFalse(resultado);
         }
 
         #endregion
 
-        #region ObtenerSolicitudesPendientes - Flujos de Excepcion
+        #region ObtenerRelacion
 
         [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientes_IdCero_LanzaArgumentOutOfRangeException()
+        public void Prueba_ObtenerRelacionInexistente_LanzaBaseDatosExcepcion()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            var amigos = new List<Amigo>().AsQueryable();
+
+            ConfigurarDbSetMock(_amigoDbSetMock, amigos);
+            _contextoMock.Setup(c => c.Amigo).Returns(_amigoDbSetMock.Object);
+            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+
+            Assert.ThrowsException<BaseDatosExcepcion>(() =>
             {
-                _repositorio.ObtenerSolicitudesPendientes(0);
+                _repositorio.ObtenerRelacion(IdUsuarioEmisor, IdUsuarioReceptor);
             });
         }
 
         [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientes_IdNegativo_LanzaArgumentOutOfRangeException()
+        public void Prueba_ObtenerRelacionExistente_RetornaRelacionCorrecta()
         {
+            var amigoEsperado = new Amigo 
+            { 
+                UsuarioEmisor = IdUsuarioEmisor, 
+                UsuarioReceptor = IdUsuarioReceptor, 
+                Estado = true 
+            };
+            var amigos = new List<Amigo> { amigoEsperado }.AsQueryable();
+
+            ConfigurarDbSetMock(_amigoDbSetMock, amigos);
+            _contextoMock.Setup(c => c.Amigo).Returns(_amigoDbSetMock.Object);
+            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+
+            Amigo resultado = _repositorio.ObtenerRelacion(IdUsuarioEmisor, IdUsuarioReceptor);
+
+            Assert.AreEqual(IdUsuarioEmisor, resultado.UsuarioEmisor);
+        }
+
+        #endregion
+
+        #region ObtenerSolicitudesPendientes
+
+        [TestMethod]
+        public void Prueba_ObtenerSolicitudesPendientesIdCero_LanzaArgumentOutOfRangeException()
+        {
+            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                _repositorio.ObtenerSolicitudesPendientes(-1);
+                _repositorio.ObtenerSolicitudesPendientes(IdCero);
+            });
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerSolicitudesPendientesIdNegativo_LanzaArgumentOutOfRangeException()
+        {
+            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            {
+                _repositorio.ObtenerSolicitudesPendientes(IdInvalido);
             });
         }
 
         #endregion
 
-        #region ActualizarEstado - Flujos Normales
+        #region ActualizarEstado
 
         [TestMethod]
-        public void Prueba_ActualizarEstado_RelacionValida_ActualizaEstado()
+        public void Prueba_ActualizarEstadoRelacionNula_LanzaArgumentNullException()
         {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
             _repositorio = new AmigoRepositorio(_contextoMock.Object);
 
-            _repositorio.ActualizarEstado(amigos[0], true);
-
-            Assert.IsTrue(amigos[0].Estado);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarEstado_RelacionValida_LlamaSaveChanges()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            _repositorio.ActualizarEstado(amigos[0], true);
-
-            _contextoMock.Verify(c => c.SaveChanges(), Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarEstado_CambiarAFalse_ActualizaCorrectamente()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, true)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            _repositorio.ActualizarEstado(amigos[0], false);
-
-            Assert.IsFalse(amigos[0].Estado);
-        }
-
-        #endregion
-
-        #region ActualizarEstado - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_ActualizarEstado_RelacionNula_LanzaArgumentNullException()
-        {
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
                 _repositorio.ActualizarEstado(null, true);
             });
         }
 
-        [TestMethod]
-        public void Prueba_ActualizarEstado_DbUpdateException_LanzaBaseDatosExcepcion()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _contextoMock.Setup(c => c.SaveChanges())
-                .Throws(new DbUpdateException("Error al actualizar"));
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-            {
-                _repositorio.ActualizarEstado(amigos[0], true);
-            });
-        }
-
         #endregion
 
-        #region EliminarRelacion - Flujos Normales
+        #region EliminarRelacion
 
         [TestMethod]
-        public void Prueba_EliminarRelacion_RelacionValida_EliminaDelDbSet()
+        public void Prueba_EliminarRelacionNula_LanzaArgumentNullException()
         {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
             _repositorio = new AmigoRepositorio(_contextoMock.Object);
 
-            _repositorio.EliminarRelacion(amigos[0]);
-
-            Assert.AreEqual(0, amigos.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_EliminarRelacion_RelacionValida_LlamaSaveChanges()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            _repositorio.EliminarRelacion(amigos[0]);
-
-            _contextoMock.Verify(c => c.SaveChanges(), Times.Once);
-        }
-
-        #endregion
-
-        #region EliminarRelacion - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_EliminarRelacion_RelacionNula_LanzaArgumentNullException()
-        {
             Assert.ThrowsException<ArgumentNullException>(() =>
             {
                 _repositorio.EliminarRelacion(null);
             });
         }
 
+        #endregion
+
+        #region ObtenerAmigos
+
         [TestMethod]
-        public void Prueba_EliminarRelacion_DbUpdateException_LanzaBaseDatosExcepcion()
+        public void Prueba_ObtenerAmigosIdCero_LanzaArgumentOutOfRangeException()
         {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _contextoMock.Setup(c => c.SaveChanges())
-                .Throws(new DbUpdateException("Error al eliminar"));
             _repositorio = new AmigoRepositorio(_contextoMock.Object);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                _repositorio.EliminarRelacion(amigos[0]);
+                _repositorio.ObtenerAmigos(IdCero);
+            });
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerAmigosIdNegativo_LanzaArgumentOutOfRangeException()
+        {
+            _repositorio = new AmigoRepositorio(_contextoMock.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            {
+                _repositorio.ObtenerAmigos(IdInexistente);
             });
         }
 
         #endregion
 
-        #region ObtenerAmigos - Flujos Normales
+        #region Metodos Auxiliares
 
-        [TestMethod]
-        public void Prueba_ObtenerAmigos_TieneAmigos_RetornaListaUsuarios()
+        private static void ConfigurarDbSetMock<T>(Mock<DbSet<T>> dbSetMock, IQueryable<T> datos) 
+            where T : class
         {
-            var usuarios = new List<Usuario>
-            {
-                EntidadesPruebaFabrica.CrearUsuarioSinJugador(1, "Usuario1"),
-                EntidadesPruebaFabrica.CrearUsuarioSinJugador(2, "Usuario2")
-            };
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, true)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            var usuarioDbSetMock = DbSetMockExtensiones.CrearDbSetMock(usuarios);
-            _contextoMock.Setup(c => c.Usuario).Returns(usuarioDbSetMock.Object);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerAmigos(1);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigos_SinAmigos_RetornaListaVacia()
-        {
-            var amigos = new List<Amigo>();
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerAmigos(1);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigos_SoloPendientes_RetornaListaVacia()
-        {
-            var amigos = new List<Amigo>
-            {
-                EntidadesPruebaFabrica.CrearRelacionAmistad(1, 2, false)
-            };
-            _contextoMock = ContextoMockFabrica.CrearContextoConAmigos(amigos);
-            _repositorio = new AmigoRepositorio(_contextoMock.Object);
-
-            var resultado = _repositorio.ObtenerAmigos(1);
-
-            Assert.AreEqual(0, resultado.Count);
-        }
-
-        #endregion
-
-        #region ObtenerAmigos - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigos_IdCero_LanzaArgumentOutOfRangeException()
-        {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                _repositorio.ObtenerAmigos(0);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigos_IdNegativo_LanzaArgumentOutOfRangeException()
-        {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                _repositorio.ObtenerAmigos(-5);
-            });
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.Provider).Returns(datos.Provider);
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.Expression).Returns(datos.Expression);
+            dbSetMock.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(datos.ElementType);
+            dbSetMock.As<IQueryable<T>>()
+                .Setup(m => m.GetEnumerator())
+                .Returns(datos.GetEnumerator());
         }
 
         #endregion

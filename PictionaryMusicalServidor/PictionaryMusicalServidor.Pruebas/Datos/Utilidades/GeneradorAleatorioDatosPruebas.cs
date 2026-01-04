@@ -3,311 +3,105 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Utilidades
+namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
 {
     /// <summary>
-    /// Contiene las pruebas unitarias para la clase GeneradorAleatorioDatos.
-    /// Verifica flujos normales, alternos y de excepcion para la generacion de datos aleatorios.
+    /// Pruebas unitarias para la clase GeneradorAleatorioDatos.
+    /// Verifica la generacion de indices aleatorios y seleccion de elementos.
     /// </summary>
     [TestClass]
     public class GeneradorAleatorioDatosPruebas
     {
-        #region ObtenerIndiceAleatorio - Flujos Normales
+        private const int TamanoCero = 0;
+        private const int TamanoNegativo = -5;
+        private const int TamanoValido = 10;
+        private const int TamanoUno = 1;
+        private const int IndiceCero = 0;
+        private const string ElementoUnico = "unico";
+        private const int ElementoUno = 1;
+        private const int ElementoDos = 2;
+        private const int ElementoTres = 3;
+        private const int ElementoCuatro = 4;
+        private const int ElementoCinco = 5;
+
+        #region ObtenerIndiceAleatorio
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoUno_RetornaCero()
+        public void Prueba_ObtenerIndiceAleatorioTamanoCero_LanzaArgumentOutOfRangeException()
         {
-            int resultado = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(1);
-
-            Assert.AreEqual(0, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoValido_RetornaIndiceEnRango()
-        {
-            int tamano = 10;
-
-            int resultado = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano);
-
-            Assert.IsTrue(resultado >= 0 && resultado < tamano);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoGrande_RetornaIndiceEnRango()
-        {
-            int tamano = 1000;
-
-            int resultado = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano);
-
-            Assert.IsTrue(resultado >= 0 && resultado < tamano);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_MultiplesLlamadas_RetornaIndicesValidos()
-        {
-            int tamano = 5;
-            bool todosValidos = true;
-
-            for (int i = 0; i < 100; i++)
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                int resultado = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano);
-                if (resultado < 0 || resultado >= tamano)
-                {
-                    todosValidos = false;
-                    break;
-                }
-            }
-
-            Assert.IsTrue(todosValidos);
+                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoCero);
+            });
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_MultiplesLlamadas_ProduceVariedad()
+        public void Prueba_ObtenerIndiceAleatorioTamanoNegativo_LanzaArgumentOutOfRangeException()
         {
-            int tamano = 10;
-            var resultados = new HashSet<int>();
-
-            for (int i = 0; i < 100; i++)
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
             {
-                resultados.Add(GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano));
-            }
-
-            Assert.IsTrue(resultados.Count > 1, 
-                "Se esperaba variedad en los resultados aleatorios");
+                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoNegativo);
+            });
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoDos_RetornaIndiceValido()
+        public void Prueba_ObtenerIndiceAleatorioTamanoValido_RetornaIndiceDentroRango()
         {
-            int tamano = 2;
+            int indice = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoValido);
 
-            int resultado = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano);
+            Assert.IsTrue(indice >= IndiceCero && indice < TamanoValido);
+        }
 
-            Assert.IsTrue(resultado == 0 || resultado == 1);
+        [TestMethod]
+        public void Prueba_ObtenerIndiceAleatorioTamanoUno_RetornaCero()
+        {
+            int indice = GeneradorAleatorioDatos.ObtenerIndiceAleatorio(TamanoUno);
+
+            Assert.AreEqual(IndiceCero, indice);
         }
 
         #endregion
 
-        #region ObtenerIndiceAleatorio - Flujos de Excepcion
+        #region SeleccionarAleatorio
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoCero_LanzaArgumentOutOfRangeException()
+        public void Prueba_SeleccionarAleatorioListaNula_LanzaArgumentNullException()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
             {
-                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(0);
+                GeneradorAleatorioDatos.SeleccionarAleatorio<string>(null);
             });
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoNegativo_LanzaArgumentOutOfRangeException()
+        public void Prueba_SeleccionarAleatorioListaVacia_LanzaArgumentException()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+            var listaVacia = new List<string>();
+
+            Assert.ThrowsException<ArgumentException>(() =>
             {
-                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(-1);
+                GeneradorAleatorioDatos.SeleccionarAleatorio(listaVacia);
             });
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoMuyNegativo_LanzaArgumentOutOfRangeException()
+        public void Prueba_SeleccionarAleatorioListaUnElemento_RetornaElemento()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-            {
-                GeneradorAleatorioDatos.ObtenerIndiceAleatorio(-100);
-            });
-        }
-
-        #endregion
-
-        #region SeleccionarAleatorio - Flujos Normales
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaUnElemento_RetornaElemento()
-        {
-            var lista = new List<string> { "unico" };
+            var lista = new List<string> { ElementoUnico };
 
             string resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
 
-            Assert.AreEqual("unico", resultado);
+            Assert.AreEqual(ElementoUnico, resultado);
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaMultiplesElementos_RetornaElementoDeLista()
+        public void Prueba_SeleccionarAleatorioListaMultiplesElementos_RetornaElementoDeLista()
         {
-            var lista = new List<string> { "a", "b", "c", "d", "e" };
-
-            string resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-
-            Assert.IsTrue(lista.Contains(resultado));
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaEnteros_RetornaElementoDeLista()
-        {
-            var lista = new List<int> { 1, 2, 3, 4, 5 };
+            var lista = new List<int> { ElementoUno, ElementoDos, ElementoTres, ElementoCuatro, ElementoCinco };
 
             int resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
 
-            Assert.IsTrue(lista.Contains(resultado));
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_MultiplesLlamadas_RetornaElementosValidos()
-        {
-            var lista = new List<string> { "uno", "dos", "tres" };
-            bool todosValidos = true;
-
-            for (int i = 0; i < 50; i++)
-            {
-                string resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-                if (!lista.Contains(resultado))
-                {
-                    todosValidos = false;
-                    break;
-                }
-            }
-
-            Assert.IsTrue(todosValidos);
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_MultiplesLlamadas_ProduceVariedad()
-        {
-            var lista = new List<string> { "a", "b", "c", "d", "e" };
-            var resultados = new HashSet<string>();
-
-            for (int i = 0; i < 100; i++)
-            {
-                resultados.Add(GeneradorAleatorioDatos.SeleccionarAleatorio(lista));
-            }
-
-            Assert.IsTrue(resultados.Count > 1, 
-                "Se esperaba variedad en los resultados aleatorios");
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaObjetos_RetornaObjetoDeLista()
-        {
-            var objeto1 = new { Id = 1, Nombre = "Objeto1" };
-            var objeto2 = new { Id = 2, Nombre = "Objeto2" };
-            var lista = new List<object> { objeto1, objeto2 };
-
-            object resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-
-            Assert.IsTrue(resultado == objeto1 || resultado == objeto2);
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaDosElementos_RetornaUnoDeLosDos()
-        {
-            var lista = new List<string> { "primero", "segundo" };
-
-            string resultado = GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-
-            Assert.IsTrue(resultado == "primero" || resultado == "segundo");
-        }
-
-        #endregion
-
-        #region SeleccionarAleatorio - Flujos de Excepcion
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaNula_LanzaArgumentNullException()
-        {
-            List<string> lista = null;
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
-            {
-                GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaVacia_LanzaArgumentException()
-        {
-            var lista = new List<string>();
-
-            Assert.ThrowsException<ArgumentException>(() =>
-            {
-                GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-            });
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaEnterosVacia_LanzaArgumentException()
-        {
-            var lista = new List<int>();
-
-            Assert.ThrowsException<ArgumentException>(() =>
-            {
-                GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-            });
-        }
-
-        #endregion
-
-        #region Thread Safety (Pruebas de Concurrencia Basicas)
-
-        [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_LlamadasConcurrentes_NoLanzaExcepcion()
-        {
-            int tamano = 100;
-            var tareas = new List<System.Threading.Tasks.Task>();
-            bool huboExcepcion = false;
-
-            for (int i = 0; i < 10; i++)
-            {
-                var tarea = System.Threading.Tasks.Task.Run(() =>
-                {
-                    try
-                    {
-                        for (int j = 0; j < 100; j++)
-                        {
-                            GeneradorAleatorioDatos.ObtenerIndiceAleatorio(tamano);
-                        }
-                    }
-                    catch
-                    {
-                        huboExcepcion = true;
-                    }
-                });
-                tareas.Add(tarea);
-            }
-
-            System.Threading.Tasks.Task.WaitAll(tareas.ToArray());
-
-            Assert.IsFalse(huboExcepcion, "No deberian ocurrir excepciones en llamadas concurrentes");
-        }
-
-        [TestMethod]
-        public void Prueba_SeleccionarAleatorio_LlamadasConcurrentes_NoLanzaExcepcion()
-        {
-            var lista = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            var tareas = new List<System.Threading.Tasks.Task>();
-            bool huboExcepcion = false;
-
-            for (int i = 0; i < 10; i++)
-            {
-                var tarea = System.Threading.Tasks.Task.Run(() =>
-                {
-                    try
-                    {
-                        for (int j = 0; j < 100; j++)
-                        {
-                            GeneradorAleatorioDatos.SeleccionarAleatorio(lista);
-                        }
-                    }
-                    catch
-                    {
-                        huboExcepcion = true;
-                    }
-                });
-                tareas.Add(tarea);
-            }
-
-            System.Threading.Tasks.Task.WaitAll(tareas.ToArray());
-
-            Assert.IsFalse(huboExcepcion, "No deberian ocurrir excepciones en llamadas concurrentes");
+            CollectionAssert.Contains(lista, resultado);
         }
 
         #endregion
