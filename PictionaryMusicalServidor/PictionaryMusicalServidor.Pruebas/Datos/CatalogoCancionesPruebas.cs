@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Datos;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
+using PictionaryMusicalServidor.Datos.Utilidades;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Datos.Excepciones;
 using System;

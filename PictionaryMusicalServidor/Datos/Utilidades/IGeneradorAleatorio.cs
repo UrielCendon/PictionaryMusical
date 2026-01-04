@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
+namespace PictionaryMusicalServidor.Datos.Utilidades
 {
     public interface IGeneradorAleatorio
     {

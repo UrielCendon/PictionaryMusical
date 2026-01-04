@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PictionaryMusicalServidor.Datos.DAL.Interfaces
+namespace PictionaryMusicalServidor.Datos.Utilidades
 {
     /// <summary>
     /// Define un contrato para obtener la fecha actual.

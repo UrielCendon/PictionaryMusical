@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
+namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
     /// Implementacion del proveedor de tiempo usando Task.Delay.
