@@ -683,9 +683,6 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoServidorInicioSesion" xml:space="preserve">
     <value>Hubo un error al iniciar sesión.</value>
   </data>
-  <data name="errorTextoSesionActivaExistente" xml:space="preserve">
-    <value>Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde.</value>
-  </data>
   <data name="errorTextoServidorNoDisponible" xml:space="preserve">
     <value>Hubo un problema con el servidor, tu sesión expiró o este dejó de estar disponible. Intente iniciar sesión de nuevo.</value>
   </data>
@@ -895,6 +892,9 @@ aciertan o cuando se acaba el tiempo.
   </data>
   <data name="errorTextoUsuarioBaneado" xml:space="preserve">
     <value>Has sido baneado del juego por mala conducta.</value>
+  </data>
+  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
+    <value>Te expulsamos indefinidamente del juego por mala conducta.</value>
   </data>
   <data name="errorObtenerCallback" xml:space="preserve">
     <value>No fue posible establecer la conexión con el servidor.</value>
@@ -1238,7 +1238,10 @@ aciertan o cuando se acaba el tiempo.
   <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
     <value>No se pudo establecer conexión con el servidor, verifica tu conexión a internet. Se redirigió a la ventana de inicio de sesión.</value>
   </data>
-  <data name="expulsarJugadorTextoFuisteBaneado" xml:space="preserve">
-    <value>Te expulsamos indefinidamente del juego por mala conducta.</value>
+  <data name="errorTextoSesionActivaExistente" xml:space="preserve">
+    <value>Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde.</value>
+  </data>
+  <data name="errorTextoLimiteFrecuenciaCorreo" xml:space="preserve">
+    <value>Se acaba de enviar un correo a esta dirección. Debes esperar 1 minuto para enviar otro.</value>
   </data>
 </root>

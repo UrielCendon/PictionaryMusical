@@ -171,11 +171,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_Localizar_MensajeTiempoEsperaCodigo_RetornaTraducidoConTiempo()
         {
-            string mensaje = "Debe esperar 30 segundos para solicitar un nuevo codigo.";
+            string mensaje = "Debe esperar 60 segundos para solicitar un nuevo codigo.";
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
-            Assert.IsTrue(resultado.Contains("30") || resultado != "default");
+            Assert.IsTrue(resultado.Contains("60") || resultado != "default");
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
 ﻿using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,10 +39,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return false;
             }
 
+            ValidarLimiteFrecuenciaEnvio(parametros.CorreoDestino);
+
             var configuracionSmtp = ObtenerConfiguracionSmtp();
             if (!configuracionSmtp.EsValida)
             {
-                _logger.Error("La configuracion de correo es invalida o esta incompleta.");
+                _logger.Error(MensajesError.Bitacora.ConfiguracionCorreoInvalida);
                 return false;
             }
 
@@ -52,11 +55,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 parametros.Codigo, 
                 idiomaNormalizado);
 
-            return await EjecutarEnvioSmtpAsync(
+            bool enviado = await EjecutarEnvioSmtpAsync(
                 parametros.CorreoDestino, 
                 asunto, 
                 cuerpoHtml, 
                 configuracionSmtp);
+
+            if (enviado)
+            {
+                RegistrarEnvioExitoso(parametros.CorreoDestino);
+            }
+
+            return enviado;
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using log4net;
 using System;
+using System.ServiceModel;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using PictionaryMusicalServidor.Servicios.Contratos;
 
@@ -41,6 +42,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         /// </summary>
         /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
         /// <returns>True si el codigo fue enviado exitosamente, false en caso contrario.</returns>
+        /// <exception cref="FaultException">
+        /// Si se intenta enviar un correo antes de que transcurra el tiempo de espera.
+        /// </exception>
         public bool EnviarNotificacion(NotificacionCodigoParametros parametros)
         {
             if (parametros == null ||
@@ -61,27 +65,44 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
                 return tarea.GetAwaiter().GetResult();
             }
+            catch (FaultException)
+            {
+                throw;
+            }
             catch (AggregateException excepcion)
             {
-                _logger.Error(
-                    "Error critico al enviar notificacion de codigo de verificacion por correo.",
-                    excepcion);
+                ManejarExcepcionAgregada(excepcion);
                 return false;
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Error(
-                    "Operacion invalida al enviar notificacion de codigo de verificacion.",
+                    MensajesError.Bitacora.OperacionInvalidaEnviarCorreo,
                     excepcion);
                 return false;
             }
             catch (Exception excepcion)
             {
                 _logger.Error(
-                    "Error inesperado al enviar notificacion de codigo de verificacion.",
+                    MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo,
                     excepcion);
                 return false;
             }
+        }
+
+        private static void ManejarExcepcionAgregada(AggregateException excepcion)
+        {
+            foreach (var innerExcepcion in excepcion.InnerExceptions)
+            {
+                if (innerExcepcion is FaultException faultExcepcion)
+                {
+                    throw faultExcepcion;
+                }
+            }
+
+            _logger.Error(
+                MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo,
+                excepcion);
         }
     }
 }

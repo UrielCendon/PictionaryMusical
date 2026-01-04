@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.Entity.Core;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
+using System.ServiceModel;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
@@ -63,6 +64,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                         resultado.Mensaje);
                 }
                 return resultado;
+            }
+            catch (FaultException)
+            {
+                throw;
             }
             catch (ArgumentNullException excepcion)
             {
@@ -127,6 +132,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                         resultado.Mensaje);
                 }
                 return resultado;
+            }
+            catch (FaultException)
+            {
+                throw;
             }
             catch (ArgumentNullException excepcion)
             {

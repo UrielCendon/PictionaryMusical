@@ -205,6 +205,8 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
                     = () => Recursos.Lang.invitarCorreoTextoJugadorYaEnSala,
                 ["No pudimos enviar la invitacion al correo. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoEnviarInvitacion,
+                ["Se acaba de enviar un correo a esta direccion. Debes esperar 1 minuto para enviar otro."]
+                    = () => Recursos.Lang.errorTextoLimiteFrecuenciaCorreo,
 
                 ["No pudimos crear la sala. Intenta mas tarde."]
                     = () => Recursos.Lang.errorTextoCrearSala,

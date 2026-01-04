@@ -37,6 +37,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 return false;
             }
 
+            ValidarLimiteFrecuenciaEnvio(parametros.CorreoDestino);
+
             var configuracion = ObtenerConfiguracionSmtp();
             if (!configuracion.EsValida)
             {
@@ -51,11 +53,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 parametros.Creador, 
                 idiomaNormalizado);
 
-            return await EjecutarEnvioSmtpAsync(
+            bool enviado = await EjecutarEnvioSmtpAsync(
                 parametros.CorreoDestino, 
                 asunto, 
                 cuerpoHtml, 
                 configuracion);
+
+            if (enviado)
+            {
+                RegistrarEnvioExitoso(parametros.CorreoDestino);
+            }
+
+            return enviado;
         }
 
         private static string ObtenerAsunto(string idiomaNormalizado)

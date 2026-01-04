@@ -25,7 +25,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private readonly IAvisoServicio _avisoServicio;
         private readonly SonidoManejador _sonidoManejador;
 
-        private const int SegundosEsperaReenvio = 30;
+        private const int SegundosEsperaReenvio = 60;
         private static readonly TimeSpan TiempoExpiracionCodigo = 
             TimeSpan.FromMinutes(5);
 

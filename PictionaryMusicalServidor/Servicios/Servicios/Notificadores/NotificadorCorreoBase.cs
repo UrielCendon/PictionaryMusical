@@ -4,6 +4,8 @@ using System;
 using System.Configuration;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime.Caching;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,9 +14,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     /// <summary>
     /// Clase base abstracta para los notificadores que envian correos electronicos.
     /// Proporciona la funcionalidad comun de configuracion SMTP y envio de correos.
+    /// Incluye proteccion contra envios frecuentes mediante limite de frecuencia.
     /// </summary>
     public abstract class NotificadorCorreoBase
     {
+        private static readonly MemoryCache _cacheEnviosRecientes = 
+            new MemoryCache("EnviosCorreoRecientes");
+
+        private static readonly object _lockCache = new object();
+
+        /// <summary>
+        /// Tiempo en segundos que debe esperar un usuario para enviar otro correo.
+        /// </summary>
+        internal const int SegundosEsperaEntreEnvios = 60;
+
         /// <summary>
         /// Logger para registrar eventos y errores.
         /// </summary>
@@ -42,6 +55,61 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
 
             return configuracionSmtp;
+        }
+
+        /// <summary>
+        /// Valida que no se haya enviado un correo reciente a la misma direccion.
+        /// Si se ha enviado uno en el ultimo minuto, lanza una excepcion FaultException.
+        /// </summary>
+        /// <param name="correoDestino">Direccion de correo a validar.</param>
+        /// <exception cref="FaultException">
+        /// Si se intenta enviar un correo antes de que transcurra el tiempo de espera.
+        /// </exception>
+        protected void ValidarLimiteFrecuenciaEnvio(string correoDestino)
+        {
+            if (string.IsNullOrWhiteSpace(correoDestino))
+            {
+                return;
+            }
+
+            string claveCache = correoDestino.Trim().ToLowerInvariant();
+
+            lock (_lockCache)
+            {
+                if (_cacheEnviosRecientes.Contains(claveCache))
+                {
+                    Logger.Warn(
+                        MensajesError.Bitacora.IntentoPrecozEnvioCorreo
+                        );
+                    throw new FaultException(MensajesError.Cliente.LimiteFrecuenciaCorreo);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registra un envio de correo exitoso en el cache con expiracion automatica.
+        /// El registro expira automaticamente despues de SegundosEsperaEntreEnvios.
+        /// </summary>
+        /// <param name="correoDestino">Direccion de correo enviada.</param>
+        protected void RegistrarEnvioExitoso(string correoDestino)
+        {
+            if (string.IsNullOrWhiteSpace(correoDestino))
+            {
+                return;
+            }
+
+            string claveCache = correoDestino.Trim().ToLowerInvariant();
+
+            var politicaExpiracion = new CacheItemPolicy
+            {
+                AbsoluteExpiration = DateTimeOffset.UtcNow
+                    .AddSeconds(SegundosEsperaEntreEnvios)
+            };
+
+            lock (_lockCache)
+            {
+                _cacheEnviosRecientes.Set(claveCache, DateTime.UtcNow, politicaExpiracion);
+            }
         }
 
         /// <summary>

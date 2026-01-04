@@ -1699,6 +1699,15 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Se acaba de enviar un correo a esta dirección. Debes esperar 1 minuto para enviar otro..
+        /// </summary>
+        public static string errorTextoLimiteFrecuenciaCorreo {
+            get {
+                return ResourceManager.GetString("errorTextoLimiteFrecuenciaCorreo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a No se pudieron cargar los avatares..
         /// </summary>
         public static string errorTextoNoCargaronAvatares {
@@ -1969,20 +1978,20 @@ namespace PictionaryMusicalCliente.Properties.Langs {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Tu sesión ha expirado. Por favor, inicia sesión nuevamente..
-        /// </summary>
-        public static string errorTextoSesionExpirada {
-            get {
-                return ResourceManager.GetString("errorTextoSesionExpirada", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca una cadena traducida similar a Hay un jugador con esa sesión activa en este momento, intenta de nuevo más tarde..
         /// </summary>
         public static string errorTextoSesionActivaExistente {
             get {
                 return ResourceManager.GetString("errorTextoSesionActivaExistente", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a Tu sesión ha expirado. Por favor, inicia sesión nuevamente..
+        /// </summary>
+        public static string errorTextoSesionExpirada {
+            get {
+                return ResourceManager.GetString("errorTextoSesionExpirada", resourceCulture);
             }
         }
         

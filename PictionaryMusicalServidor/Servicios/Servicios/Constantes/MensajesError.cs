@@ -212,6 +212,8 @@
                 "El jugador con este correo ya esta en la sala.";
             public const string ErrorEnviarInvitacionCorreo = 
                 "No pudimos enviar la invitacion al correo. Intenta mas tarde.";
+            public const string LimiteFrecuenciaCorreo = 
+                "Se acaba de enviar un correo a esta direccion. Debes esperar 1 minuto para enviar otro.";
 
             public const string ErrorObtenerCallback = 
                 "No pudimos conectarte al servidor. Verifica tu conexion e intenta de nuevo.";
@@ -583,6 +585,8 @@
                 "Formato de correo invalido al enviar invitacion.";
             public const string ErrorCriticoEnviarNotificacionCodigo = 
                 "Error critico al enviar notificacion de codigo.";
+            public const string IntentoPrecozEnvioCorreo = 
+                "Intento de envio de correo antes del tiempo minimo de espera.";
 
             public const string IdentificadorInvalidoSuscripcionListaAmigos = 
                 "Identificador invalido al suscribirse a la lista de amigos.";
