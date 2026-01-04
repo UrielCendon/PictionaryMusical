@@ -114,7 +114,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 return;
             }
 
-            SesionesActivasRegistro.EliminarSesion(nombreUsuario);
             _logger.Info("Sesion cerrada correctamente.");
         }
 
@@ -192,23 +191,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                     Mensaje = MensajesError.Cliente.UsuarioBaneadoPorReportes
                 };
             }
-
-            if (SesionesActivasRegistro.TieneSesionActiva(usuario.Nombre_Usuario))
-            {
-                _logger.WarnFormat(
-                    "Intento de inicio de sesion con usuario ID {0} que ya tiene sesion activa.",
-                    usuario.idUsuario);
-
-                return new ResultadoInicioSesionDTO
-                {
-                    InicioSesionExitoso = false,
-                    CuentaEncontrada = true,
-                    SesionActivaExistente = true,
-                    Mensaje = MensajesError.Cliente.SesionActivaExistente
-                };
-            }
-
-            SesionesActivasRegistro.RegistrarSesion(usuario.Nombre_Usuario);
 
             _logger.Info(
                 "Inicio de sesion exitoso.");

@@ -19,12 +19,5 @@ namespace PictionaryMusicalServidor.Servicios.Contratos
         /// </returns>
         [OperationContract]
         ResultadoInicioSesionDTO IniciarSesion(CredencialesInicioSesionDTO credenciales);
-
-        /// <summary>
-        /// Cierra la sesion activa del usuario especificado.
-        /// </summary>
-        /// <param name="nombreUsuario">Nombre del usuario cuya sesion se cerrara.</param>
-        [OperationContract]
-        void CerrarSesion(string nombreUsuario);
     }
 }

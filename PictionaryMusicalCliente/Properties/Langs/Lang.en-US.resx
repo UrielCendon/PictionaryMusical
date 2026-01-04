@@ -1236,9 +1236,6 @@
   <data name="errorTextoInvitadoSinConexion" xml:space="preserve">
     <value>Could not establish connection with the server, check your internet connection. You have been redirected to the login screen.</value>
   </data>
-  <data name="errorTextoSesionActivaExistente" xml:space="preserve">
-    <value>There is already an active session with this account, please try again later.</value>
-  </data>
   <data name="errorTextoLimiteFrecuenciaCorreo" xml:space="preserve">
     <value>An email was just sent to this address. You must wait 1 minute before sending another.</value>
   </data>

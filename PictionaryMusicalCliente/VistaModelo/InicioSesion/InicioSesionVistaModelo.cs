@@ -566,11 +566,6 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
         private static string ObtenerMensajeErrorSegunResultado(
             DTOs.ResultadoInicioSesionDTO resultado)
         {
-            if (resultado?.SesionActivaExistente == true)
-            {
-                return Lang.errorTextoSesionActivaExistente;
-            }
-
             if (resultado?.ContrasenaIncorrecta == true || 
                 resultado?.CuentaEncontrada == false)
             {

@@ -29,12 +29,6 @@ namespace PictionaryMusicalServidor.Servicios.Contratos.DTOs
         public bool ContrasenaIncorrecta { get; set; }
 
         /// <summary>
-        /// Indica si ya existe una sesion activa para este usuario.
-        /// </summary>
-        [DataMember]
-        public bool SesionActivaExistente { get; set; }
-
-        /// <summary>
         /// Mensaje descriptivo del resultado del inicio de sesion.
         /// </summary>
         [DataMember]
