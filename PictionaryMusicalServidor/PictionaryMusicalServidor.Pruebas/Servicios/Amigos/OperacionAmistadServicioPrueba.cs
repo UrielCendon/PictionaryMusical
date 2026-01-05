@@ -34,11 +34,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _usuarioRepositorioMock = new Mock<IUsuarioRepositorio>();
             _contextoMock = new Mock<BaseDatosPruebaEntities>();
 
-            _contextoFactoriaMock.Setup(contextoFactoria => contextoFactoria.CrearContexto())
+            _contextoFactoriaMock
+                .Setup(factoria => factoria.CrearContexto())
                 .Returns(_contextoMock.Object);
             _repositorioFactoriaMock
-                .Setup(repositorioFactoria => 
-                    repositorioFactoria.CrearUsuarioRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
+                .Setup(factoria => factoria.CrearUsuarioRepositorio(
+                    It.IsAny<BaseDatosPruebaEntities>()))
                 .Returns(_usuarioRepositorioMock.Object);
 
             _operacionServicio = new OperacionAmistadServicio(
@@ -48,38 +49,54 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerDatosUsuarioSuscripcionUsuarioNoEncontrado_LanzaFaultException()
+        public void Prueba_ObtenerDatosUsuarioSuscripcion_UsuarioNoExiste_LanzaFaultException()
         {
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns((Usuario)null);
 
-            Assert.ThrowsException<FaultException>(() =>
-                _operacionServicio.ObtenerDatosUsuarioSuscripcion(NombreEmisorPrueba));
+            Assert.ThrowsException<FaultException>(
+                () => _operacionServicio.ObtenerDatosUsuarioSuscripcion(NombreEmisorPrueba));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerDatosUsuarioSuscripcion_FlujoExitoso()
+        {
+            var usuario = new Usuario
+            {
+                idUsuario = IdEmisorPrueba,
+                Nombre_Usuario = NombreEmisorPrueba
+            };
+
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Returns(usuario);
+
+            var resultado = _operacionServicio.ObtenerDatosUsuarioSuscripcion(NombreEmisorPrueba);
+
+            Assert.AreEqual(IdEmisorPrueba, resultado.IdUsuario);
+            Assert.IsNotNull(resultado.NombreNormalizado);
         }
 
         [TestMethod]
         public void Prueba_EjecutarCreacionSolicitud_FlujoExitoso()
         {
-            var emisor = new Usuario 
-            { 
-                idUsuario = IdEmisorPrueba, 
-                Nombre_Usuario = NombreEmisorPrueba 
+            var emisor = new Usuario
+            {
+                idUsuario = IdEmisorPrueba,
+                Nombre_Usuario = NombreEmisorPrueba
             };
-            var receptor = new Usuario 
-            { 
-                idUsuario = IdReceptorPrueba, 
-                Nombre_Usuario = NombreReceptorPrueba 
+            var receptor = new Usuario
+            {
+                idUsuario = IdReceptorPrueba,
+                Nombre_Usuario = NombreReceptorPrueba
             };
 
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns(emisor);
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
                 .Returns(receptor);
 
             var resultado = _operacionServicio.EjecutarCreacionSolicitud(
@@ -89,23 +106,42 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             Assert.AreEqual(emisor, resultado.Emisor);
             Assert.AreEqual(receptor, resultado.Receptor);
             _amistadServicioMock.Verify(
-                amistadServicio => amistadServicio.CrearSolicitud(
-                    IdEmisorPrueba, 
-                    IdReceptorPrueba), 
+                servicio => servicio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba),
                 Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_EjecutarCreacionSolicitudUsuarioNoExiste_LanzaFaultException()
+        public void Prueba_EjecutarCreacionSolicitud_EmisorNoExiste_LanzaFaultException()
         {
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns((Usuario)null);
 
-            Assert.ThrowsException<FaultException>(() =>
-                _operacionServicio.EjecutarCreacionSolicitud(
-                    NombreEmisorPrueba, 
+            Assert.ThrowsException<FaultException>(
+                () => _operacionServicio.EjecutarCreacionSolicitud(
+                    NombreEmisorPrueba,
+                    NombreReceptorPrueba));
+        }
+
+        [TestMethod]
+        public void Prueba_EjecutarCreacionSolicitud_ReceptorNoExiste_LanzaFaultException()
+        {
+            var emisor = new Usuario
+            {
+                idUsuario = IdEmisorPrueba,
+                Nombre_Usuario = NombreEmisorPrueba
+            };
+
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Returns(emisor);
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
+                .Returns((Usuario)null);
+
+            Assert.ThrowsException<FaultException>(
+                () => _operacionServicio.EjecutarCreacionSolicitud(
+                    NombreEmisorPrueba,
                     NombreReceptorPrueba));
         }
 
@@ -113,117 +149,91 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         public void Prueba_EjecutarAceptacionSolicitud_FlujoExitoso()
         {
             var emisor = new Usuario
-            { 
-                idUsuario = IdEmisorPrueba, 
-                Nombre_Usuario = NombreEmisorPrueba 
+            {
+                idUsuario = IdEmisorPrueba,
+                Nombre_Usuario = NombreEmisorPrueba
             };
             var receptor = new Usuario
-            { 
-                idUsuario = IdReceptorPrueba, 
-                Nombre_Usuario = NombreReceptorPrueba 
+            {
+                idUsuario = IdReceptorPrueba,
+                Nombre_Usuario = NombreReceptorPrueba
             };
 
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns(emisor);
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
                 .Returns(receptor);
 
-            _operacionServicio.EjecutarAceptacionSolicitud(
-                NombreEmisorPrueba, 
+            var resultado = _operacionServicio.EjecutarAceptacionSolicitud(
+                NombreEmisorPrueba,
                 NombreReceptorPrueba);
 
+            Assert.IsNotNull(resultado.NombreNormalizadoEmisor);
+            Assert.IsNotNull(resultado.NombreNormalizadoReceptor);
             _amistadServicioMock.Verify(
-                amistadServicio => amistadServicio.AceptarSolicitud(
-                    IdEmisorPrueba, 
-                    IdReceptorPrueba), 
+                servicio => servicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba),
                 Times.Once);
+        }
+
+        [TestMethod]
+        public void Prueba_EjecutarAceptacionSolicitud_UsuarioNoExiste_LanzaFaultException()
+        {
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Returns((Usuario)null);
+
+            Assert.ThrowsException<FaultException>(
+                () => _operacionServicio.EjecutarAceptacionSolicitud(
+                    NombreEmisorPrueba,
+                    NombreReceptorPrueba));
         }
 
         [TestMethod]
         public void Prueba_EjecutarEliminacion_FlujoExitoso()
         {
             var emisor = new Usuario
-            { 
-                idUsuario = IdEmisorPrueba, 
-                Nombre_Usuario = NombreEmisorPrueba 
+            {
+                idUsuario = IdEmisorPrueba,
+                Nombre_Usuario = NombreEmisorPrueba
             };
             var receptor = new Usuario
-            { 
-                idUsuario = IdReceptorPrueba, 
-                Nombre_Usuario = NombreReceptorPrueba 
+            {
+                idUsuario = IdReceptorPrueba,
+                Nombre_Usuario = NombreReceptorPrueba
             };
             var relacion = new Amigo();
 
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns(emisor);
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreReceptorPrueba))
                 .Returns(receptor);
             _amistadServicioMock
-                .Setup(amistadServicio => 
-                    amistadServicio.EliminarAmistad(IdEmisorPrueba, IdReceptorPrueba))
+                .Setup(servicio => servicio.EliminarAmistad(IdEmisorPrueba, IdReceptorPrueba))
                 .Returns(relacion);
 
             var resultado = _operacionServicio.EjecutarEliminacion(
-                NombreEmisorPrueba, 
+                NombreEmisorPrueba,
                 NombreReceptorPrueba);
 
             Assert.AreEqual(relacion, resultado.Relacion);
+            Assert.IsNotNull(resultado.NombrePrimerUsuarioNormalizado);
+            Assert.IsNotNull(resultado.NombreSegundoUsuarioNormalizado);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerDatosUsuarioSuscripcion_FlujoExitoso()
-        {
-            var usuario = new Usuario
-            { 
-                idUsuario = IdEmisorPrueba, 
-                Nombre_Usuario = NombreEmisorPrueba 
-            };
-
-            _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
-                .Returns(usuario);
-
-            var resultado = _operacionServicio.ObtenerDatosUsuarioSuscripcion(NombreEmisorPrueba);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(IdEmisorPrueba, resultado.IdUsuario);
-            Assert.AreEqual(NombreEmisorPrueba, resultado.NombreNormalizado);
-        }
-
-        [TestMethod]
-        public void Prueba_EjecutarAceptacionSolicitudUsuarioNoExiste_LanzaFaultException()
+        public void Prueba_EjecutarEliminacion_UsuarioNoExiste_LanzaFaultException()
         {
             _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
                 .Returns((Usuario)null);
 
-            Assert.ThrowsException<FaultException>(() =>
-                _operacionServicio.EjecutarAceptacionSolicitud(
-                    NombreEmisorPrueba, 
-                    NombreReceptorPrueba));
-        }
-
-        [TestMethod]
-        public void Prueba_EjecutarEliminacionUsuarioNoExiste_LanzaFaultException()
-        {
-            _usuarioRepositorioMock
-                .Setup(usuarioRepositorio => 
-                    usuarioRepositorio.ObtenerPorNombreUsuario(NombreEmisorPrueba))
-                .Returns((Usuario)null);
-
-            Assert.ThrowsException<FaultException>(() =>
-                _operacionServicio.EjecutarEliminacion(
-                    NombreEmisorPrueba, 
+            Assert.ThrowsException<FaultException>(
+                () => _operacionServicio.EjecutarEliminacion(
+                    NombreEmisorPrueba,
                     NombreReceptorPrueba));
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
+using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Amigos;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
@@ -21,6 +22,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
 
         private const int IdEmisorPrueba = 1;
         private const int IdReceptorPrueba = 2;
+        private const string NombreUsuarioReceptor = "UsuarioReceptor";
 
         [TestInitialize]
         public void Inicializar()
@@ -30,9 +32,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _amigoRepositorioMock = new Mock<IAmigoRepositorio>();
             _contextoMock = new Mock<BaseDatosPruebaEntities>();
 
-            _contextoFactoriaMock.Setup(contextoFactoria => contextoFactoria.CrearContexto())
+            _contextoFactoriaMock
+                .Setup(factoria => factoria.CrearContexto())
                 .Returns(_contextoMock.Object);
-            _repositorioFactoriaMock.Setup(repositorioFactoria => repositorioFactoria.CrearAmigoRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
+            _repositorioFactoriaMock
+                .Setup(factoria => factoria.CrearAmigoRepositorio(
+                    It.IsAny<BaseDatosPruebaEntities>()))
                 .Returns(_amigoRepositorioMock.Object);
 
             _amistadServicio = new AmistadServicio(
@@ -41,137 +46,172 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         }
 
         [TestMethod]
-        public void Prueba_CrearSolicitudMismoUsuario_LanzaInvalidOperationException()
+        public void Prueba_CrearSolicitud_MismoUsuario_LanzaInvalidOperationException()
         {
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.CrearSolicitud(IdEmisorPrueba, IdEmisorPrueba));
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.CrearSolicitud(IdEmisorPrueba, IdEmisorPrueba));
         }
 
         [TestMethod]
-        public void Prueba_CrearSolicitudRelacionExistente_LanzaInvalidOperationException()
+        public void Prueba_CrearSolicitud_RelacionExistente_LanzaInvalidOperationException()
         {
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ExisteRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ExisteRelacion(IdEmisorPrueba, IdReceptorPrueba))
                 .Returns(true);
 
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba));
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba));
         }
 
         [TestMethod]
         public void Prueba_CrearSolicitud_FlujoExitoso()
         {
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ExisteRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ExisteRelacion(IdEmisorPrueba, IdReceptorPrueba))
                 .Returns(false);
 
             _amistadServicio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba);
 
-            _amigoRepositorioMock.Verify(amigoRepositorio => amigoRepositorio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba), Times.Once);
+            _amigoRepositorioMock.Verify(
+                repositorio => repositorio.CrearSolicitud(IdEmisorPrueba, IdReceptorPrueba),
+                Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_AceptarSolicitudInexistente_LanzaInvalidOperationException()
+        public void Prueba_AceptarSolicitud_SolicitudInexistente_LanzaInvalidOperationException()
         {
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerRelacion(
+                    IdEmisorPrueba,
+                    IdReceptorPrueba))
                 .Returns((Amigo)null);
 
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba));
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba));
         }
 
         [TestMethod]
-        public void Prueba_AceptarSolicitudYaAceptada_LanzaInvalidOperationException()
+        public void Prueba_AceptarSolicitud_YaAceptada_LanzaInvalidOperationException()
         {
-            var relacion = new Amigo { UsuarioReceptor = IdReceptorPrueba, Estado = true };
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            var relacion = new Amigo
+            {
+                UsuarioReceptor = IdReceptorPrueba,
+                Estado = true
+            };
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerRelacion(
+                    IdEmisorPrueba,
+                    IdReceptorPrueba))
                 .Returns(relacion);
 
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba));
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba));
         }
 
         [TestMethod]
         public void Prueba_AceptarSolicitud_FlujoExitoso()
         {
-            var relacion = new Amigo { UsuarioReceptor = IdReceptorPrueba, Estado = false };
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            var relacion = new Amigo
+            {
+                UsuarioReceptor = IdReceptorPrueba,
+                Estado = false
+            };
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerRelacion(
+                    IdEmisorPrueba,
+                    IdReceptorPrueba))
                 .Returns(relacion);
 
             _amistadServicio.AceptarSolicitud(IdEmisorPrueba, IdReceptorPrueba);
 
-            _amigoRepositorioMock.Verify(amigoRepositorio => amigoRepositorio.ActualizarEstado(relacion, true), Times.Once);
+            _amigoRepositorioMock.Verify(
+                repositorio => repositorio.ActualizarEstado(relacion, true),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public void Prueba_EliminarAmistad_MismoUsuario_LanzaInvalidOperationException()
+        {
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.EliminarAmistad(IdEmisorPrueba, IdEmisorPrueba));
+        }
+
+        [TestMethod]
+        public void Prueba_EliminarAmistad_RelacionNoExiste_LanzaInvalidOperationException()
+        {
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerRelacion(
+                    IdEmisorPrueba,
+                    IdReceptorPrueba))
+                .Returns((Amigo)null);
+
+            Assert.ThrowsException<InvalidOperationException>(
+                () => _amistadServicio.EliminarAmistad(IdEmisorPrueba, IdReceptorPrueba));
         }
 
         [TestMethod]
         public void Prueba_EliminarAmistad_FlujoExitoso()
         {
             var relacion = new Amigo();
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerRelacion(IdEmisorPrueba, IdReceptorPrueba))
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerRelacion(
+                    IdEmisorPrueba,
+                    IdReceptorPrueba))
                 .Returns(relacion);
 
             var resultado = _amistadServicio.EliminarAmistad(IdEmisorPrueba, IdReceptorPrueba);
 
             Assert.AreEqual(relacion, resultado);
-            _amigoRepositorioMock.Verify(amigoRepositorio => amigoRepositorio.EliminarRelacion(relacion), Times.Once);
+            _amigoRepositorioMock.Verify(
+                repositorio => repositorio.EliminarRelacion(relacion),
+                Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerSolicitudesPendientesDTO_FlujoExitoso()
+        public void Prueba_ObtenerAmigosDTO_SinAmigos_RetornaListaVacia()
         {
-            var solicitudesPendientes = new List<Amigo>();
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerSolicitudesPendientes(IdReceptorPrueba))
-                .Returns(solicitudesPendientes);
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerAmigos(IdEmisorPrueba))
+                .Returns((List<Usuario>)null);
+
+            var resultado = _amistadServicio.ObtenerAmigosDTO(IdEmisorPrueba);
+
+            Assert.IsNotNull(resultado);
+            Assert.AreEqual(0, resultado.Count);
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerAmigosDTO_ConAmigos_RetornaListaAmigos()
+        {
+            var listaAmigos = new List<Usuario>
+            {
+                new Usuario
+                {
+                    idUsuario = IdReceptorPrueba,
+                    Nombre_Usuario = NombreUsuarioReceptor
+                }
+            };
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerAmigos(IdEmisorPrueba))
+                .Returns(listaAmigos);
+
+            var resultado = _amistadServicio.ObtenerAmigosDTO(IdEmisorPrueba);
+
+            Assert.AreEqual(1, resultado.Count);
+            Assert.AreEqual(NombreUsuarioReceptor, resultado[0].NombreUsuario);
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerSolicitudesPendientesDTO_SinSolicitudes_RetornaListaVacia()
+        {
+            _amigoRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerSolicitudesPendientes(IdReceptorPrueba))
+                .Returns(new List<Amigo>());
 
             var resultado = _amistadServicio.ObtenerSolicitudesPendientesDTO(IdReceptorPrueba);
 
             Assert.IsNotNull(resultado);
             Assert.AreEqual(0, resultado.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigosDTO_FlujoExitoso()
-        {
-            var listaAmigos = new List<Usuario>
-            {
-                new Usuario { idUsuario = IdEmisorPrueba, Nombre_Usuario = "Amigo1" }
-            };
-
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerAmigos(IdReceptorPrueba))
-                .Returns(listaAmigos);
-
-            var resultado = _amistadServicio.ObtenerAmigosDTO(IdReceptorPrueba);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(1, resultado.Count);
-            Assert.AreEqual("Amigo1", resultado[0].NombreUsuario);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerAmigosDTO_SinAmigosRetornaListaVacia()
-        {
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerAmigos(IdReceptorPrueba))
-                .Returns((List<Usuario>)null);
-
-            var resultado = _amistadServicio.ObtenerAmigosDTO(IdReceptorPrueba);
-
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Count);
-        }
-
-        [TestMethod]
-        public void Prueba_EliminarAmistadMismoUsuario_LanzaInvalidOperationException()
-        {
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.EliminarAmistad(IdEmisorPrueba, IdEmisorPrueba));
-        }
-
-        [TestMethod]
-        public void Prueba_EliminarAmistadRelacionNoExiste_LanzaInvalidOperationException()
-        {
-            _amigoRepositorioMock.Setup(amigoRepositorio => amigoRepositorio.ObtenerRelacion(IdEmisorPrueba, IdReceptorPrueba))
-                .Returns((Amigo)null);
-
-            Assert.ThrowsException<InvalidOperationException>(() =>
-                _amistadServicio.EliminarAmistad(IdEmisorPrueba, IdReceptorPrueba));
         }
     }
 }

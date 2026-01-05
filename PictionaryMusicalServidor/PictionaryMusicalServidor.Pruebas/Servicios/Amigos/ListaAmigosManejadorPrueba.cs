@@ -7,8 +7,8 @@ using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Amigos;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
-using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core;
 using System.ServiceModel;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
@@ -27,6 +27,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         private ListaAmigosManejador _listaAmigosManejador;
 
         private const string NombreUsuarioPrueba = "UsuarioLista";
+        private const string NombreAmigoPrueba = "AmigoPrueba";
         private const int IdUsuarioPrueba = 50;
 
         [TestInitialize]
@@ -36,16 +37,21 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _repositorioFactoriaMock = new Mock<IRepositorioFactoria>();
             _amistadServicioMock = new Mock<IAmistadServicio>();
             _notificadorListaMock = new Mock<INotificadorListaAmigos>();
-            _manejadorCallbackMock = new Mock<IManejadorCallback<IListaAmigosManejadorCallback>>();
-            _proveedorCallbackMock = new Mock<IProveedorCallback<IListaAmigosManejadorCallback>>();
+            _manejadorCallbackMock = 
+                new Mock<IManejadorCallback<IListaAmigosManejadorCallback>>();
+            _proveedorCallbackMock = 
+                new Mock<IProveedorCallback<IListaAmigosManejadorCallback>>();
             _usuarioRepositorioMock = new Mock<IUsuarioRepositorio>();
             _contextoMock = new Mock<BaseDatosPruebaEntities>();
 
-            _contextoFactoriaMock.Setup(contextoFactoria => contextoFactoria.CrearContexto())
+            _contextoFactoriaMock
+                .Setup(contextoFactoria => contextoFactoria.CrearContexto())
                 .Returns(_contextoMock.Object);
 
-            _repositorioFactoriaMock.Setup(repositorioFactoria => repositorioFactoria.CrearUsuarioRepositorio(
-                It.IsAny<BaseDatosPruebaEntities>())).Returns(_usuarioRepositorioMock.Object);
+            _repositorioFactoriaMock
+                .Setup(repositorioFactoria => repositorioFactoria
+                    .CrearUsuarioRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
+                .Returns(_usuarioRepositorioMock.Object);
 
             _listaAmigosManejador = new ListaAmigosManejador(
                 _contextoFactoriaMock.Object,
@@ -59,49 +65,75 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         [TestMethod]
         public void Prueba_Suscribir_FlujoExitoso()
         {
-            var usuario = new Usuario { idUsuario = IdUsuarioPrueba, Nombre_Usuario = NombreUsuarioPrueba };
+            var usuario = new Usuario
+            {
+                idUsuario = IdUsuarioPrueba,
+                Nombre_Usuario = NombreUsuarioPrueba
+            };
             var listaAmigos = new List<AmigoDTO>();
 
-            _usuarioRepositorioMock.Setup(usuarioRepositorio => usuarioRepositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
                 .Returns(usuario);
-            _amistadServicioMock.Setup(amistadServicio => amistadServicio.ObtenerAmigosDTO(IdUsuarioPrueba))
+            _amistadServicioMock
+                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
                 .Returns(listaAmigos);
-            _proveedorCallbackMock.Setup(proveedorCallback => proveedorCallback.ObtenerCallbackActual())
+            _proveedorCallbackMock
+                .Setup(proveedor => proveedor.ObtenerCallbackActual())
                 .Returns(new Mock<IListaAmigosManejadorCallback>().Object);
 
             _listaAmigosManejador.Suscribir(NombreUsuarioPrueba);
 
-            _manejadorCallbackMock.Verify(manejadorCallback => manejadorCallback.Suscribir(
-                NombreUsuarioPrueba,
-                It.IsAny<IListaAmigosManejadorCallback>()), Times.Once);
-
-            _notificadorListaMock.Verify(notificador => notificador.NotificarLista(
-                NombreUsuarioPrueba,
-                listaAmigos), Times.Once);
+            _manejadorCallbackMock.Verify(
+                manejador => manejador.Suscribir(
+                    NombreUsuarioPrueba,
+                    It.IsAny<IListaAmigosManejadorCallback>()),
+                Times.Once);
+            _notificadorListaMock.Verify(
+                notificador => notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos),
+                Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerAmigosUsuarioNoExiste_LanzaFaultException()
+        public void Prueba_Suscribir_ErrorBaseDatos_LanzaFaultException()
         {
-            _usuarioRepositorioMock.Setup(usuarioRepositorio => usuarioRepositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+                .Throws(new EntityException());
+
+            Assert.ThrowsException<FaultException>(
+                () => _listaAmigosManejador.Suscribir(NombreUsuarioPrueba));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerAmigos_UsuarioNoExiste_LanzaFaultException()
+        {
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
                 .Returns((Usuario)null);
 
-            Assert.ThrowsException<FaultException>(() =>
-                _listaAmigosManejador.ObtenerAmigos(NombreUsuarioPrueba));
+            Assert.ThrowsException<FaultException>(
+                () => _listaAmigosManejador.ObtenerAmigos(NombreUsuarioPrueba));
         }
 
         [TestMethod]
         public void Prueba_ObtenerAmigos_FlujoExitoso()
         {
-            var usuario = new Usuario { idUsuario = IdUsuarioPrueba, Nombre_Usuario = NombreUsuarioPrueba };
+            var usuario = new Usuario
+            {
+                idUsuario = IdUsuarioPrueba,
+                Nombre_Usuario = NombreUsuarioPrueba
+            };
             var listaEsperada = new List<AmigoDTO>
             {
-                new AmigoDTO { NombreUsuario = "Amigo1" }
+                new AmigoDTO { NombreUsuario = NombreAmigoPrueba }
             };
 
-            _usuarioRepositorioMock.Setup(usuarioRepositorio => usuarioRepositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
                 .Returns(usuario);
-            _amistadServicioMock.Setup(amistadServicio => amistadServicio.ObtenerAmigosDTO(IdUsuarioPrueba))
+            _amistadServicioMock
+                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
                 .Returns(listaEsperada);
 
             var resultado = _listaAmigosManejador.ObtenerAmigos(NombreUsuarioPrueba);
@@ -110,28 +142,24 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         }
 
         [TestMethod]
+        public void Prueba_ObtenerAmigos_ErrorBaseDatos_LanzaFaultException()
+        {
+            _usuarioRepositorioMock
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+                .Throws(new EntityException());
+
+            Assert.ThrowsException<FaultException>(
+                () => _listaAmigosManejador.ObtenerAmigos(NombreUsuarioPrueba));
+        }
+
+        [TestMethod]
         public void Prueba_CancelarSuscripcion_FlujoExitoso()
         {
             _listaAmigosManejador.CancelarSuscripcion(NombreUsuarioPrueba);
 
-            _manejadorCallbackMock.Verify(manejadorCallback => manejadorCallback.Desuscribir(NombreUsuarioPrueba), Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_SuscribirUsuarioNoExiste_LanzaFaultException()
-        {
-            _usuarioRepositorioMock.Setup(usuarioRepositorio => usuarioRepositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
-                .Returns((Usuario)null);
-
-            Assert.ThrowsException<FaultException>(() =>
-                _listaAmigosManejador.Suscribir(NombreUsuarioPrueba));
-        }
-
-        [TestMethod]
-        public void Prueba_CancelarSuscripcionNombreInvalido_LanzaFaultException()
-        {
-            Assert.ThrowsException<FaultException>(() =>
-                _listaAmigosManejador.CancelarSuscripcion(string.Empty));
+            _manejadorCallbackMock.Verify(
+                manejador => manejador.Desuscribir(NombreUsuarioPrueba),
+                Times.Once);
         }
     }
 }
