@@ -27,6 +27,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const int MaximoJugadoresSala = 4;
+        private const int MaximoIntentosNombreInvitado = 20;
 
         private readonly ISalasServicio _salasServicio;
         private readonly ILocalizacionServicio _localizacionServicio;
@@ -188,9 +189,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             var nombresReservados = new HashSet<string>(
                 StringComparer.OrdinalIgnoreCase);
             var culturaActual = _localizacionServicio?.CulturaActual;
-            const int maxIntentos = 20;
 
-            for (int intento = 0; intento < maxIntentos; intento++)
+            for (int intento = 0; intento < MaximoIntentosNombreInvitado; intento++)
             {
                 ResultadoGeneracion resultadoGeneracion = GenerarNombreInvitado(
                     culturaActual, 

@@ -9,6 +9,8 @@ namespace PictionaryMusicalCliente.Utilidades
     /// </summary>
     public static class ControlVisual
     {
+        private const int GrosorBordeError = 2;
+
         /// <summary>
         /// Elimina los estilos de error (borde rojo) aplicados a un control.
         /// </summary>
@@ -34,7 +36,7 @@ namespace PictionaryMusicalCliente.Utilidades
             }
 
             control.BorderBrush = Brushes.Red;
-            control.BorderThickness = new Thickness(2);
+            control.BorderThickness = new Thickness(GrosorBordeError);
         }
     }
 }
