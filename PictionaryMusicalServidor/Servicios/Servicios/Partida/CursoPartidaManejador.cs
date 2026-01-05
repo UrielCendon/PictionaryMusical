@@ -203,15 +203,25 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 var validadorAdivinanza = new ValidadorAdivinanza(_catalogoCanciones, gestorTiempos);
                 var proveedorTiempo = new ProveedorTiempo();
 
+                var configuracionPartida = new ConfiguracionPartida
+                {
+                    TiempoRonda = tiempoRonda,
+                    Dificultad = configuracion?.Dificultad ?? DificultadPorDefecto,
+                    TotalRondas = configuracion?.NumeroRondas ?? NumeroRondasPorDefecto
+                };
+
+                var dependenciasPartida = new DependenciasPartida
+                {
+                    Catalogo = _catalogoCanciones,
+                    GestorJugadores = gestorJugadores,
+                    GestorTiempos = gestorTiempos,
+                    ValidadorAdivinanza = validadorAdivinanza,
+                    ProveedorTiempo = proveedorTiempo
+                };
+
                 var controlador = new ControladorPartida(
-                    tiempoRonda,
-                    configuracion?.Dificultad ?? DificultadPorDefecto,
-                    configuracion?.NumeroRondas ?? NumeroRondasPorDefecto,
-                    _catalogoCanciones,
-                    gestorJugadores,
-                    gestorTiempos,
-                    validadorAdivinanza,
-                    proveedorTiempo);
+                    configuracionPartida,
+                    dependenciasPartida);
 
                 if (!string.IsNullOrWhiteSpace(configuracion?.IdiomaCanciones))
                 {
