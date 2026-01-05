@@ -92,6 +92,8 @@ namespace PictionaryMusicalCliente
 
         protected override void OnExit(ExitEventArgs e)
         {
+            IntentarCerrarSesionEnServidor();
+
             MusicaManejador?.Detener();
             MusicaManejador?.Dispose();
             SonidoManejador?.Dispose();
@@ -99,6 +101,26 @@ namespace PictionaryMusicalCliente
             ListaAmigosServicio?.Dispose();
 
             base.OnExit(e);
+        }
+
+        private static void IntentarCerrarSesionEnServidor()
+        {
+            string nombreUsuario = UsuarioGlobal?.NombreUsuario;
+
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return;
+            }
+
+            try
+            {
+                InicioSesionServicio?.CerrarSesionAsync(nombreUsuario)
+                    .GetAwaiter().GetResult();
+            }
+            catch
+            {
+                // Si falla el cierre de sesion, la sesion expirara por timeout en el servidor
+            }
         }
 
         /// <summary>

@@ -5,7 +5,9 @@ using PictionaryMusicalCliente.Utilidades.Abstracciones;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.InicioSesion;
 using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal;
+using log4net;
 using System;
+using System.Threading.Tasks;
 
 namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 {
@@ -14,6 +16,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
     /// </summary>
     public sealed class SalaNavegacionManejador
     {
+        private static readonly ILog _logger = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private readonly IVentanaServicio _ventana;
         private readonly ILocalizadorServicio _localizador;
         private readonly SonidoManejador _sonidoManejador;
@@ -90,6 +94,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
 
         private void NavegarAInicioSesion()
         {
+            IntentarCerrarSesionEnServidor();
             _usuarioSesion.Limpiar();
             App.ReinicializarServiciosConexion();
 
@@ -130,6 +135,34 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
                 _localizador,
                 dependencias);
             _ventana.MostrarVentana(principalVistaModelo);
+        }
+
+        private void IntentarCerrarSesionEnServidor()
+        {
+            string nombreUsuario = _usuarioSesion.NombreUsuario;
+
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await App.InicioSesionServicio.CerrarSesionAsync(nombreUsuario)
+                        .ConfigureAwait(false);
+                    _logger.Info(
+                        "Sesion cerrada en servidor durante navegacion a inicio.");
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn(
+                        "No se pudo cerrar la sesion en el servidor durante " +
+                        "navegacion a inicio. La sesion expirara por timeout.",
+                        excepcion);
+                }
+            });
         }
     }
 }

@@ -699,6 +699,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             
             DesuscribirEventos();
             AbortarCanalesAmigos();
+            IntentarCerrarSesionEnServidor();
             _usuarioSesion.Limpiar();
             App.ReinicializarServiciosConexion();
 
@@ -744,6 +745,34 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             {
                 _logger.Warn("Error al abortar canal de amigos.", excepcion);
             }
+        }
+
+        private void IntentarCerrarSesionEnServidor()
+        {
+            string nombreUsuario = _usuarioSesion.NombreUsuario;
+
+            if (string.IsNullOrWhiteSpace(nombreUsuario))
+            {
+                return;
+            }
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await App.InicioSesionServicio.CerrarSesionAsync(nombreUsuario)
+                        .ConfigureAwait(false);
+                    _logger.Info(
+                        "Sesion cerrada en servidor durante reinicio por desconexion.");
+                }
+                catch (Exception excepcion)
+                {
+                    _logger.Warn(
+                        "No se pudo cerrar la sesion en el servidor durante " +
+                        "reinicio por desconexion. La sesion expirara por timeout.",
+                        excepcion);
+                }
+            });
         }
 
         private void EjecutarAbrirAjustes()
