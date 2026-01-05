@@ -10,9 +10,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
     [TestClass]
     public class ContextoFactoriaPruebas
     {
-        private const string CadenaConexionValida = 
-            "metadata=res://*/;provider=System.Data.SqlClient;" +
-            "provider connection string=\"Data Source=localhost;Initial Catalog=Test\"";
         private const string CadenaConexionVacia = "";
         private const string CadenaConexionNula = null;
         private const string CadenaConexionEspacios = "   ";
@@ -24,8 +21,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             _proveedorConexionMock = new Mock<IProveedorConexion>();
         }
-
-        #region Pruebas Constructor
 
         [TestMethod]
         public void Prueba_Constructor_ProveedorConexionNulo_LanzaArgumentNullException()
@@ -39,7 +34,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var factoria = new ContextoFactoria(_proveedorConexionMock.Object);
 
-            Assert.IsTrue(factoria is IContextoFactoria);
+            Assert.IsInstanceOfType(factoria, typeof(IContextoFactoria));
         }
 
         [TestMethod]
@@ -47,12 +42,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var factoria = new ContextoFactoria();
 
-            Assert.IsTrue(factoria is IContextoFactoria);
+            Assert.IsInstanceOfType(factoria, typeof(IContextoFactoria));
         }
-
-        #endregion
-
-        #region Pruebas CrearContexto
 
         [TestMethod]
         public void Prueba_CrearContexto_ConexionVacia_RetornaContextoPorDefecto()
@@ -64,7 +55,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             using (var contexto = factoria.CrearContexto())
             {
-                Assert.IsTrue(contexto != null);
+                Assert.IsNotNull(contexto);
             }
         }
 
@@ -78,7 +69,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             using (var contexto = factoria.CrearContexto())
             {
-                Assert.IsTrue(contexto != null);
+                Assert.IsNotNull(contexto);
             }
         }
 
@@ -92,7 +83,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             using (var contexto = factoria.CrearContexto())
             {
-                Assert.IsTrue(contexto != null);
+                Assert.IsNotNull(contexto);
             }
         }
 
@@ -132,7 +123,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
                 proveedor => proveedor.ObtenerConexion(), 
                 Times.Once);
         }
-
-        #endregion
     }
 }

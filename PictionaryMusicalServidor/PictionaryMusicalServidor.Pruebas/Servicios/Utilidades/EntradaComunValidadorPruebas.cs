@@ -18,15 +18,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             "TextoQueExcedeLaLongitudMaximaPermitidaDe50CaracteresEnElSistema";
         private const int LongitudMaximaTextoEsperada = 50;
         private const int LongitudMaximaReporteEsperada = 100;
-        private const int LongitudCodigoVerificacionEsperada = 6;
-        private const int LongitudCodigoSalaEsperada = 6;
         private const int LongitudMaximaMensajeChatEsperada = 150;
+        private const int IncrementoUno = 1;
 
         private const string CorreoValido = "usuario@ejemplo.com";
         private const string CorreoInvalidoSinArroba = "usuarioejemplo.com";
         private const string CorreoInvalidoSinDominio = "usuario@";
-        private const string CorreoInvalidoEspacios = "usuario @ejemplo.com";
-        private const string CorreoInvalidoCaracteres = "usuario<>@ejemplo.com";
 
         private const string ContrasenaValida = "Password1!";
         private const string ContrasenaSinMayuscula = "password1!";
@@ -38,7 +35,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         private const string TokenValido = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6";
         private const string TokenInvalidoCorto = "a1b2c3d4";
         private const string TokenInvalidoLargo = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8";
-        private const string TokenInvalidoCaracteres = "g1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6";
 
         private const string CodigoVerificacionValido = "123456";
         private const string CodigoVerificacionInvalidoCorto = "12345";
@@ -85,15 +81,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
         private const string NombreValido = "Juan";
         private const string ApellidoValido = "Perez";
-
-        #region Pruebas NormalizarTexto
+        private const char CaracterRelleno = 'a';
 
         [TestMethod]
         public void Prueba_NormalizarTexto_TextoNulo_RetornaNulo()
         {
             string resultado = EntradaComunValidador.NormalizarTexto(TextoNulo);
 
-            Assert.AreEqual(TextoNulo, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -101,7 +96,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             string resultado = EntradaComunValidador.NormalizarTexto(TextoVacio);
 
-            Assert.AreEqual(TextoNulo, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -109,7 +104,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             string resultado = EntradaComunValidador.NormalizarTexto(TextoConEspacios);
 
-            Assert.AreEqual(TextoNulo, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -127,10 +122,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.AreEqual(TextoValido, resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsLongitudValida
 
         [TestMethod]
         public void Prueba_EsLongitudValida_TextoNulo_RetornaFalso()
@@ -175,16 +166,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsLongitudValida_TextoExactamente50Caracteres_RetornaVerdadero()
         {
-            string textoExacto = new string('a', LongitudMaximaTextoEsperada);
+            string textoExacto = new string(CaracterRelleno, LongitudMaximaTextoEsperada);
 
             bool resultado = EntradaComunValidador.EsLongitudValida(textoExacto);
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsLongitudValidaReporte
 
         [TestMethod]
         public void Prueba_EsLongitudValidaReporte_TextoNulo_RetornaFalso()
@@ -205,7 +192,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsLongitudValidaReporte_TextoExcedeLongitud_RetornaFalso()
         {
-            string textoLargo = new string('a', LongitudMaximaReporteEsperada + 1);
+            string textoLargo = new string(
+                CaracterRelleno, 
+                LongitudMaximaReporteEsperada + IncrementoUno);
 
             bool resultado = EntradaComunValidador.EsLongitudValidaReporte(textoLargo);
 
@@ -223,16 +212,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsLongitudValidaReporte_TextoExactamente100Caracteres_RetornaVerdadero()
         {
-            string textoExacto = new string('a', LongitudMaximaReporteEsperada);
+            string textoExacto = new string(CaracterRelleno, LongitudMaximaReporteEsperada);
 
             bool resultado = EntradaComunValidador.EsLongitudValidaReporte(textoExacto);
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsCorreoValido
 
         [TestMethod]
         public void Prueba_EsCorreoValido_CorreoNulo_RetornaFalso()
@@ -277,16 +262,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsCorreoValido_CorreoExcedeLongitud_RetornaFalso()
         {
-            string correoLargo = new string('a', LongitudMaximaTextoEsperada) + "@test.com";
+            string correoLargo = new string(CaracterRelleno, LongitudMaximaTextoEsperada) 
+                + "@test.com";
 
             bool resultado = EntradaComunValidador.EsCorreoValido(correoLargo);
 
             Assert.IsFalse(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsContrasenaValida
 
         [TestMethod]
         public void Prueba_EsContrasenaValida_ContrasenaNula_RetornaFalso()
@@ -360,10 +342,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado);
         }
 
-        #endregion
-
-        #region Pruebas EsTokenValido
-
         [TestMethod]
         public void Prueba_EsTokenValido_TokenNulo_RetornaFalso()
         {
@@ -403,10 +381,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsCodigoVerificacionValido
 
         [TestMethod]
         public void Prueba_EsCodigoVerificacionValido_CodigoNulo_RetornaFalso()
@@ -460,10 +434,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado);
         }
 
-        #endregion
-
-        #region Pruebas EsCodigoSalaValido
-
         [TestMethod]
         public void Prueba_EsCodigoSalaValido_CodigoNulo_RetornaFalso()
         {
@@ -512,10 +482,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado);
         }
 
-        #endregion
-
-        #region Pruebas EsMensajeValido
-
         [TestMethod]
         public void Prueba_EsMensajeValido_MensajeNulo_RetornaFalso()
         {
@@ -543,7 +509,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsMensajeValido_MensajeExcedeLimite_RetornaFalso()
         {
-            string mensajeLargo = new string('a', LongitudMaximaMensajeChatEsperada + 1);
+            string mensajeLargo = new string(
+                CaracterRelleno, 
+                LongitudMaximaMensajeChatEsperada + IncrementoUno);
 
             bool resultado = EntradaComunValidador.EsMensajeValido(mensajeLargo);
 
@@ -561,16 +529,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_EsMensajeValido_MensajeExactamente150Caracteres_RetornaVerdadero()
         {
-            string mensajeExacto = new string('a', LongitudMaximaMensajeChatEsperada);
+            string mensajeExacto = new string(CaracterRelleno, LongitudMaximaMensajeChatEsperada);
 
             bool resultado = EntradaComunValidador.EsMensajeValido(mensajeExacto);
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsIdiomaValido
 
         [TestMethod]
         public void Prueba_EsIdiomaValido_IdiomaNulo_RetornaFalso()
@@ -596,10 +560,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado);
         }
 
-        #endregion
-
-        #region Pruebas EsDificultadValida
-
         [TestMethod]
         public void Prueba_EsDificultadValida_DificultadNula_RetornaFalso()
         {
@@ -623,10 +583,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas EsNombreUsuarioValido
 
         [TestMethod]
         public void Prueba_EsNombreUsuarioValido_NombreNulo_RetornaFalso()
@@ -660,10 +616,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado);
         }
 
-        #endregion
-
-        #region Pruebas ValidarNombreUsuario
-
         [TestMethod]
         public void Prueba_ValidarNombreUsuario_NombreNulo_LanzaFaultException()
         {
@@ -688,14 +640,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarNombreUsuario_NombreValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarNombreUsuario(NombreUsuarioValido, NombreParametro);
+            Action accion = () => EntradaComunValidador
+                .ValidarNombreUsuario(NombreUsuarioValido, NombreParametro);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ObtenerNombreUsuarioNormalizado
 
         [TestMethod]
         public void Prueba_ObtenerNombreUsuarioNormalizado_AmbosNulos_RetornaNulo()
@@ -703,7 +654,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             string resultado = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                 TextoNulo, TextoNulo);
 
-            Assert.AreEqual(TextoNulo, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -732,10 +683,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.AreEqual(TextoValido, resultado);
         }
-
-        #endregion
-
-        #region Pruebas ValidarNuevaCuenta
 
         [TestMethod]
         public void Prueba_ValidarNuevaCuenta_CuentaNula_RetornaFallo()
@@ -809,10 +756,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.IsTrue(resultado.OperacionExitosa);
         }
-
-        #endregion
-
-        #region Pruebas ValidarActualizacionPerfil
 
         [TestMethod]
         public void Prueba_ValidarActualizacionPerfil_SolicitudNula_RetornaFallo()
@@ -909,10 +852,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.IsTrue(resultado.OperacionExitosa);
         }
 
-        #endregion
-
-        #region Pruebas ValidarConfiguracionPartida
-
         [TestMethod]
         public void Prueba_ValidarConfiguracionPartida_ConfiguracionNula_LanzaFaultException()
         {
@@ -1005,14 +944,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var configuracion = CrearConfiguracionPartidaValida();
 
-            EntradaComunValidador.ValidarConfiguracionPartida(configuracion);
+            Action accion = () => EntradaComunValidador
+                .ValidarConfiguracionPartida(configuracion);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarEntradaSalaChat
 
         [TestMethod]
         public void Prueba_ValidarEntradaSalaChat_NombreJugadorNulo_LanzaFaultException()
@@ -1032,14 +970,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarEntradaSalaChat_DatosValidos_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarEntradaSalaChat(CodigoSalaValido, NombreUsuarioValido);
+            Action accion = () => EntradaComunValidador
+                .ValidarEntradaSalaChat(CodigoSalaValido, NombreUsuarioValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarCodigoSala
 
         [TestMethod]
         public void Prueba_ValidarCodigoSala_CodigoInvalido_LanzaFaultException()
@@ -1051,14 +988,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarCodigoSala_CodigoValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarCodigoSala(CodigoSalaValido);
+            Action accion = () => EntradaComunValidador.ValidarCodigoSala(CodigoSalaValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarIdSala
 
         [TestMethod]
         public void Prueba_ValidarIdSala_IdNulo_LanzaFaultException()
@@ -1077,14 +1012,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarIdSala_IdValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarIdSala(IdSalaValido);
+            Action accion = () => EntradaComunValidador.ValidarIdSala(IdSalaValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarIdJugador
 
         [TestMethod]
         public void Prueba_ValidarIdJugador_IdNulo_LanzaFaultException()
@@ -1103,14 +1036,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarIdJugador_IdValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarIdJugador(IdJugadorValido);
+            Action accion = () => EntradaComunValidador.ValidarIdJugador(IdJugadorValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarSuscripcionJugador
 
         [TestMethod]
         public void Prueba_ValidarSuscripcionJugador_SuscripcionNula_LanzaFaultException()
@@ -1144,14 +1075,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var suscripcion = CrearSuscripcionJugadorValida();
 
-            EntradaComunValidador.ValidarSuscripcionJugador(suscripcion);
+            Action accion = () => EntradaComunValidador.ValidarSuscripcionJugador(suscripcion);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas SuperaLimiteCaracteresMensaje
 
         [TestMethod]
         public void Prueba_SuperaLimiteCaracteresMensaje_MensajeNulo_RetornaFalso()
@@ -1172,14 +1101,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_SuperaLimiteCaracteresMensaje_MensajeExcedeLimite_RetornaVerdadero()
         {
-            bool resultado = EntradaComunValidador.SuperaLimiteCaracteresMensaje(MensajeExcedeLimite);
+            bool resultado = EntradaComunValidador
+                .SuperaLimiteCaracteresMensaje(MensajeExcedeLimite);
 
             Assert.IsTrue(resultado);
         }
-
-        #endregion
-
-        #region Pruebas ValidarMensajeJuego
 
         [TestMethod]
         public void Prueba_ValidarMensajeJuego_IdSalaNulo_LanzaFaultException()
@@ -1198,14 +1124,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarMensajeJuego_DatosValidos_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarMensajeJuego(MensajeValido, IdSalaValido);
+            Action accion = () => EntradaComunValidador
+                .ValidarMensajeJuego(MensajeValido, IdSalaValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarReporteJugador
 
         [TestMethod]
         public void Prueba_ValidarReporteJugador_ReporteNulo_LanzaFaultException()
@@ -1259,14 +1184,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var reporte = CrearReporteJugadorValido();
 
-            EntradaComunValidador.ValidarReporteJugador(reporte);
+            Action accion = () => EntradaComunValidador.ValidarReporteJugador(reporte);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarInvitacionSala
 
         [TestMethod]
         public void Prueba_ValidarInvitacionSala_InvitacionNula_LanzaArgumentException()
@@ -1310,14 +1233,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var invitacion = CrearInvitacionSalaValida();
 
-            EntradaComunValidador.ValidarInvitacionSala(invitacion);
+            Action accion = () => EntradaComunValidador.ValidarInvitacionSala(invitacion);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarIdUsuario
 
         [TestMethod]
         public void Prueba_ValidarIdUsuario_IdCero_LanzaArgumentException()
@@ -1336,14 +1257,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarIdUsuario_IdValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarIdUsuario(IdUsuarioValido);
+            Action accion = () => EntradaComunValidador.ValidarIdUsuario(IdUsuarioValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarNombreUsuarioSuscripcion
 
         [TestMethod]
         public void Prueba_ValidarNombreUsuarioSuscripcion_NombreNulo_LanzaFaultException()
@@ -1362,14 +1281,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarNombreUsuarioSuscripcion_NombreValido_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarNombreUsuarioSuscripcion(NombreUsuarioValido);
+            Action accion = () => EntradaComunValidador
+                .ValidarNombreUsuarioSuscripcion(NombreUsuarioValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Pruebas ValidarUsuariosInteraccion
 
         [TestMethod]
         public void Prueba_ValidarUsuariosInteraccion_UsuarioANulo_LanzaFaultException()
@@ -1388,15 +1306,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_ValidarUsuariosInteraccion_AmbosValidos_NoLanzaExcepcion()
         {
-            EntradaComunValidador.ValidarUsuariosInteraccion(
-                NombreUsuarioValido, NombreUsuarioValido);
+            Action accion = () => EntradaComunValidador
+                .ValidarUsuariosInteraccion(NombreUsuarioValido, NombreUsuarioValido);
 
-            Assert.IsTrue(true);
+            Exception excepcion = Record.Exception(accion);
+
+            Assert.IsNull(excepcion);
         }
-
-        #endregion
-
-        #region Metodos Auxiliares
 
         private NuevaCuentaDTO CrearNuevaCuentaValida()
         {
@@ -1468,6 +1384,20 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             };
         }
 
-        #endregion
+        private static class Record
+        {
+            public static Exception Exception(Action accion)
+            {
+                try
+                {
+                    accion();
+                    return null;
+                }
+                catch (Exception excepcion)
+                {
+                    return excepcion;
+                }
+            }
+        }
     }
 }

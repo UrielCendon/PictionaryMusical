@@ -2,6 +2,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 {
@@ -18,8 +19,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         private const int NumeroIteracionesPruebaAleatoriedad = 100;
         private const int TamanioListaMezcla = 10;
         private const int IndiceInicial = 0;
-
-        #region Pruebas GenerarToken
+        private const int MitadIteraciones = NumeroIteracionesPruebaAleatoriedad / 2;
+        private const int ElementoUnico = 1;
+        private const string PatronHexadecimal = "^[a-fA-F0-9]+$";
+        private const string PatronSoloDigitos = "^[0-9]+$";
+        private const string CaracterCeroInicial = "0";
 
         [TestMethod]
         public void Prueba_GenerarToken_RetornaTokenConLongitudCorrecta()
@@ -34,8 +38,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             string token = GeneradorAleatorio.GenerarToken();
 
-            bool esHexadecimal = System.Text.RegularExpressions.Regex.IsMatch(
-                token, "^[a-fA-F0-9]+$");
+            bool esHexadecimal = Regex.IsMatch(token, PatronHexadecimal);
 
             Assert.IsTrue(esHexadecimal);
         }
@@ -43,10 +46,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_GenerarToken_TokensConsecutivosSonDiferentes()
         {
-            string token1 = GeneradorAleatorio.GenerarToken();
-            string token2 = GeneradorAleatorio.GenerarToken();
+            string tokenPrimero = GeneradorAleatorio.GenerarToken();
+            string tokenSegundo = GeneradorAleatorio.GenerarToken();
 
-            Assert.AreNotEqual(token1, token2);
+            Assert.AreNotEqual(tokenPrimero, tokenSegundo);
         }
 
         [TestMethod]
@@ -54,17 +57,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var tokens = new HashSet<string>();
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 tokens.Add(GeneradorAleatorio.GenerarToken());
             }
 
             Assert.AreEqual(NumeroIteracionesPruebaAleatoriedad, tokens.Count);
         }
-
-        #endregion
-
-        #region Pruebas GenerarCodigoVerificacion
 
         [TestMethod]
         public void Prueba_GenerarCodigoVerificacion_LongitudPorDefecto_RetornaSeisDigitos()
@@ -75,7 +74,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_GenerarCodigoVerificacion_LongitudPersonalizada_RetornaLongitudCorrecta()
+        public void Prueba_GenerarCodigoVerificacion_LongitudPersonalizada_RetornaLongitud()
         {
             string codigo = GeneradorAleatorio.GenerarCodigoVerificacion(LongitudCuatroDigitos);
 
@@ -87,20 +86,20 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             string codigo = GeneradorAleatorio.GenerarCodigoVerificacion();
 
-            bool soloDigitos = System.Text.RegularExpressions.Regex.IsMatch(codigo, "^[0-9]+$");
+            bool soloDigitos = Regex.IsMatch(codigo, PatronSoloDigitos);
 
             Assert.IsTrue(soloDigitos);
         }
 
         [TestMethod]
-        public void Prueba_GenerarCodigoVerificacion_LongitudCero_LanzaArgumentOutOfRangeException()
+        public void Prueba_GenerarCodigoVerificacion_LongitudCero_LanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 GeneradorAleatorio.GenerarCodigoVerificacion(LongitudCero));
         }
 
         [TestMethod]
-        public void Prueba_GenerarCodigoVerificacion_LongitudNegativa_LanzaArgumentOutOfRangeException()
+        public void Prueba_GenerarCodigoVerificacion_LongitudNegativa_LanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 GeneradorAleatorio.GenerarCodigoVerificacion(LongitudNegativa));
@@ -111,12 +110,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var codigos = new HashSet<string>();
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 codigos.Add(GeneradorAleatorio.GenerarCodigoVerificacion(LongitudOchoDigitos));
             }
 
-            Assert.IsTrue(codigos.Count > 1);
+            Assert.IsTrue(codigos.Count > ElementoUnico);
         }
 
         [TestMethod]
@@ -124,10 +123,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             bool encontroCeroInicial = false;
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 string codigo = GeneradorAleatorio.GenerarCodigoVerificacion();
-                if (codigo.StartsWith("0"))
+                if (codigo.StartsWith(CaracterCeroInicial))
                 {
                     encontroCeroInicial = true;
                     break;
@@ -136,10 +135,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.IsFalse(encontroCeroInicial);
         }
-
-        #endregion
-
-        #region Pruebas GenerarCodigoSala
 
         [TestMethod]
         public void Prueba_GenerarCodigoSala_LongitudPorDefecto_RetornaSeisDigitos()
@@ -162,20 +157,20 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             string codigo = GeneradorAleatorio.GenerarCodigoSala();
 
-            bool soloDigitos = System.Text.RegularExpressions.Regex.IsMatch(codigo, "^[0-9]+$");
+            bool soloDigitos = Regex.IsMatch(codigo, PatronSoloDigitos);
 
             Assert.IsTrue(soloDigitos);
         }
 
         [TestMethod]
-        public void Prueba_GenerarCodigoSala_LongitudCero_LanzaArgumentOutOfRangeException()
+        public void Prueba_GenerarCodigoSala_LongitudCero_LanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 GeneradorAleatorio.GenerarCodigoSala(LongitudCero));
         }
 
         [TestMethod]
-        public void Prueba_GenerarCodigoSala_LongitudNegativa_LanzaArgumentOutOfRangeException()
+        public void Prueba_GenerarCodigoSala_LongitudNegativa_LanzaExcepcion()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 GeneradorAleatorio.GenerarCodigoSala(LongitudNegativa));
@@ -186,10 +181,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             bool encontroCeroInicial = false;
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 string codigo = GeneradorAleatorio.GenerarCodigoSala();
-                if (codigo.StartsWith("0"))
+                if (codigo.StartsWith(CaracterCeroInicial))
                 {
                     encontroCeroInicial = true;
                     break;
@@ -204,17 +199,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             var codigos = new HashSet<string>();
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 codigos.Add(GeneradorAleatorio.GenerarCodigoSala());
             }
 
-            Assert.IsTrue(codigos.Count > 1);
+            Assert.IsTrue(codigos.Count > ElementoUnico);
         }
-
-        #endregion
-
-        #region Pruebas MezclarLista
 
         [TestMethod]
         public void Prueba_MezclarLista_ListaNula_LanzaArgumentNullException()
@@ -236,11 +227,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_MezclarLista_ListaUnElemento_ConservaElemento()
         {
-            var lista = new List<int> { 1 };
+            var lista = new List<int> { ElementoUnico };
 
             GeneradorAleatorio.MezclarLista(lista);
 
-            Assert.AreEqual(1, lista[IndiceInicial]);
+            Assert.AreEqual(ElementoUnico, lista[IndiceInicial]);
         }
 
         [TestMethod]
@@ -271,7 +262,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             int vecesDiferentes = 0;
 
-            for (int i = 0; i < NumeroIteracionesPruebaAleatoriedad; i++)
+            for (int indice = 0; indice < NumeroIteracionesPruebaAleatoriedad; indice++)
             {
                 var lista = CrearListaOrdenada(TamanioListaMezcla);
                 var listaOriginal = new List<int>(lista);
@@ -284,7 +275,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
                 }
             }
 
-            Assert.IsTrue(vecesDiferentes > NumeroIteracionesPruebaAleatoriedad / 2);
+            Assert.IsTrue(vecesDiferentes > MitadIteraciones);
         }
 
         [TestMethod]
@@ -300,30 +291,26 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
                 new List<string>(lista));
         }
 
-        #endregion
-
-        #region Metodos Auxiliares
-
-        private List<int> CrearListaOrdenada(int tamanio)
+        private static List<int> CrearListaOrdenada(int tamanio)
         {
             var lista = new List<int>();
-            for (int i = 0; i < tamanio; i++)
+            for (int indice = 0; indice < tamanio; indice++)
             {
-                lista.Add(i);
+                lista.Add(indice);
             }
             return lista;
         }
 
-        private bool SonListasIguales<T>(IList<T> lista1, IList<T> lista2)
+        private static bool SonListasIguales<T>(IList<T> listaPrimera, IList<T> listaSegunda)
         {
-            if (lista1.Count != lista2.Count)
+            if (listaPrimera.Count != listaSegunda.Count)
             {
                 return false;
             }
 
-            for (int i = 0; i < lista1.Count; i++)
+            for (int indice = 0; indice < listaPrimera.Count; indice++)
             {
-                if (!EqualityComparer<T>.Default.Equals(lista1[i], lista2[i]))
+                if (!EqualityComparer<T>.Default.Equals(listaPrimera[indice], listaSegunda[indice]))
                 {
                     return false;
                 }
@@ -331,7 +318,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             return true;
         }
-
-        #endregion
     }
 }

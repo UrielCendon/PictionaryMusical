@@ -14,9 +14,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         private const string NombreUsuarioAlternativo = "UsuarioAlternativo";
         private const string NombreUsuarioMinusculas = "usuariotest";
         private const string NombreUsuarioMayusculas = "USUARIOTEST";
-        private const string NombreUsuarioExcedeLongitud =
-            "UsuarioConNombreDemasiadoLargoQueExcedeLosLimitesPermitidosEnElSistema" +
-            "YDeberiaSerRechazadoPorElValidador";
 
         private ManejadorCallback<ICallbackPrueba> _manejador;
 
@@ -25,8 +22,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             _manejador = new ManejadorCallback<ICallbackPrueba>();
         }
-
-        #region Pruebas Constructor
 
         [TestMethod]
         public void Prueba_Constructor_SinParametros_CreaInstancia()
@@ -55,7 +50,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_Constructor_ConOrdinalIgnoreCase_ComparaIgnorandoMayusculas()
         {
-            var manejador = new ManejadorCallback<ICallbackPrueba>(StringComparer.OrdinalIgnoreCase);
+            var manejador = new ManejadorCallback<ICallbackPrueba>(
+                StringComparer.OrdinalIgnoreCase);
             var callback = new CallbackPrueba();
             manejador.Suscribir(NombreUsuarioValido, callback);
 
@@ -63,10 +59,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             Assert.AreEqual(callback, resultado);
         }
-
-        #endregion
-
-        #region Pruebas Suscribir
 
         [TestMethod]
         public void Prueba_Suscribir_NombreUsuarioNulo_NoRegistraCallback()
@@ -76,7 +68,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Suscribir(NombreUsuarioNulo, callback);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioNulo);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -87,7 +79,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Suscribir(NombreUsuarioVacio, callback);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioVacio);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -98,7 +90,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Suscribir(NombreUsuarioSoloEspacios, callback);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioSoloEspacios);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -107,7 +99,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Suscribir(NombreUsuarioValido, null);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -124,70 +116,66 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         [TestMethod]
         public void Prueba_Suscribir_MismoUsuarioDosVeces_SobrescribeCallback()
         {
-            var callback1 = new CallbackPrueba();
-            var callback2 = new CallbackPrueba();
-            _manejador.Suscribir(NombreUsuarioValido, callback1);
+            var callbackPrimero = new CallbackPrueba();
+            var callbackSegundo = new CallbackPrueba();
+            _manejador.Suscribir(NombreUsuarioValido, callbackPrimero);
 
-            _manejador.Suscribir(NombreUsuarioValido, callback2);
+            _manejador.Suscribir(NombreUsuarioValido, callbackSegundo);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
-            Assert.AreEqual(callback2, resultado);
+            Assert.AreEqual(callbackSegundo, resultado);
         }
 
         [TestMethod]
         public void Prueba_Suscribir_UsuariosDiferentes_RegistraAmbos()
         {
-            var callback1 = new CallbackPrueba();
-            var callback2 = new CallbackPrueba();
+            var callbackPrimero = new CallbackPrueba();
+            var callbackSegundo = new CallbackPrueba();
 
-            _manejador.Suscribir(NombreUsuarioValido, callback1);
-            _manejador.Suscribir(NombreUsuarioAlternativo, callback2);
+            _manejador.Suscribir(NombreUsuarioValido, callbackPrimero);
+            _manejador.Suscribir(NombreUsuarioAlternativo, callbackSegundo);
 
-            ICallbackPrueba resultado1 = _manejador.ObtenerCallback(NombreUsuarioValido);
-            ICallbackPrueba resultado2 = _manejador.ObtenerCallback(NombreUsuarioAlternativo);
-            Assert.AreEqual(callback1, resultado1);
-            Assert.AreEqual(callback2, resultado2);
+            ICallbackPrueba resultadoPrimero = _manejador.ObtenerCallback(NombreUsuarioValido);
+            ICallbackPrueba resultadoSegundo = _manejador.ObtenerCallback(NombreUsuarioAlternativo);
+            Assert.AreEqual(callbackPrimero, resultadoPrimero);
+            Assert.AreEqual(callbackSegundo, resultadoSegundo);
         }
 
         [TestMethod]
         public void Prueba_Suscribir_NombreConDiferentesMayusculas_ConsideraMismoUsuario()
         {
-            var callback1 = new CallbackPrueba();
-            var callback2 = new CallbackPrueba();
+            var callbackPrimero = new CallbackPrueba();
+            var callbackSegundo = new CallbackPrueba();
 
-            _manejador.Suscribir(NombreUsuarioMinusculas, callback1);
-            _manejador.Suscribir(NombreUsuarioMayusculas, callback2);
+            _manejador.Suscribir(NombreUsuarioMinusculas, callbackPrimero);
+            _manejador.Suscribir(NombreUsuarioMayusculas, callbackSegundo);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
-            Assert.AreEqual(callback2, resultado);
+            Assert.AreEqual(callbackSegundo, resultado);
         }
-
-        #endregion
-
-        #region Pruebas Desuscribir
 
         [TestMethod]
         public void Prueba_Desuscribir_NombreUsuarioNulo_NoLanzaExcepcion()
         {
-            _manejador.Desuscribir(NombreUsuarioNulo);
+            Exception excepcion = CapturarExcepcion(() => _manejador.Desuscribir(NombreUsuarioNulo));
 
-            Assert.IsTrue(true);
+            Assert.IsNull(excepcion);
         }
 
         [TestMethod]
         public void Prueba_Desuscribir_NombreUsuarioVacio_NoLanzaExcepcion()
         {
-            _manejador.Desuscribir(NombreUsuarioVacio);
+            Exception excepcion = CapturarExcepcion(() => _manejador.Desuscribir(NombreUsuarioVacio));
 
-            Assert.IsTrue(true);
+            Assert.IsNull(excepcion);
         }
 
         [TestMethod]
         public void Prueba_Desuscribir_UsuarioNoExistente_NoLanzaExcepcion()
         {
-            _manejador.Desuscribir(NombreUsuarioValido);
+            Exception excepcion = CapturarExcepcion(() => _manejador.Desuscribir(NombreUsuarioValido));
 
-            Assert.IsTrue(true);
+            Assert.IsNull(excepcion);
         }
 
         [TestMethod]
@@ -199,23 +187,23 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Desuscribir(NombreUsuarioValido);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
         public void Prueba_Desuscribir_SoloEliminaUsuarioEspecifico_OtrosPermanecen()
         {
-            var callback1 = new CallbackPrueba();
-            var callback2 = new CallbackPrueba();
-            _manejador.Suscribir(NombreUsuarioValido, callback1);
-            _manejador.Suscribir(NombreUsuarioAlternativo, callback2);
+            var callbackPrimero = new CallbackPrueba();
+            var callbackSegundo = new CallbackPrueba();
+            _manejador.Suscribir(NombreUsuarioValido, callbackPrimero);
+            _manejador.Suscribir(NombreUsuarioAlternativo, callbackSegundo);
 
             _manejador.Desuscribir(NombreUsuarioValido);
 
-            ICallbackPrueba resultado1 = _manejador.ObtenerCallback(NombreUsuarioValido);
-            ICallbackPrueba resultado2 = _manejador.ObtenerCallback(NombreUsuarioAlternativo);
-            Assert.AreEqual(null, resultado1);
-            Assert.AreEqual(callback2, resultado2);
+            ICallbackPrueba resultadoPrimero = _manejador.ObtenerCallback(NombreUsuarioValido);
+            ICallbackPrueba resultadoSegundo = _manejador.ObtenerCallback(NombreUsuarioAlternativo);
+            Assert.IsNull(resultadoPrimero);
+            Assert.AreEqual(callbackSegundo, resultadoSegundo);
         }
 
         [TestMethod]
@@ -227,19 +215,15 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _manejador.Desuscribir(NombreUsuarioMayusculas);
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
-
-        #endregion
-
-        #region Pruebas ObtenerCallback
 
         [TestMethod]
         public void Prueba_ObtenerCallback_UsuarioNoRegistrado_RetornaNulo()
         {
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
 
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -247,7 +231,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioNulo);
 
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -255,7 +239,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
         {
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioVacio);
 
-            Assert.AreEqual(null, resultado);
+            Assert.IsNull(resultado);
         }
 
         [TestMethod]
@@ -266,7 +250,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
 
             ICallbackPrueba resultado = _manejador.ObtenerCallback(NombreUsuarioValido);
 
-            Assert.AreEqual(callback, resultado);
+            Assert.IsNotNull(resultado);
+            Assert.AreSame(callback, resultado);
         }
 
         [TestMethod]
@@ -280,9 +265,18 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             Assert.AreEqual(callback, resultado);
         }
 
-        #endregion
-
-        #region Interfaz y Clase de Prueba
+        private static Exception CapturarExcepcion(Action accion)
+        {
+            try
+            {
+                accion();
+                return null;
+            }
+            catch (Exception excepcion)
+            {
+                return excepcion;
+            }
+        }
 
         public interface ICallbackPrueba
         {
@@ -295,7 +289,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             {
             }
         }
-
-        #endregion
     }
 }

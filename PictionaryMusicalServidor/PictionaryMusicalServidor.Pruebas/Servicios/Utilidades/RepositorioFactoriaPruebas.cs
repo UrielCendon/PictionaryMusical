@@ -19,31 +19,25 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             _contextoMock = new Mock<BaseDatosPruebaEntities>();
         }
 
-        #region Pruebas CrearUsuarioRepositorio
-
         [TestMethod]
         public void Prueba_CrearUsuarioRepositorio_RetornaInstanciaValida()
         {
             IUsuarioRepositorio repositorio = _factoria.CrearUsuarioRepositorio(
                 _contextoMock.Object);
 
-            Assert.IsTrue(repositorio is IUsuarioRepositorio);
+            Assert.IsInstanceOfType(repositorio, typeof(IUsuarioRepositorio));
         }
 
         [TestMethod]
-        public void Prueba_CrearUsuarioRepositorio_LlamadasConsecutivas_RetornanInstanciasDiferentes()
+        public void Prueba_CrearUsuarioRepositorio_LlamadasConsecutivas_RetornaDiferentes()
         {
-            IUsuarioRepositorio repositorio1 = _factoria.CrearUsuarioRepositorio(
+            IUsuarioRepositorio repositorioPrimero = _factoria.CrearUsuarioRepositorio(
                 _contextoMock.Object);
-            IUsuarioRepositorio repositorio2 = _factoria.CrearUsuarioRepositorio(
+            IUsuarioRepositorio repositorioSegundo = _factoria.CrearUsuarioRepositorio(
                 _contextoMock.Object);
 
-            Assert.AreNotSame(repositorio1, repositorio2);
+            Assert.AreNotSame(repositorioPrimero, repositorioSegundo);
         }
-
-        #endregion
-
-        #region Pruebas CrearAmigoRepositorio
 
         [TestMethod]
         public void Prueba_CrearAmigoRepositorio_RetornaInstanciaValida()
@@ -51,23 +45,19 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             IAmigoRepositorio repositorio = _factoria.CrearAmigoRepositorio(
                 _contextoMock.Object);
 
-            Assert.IsTrue(repositorio is IAmigoRepositorio);
+            Assert.IsInstanceOfType(repositorio, typeof(IAmigoRepositorio));
         }
 
         [TestMethod]
-        public void Prueba_CrearAmigoRepositorio_LlamadasConsecutivas_RetornanInstanciasDiferentes()
+        public void Prueba_CrearAmigoRepositorio_LlamadasConsecutivas_RetornaDiferentes()
         {
-            IAmigoRepositorio repositorio1 = _factoria.CrearAmigoRepositorio(
+            IAmigoRepositorio repositorioPrimero = _factoria.CrearAmigoRepositorio(
                 _contextoMock.Object);
-            IAmigoRepositorio repositorio2 = _factoria.CrearAmigoRepositorio(
+            IAmigoRepositorio repositorioSegundo = _factoria.CrearAmigoRepositorio(
                 _contextoMock.Object);
 
-            Assert.AreNotSame(repositorio1, repositorio2);
+            Assert.AreNotSame(repositorioPrimero, repositorioSegundo);
         }
-
-        #endregion
-
-        #region Pruebas CrearClasificacionRepositorio
 
         [TestMethod]
         public void Prueba_CrearClasificacionRepositorio_RetornaInstanciaValida()
@@ -75,23 +65,19 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             IClasificacionRepositorio repositorio = _factoria.CrearClasificacionRepositorio(
                 _contextoMock.Object);
 
-            Assert.IsTrue(repositorio is IClasificacionRepositorio);
+            Assert.IsInstanceOfType(repositorio, typeof(IClasificacionRepositorio));
         }
 
         [TestMethod]
-        public void Prueba_CrearClasificacionRepositorio_LlamadasConsecutivas_RetornanDiferentes()
+        public void Prueba_CrearClasificacionRepositorio_LlamadasConsecutivas_RetornaDiferentes()
         {
-            IClasificacionRepositorio repositorio1 = _factoria.CrearClasificacionRepositorio(
-                _contextoMock.Object);
-            IClasificacionRepositorio repositorio2 = _factoria.CrearClasificacionRepositorio(
-                _contextoMock.Object);
+            IClasificacionRepositorio repositorioPrimero = _factoria
+                .CrearClasificacionRepositorio(_contextoMock.Object);
+            IClasificacionRepositorio repositorioSegundo = _factoria
+                .CrearClasificacionRepositorio(_contextoMock.Object);
 
-            Assert.AreNotSame(repositorio1, repositorio2);
+            Assert.AreNotSame(repositorioPrimero, repositorioSegundo);
         }
-
-        #endregion
-
-        #region Pruebas CrearReporteRepositorio
 
         [TestMethod]
         public void Prueba_CrearReporteRepositorio_RetornaInstanciaValida()
@@ -99,23 +85,19 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             IReporteRepositorio repositorio = _factoria.CrearReporteRepositorio(
                 _contextoMock.Object);
 
-            Assert.IsTrue(repositorio is IReporteRepositorio);
+            Assert.IsInstanceOfType(repositorio, typeof(IReporteRepositorio));
         }
 
         [TestMethod]
-        public void Prueba_CrearReporteRepositorio_LlamadasConsecutivas_RetornanInstanciasDiferentes()
+        public void Prueba_CrearReporteRepositorio_LlamadasConsecutivas_RetornaDiferentes()
         {
-            IReporteRepositorio repositorio1 = _factoria.CrearReporteRepositorio(
+            IReporteRepositorio repositorioPrimero = _factoria.CrearReporteRepositorio(
                 _contextoMock.Object);
-            IReporteRepositorio repositorio2 = _factoria.CrearReporteRepositorio(
+            IReporteRepositorio repositorioSegundo = _factoria.CrearReporteRepositorio(
                 _contextoMock.Object);
 
-            Assert.AreNotSame(repositorio1, repositorio2);
+            Assert.AreNotSame(repositorioPrimero, repositorioSegundo);
         }
-
-        #endregion
-
-        #region Pruebas CrearJugadorRepositorio
 
         [TestMethod]
         public void Prueba_CrearJugadorRepositorio_RetornaInstanciaValida()
@@ -123,30 +105,24 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Utilidades
             IJugadorRepositorio repositorio = _factoria.CrearJugadorRepositorio(
                 _contextoMock.Object);
 
-            Assert.IsTrue(repositorio is IJugadorRepositorio);
+            Assert.IsInstanceOfType(repositorio, typeof(IJugadorRepositorio));
         }
 
         [TestMethod]
-        public void Prueba_CrearJugadorRepositorio_LlamadasConsecutivas_RetornanInstanciasDiferentes()
+        public void Prueba_CrearJugadorRepositorio_LlamadasConsecutivas_RetornaDiferentes()
         {
-            IJugadorRepositorio repositorio1 = _factoria.CrearJugadorRepositorio(
+            IJugadorRepositorio repositorioPrimero = _factoria.CrearJugadorRepositorio(
                 _contextoMock.Object);
-            IJugadorRepositorio repositorio2 = _factoria.CrearJugadorRepositorio(
+            IJugadorRepositorio repositorioSegundo = _factoria.CrearJugadorRepositorio(
                 _contextoMock.Object);
 
-            Assert.AreNotSame(repositorio1, repositorio2);
+            Assert.AreNotSame(repositorioPrimero, repositorioSegundo);
         }
-
-        #endregion
-
-        #region Pruebas Implementacion Interfaz
 
         [TestMethod]
         public void Prueba_RepositorioFactoria_ImplementaIRepositorioFactoria()
         {
-            Assert.IsTrue(_factoria is IRepositorioFactoria);
+            Assert.IsInstanceOfType(_factoria, typeof(IRepositorioFactoria));
         }
-
-        #endregion
     }
 }
