@@ -271,6 +271,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 sala.RemoverJugador(nombreUsuario.Trim());
+
+                if (sala.DebeEliminarse)
+                {
+                    SalaInternaManejador salaRemovida;
+                    _salas.TryRemove(codigoSala.Trim(), out salaRemovida);
+                }
+
                 _notificador.NotificarListaSalasATodos();
             }
             catch (FaultException excepcion)
@@ -536,6 +543,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             {
                 sala.PartidaFinalizada = true;
             }
+
+            SalaInternaManejador salaRemovida;
+            _salas.TryRemove(codigoSala, out salaRemovida);
+
+            _logger.InfoFormat(
+                "Sala '{0}' eliminada por finalizacion de partida.",
+                codigoSala);
+
+            _notificador.NotificarListaSalasATodos();
         }
 
 

@@ -329,12 +329,16 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 return ResultadoRemocionJugador.SinAccion();
             }
 
+            if (eraAnfitrion)
+            {
+                return ResultadoRemocionJugador.Cancelar(
+                    MensajesError.Cliente.PartidaCanceladaHostSalio);
+            }
+
             if (!_gestorJugadores.HaySuficientesJugadores)
             {
-                string mensaje = eraAnfitrion
-                    ? MensajesError.Cliente.PartidaCanceladaHostSalio
-                    : MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
-                return ResultadoRemocionJugador.Cancelar(mensaje);
+                return ResultadoRemocionJugador.Cancelar(
+                    MensajesError.Cliente.PartidaCanceladaFaltaJugadores);
             }
 
             if (eraDibujante)

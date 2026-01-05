@@ -150,9 +150,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
             if (PartidaFinalizada && esAnfitrion)
             {
-                _gestorNotificaciones.Limpiar();
                 DebeEliminarse = true;
-                return new AccionPostRemocion { Tipo = TipoAccionRemocion.Ninguna };
+                return new AccionPostRemocion 
+                { 
+                    Tipo = TipoAccionRemocion.LimpiarSinNotificar 
+                };
             }
 
             var salaActualizada = ConvertirADtoInterno();
@@ -160,7 +162,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             if (esAnfitrion)
             {
                 _jugadores.Clear();
-                _gestorNotificaciones.Limpiar();
                 DebeEliminarse = true;
                 return new AccionPostRemocion
                 {
@@ -199,7 +200,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                         accion.NombreUsuario, 
                         accion.SalaActualizada);
                     _gestorNotificaciones.NotificarCancelacion(Codigo);
+                    _gestorNotificaciones.Limpiar();
                     _logger.Info(MensajesError.Bitacora.SalaCanceladaSalidaAnfitrion);
+                    break;
+                case TipoAccionRemocion.LimpiarSinNotificar:
+                    _gestorNotificaciones.Limpiar();
                     break;
             }
         }
@@ -219,7 +224,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             Ninguna,
             NotificarSalida,
-            CancelarSala
+            CancelarSala,
+            LimpiarSinNotificar
         }
 
         private struct AccionPostRemocion

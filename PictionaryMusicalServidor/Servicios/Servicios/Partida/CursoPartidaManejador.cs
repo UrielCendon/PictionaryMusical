@@ -477,8 +477,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             ResultadoPartidaDTO resultado,
             ControladorPartida controlador)
         {
-            _salasManejador.MarcarPartidaComoFinalizada(idSala);
-            
             var jugadores = ObtenerJugadoresFinales(controlador);
             _actualizadorClasificacion.ActualizarClasificaciones(jugadores, resultado);
             
@@ -487,6 +485,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             {
                 _notificadorPartida.NotificarFinPartida(idSala, callbacks, resultado);
             }
+
+            _salasManejador.MarcarPartidaComoFinalizada(idSala);
         }
 
         private static List<JugadorPartida> ObtenerJugadoresFinales(ControladorPartida controlador)

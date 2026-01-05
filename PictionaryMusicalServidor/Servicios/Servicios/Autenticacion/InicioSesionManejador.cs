@@ -193,20 +193,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 };
             }
 
-            if (!SesionUsuarioManejador.Instancia.IntentarRegistrarSesion(
+            SesionUsuarioManejador.Instancia.RegistrarSesionForzada(
                 usuario.idUsuario, 
-                usuario.Nombre_Usuario))
-            {
-                _logger.Warn(
-                    MensajesError.Bitacora.IntentoDuplicadoSesion);
-
-                return new ResultadoInicioSesionDTO
-                {
-                    InicioSesionExitoso = false,
-                    CuentaEncontrada = true,
-                    Mensaje = MensajesError.Cliente.SesionDuplicada
-                };
-            }
+                usuario.Nombre_Usuario);
 
             _logger.Info(
                 "Inicio de sesion exitoso.");

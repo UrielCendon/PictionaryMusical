@@ -68,6 +68,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         }
 
         /// <summary>
+        /// Registra una nueva sesion para el usuario, reemplazando cualquier sesion anterior.
+        /// Util para manejar sesiones huerfanas cuando el cliente se desconecto sin cerrar sesion.
+        /// </summary>
+        /// <param name="usuarioId">Identificador del usuario.</param>
+        /// <param name="nombreUsuario">Nombre del usuario para registro.</param>
+        public void RegistrarSesionForzada(int usuarioId, string nombreUsuario)
+        {
+            var nuevaSesion = new SesionActiva(nombreUsuario, DateTime.UtcNow);
+
+            _sesionesActivas.AddOrUpdate(
+                usuarioId,
+                nuevaSesion,
+                (clave, sesionExistente) =>
+                {
+                    _logger.WarnFormat(
+                        "Sesion anterior reemplazada para usuario con id {0}. " +
+                        "Sesion anterior iniciada: {1}.",
+                        clave,
+                        sesionExistente.FechaInicio);
+                    return nuevaSesion;
+                });
+
+            _logger.InfoFormat(
+                MensajesError.Bitacora.SesionRegistradaUsuario,
+                usuarioId);
+        }
+
+        /// <summary>
         /// Elimina la sesion activa de un usuario.
         /// </summary>
         /// <param name="usuarioId">Identificador del usuario.</param>

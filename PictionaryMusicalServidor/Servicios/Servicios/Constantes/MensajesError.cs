@@ -587,6 +587,8 @@
                 "Error critico al enviar notificacion de codigo.";
             public const string IntentoPrecozEnvioCorreo = 
                 "Intento de envio de correo antes del tiempo minimo de espera.";
+            public const string TimeoutEnvioCorreo = 
+                "Timeout al enviar correo. El servidor SMTP no respondio a tiempo.";
 
             public const string IdentificadorInvalidoSuscripcionListaAmigos = 
                 "Identificador invalido al suscribirse a la lista de amigos.";

@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Runtime.Caching;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
@@ -27,6 +28,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// Tiempo en segundos que debe esperar un usuario para enviar otro correo.
         /// </summary>
         internal const int SegundosEsperaEntreEnvios = 60;
+
+        /// <summary>
+        /// Timeout en milisegundos para operaciones SMTP.
+        /// </summary>
+        private const int TimeoutSmtpMilisegundos = 30000;
 
         /// <summary>
         /// Logger para registrar eventos y errores.
@@ -141,6 +147,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                     using (var clienteSmtp = new SmtpClient(config.Host, config.Puerto))
                     {
                         clienteSmtp.EnableSsl = config.HabilitarSsl;
+                        clienteSmtp.Timeout = TimeoutSmtpMilisegundos;
 
                         if (!string.IsNullOrWhiteSpace(config.Contrasena))
                         {
@@ -148,13 +155,36 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                                 new NetworkCredential(config.Usuario, config.Contrasena);
                         }
 
-                        await clienteSmtp
-                            .SendMailAsync(mensaje)
-                            .ConfigureAwait(false);
+                        using (var cts = new CancellationTokenSource(TimeoutSmtpMilisegundos))
+                        {
+                            var tareaEnvio = clienteSmtp.SendMailAsync(mensaje);
+                            var tareaTimeout = Task.Delay(
+                                TimeoutSmtpMilisegundos, cts.Token);
+
+                            var tareaCompletada = await Task
+                                .WhenAny(tareaEnvio, tareaTimeout)
+                                .ConfigureAwait(false);
+
+                            if (tareaCompletada == tareaTimeout)
+                            {
+                                clienteSmtp.SendAsyncCancel();
+                                Logger.Error(
+                                    MensajesError.Bitacora.TimeoutEnvioCorreo);
+                                return false;
+                            }
+
+                            cts.Cancel();
+                            await tareaEnvio.ConfigureAwait(false);
+                        }
                     }
                 }
 
                 return true;
+            }
+            catch (OperationCanceledException excepcion)
+            {
+                Logger.Error(MensajesError.Bitacora.TimeoutEnvioCorreo, excepcion);
+                return false;
             }
             catch (SmtpException excepcion)
             {
