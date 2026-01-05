@@ -600,9 +600,10 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 _semaforo.Release();
             }
-            catch (ObjectDisposedException)
+            catch (ObjectDisposedException excepcion)
             {
-                _logger.Info("Semaforo ya dispuesto al liberar.");
+                _logger.Info("Semaforo ya dispuesto al liberar.",
+                    excepcion);
             }
         }
 
