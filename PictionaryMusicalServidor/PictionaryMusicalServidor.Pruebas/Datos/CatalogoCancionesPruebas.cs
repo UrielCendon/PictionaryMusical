@@ -39,14 +39,14 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_Constructor_GeneradorNuloLanzaExcepcion()
+        public void Prueba_Constructor_LanzaExcepcionConGeneradorNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new CatalogoCanciones(null));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_IdiomaVacioLanzaExcepcion()
+        public void Prueba_ObtenerCancionAleatoria_LanzaExcepcionConIdiomaVacio()
         {
             var idsExcluidos = new HashSet<int>();
 
@@ -55,7 +55,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_IdiomaEspanolInvocaGenerador()
+        public void Prueba_ObtenerCancionAleatoria_RetornaCancionEnEspanol()
         {
             var idsExcluidos = new HashSet<int>();
             var cancionEsperada = new Cancion
@@ -77,7 +77,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_IdiomaInglesInvocaGenerador()
+        public void Prueba_ObtenerCancionAleatoria_RetornaCancionEnIngles()
         {
             var idsExcluidos = new HashSet<int>();
             var cancionEsperada = new Cancion
@@ -98,7 +98,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_MapeoIdiomaCodigoFunciona()
+        public void Prueba_ObtenerCancionAleatoria_AceptaCodigoDeIdioma()
         {
             var idsExcluidos = new HashSet<int>();
             var cancionEsperada = new Cancion
@@ -119,7 +119,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_SinCancionesDisponiblesLanzaExcepcion()
+        public void Prueba_ObtenerCancionAleatoria_LanzaExcepcionSiNoHayCanciones()
         {
             var idsExcluidos = new HashSet<int>(Enumerable.Range(1, 20));
 
@@ -128,7 +128,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionAleatoria_IdiomaMixtoInvocaGenerador()
+        public void Prueba_ObtenerCancionAleatoria_RetornaCancionConIdiomaMixto()
         {
             var idsExcluidos = new HashSet<int>();
             var cancionEsperada = new Cancion
@@ -148,7 +148,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionPorId_IdExistenteRetornaCancion()
+        public void Prueba_ObtenerCancionPorId_RetornaCancionExistente()
         {
             var resultado = _catalogo.ObtenerCancionPorId(IdCancionEspanol);
 
@@ -158,14 +158,14 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCancionPorId_IdInexistenteLanzaExcepcion()
+        public void Prueba_ObtenerCancionPorId_LanzaExcepcionConIdInexistente()
         {
             Assert.ThrowsException<KeyNotFoundException>(() =>
                 _catalogo.ObtenerCancionPorId(IdCancionInexistente));
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IdInexistenteRetornaFalse()
+        public void Prueba_ValidarRespuesta_RetornaFalseConIdInexistente()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionInexistente, IntentoCorrecto);
 
@@ -173,7 +173,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IntentoVacioRetornaFalse()
+        public void Prueba_ValidarRespuesta_RetornaFalseConIntentoVacio()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionEspanol, IntentoVacio);
 
@@ -181,7 +181,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IntentoCorrectoRetornaTrue()
+        public void Prueba_ValidarRespuesta_RetornaTrueConIntentoCorrecto()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionEspanol, IntentoCorrecto);
 
@@ -189,7 +189,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IntentoConMayusculasRetornaTrue()
+        public void Prueba_ValidarRespuesta_RetornaTrueConMayusculas()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionEspanol, IntentoConMayusculas);
 
@@ -197,7 +197,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IntentoConEspaciosRetornaTrue()
+        public void Prueba_ValidarRespuesta_RetornaTrueConEspacios()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionEspanol, IntentoConEspacios);
 
@@ -205,7 +205,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ValidarRespuesta_IntentoIncorrectoRetornaFalse()
+        public void Prueba_ValidarRespuesta_RetornaFalseConIntentoIncorrecto()
         {
             bool resultado = _catalogo.ValidarRespuesta(IdCancionEspanol, IntentoIncorrecto);
 

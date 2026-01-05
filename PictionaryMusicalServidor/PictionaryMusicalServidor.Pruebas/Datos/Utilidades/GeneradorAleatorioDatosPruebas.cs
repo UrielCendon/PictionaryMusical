@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Datos
+namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="GeneradorAleatorioDatos"/>.
@@ -29,7 +29,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoValidoRetornaIndiceEnRango()
+        public void Prueba_ObtenerIndiceAleatorio_RetornaIndiceDentroDeRango()
         {
             int resultado = _generador.ObtenerIndiceAleatorio(TamanoColeccionValido);
 
@@ -38,21 +38,21 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoCeroLanzaExcepcion()
+        public void Prueba_ObtenerIndiceAleatorio_LanzaExcepcionConTamanoCero()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 _generador.ObtenerIndiceAleatorio(TamanoColeccionCero));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerIndiceAleatorio_TamanoNegativoLanzaExcepcion()
+        public void Prueba_ObtenerIndiceAleatorio_LanzaExcepcionConTamanoNegativo()
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
                 _generador.ObtenerIndiceAleatorio(TamanoColeccionNegativo));
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaValidaRetornaElementoDeLaLista()
+        public void Prueba_SeleccionarAleatorio_RetornaElementoExistente()
         {
             var listaDatos = new List<string> { ElementoUno, ElementoDos, ElementoTres };
 
@@ -62,14 +62,14 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaNulaLanzaExcepcion()
+        public void Prueba_SeleccionarAleatorio_LanzaExcepcionConListaNula()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 _generador.SeleccionarAleatorio<string>(null));
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarAleatorio_ListaVaciaLanzaExcepcion()
+        public void Prueba_SeleccionarAleatorio_LanzaExcepcionConListaVacia()
         {
             var listaVacia = new List<int>();
 
@@ -78,7 +78,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_MezclarLista_ListaConElementosNoPierdeDatos()
+        public void Prueba_MezclarLista_ConservaElementos()
         {
             var listaOriginal = new List<string> { ElementoUno, ElementoDos, ElementoTres };
             var listaMezclada = new List<string>(listaOriginal);
@@ -90,7 +90,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_MezclarLista_ListaNulaLanzaExcepcion()
+        public void Prueba_MezclarLista_LanzaExcepcionConListaNula()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 _generador.MezclarLista<string>(null));

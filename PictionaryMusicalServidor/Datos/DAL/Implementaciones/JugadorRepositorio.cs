@@ -42,33 +42,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 return _contexto.Jugador.Any(
                     jugadorEntidad => jugadorEntidad.Correo == correo);
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorVerificarExistenciaCorreo, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(
@@ -102,33 +75,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
 
                 return jugadorCreado;
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Jugador.ErrorGuardarJugador, 
-                    excepcion);
             }
             catch (Exception excepcion)
             {

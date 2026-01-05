@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
-namespace PictionaryMusicalServidor.Pruebas.Datos
+namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
 {
     /// <summary>
     /// Contiene pruebas unitarias para la clase <see cref="Conexion"/>.
@@ -36,7 +36,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_VariablesConfiguradasRetornaCadenaCorrecta()
+        public void Prueba_ObtenerConexion_RetornaCadenaConCredencialesConfiguradas()
         {
             Environment.SetEnvironmentVariable(VariableServidor, ValorServidor);
             Environment.SetEnvironmentVariable(VariableUsuario, ValorUsuario);
@@ -57,7 +57,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_ServidorNoConfiguradoUsaLocalhost()
+        public void Prueba_ObtenerConexion_UsaLocalhostCuandoFaltaServidor()
         {
             Environment.SetEnvironmentVariable(VariableServidor, null);
             Environment.SetEnvironmentVariable(VariableUsuario, ValorUsuario);
@@ -72,13 +72,13 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_CredencialesNulasLanzaExcepcion()
+        public void Prueba_ObtenerConexion_LanzaExcepcionCuandoFaltanCredenciales()
         {
             Environment.SetEnvironmentVariable(VariableServidor, ValorServidor);
             Environment.SetEnvironmentVariable(VariableUsuario, null);
             Environment.SetEnvironmentVariable(VariableContrasena, null);
 
-            Assert.ThrowsException<ArgumentNullException>(() => Conexion.ObtenerConexion());
+            Assert.ThrowsException<InvalidOperationException>(() => Conexion.ObtenerConexion());
         }
     }
 }

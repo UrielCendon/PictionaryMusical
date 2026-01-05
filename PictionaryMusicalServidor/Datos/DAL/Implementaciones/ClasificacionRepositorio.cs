@@ -52,27 +52,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return nuevaClasificacion;
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorCrearInicial, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesErrorDatos.Clasificacion.ErrorCrearInicial, excepcion);
@@ -116,33 +95,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
                 return true;
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(
@@ -170,27 +122,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .ThenBy(usuario => usuario.Nombre_Usuario)
                     .Take(cantidad)
                     .ToList();
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Clasificacion.ErrorConsultarMejores, 
-                    excepcion);
             }
             catch (Exception excepcion)
             {

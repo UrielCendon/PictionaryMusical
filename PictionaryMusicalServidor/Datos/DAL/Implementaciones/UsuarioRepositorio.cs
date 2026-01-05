@@ -60,33 +60,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                         nombreNormalizado,
                         StringComparison.Ordinal);
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorVerificarExistencia, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(
@@ -120,33 +93,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _contexto.SaveChanges();
 
                 return usuarioCreado;
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorGuardarUsuario, 
-                    excepcion);
             }
             catch (Exception excepcion)
             {
@@ -204,33 +150,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
-                    excepcion);
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerUsuario, 
                     excepcion);
             }
             catch (Exception excepcion)
@@ -294,33 +213,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerPorCorreo, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(
@@ -373,33 +265,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
-                    excepcion);
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorAsincronoObtenerPorCorreo, 
                     excepcion);
             }
             catch (Exception excepcion)
@@ -455,33 +320,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
                     excepcion);
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
-                    idUsuario);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
-                    idUsuario);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales,
-                    idUsuario);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConRedesSociales, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
@@ -511,36 +349,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     usuario.Contrasena = nuevaContrasenaHash;
                     _contexto.SaveChanges();
                 }
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Usuario.ErrorActualizarContrasena,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
@@ -594,33 +402,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 _logger.Info(MensajesErrorDatos.Usuario.UsuarioNoEncontrado, excepcion);
                 throw new BaseDatosExcepcion(
                     MensajesErrorDatos.Usuario.UsuarioNoEncontrado, 
-                    excepcion);
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre,
-                    excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Usuario.ErrorObtenerConJugadorPorNombre, 
                     excepcion);
             }
             catch (Exception excepcion)

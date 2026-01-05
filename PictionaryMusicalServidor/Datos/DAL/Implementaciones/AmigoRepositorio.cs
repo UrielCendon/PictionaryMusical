@@ -48,27 +48,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     (relacionAmistad.UsuarioEmisor == usuarioBId 
                         && relacionAmistad.UsuarioReceptor == usuarioAId));
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorVerificarRelacion, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesErrorDatos.Amigo.ErrorVerificarRelacion, excepcion);
@@ -129,27 +108,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 return relacionEncontrada;
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
-                    excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
-                    excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
-                throw new BaseDatosExcepcion(
-                    MensajesErrorDatos.Amigo.ErrorObtenerRelacion, 
-                    excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesErrorDatos.Amigo.ErrorObtenerRelacion, excepcion);
@@ -190,36 +148,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Include(solicitudAmistad => solicitudAmistad.Usuario1)
                     .ToList();
             }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerSolicitudesPendientes,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
             catch (Exception excepcion)
             {
                 _logger.ErrorFormat(
@@ -252,42 +180,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 relacion.Estado = estado;
                 _contexto.SaveChanges();
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorActualizarEstado,
-                    relacion.UsuarioEmisor, 
-                    relacion.UsuarioReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
@@ -325,42 +217,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 _contexto.Amigo.Remove(relacion);
                 _contexto.SaveChanges();
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorEliminarRelacion,
-                    identificadorEmisor, 
-                    identificadorReceptor);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {
@@ -417,36 +273,6 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                     .Where(usuarioEntidad => 
                         identificadoresAmigos.Contains(usuarioEntidad.idUsuario))
                     .ToList();
-            }
-            catch (DbUpdateException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (EntityException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
-            }
-            catch (DataException excepcion)
-            {
-                _logger.ErrorFormat(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                string mensajeExcepcion = string.Format(
-                    MensajesErrorDatos.Amigo.ErrorObtenerAmigos,
-                    usuarioId);
-                throw new BaseDatosExcepcion(mensajeExcepcion, excepcion);
             }
             catch (Exception excepcion)
             {

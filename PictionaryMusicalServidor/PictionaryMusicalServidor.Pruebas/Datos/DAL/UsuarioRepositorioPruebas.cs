@@ -298,25 +298,21 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
             Assert.IsNotNull(resultado.Jugador);
         }
 
+        [TestMethod]
+        public void Prueba_ObtenerPorNombreConJugador_UsuarioNoExisteLanzaExcepcion()
+        {
+            var datos = new List<Usuario>().AsQueryable();
+            ConfigurarDbSet(_usuarioDbSetMock, datos);
+
+            Assert.ThrowsException<BaseDatosExcepcion>(() =>
+                _repositorio.ObtenerPorNombreConJugador(NombreUsuarioValido));
+        }
+
         private static Mock<DbSet<T>> CrearDbSetMock<T>(List<T> datos) where T : class
         {
-            var queryable = datos.AsQueryable();
             var mockSet = new Mock<DbSet<T>>();
-
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Provider)
-                .Returns(queryable.Provider);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Expression)
-                .Returns(queryable.Expression);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.ElementType)
-                .Returns(queryable.ElementType);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => queryable.GetEnumerator());
-
-            mockSet.Setup(dbSet => dbSet.Include(It.IsAny<string>())).Returns(mockSet.Object);
+            ConfigurarDbSet(mockSet, datos.AsQueryable());
+            
             mockSet.Setup(dbSet => dbSet.Add(It.IsAny<T>())).Returns<T>(entidad => entidad);
 
             return mockSet;

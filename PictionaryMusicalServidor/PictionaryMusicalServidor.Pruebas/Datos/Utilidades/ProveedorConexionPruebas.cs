@@ -1,3 +1,4 @@
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PictionaryMusicalServidor.Datos.Utilidades;
 
@@ -16,13 +17,16 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         [TestInitialize]
         public void Inicializar()
         {
+            Environment.SetEnvironmentVariable("BD_SERVIDOR", "localhost");
+            Environment.SetEnvironmentVariable("BD_USUARIO", "sa");
+            Environment.SetEnvironmentVariable("BD_CONTRASENA", "Password123!");
             _proveedor = new ProveedorConexion();
         }
 
         #region Pruebas ObtenerConexion
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_RetornaCadenaNoVacia()
+        public void Prueba_ObtenerConexion_RetornaCadenaConLongitudMinima()
         {
             string conexion = _proveedor.ObtenerConexion();
 
@@ -30,7 +34,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_ContieneProveedorSqlClient()
+        public void Prueba_ObtenerConexion_IncluyeProveedorSqlClient()
         {
             string conexion = _proveedor.ObtenerConexion();
 
@@ -38,7 +42,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_ContieneMetadatosModelo()
+        public void Prueba_ObtenerConexion_IncluyeMetadatosDeModelo()
         {
             string conexion = _proveedor.ObtenerConexion();
 
@@ -46,7 +50,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_ContieneCatalogoInicial()
+        public void Prueba_ObtenerConexion_IncluyeNombreDeCatalogo()
         {
             string conexion = _proveedor.ObtenerConexion();
 
@@ -54,7 +58,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         }
 
         [TestMethod]
-        public void Prueba_ObtenerConexion_LlamadasConsecutivasRetornanMismaEstructura()
+        public void Prueba_ObtenerConexion_RetornaMismoValorEnLlamadasConsecutivas()
         {
             string conexion1 = _proveedor.ObtenerConexion();
             string conexion2 = _proveedor.ObtenerConexion();

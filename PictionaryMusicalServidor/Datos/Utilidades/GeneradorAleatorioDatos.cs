@@ -77,14 +77,14 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
 
             lock (_bloqueo)
             {
-                int n = lista.Count;
-                while (n > 1)
+                int indiceActual = lista.Count;
+                while (indiceActual > 1)
                 {
-                    n--;
-                    int k = _random.Next(n + 1);
-                    T valor = lista[k];
-                    lista[k] = lista[n];
-                    lista[n] = valor;
+                    indiceActual--;
+                    int indiceAleatorio = _random.Next(indiceActual + 1);
+                    T valorTemporal = lista[indiceAleatorio];
+                    lista[indiceAleatorio] = lista[indiceActual];
+                    lista[indiceActual] = valorTemporal;
                 }
             }
         }
