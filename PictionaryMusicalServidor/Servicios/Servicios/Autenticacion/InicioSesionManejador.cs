@@ -197,8 +197,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 usuario.idUsuario, 
                 usuario.Nombre_Usuario))
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.IntentoDuplicadoSesion);
+                _logger.WarnFormat(
+                    MensajesError.Bitacora.IntentoDuplicadoSesion,
+                    usuario.idUsuario);
 
                 return new ResultadoInicioSesionDTO
                 {
