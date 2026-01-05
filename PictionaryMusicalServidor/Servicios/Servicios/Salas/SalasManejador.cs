@@ -75,7 +75,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         /// <returns>Coleccion de salas internas.</returns>
         IEnumerable<SalaInternaManejador> IObtenerSalas.ObtenerSalasInternas()
         {
-            return _almacenSalas.Values;
+            return _almacenSalas.Valores;
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         public IList<SalaDTO> ObtenerSalas()
         {
             var resultado = new List<SalaDTO>();
-            foreach (var sala in _almacenSalas.Values)
+            foreach (var sala in _almacenSalas.Valores)
             {
                 resultado.Add(sala.ConvertirADto());
             }
@@ -116,7 +116,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
                 sala.AgregarJugador(nombreCreador.Trim(), callback, notificar: false);
 
-                if (!_almacenSalas.TryAdd(codigo, sala))
+                if (!_almacenSalas.IntentarAgregar(codigo, sala))
                 {
                     _logger.WarnFormat(
                         MensajesError.Bitacora.ErrorConcurrenciaCrearSala,
@@ -180,7 +180,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala.Trim(), out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala.Trim(), out sala))
                 {
                     throw new FaultException(MensajesError.Cliente.SalaNoEncontrada);
                 }
@@ -281,7 +281,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala.Trim(), out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala.Trim(), out sala))
                 {
                     throw new FaultException(MensajesError.Cliente.SalaNoEncontrada);
                 }
@@ -291,7 +291,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (sala.DebeEliminarse)
                 {
                     SalaInternaManejador salaRemovida;
-                    _almacenSalas.TryRemove(codigoSala.Trim(), out salaRemovida);
+                    _almacenSalas.IntentarRemover(codigoSala.Trim(), out salaRemovida);
                 }
 
                 _notificador.NotificarListaSalasATodos();
@@ -426,7 +426,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala.Trim(), out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala.Trim(), out sala))
                 {
                     throw new FaultException(MensajesError.Cliente.SalaNoEncontrada);
                 }
@@ -444,7 +444,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (sala.DebeEliminarse)
                 {
                     SalaInternaManejador salaRemovida;
-                    _almacenSalas.TryRemove(codigoSala.Trim(), out salaRemovida);
+                    _almacenSalas.IntentarRemover(codigoSala.Trim(), out salaRemovida);
                 }
 
                 _notificador.NotificarListaSalasATodos();
@@ -488,7 +488,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 }
 
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala.Trim(), out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala.Trim(), out sala))
                 {
                     return;
                 }
@@ -502,7 +502,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (sala.DebeEliminarse)
                 {
                     SalaInternaManejador salaRemovida;
-                    _almacenSalas.TryRemove(codigoSala.Trim(), out salaRemovida);
+                    _almacenSalas.IntentarRemover(codigoSala.Trim(), out salaRemovida);
                 }
 
                 _notificador.NotificarListaSalasATodos();
@@ -530,7 +530,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             }
 
             SalaInternaManejador sala;
-            if (_almacenSalas.TryGetValue(codigoSala.Trim(), out sala))
+            if (_almacenSalas.IntentarObtener(codigoSala.Trim(), out sala))
             {
                 return sala.ConvertirADto();
             }
@@ -544,7 +544,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         public void MarcarPartidaComoIniciada(string codigoSala)
         {
             SalaInternaManejador sala;
-            if (_almacenSalas.TryGetValue(codigoSala, out sala))
+            if (_almacenSalas.IntentarObtener(codigoSala, out sala))
             {
                 sala.PartidaIniciada = true;
             }
@@ -553,13 +553,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         public void MarcarPartidaComoFinalizada(string codigoSala)
         {
             SalaInternaManejador sala;
-            if (_almacenSalas.TryGetValue(codigoSala, out sala))
+            if (_almacenSalas.IntentarObtener(codigoSala, out sala))
             {
                 sala.PartidaFinalizada = true;
             }
 
             SalaInternaManejador salaRemovida;
-            _almacenSalas.TryRemove(codigoSala, out salaRemovida);
+            _almacenSalas.IntentarRemover(codigoSala, out salaRemovida);
 
             _logger.InfoFormat(
                 "Sala '{0}' eliminada por finalizacion de partida.",
@@ -631,7 +631,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             try
             {
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala, out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala, out sala))
                 {
                     return;
                 }
@@ -641,7 +641,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (sala.DebeEliminarse)
                 {
                     SalaInternaManejador salaRemovida;
-                    _almacenSalas.TryRemove(codigoSala, out salaRemovida);
+                    _almacenSalas.IntentarRemover(codigoSala, out salaRemovida);
                 }
 
                 _notificador.NotificarListaSalasATodos();
@@ -667,7 +667,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
 
                 SalaInternaManejador sala;
-                if (!_almacenSalas.TryGetValue(codigoSala, out sala))
+                if (!_almacenSalas.IntentarObtener(codigoSala, out sala))
                 {
                     return;
                 }
@@ -677,7 +677,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 if (sala.DebeEliminarse)
                 {
                     SalaInternaManejador salaRemovida;
-                    _almacenSalas.TryRemove(codigoSala, out salaRemovida);
+                    _almacenSalas.IntentarRemover(codigoSala, out salaRemovida);
                 }
 
                 _notificador.NotificarListaSalasATodos();

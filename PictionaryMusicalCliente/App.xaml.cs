@@ -1,4 +1,5 @@
-﻿using log4net.Config;
+﻿using log4net;
+using log4net.Config;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
 using PictionaryMusicalCliente.ClienteServicios.Dialogos;
 using PictionaryMusicalCliente.ClienteServicios.Idiomas;
@@ -25,6 +26,9 @@ namespace PictionaryMusicalCliente
     /// </summary>
     public partial class App : Application
     {
+        private static readonly ILog _logger = LogManager.GetLogger(
+            System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static IWcfClienteFabrica WcfFabrica { get; private set; }
         public static IWcfClienteEjecutor WcfEjecutor { get; private set; }
         public static IManejadorErrorServicio ManejadorError { get; private set; }
@@ -119,7 +123,8 @@ namespace PictionaryMusicalCliente
             }
             catch
             {
-                // Si falla el cierre de sesion, la sesion expirara por timeout en el servidor
+                _logger.WarnFormat(
+                    "No se pudo cerrar la sesion del usuario en el servidor.");
             }
         }
 

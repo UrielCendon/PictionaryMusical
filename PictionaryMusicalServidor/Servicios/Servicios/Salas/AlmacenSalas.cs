@@ -21,34 +21,34 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         }
 
         /// <inheritdoc/>
-        public bool TryAdd(string codigo, SalaInternaManejador sala)
+        public bool IntentarAgregar(string codigo, SalaInternaManejador sala)
         {
             return _salas.TryAdd(codigo, sala);
         }
 
         /// <inheritdoc/>
-        public bool TryGetValue(string codigo, out SalaInternaManejador sala)
+        public bool IntentarObtener(string codigo, out SalaInternaManejador sala)
         {
             return _salas.TryGetValue(codigo, out sala);
         }
 
         /// <inheritdoc/>
-        public bool TryRemove(string codigo, out SalaInternaManejador sala)
+        public bool IntentarRemover(string codigo, out SalaInternaManejador sala)
         {
             return _salas.TryRemove(codigo, out sala);
         }
 
         /// <inheritdoc/>
-        public bool ContainsKey(string codigo)
+        public bool ContieneCodigo(string codigo)
         {
             return _salas.ContainsKey(codigo);
         }
 
         /// <inheritdoc/>
-        public IEnumerable<SalaInternaManejador> Values => _salas.Values;
+        public IEnumerable<SalaInternaManejador> Valores => _salas.Values;
 
         /// <inheritdoc/>
-        public void Clear()
+        public void Limpiar()
         {
             _salas.Clear();
         }

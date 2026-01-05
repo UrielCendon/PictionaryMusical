@@ -32,7 +32,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             for (int i = 0; i < MaximoIntentos; i++)
             {
                 string codigo = GeneradorAleatorio.GenerarCodigoSala(LongitudCodigo);
-                if (!_almacenSalas.ContainsKey(codigo))
+                if (!_almacenSalas.ContieneCodigo(codigo))
                 {
                     return codigo;
                 }
