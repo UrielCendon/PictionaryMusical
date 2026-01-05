@@ -389,14 +389,15 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
             catch (ServicioExcepcion excepcion)
             {
-                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", excepcion);
+                _logger.Error("Excepcion de servicio al intentar unirse como invitado.", 
+                    excepcion);
                 string mensaje = ObtenerMensajeErrorUnionInvitado(excepcion);
                 _sonidoManejador.ReproducirError();
                 return ResultadoUnionInvitado.Error(mensaje);
             }
         }
 
-        private string ObtenerMensajeErrorUnionInvitado(ServicioExcepcion excepcion)
+        private static string ObtenerMensajeErrorUnionInvitado(ServicioExcepcion excepcion)
         {
             if (excepcion.Tipo == TipoErrorServicio.TiempoAgotado ||
                 excepcion.Tipo == TipoErrorServicio.Comunicacion)

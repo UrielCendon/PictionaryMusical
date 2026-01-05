@@ -118,10 +118,11 @@ namespace PictionaryMusicalCliente.Utilidades
                 {
                     ventana.Close();
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException excepcion)
                 {
                     _logger.Info(
-                        "No se pudo cerrar una ventana, ya estaba en proceso de cierre.");
+                        "No se pudo cerrar una ventana, ya estaba en proceso de cierre.",
+                        excepcion);
                 }
             }
         }
