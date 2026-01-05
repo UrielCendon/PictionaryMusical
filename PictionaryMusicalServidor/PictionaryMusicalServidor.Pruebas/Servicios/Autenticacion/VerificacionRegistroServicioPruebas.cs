@@ -107,10 +107,17 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             where T : class
         {
             var mockSet = new Mock<System.Data.Entity.DbSet<T>>();
-            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(datos.Provider);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(datos.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(datos.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator())
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.Provider)
+                .Returns(datos.Provider);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.Expression)
+                .Returns(datos.Expression);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.ElementType)
+                .Returns(datos.ElementType);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
             return mockSet;
         }

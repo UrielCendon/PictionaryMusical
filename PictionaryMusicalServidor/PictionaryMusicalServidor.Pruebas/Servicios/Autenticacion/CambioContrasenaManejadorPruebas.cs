@@ -106,7 +106,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             _recuperacionServicioMock
                 .Setup(servicio => servicio.SolicitarCodigoRecuperacion(solicitud))
-                .Throws(new ArgumentNullException());
+                .Throws(new ArgumentNullException(
+                    "El argumento solicitud no puede ser nulo",
+                    innerException: null));
 
             ResultadoSolicitudRecuperacionDTO resultado = 
                 _manejador.SolicitarCodigoRecuperacion(solicitud);
@@ -359,7 +361,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             _recuperacionServicioMock
                 .Setup(servicio => servicio.ActualizarContrasena(solicitud))
-                .Throws(new ArgumentNullException());
+                .Throws(new ArgumentNullException(
+                    "El argumento solicitud no puede ser nulo",
+                    innerException: null));
 
             ResultadoOperacionDTO resultado = _manejador.ActualizarContrasena(solicitud);
 

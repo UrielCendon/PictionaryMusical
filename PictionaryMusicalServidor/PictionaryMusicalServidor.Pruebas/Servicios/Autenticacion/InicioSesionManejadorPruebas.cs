@@ -54,11 +54,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
                 .Returns(_contextoMock.Object);
 
             _repositorioFactoriaMock
-                .Setup(fabrica => fabrica.CrearUsuarioRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
+                .Setup(fabrica => fabrica.CrearUsuarioRepositorio(
+                    It.IsAny<BaseDatosPruebaEntities>()))
                 .Returns(_usuarioRepositorioMock.Object);
 
             _repositorioFactoriaMock
-                .Setup(fabrica => fabrica.CrearReporteRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
+                .Setup(fabrica => fabrica.CrearReporteRepositorio(
+                    It.IsAny<BaseDatosPruebaEntities>()))
                 .Returns(_reporteRepositorioMock.Object);
 
             _manejador = new InicioSesionManejador(
@@ -74,7 +76,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             LimpiarSesionesActivas();
         }
 
-        private void LimpiarSesionesActivas()
+        private static void LimpiarSesionesActivas()
         {
             SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(NombreUsuarioValido);
         }

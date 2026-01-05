@@ -19,19 +19,18 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
     {
         private const string NombreUsuarioValido = "UsuarioTest";
         private const string CorreoValido = "test@correo.com";
+        private const string CorreoInvalido = "correo_invalido";
         private const string ContrasenaValida = "Password1!";
+        private const string ContrasenaDebil = "123";
         private const string NombreValido = "NombreTest";
         private const string ApellidoValido = "ApellidoTest";
         private const string TokenValido = "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6";
         private const string CodigoValido = "123456";
-        private const string MensajeExito = "Operacion exitosa";
-        private const string MensajeError = "Error en operacion";
         private const string IdiomaEspanol = "es";
+        private const string CadenaVacia = "";
+        private const string MensajeError = "Error en operacion";
         private const int AvatarIdValido = 1;
         private const int AvatarIdInvalido = 0;
-        private const int IdClasificacionCreada = 1;
-        private const int IdJugadorCreado = 10;
-        private const int IdUsuarioCreado = 100;
 
         private Mock<IContextoFactoria> _contextoFactoriaMock;
         private Mock<IRepositorioFactoria> _repositorioFactoriaMock;
@@ -133,7 +132,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
         public void Prueba_RegistrarCuenta_UsuarioVacio_RetornaFallo()
         {
             var nuevaCuenta = CrearNuevaCuentaValida();
-            nuevaCuenta.Usuario = string.Empty;
+            nuevaCuenta.Usuario = CadenaVacia;
 
             ResultadoRegistroCuentaDTO resultado = _manejador.RegistrarCuenta(nuevaCuenta);
 
@@ -144,7 +143,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
         public void Prueba_RegistrarCuenta_CorreoInvalido_RetornaFallo()
         {
             var nuevaCuenta = CrearNuevaCuentaValida();
-            nuevaCuenta.Correo = "correo_invalido";
+            nuevaCuenta.Correo = CorreoInvalido;
 
             ResultadoRegistroCuentaDTO resultado = _manejador.RegistrarCuenta(nuevaCuenta);
 
@@ -155,7 +154,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
         public void Prueba_RegistrarCuenta_ContrasenaDebil_RetornaFallo()
         {
             var nuevaCuenta = CrearNuevaCuentaValida();
-            nuevaCuenta.Contrasena = "123";
+            nuevaCuenta.Contrasena = ContrasenaDebil;
 
             ResultadoRegistroCuentaDTO resultado = _manejador.RegistrarCuenta(nuevaCuenta);
 
@@ -205,10 +204,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
                 .Returns(true);
 
             ConfigurarContextoSinDuplicados();
-            ConfigurarTransaccionMock();
 
-            _clasificacionRepositorioMock
-                .Setup(repositorio => repositorio.CrearClasificacionInicial())
+            _contextoFactoriaMock
+                .Setup(fabrica => fabrica.CrearContexto())
                 .Throws(new EntityException());
 
             ResultadoRegistroCuentaDTO resultado = _manejador.RegistrarCuenta(nuevaCuenta);
@@ -226,10 +224,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
                 .Returns(true);
 
             ConfigurarContextoSinDuplicados();
-            ConfigurarTransaccionMock();
 
-            _clasificacionRepositorioMock
-                .Setup(repositorio => repositorio.CrearClasificacionInicial())
+            _contextoFactoriaMock
+                .Setup(fabrica => fabrica.CrearContexto())
                 .Throws(new DataException());
 
             ResultadoRegistroCuentaDTO resultado = _manejador.RegistrarCuenta(nuevaCuenta);
@@ -387,24 +384,21 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             _contextoMock.Setup(contexto => contexto.Jugador).Returns(jugadorDbSetMock.Object);
         }
 
-        private void ConfigurarTransaccionMock()
-        {
-            var transaccionMock = new Mock<System.Data.Entity.DbContextTransaction>();
-            var databaseMock = new Mock<System.Data.Entity.Database>();
-
-            _contextoMock
-                .Setup(contexto => contexto.Database)
-                .Returns(databaseMock.Object);
-        }
-
         private static Mock<System.Data.Entity.DbSet<T>> CrearDbSetMock<T>(IQueryable<T> datos) 
             where T : class
         {
             var mockSet = new Mock<System.Data.Entity.DbSet<T>>();
-            mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(datos.Provider);
-            mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(datos.Expression);
-            mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(datos.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator())
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.Provider)
+                .Returns(datos.Provider);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.Expression)
+                .Returns(datos.Expression);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.ElementType)
+                .Returns(datos.ElementType);
+            mockSet.As<IQueryable<T>>()
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
             return mockSet;
         }

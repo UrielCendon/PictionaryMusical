@@ -118,7 +118,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             _verificacionServicioMock
                 .Setup(servicio => servicio.SolicitarCodigo(nuevaCuenta))
-                .Throws(new ArgumentNullException());
+                .Throws(new ArgumentNullException(
+                    "El argumento nuevaCuenta no puede ser nulo",
+                    innerException: null));
 
             ResultadoSolicitudCodigoDTO resultado = 
                 _manejador.SolicitarCodigoVerificacion(nuevaCuenta);
