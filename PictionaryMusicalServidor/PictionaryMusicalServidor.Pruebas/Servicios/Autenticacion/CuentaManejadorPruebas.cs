@@ -234,6 +234,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsFalse(resultado.RegistroExitoso);
         }
 
+        // fif el flujo debería validar solo codigoenviado como resultado principal
         [TestMethod]
         public void Prueba_SolicitarCodigoVerificacion_FlujoExitoso_RetornaCodigoEnviado()
         {

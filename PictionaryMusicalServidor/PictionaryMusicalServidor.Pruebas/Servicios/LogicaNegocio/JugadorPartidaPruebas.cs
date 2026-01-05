@@ -17,6 +17,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         private const string FormatoToStringEsperado = "Nombre: {0}, Conexion: {1}, " +
             "Host: {2}, Dibujante: {3}, Puntaje: {4}";
 
+        // fix el flujo debería validar solo que no sea la misma instancia sin validar todos los datos
         [TestMethod]
         public void Prueba_CopiarDatosBasicos_InstanciaValida()
         {

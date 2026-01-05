@@ -39,6 +39,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
                 new CambioContrasenaManejador(null));
         }
 
+        // fix los areequal adicionales no son necesarios el flujo debería validar solo Codigoenviado como resultado
         [TestMethod]
         public void Prueba_SolicitarCodigoRecuperacion_FlujoExitoso_RetornaCodigoEnviado()
         {

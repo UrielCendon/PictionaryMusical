@@ -104,6 +104,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.AreEqual(PuntosCero, puntos);
         }
 
+        // fix el flujo debería validar solo el resultado true
         [TestMethod]
         public void Prueba_VerificarAcierto_RespuestaCorrecta()
         {
@@ -136,6 +137,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.AreEqual(PuntosCero, puntos);
         }
 
+        // fix el flujo deberia validar solo el resultado true
         [TestMethod]
         public void Prueba_VerificarAcierto_MensajeProtocoloValido()
         {

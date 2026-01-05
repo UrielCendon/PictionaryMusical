@@ -235,7 +235,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsFalse(resultado.InicioSesionExitoso);
             Assert.IsTrue(resultado.CuentaEncontrada);
         }
+        
 
+        //fix aqui los areequal no serian necesarios ya que el flujo como tal seria solo validar el retorno de la sesion exitosa
         [TestMethod]
         public void Prueba_IniciarSesion_CredencialesCorrectas_RetornaSesionExitosa()
         {
@@ -287,6 +289,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsTrue(resultado.CuentaEncontrada);
         }
 
+        // fix el areequal del nombreusuario no es necesario, el flujo debería validar solo iniciosesionExitoso
         [TestMethod]
         public void Prueba_IniciarSesion_BusquedaPorCorreo_RetornaSesionExitosa()
         {

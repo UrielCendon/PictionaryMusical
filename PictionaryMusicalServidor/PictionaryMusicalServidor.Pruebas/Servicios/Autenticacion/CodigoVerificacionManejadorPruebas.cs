@@ -68,6 +68,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
                 new CodigoVerificacionManejador(_verificacionServicioMock.Object, null));
         }
 
+        // fix el flujo debería validar solo CodigoEnviado como resultado principal
         [TestMethod]
         public void Prueba_SolicitarCodigoVerificacion_FlujoExitoso_RetornaCodigoEnviado()
         {
@@ -305,6 +306,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsFalse(resultado.RegistroExitoso);
         }
 
+        // fix el flujo debería validar solo codigoenviado
         [TestMethod]
         public void Prueba_SolicitarCodigoRecuperacion_FlujoExitoso_RetornaCodigoEnviado()
         {

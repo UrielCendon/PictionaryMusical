@@ -97,6 +97,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 _controlador.IniciarPartida(IdJugador));
         }
 
+        // fix el flujo debería validar solo que el evento se disparo
         [TestMethod]
         public void Prueba_IniciarPartida_FlujoCorrecto()
         {
@@ -169,6 +170,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 Times.Once);
         }
 
+        // fix el flujo debería validar solo que la partida finalizo
         [TestMethod]
         public void Prueba_RemoverJugador_HostAbandona()
         {

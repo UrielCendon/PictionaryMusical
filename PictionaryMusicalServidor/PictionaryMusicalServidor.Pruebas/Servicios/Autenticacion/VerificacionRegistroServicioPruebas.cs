@@ -402,6 +402,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsFalse(_servicio.EstaVerificacionConfirmada(nuevaCuenta));
         }
 
+        // fix el areequal del tokencodigo no es necesario, el flujo debería validar solo codigoenviado
         [TestMethod]
         public void Prueba_FlujoCompleto_SolicitarYReenviar_ExitoTotal()
         {

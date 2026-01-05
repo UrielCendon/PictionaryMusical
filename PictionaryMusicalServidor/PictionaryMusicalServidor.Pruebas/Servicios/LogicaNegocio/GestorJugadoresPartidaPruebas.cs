@@ -43,6 +43,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 new GestorJugadoresPartida(null));
         }
 
+        // fix el flujo deberia validar solo que el jugador exista y sin usar el not null
         [TestMethod]
         public void Prueba_Agregar_JugadorNuevo()
         {
@@ -55,6 +56,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.IsTrue(jugador.EsHost);
         }
 
+        // fix el flujo debería validar solo que se actualizo el nombre
         [TestMethod]
         public void Prueba_Agregar_JugadorExistente()
         {
@@ -84,6 +86,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.IsTrue(_gestor.HaySuficientesJugadores);
         }
 
+        // fix el flujo debería validar solo el resultado true al remover
         [TestMethod]
         public void Prueba_Remover_JugadorExistente()
         {
@@ -125,6 +128,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.IsTrue(_gestor.QuedanDibujantesPendientes());
         }
 
+        // fix el flujo debería validar solo que el siguiente tenga el rol no mas cosas
         [TestMethod]
         public void Prueba_SeleccionarSiguienteDibujante_AsignaRol()
         {
@@ -166,6 +170,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             Assert.IsTrue(_gestor.TodosAdivinaron());
         }
 
+        // fix el flujo debería validar solo el primero de la clasificacion para no tener muchas veces lo mismo
         [TestMethod]
         public void Prueba_GenerarClasificacion_OrdenaDescendente()
         {

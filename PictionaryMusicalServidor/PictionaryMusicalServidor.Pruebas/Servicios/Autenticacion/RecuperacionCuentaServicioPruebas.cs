@@ -199,6 +199,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.IsFalse(resultado.CodigoEnviado);
         }
 
+        // fix el areequal del correodestino no es necesario el flujo debería validar solo codigoenviado como resultado principal
         [TestMethod]
         public void Prueba_SolicitarCodigoRecuperacion_FlujoExitoso_RetornaCodigoEnviado()
         {
@@ -226,6 +227,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
             Assert.AreEqual(CorreoValido, resultado.CorreoDestino);
         }
 
+        // fix el flujo debería validar solo CodigoEnviado
         [TestMethod]
         public void Prueba_SolicitarCodigoRecuperacion_BusquedaPorCorreo_RetornaCodigoEnviado()
         {
