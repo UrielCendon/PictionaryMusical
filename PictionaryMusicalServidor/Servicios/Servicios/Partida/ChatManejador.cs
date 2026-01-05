@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos;
@@ -13,7 +12,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
     /// <summary>
     /// Implementacion del servicio de chat entre jugadores.
     /// Gestiona la comunicacion en tiempo real entre jugadores conectados a una sala.
-    /// Utiliza un diccionario estatico para administrar los clientes conectados por sala.
     /// </summary>
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single,
         ConcurrencyMode = ConcurrencyMode.Multiple)]
@@ -21,21 +19,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(ChatManejador));
 
-        private static readonly Dictionary<string, List<ClienteChat>> _clientesPorSala =
-            new Dictionary<string, List<ClienteChat>>(StringComparer.OrdinalIgnoreCase);
+        private static readonly IAlmacenClientesChat _almacenGlobal = new AlmacenClientesChat();
 
-        private static readonly object _sincronizacion = new object();
+        private readonly IAlmacenClientesChat _almacenClientes;
+        private readonly IProveedorContextoOperacion _proveedorContexto;
 
         /// <summary>
         /// Constructor por defecto para WCF.
         /// </summary>
         public ChatManejador()
+            : this(_almacenGlobal, new ProveedorContextoOperacion())
         {
         }
 
         /// <summary>
+        /// Constructor con inyeccion de dependencias para pruebas unitarias.
+        /// </summary>
+        /// <param name="almacenClientes">Almacen de clientes de chat.</param>
+        /// <param name="proveedorContexto">Proveedor de contexto de operacion.</param>
+        public ChatManejador(
+            IAlmacenClientesChat almacenClientes,
+            IProveedorContextoOperacion proveedorContexto)
+        {
+            _almacenClientes = almacenClientes
+                ?? throw new ArgumentNullException(nameof(almacenClientes));
+            _proveedorContexto = proveedorContexto
+                ?? throw new ArgumentNullException(nameof(proveedorContexto));
+        }
+
+        /// <summary>
         /// Permite a un jugador unirse al chat de una sala especifica.
-        /// Registra el callback del cliente y notifica a los demas participantes que alguien entro.
+        /// Registra el callback del cliente y notifica a los demas participantes.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="nombreJugador">Nombre del jugador que se une.</param>
@@ -95,7 +109,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         /// <summary>
         /// Envia un mensaje a todos los participantes del chat de una sala.
-        /// Distribuye el mensaje invocando el callback RecibirMensaje de cada cliente conectado.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="mensaje">Contenido del mensaje a enviar.</param>
@@ -159,7 +172,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         /// <summary>
         /// Permite a un jugador salir del chat de una sala.
-        /// Elimina el callback y notifica a los demas participantes que el jugador salio.
         /// </summary>
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="nombreJugador">Nombre del jugador que sale.</param>
@@ -211,61 +223,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static List<ClienteChat> GestionarIngresoSala(
+        private List<ClienteChat> GestionarIngresoSala(
             string idSala,
             string nombreJugador,
             IChatManejadorCallback callback)
         {
-            lock (_sincronizacion)
-            {
-                var clientesSala = ObtenerOCrearListaClientes(idSala);
-                RegistrarOActualizarCliente(clientesSala, nombreJugador, callback);
-                return ObtenerClientesExcluyendo(clientesSala, nombreJugador);
-            }
+            _almacenClientes.RegistrarOActualizarCliente(idSala, nombreJugador, callback);
+            return _almacenClientes.ObtenerClientesExcluyendo(idSala, nombreJugador);
         }
 
-        private static List<ClienteChat> ObtenerOCrearListaClientes(string idSala)
-        {
-            List<ClienteChat> clientesSala;
-            if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
-            {
-                clientesSala = new List<ClienteChat>();
-                _clientesPorSala[idSala] = clientesSala;
-            }
-            return clientesSala;
-        }
-
-        private static void RegistrarOActualizarCliente(
-            List<ClienteChat> clientesSala,
-            string nombreJugador,
-            IChatManejadorCallback callback)
-        {
-            var clienteExistente = clientesSala.FirstOrDefault(clienteActual =>
-                string.Equals(clienteActual.NombreJugador, nombreJugador, StringComparison.OrdinalIgnoreCase));
-
-            if (clienteExistente != null)
-            {
-                clienteExistente.Callback = callback;
-            }
-            else
-            {
-                clientesSala.Add(new ClienteChat(nombreJugador, callback));
-            }
-        }
-
-        private static List<ClienteChat> ObtenerClientesExcluyendo(
-            List<ClienteChat> clientesSala,
-            string nombreJugador)
-        {
-            return clientesSala
-                .Where(clienteActual => !string.Equals(
-                    clienteActual.NombreJugador, 
-                    nombreJugador, 
-                    StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-
-        private static void NotificarIngresoMasivo(
+        private void NotificarIngresoMasivo(
             string idSala,
             string nombreJugador,
             List<ClienteChat> destinatarios)
@@ -276,7 +243,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void NotificarJugadorUnidoSeguro(
+        private void NotificarJugadorUnidoSeguro(
             string idSala,
             ClienteChat cliente,
             string nombreJugador)
@@ -287,9 +254,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorComunicacionChat, 
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
@@ -299,23 +264,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorCanalCerradoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorInesperadoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
         }
 
-        private static void RemoverCliente(string idSala, string nombreJugador)
+        private void RemoverCliente(string idSala, string nombreJugador)
         {
-            var clientesANotificar = ProcesarSalidaSala(idSala, nombreJugador);
+            var clientesANotificar = _almacenClientes.ObtenerClientesExcluyendo(idSala, nombreJugador);
+            _almacenClientes.RemoverCliente(idSala, nombreJugador);
 
             if (clientesANotificar != null && clientesANotificar.Count > 0)
             {
@@ -323,48 +285,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static List<ClienteChat> ProcesarSalidaSala(string idSala, string nombreJugador)
-        {
-            lock (_sincronizacion)
-            {
-                List<ClienteChat> clientesSala;
-                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
-                {
-                    return new List<ClienteChat>();
-                }
-
-                int cantidadRemovida = 0;
-                for (int i = clientesSala.Count - 1; i >= 0; i--)
-                {
-                    if (string.Equals(
-                        clientesSala[i].NombreJugador,
-                        nombreJugador,
-                        StringComparison.OrdinalIgnoreCase))
-                    {
-                        clientesSala.RemoveAt(i);
-                        cantidadRemovida++;
-                    }
-                }
-
-                bool clienteRemovido = cantidadRemovida > 0;
-
-                if (!clienteRemovido)
-                {
-                    return new List<ClienteChat>();
-                }
-
-                var remanentes = clientesSala.ToList();
-
-                if (clientesSala.Count == 0)
-                {
-                    _clientesPorSala.Remove(idSala);
-                }
-
-                return remanentes;
-            }
-        }
-
-        private static void NotificarSalidaMasiva(
+        private void NotificarSalidaMasiva(
             string idSala,
             string nombreJugador,
             List<ClienteChat> destinatarios)
@@ -375,7 +296,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void NotificarJugadorSalioSeguro(
+        private void NotificarJugadorSalioSeguro(
             string idSala,
             ClienteChat cliente,
             string nombreJugador)
@@ -386,9 +307,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorComunicacionChat, 
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
@@ -398,29 +317,24 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorCanalCerradoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorInesperadoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 RemoverClienteInalcanzable(idSala, cliente.NombreJugador);
             }
         }
 
-        private static IChatManejadorCallback ObtenerCallbackActual()
+        private IChatManejadorCallback ObtenerCallbackActual()
         {
-            var contexto = OperationContext.Current;
-            if (contexto == null)
+            if (!_proveedorContexto.ExisteContexto)
             {
                 throw new FaultException(MensajesError.Cliente.ErrorContextoOperacion);
             }
 
-            var callback = contexto.GetCallbackChannel<IChatManejadorCallback>();
+            var callback = _proveedorContexto.ObtenerCallbackChannel<IChatManejadorCallback>();
             if (callback == null)
             {
                 throw new FaultException(MensajesError.Cliente.ErrorObtenerCallback);
@@ -429,9 +343,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             return callback;
         }
 
-        private static void ConfigurarEventosCanal(string idSala, string nombreJugador)
+        private void ConfigurarEventosCanal(string idSala, string nombreJugador)
         {
-            var canal = OperationContext.Current?.Channel;
+            var canal = _proveedorContexto.ObtenerCanalActual();
             if (canal != null)
             {
                 EventHandler manejadorClosed = null;
@@ -452,22 +366,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void NotificarMensajeATodos(
+        private void NotificarMensajeATodos(
             string idSala,
             string nombreJugador,
             string mensaje)
         {
-            List<ClienteChat> clientesANotificar;
-
-            lock (_sincronizacion)
+            var clientesANotificar = _almacenClientes.ObtenerClientesSala(idSala);
+            if (clientesANotificar == null)
             {
-                List<ClienteChat> clientesSala;
-                if (!_clientesPorSala.TryGetValue(idSala, out clientesSala))
-                {
-                    return;
-                }
-
-                clientesANotificar = clientesSala.ToList();
+                return;
             }
 
             foreach (var cliente in clientesANotificar)
@@ -483,8 +390,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
         }
 
-        private static void NotificarMensajeSeguro(
-            NotificacionMensajeSeguroParametros parametros)
+        private void NotificarMensajeSeguro(NotificacionMensajeSeguroParametros parametros)
         {
             try
             {
@@ -494,9 +400,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorComunicacionChat, 
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionChat, excepcion);
                 RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (TimeoutException excepcion)
@@ -506,59 +410,22 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorCanalCerradoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoChat, excepcion);
                 RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
             catch (Exception excepcion)
             {
-                _logger.Warn(
-                    MensajesError.Bitacora.ErrorInesperadoChat,
-                    excepcion);
+                _logger.Warn(MensajesError.Bitacora.ErrorInesperadoChat, excepcion);
                 RemoverClienteInalcanzable(parametros.IdSala, parametros.Cliente.NombreJugador);
             }
         }
 
-        /// <summary>
-        /// Remueve un cliente del chat y elimina su sesión cuando se detecta
-        /// que el cliente está inalcanzable (error de comunicación o timeout).
-        /// </summary>
-        /// <param name="idSala">Identificador de la sala.</param>
-        /// <param name="nombreJugador">Nombre del jugador a remover.</param>
-        private static void RemoverClienteInalcanzable(string idSala, string nombreJugador)
+        private void RemoverClienteInalcanzable(string idSala, string nombreJugador)
         {
-            RemoverClienteSinNotificar(idSala, nombreJugador);
-            
-            _logger.Info(
-                "Eliminando sesión por cliente inalcanzable en chat.");
+            _almacenClientes.RemoverCliente(idSala, nombreJugador);
+
+            _logger.Info("Eliminando sesion por cliente inalcanzable en chat.");
             SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreJugador);
-        }
-
-        private static void RemoverClienteSinNotificar(string idSala, string nombreJugador)
-        {
-            lock (_sincronizacion)
-            {
-                List<ClienteChat> clientesSala;
-                if (_clientesPorSala.TryGetValue(idSala, out clientesSala))
-                {
-                    for (int i = clientesSala.Count - 1; i >= 0; i--)
-                    {
-                        if (string.Equals(
-                            clientesSala[i].NombreJugador,
-                            nombreJugador,
-                            StringComparison.OrdinalIgnoreCase))
-                        {
-                            clientesSala.RemoveAt(i);
-                        }
-                    }
-
-                    if (clientesSala.Count == 0)
-                    {
-                        _clientesPorSala.Remove(idSala);
-                    }
-                }
-            }
         }
     }
 }
