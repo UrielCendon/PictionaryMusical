@@ -16,8 +16,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         private const string NombreUsuarioPrueba = "UsuarioPrueba";
         private const string NombreUsuarioNormalizado = "usuarioprueba";
         private const int IdUsuarioPrueba = 100;
-        private const string NombreEmisor = "UsuarioEmisor";
-        private const string NombreReceptor = "UsuarioReceptor";
+        private const string NombreUsuarioEmisor = "UsuarioEmisor";
+        private const string NombreUsuarioReceptor = "UsuarioReceptor";
+        private const int CantidadSolicitudesDobles = 2;
 
         private Mock<IManejadorCallback<IAmigosManejadorCallback>> _manejadorCallbackMock;
         private Mock<IAmistadServicio> _amistadServicioMock;
@@ -62,19 +63,21 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _notificador.NotificarSolicitudActualizada(NombreUsuarioPrueba, solicitud);
 
             _callbackMock.Verify(
-                callback => callback.NotificarSolicitudActualizada(It.IsAny<SolicitudAmistadDTO>()),
+                callback => callback.NotificarSolicitudActualizada(
+                    It.IsAny<SolicitudAmistadDTO>()),
                 Times.Never);
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudActualizada_ExcepcionEnCallbackNoSePropaga()
+        public void Prueba_NotificarSolicitudActualizada_ExcepcionNoSePropaga()
         {
             var solicitud = CrearSolicitudAmistadDto();
             _manejadorCallbackMock
                 .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
                 .Returns(_callbackMock.Object);
             _callbackMock
-                .Setup(callback => callback.NotificarSolicitudActualizada(It.IsAny<SolicitudAmistadDTO>()))
+                .Setup(callback => callback.NotificarSolicitudActualizada(
+                    It.IsAny<SolicitudAmistadDTO>()))
                 .Throws(new Exception());
 
             _notificador.NotificarSolicitudActualizada(NombreUsuarioPrueba, solicitud);
@@ -110,19 +113,21 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _notificador.NotificarAmistadEliminada(NombreUsuarioPrueba, solicitud);
 
             _callbackMock.Verify(
-                callback => callback.NotificarAmistadEliminada(It.IsAny<SolicitudAmistadDTO>()),
+                callback => callback.NotificarAmistadEliminada(
+                    It.IsAny<SolicitudAmistadDTO>()),
                 Times.Never);
         }
 
         [TestMethod]
-        public void Prueba_NotificarAmistadEliminada_ExcepcionEnCallbackNoSePropaga()
+        public void Prueba_NotificarAmistadEliminada_ExcepcionNoSePropaga()
         {
             var solicitud = CrearSolicitudAmistadDto();
             _manejadorCallbackMock
                 .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
                 .Returns(_callbackMock.Object);
             _callbackMock
-                .Setup(callback => callback.NotificarAmistadEliminada(It.IsAny<SolicitudAmistadDTO>()))
+                .Setup(callback => callback.NotificarAmistadEliminada(
+                    It.IsAny<SolicitudAmistadDTO>()))
                 .Throws(new Exception());
 
             _notificador.NotificarAmistadEliminada(NombreUsuarioPrueba, solicitud);
@@ -133,7 +138,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudesPendientesAlSuscribir_SinSolicitudesNoNotifica()
+        public void Prueba_NotificarSolicitudesPendientes_ListaVaciaNoNotifica()
         {
             _amistadServicioMock
                 .Setup(servicio => servicio.ObtenerSolicitudesPendientesDTO(IdUsuarioPrueba))
@@ -149,7 +154,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudesPendientesAlSuscribir_ListaNulaNoNotifica()
+        public void Prueba_NotificarSolicitudesPendientes_ListaNulaNoNotifica()
         {
             _amistadServicioMock
                 .Setup(servicio => servicio.ObtenerSolicitudesPendientesDTO(IdUsuarioPrueba))
@@ -165,7 +170,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudesPendientesAlSuscribir_ConSolicitudesNotificaCadaUna()
+        public void Prueba_NotificarSolicitudesPendientes_ConSolicitudesNotificaCadaUna()
         {
             var solicitudes = new List<SolicitudAmistadDTO>
             {
@@ -184,12 +189,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
                 IdUsuarioPrueba);
 
             _callbackMock.Verify(
-                callback => callback.NotificarSolicitudActualizada(It.IsAny<SolicitudAmistadDTO>()),
-                Times.Exactly(2));
+                callback => callback.NotificarSolicitudActualizada(
+                    It.IsAny<SolicitudAmistadDTO>()),
+                Times.Exactly(CantidadSolicitudesDobles));
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudesPendientesAlSuscribir_DataExceptionSePropaga()
+        public void Prueba_NotificarSolicitudesPendientes_DataExceptionSePropaga()
         {
             _amistadServicioMock
                 .Setup(servicio => servicio.ObtenerSolicitudesPendientesDTO(IdUsuarioPrueba))
@@ -202,7 +208,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarSolicitudesPendientesAlSuscribir_ExcepcionGeneralLanzaDataException()
+        public void Prueba_NotificarSolicitudesPendientes_ExcepcionGeneralLanzaDataException()
         {
             _amistadServicioMock
                 .Setup(servicio => servicio.ObtenerSolicitudesPendientesDTO(IdUsuarioPrueba))
@@ -218,8 +224,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         {
             return new SolicitudAmistadDTO
             {
-                UsuarioEmisor = NombreEmisor,
-                UsuarioReceptor = NombreReceptor,
+                UsuarioEmisor = NombreUsuarioEmisor,
+                UsuarioReceptor = NombreUsuarioReceptor,
                 SolicitudAceptada = false
             };
         }

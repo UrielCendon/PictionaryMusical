@@ -14,6 +14,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
     {
         private const string CodigoSalaPrueba = "SALA01";
         private const string NombreCreadorSala = "CreadorSala";
+        private const int NumeroRondasPrueba = 3;
+        private const int TiempoPorRondaSegundosPrueba = 60;
+        private const string DificultadPrueba = "media";
+        private const string NombreCallbackDescartado = "callback";
 
         private Mock<IObtenerSalas> _proveedorSalasMock;
         private Mock<ISalasManejadorCallback> _callbackMock;
@@ -41,10 +45,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         [TestMethod]
         public void Prueba_Suscribir_MultiplesCallbacksRetornanGuidsDistintos()
         {
-            Guid sesionId1 = _notificador.Suscribir(_callbackMock.Object);
-            Guid sesionId2 = _notificador.Suscribir(_callbackSecundarioMock.Object);
+            Guid sesionIdPrimero = _notificador.Suscribir(_callbackMock.Object);
+            Guid sesionIdSegundo = _notificador.Suscribir(_callbackSecundarioMock.Object);
 
-            Assert.AreNotEqual(sesionId1, sesionId2);
+            Assert.AreNotEqual(sesionIdPrimero, sesionIdSegundo);
         }
 
         [TestMethod]
@@ -76,7 +80,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_DesuscribirPorCallback_EliminaTodasLasSuscripcionesDelCallback()
+        public void Prueba_DesuscribirPorCallback_EliminaTodasLasSuscripciones()
         {
             ConfigurarProveedorSalasVacio();
             _notificador.Suscribir(_callbackMock.Object);
@@ -123,13 +127,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarListaSalas_ExcepcionComunicacionNoSePropaga()
+        public void Prueba_NotificarListaSalas_CommunicationExceptionNoSePropaga()
         {
             _proveedorSalasMock
                 .Setup(proveedor => proveedor.ObtenerSalasInternas())
                 .Returns(new List<SalaInternaManejador>());
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
                 .Throws(new System.ServiceModel.CommunicationException());
 
             _notificador.NotificarListaSalas(_callbackMock.Object);
@@ -140,13 +145,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarListaSalas_ExcepcionTimeoutNoSePropaga()
+        public void Prueba_NotificarListaSalas_TimeoutExceptionNoSePropaga()
         {
             _proveedorSalasMock
                 .Setup(proveedor => proveedor.ObtenerSalasInternas())
                 .Returns(new List<SalaInternaManejador>());
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
                 .Throws(new TimeoutException());
 
             _notificador.NotificarListaSalas(_callbackMock.Object);
@@ -157,14 +163,15 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarListaSalas_ExcepcionObjectDisposedNoSePropaga()
+        public void Prueba_NotificarListaSalas_ObjectDisposedExceptionNoSePropaga()
         {
             _proveedorSalasMock
                 .Setup(proveedor => proveedor.ObtenerSalasInternas())
                 .Returns(new List<SalaInternaManejador>());
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
-                .Throws(new ObjectDisposedException("callback"));
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
+                .Throws(new ObjectDisposedException(NombreCallbackDescartado));
 
             _notificador.NotificarListaSalas(_callbackMock.Object);
 
@@ -203,13 +210,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarListaSalasATodos_ExcepcionEnUnCallbackNoAfectaAOtros()
+        public void Prueba_NotificarListaSalasATodos_ExcepcionEnUnoNoAfectaAOtros()
         {
             ConfigurarProveedorSalasVacio();
             _notificador.Suscribir(_callbackMock.Object);
             _notificador.Suscribir(_callbackSecundarioMock.Object);
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
                 .Throws(new System.ServiceModel.CommunicationException());
 
             _notificador.NotificarListaSalasATodos();
@@ -225,7 +233,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             ConfigurarProveedorSalasVacio();
             _notificador.Suscribir(_callbackMock.Object);
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
                 .Throws(new System.ServiceModel.CommunicationException());
 
             _notificador.NotificarListaSalasATodos();
@@ -243,7 +252,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             ConfigurarProveedorSalasVacio();
             _notificador.Suscribir(_callbackMock.Object);
             _callbackMock
-                .Setup(callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()))
+                .Setup(callback => callback.NotificarListaSalasActualizada(
+                    It.IsAny<SalaDTO[]>()))
                 .Throws(new TimeoutException());
 
             _notificador.NotificarListaSalasATodos();
@@ -267,9 +277,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             var gestorMock = new Mock<IGestorNotificacionesSalaInterna>();
             var configuracion = new ConfiguracionPartidaDTO
             {
-                NumeroRondas = 3,
-                TiempoPorRondaSegundos = 60,
-                Dificultad = "media"
+                NumeroRondas = NumeroRondasPrueba,
+                TiempoPorRondaSegundos = TiempoPorRondaSegundosPrueba,
+                Dificultad = DificultadPrueba
             };
 
             var sala = new SalaInternaManejador(

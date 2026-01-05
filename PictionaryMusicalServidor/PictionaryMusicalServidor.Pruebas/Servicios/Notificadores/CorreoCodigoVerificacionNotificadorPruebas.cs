@@ -6,181 +6,179 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
     [TestClass]
     public class CorreoCodigoVerificacionNotificadorPruebas
     {
-        private const string CodigoPrueba = "123456";
-        private const string UsuarioDestinoPrueba = "UsuarioTest";
-        private const string IdiomaEspanol = "es";
-        private const string IdiomaIngles = "en";
-        private const string IdiomaEspanolVariante = "es-MX";
-        private const string IdiomaInglesVariante = "en-US";
-        private const string SaludoEspanol = "Hola";
-        private const string SaludoIngles = "Hello";
-        private const string MensajeCodigoEspanol = "Tu codigo de verificacion es:";
-        private const string MensajeCodigoIngles = "Your verification code is:";
-        private const string MensajeIgnorarEspanol = "Si no solicitaste este codigo";
-        private const string MensajeIgnorarIngles = "If you did not request this code";
+        private const string CodigoVerificacionPrueba = "123456";
+        private const string NombreUsuarioDestinoPrueba = "UsuarioTest";
+        private const string CodigoIdiomaEspanol = "es";
+        private const string CodigoIdiomaIngles = "en";
+        private const string CodigoIdiomaEspanolVariante = "es-MX";
+        private const string CodigoIdiomaInglesVariante = "en-US";
+        private const string CodigoIdiomaFrances = "fr";
+        private const string TextoSaludoEspanol = "Hola";
+        private const string TextoSaludoIngles = "Hello";
+        private const string TextoMensajeCodigoEspanol = "Tu codigo de verificacion es:";
+        private const string TextoMensajeCodigoIngles = "Your verification code is:";
+        private const string TextoMensajeIgnorarEspanol = "Si no solicitaste este codigo";
+        private const string TextoMensajeIgnorarIngles = "If you did not request this code";
         private const string EtiquetaHtmlApertura = "<html>";
         private const string EtiquetaHtmlCierre = "</html>";
         private const string EtiquetaBodyApertura = "<body";
         private const string EtiquetaBodyCierre = "</body>";
+        private const string EstiloFontFamily = "font-family";
+        private const string EstiloColor = "color";
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaEspanolContieneTextoEspanol()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanol);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
-            Assert.IsTrue(cuerpo.Contains(MensajeCodigoEspanol));
-            Assert.IsTrue(cuerpo.Contains(MensajeIgnorarEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeCodigoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeIgnorarEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaInglesContieneTextoIngles()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaIngles);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaIngles);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoIngles));
-            Assert.IsTrue(cuerpo.Contains(MensajeCodigoIngles));
-            Assert.IsTrue(cuerpo.Contains(MensajeIgnorarIngles));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoIngles));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeCodigoIngles));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeIgnorarIngles));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_ContieneCodigoVerificacion()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanol);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsTrue(cuerpo.Contains(CodigoPrueba));
+            Assert.IsTrue(cuerpoMensaje.Contains(CodigoVerificacionPrueba));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_ContieneNombreUsuario()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanol);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsTrue(cuerpo.Contains(UsuarioDestinoPrueba));
+            Assert.IsTrue(cuerpoMensaje.Contains(NombreUsuarioDestinoPrueba));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_UsuarioNuloNoIncluyeNombre()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
                 null,
-                CodigoPrueba,
-                IdiomaEspanol);
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsFalse(cuerpo.Contains(UsuarioDestinoPrueba));
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
+            Assert.IsFalse(cuerpoMensaje.Contains(NombreUsuarioDestinoPrueba));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_UsuarioVacioNoIncluyeNombre()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
                 string.Empty,
-                CodigoPrueba,
-                IdiomaEspanol);
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
-            Assert.IsTrue(cuerpo.Contains(CodigoPrueba));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(CodigoVerificacionPrueba));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_ContieneEstructuraHtmlValida()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanol);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            Assert.IsTrue(cuerpo.Contains(EtiquetaHtmlApertura));
-            Assert.IsTrue(cuerpo.Contains(EtiquetaHtmlCierre));
-            Assert.IsTrue(cuerpo.Contains(EtiquetaBodyApertura));
-            Assert.IsTrue(cuerpo.Contains(EtiquetaBodyCierre));
+            Assert.IsTrue(cuerpoMensaje.Contains(EtiquetaHtmlApertura));
+            Assert.IsTrue(cuerpoMensaje.Contains(EtiquetaHtmlCierre));
+            Assert.IsTrue(cuerpoMensaje.Contains(EtiquetaBodyApertura));
+            Assert.IsTrue(cuerpoMensaje.Contains(EtiquetaBodyCierre));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaNuloUsaEspanol()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
                 null);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
-            Assert.IsTrue(cuerpo.Contains(MensajeCodigoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeCodigoEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaVacioUsaEspanol()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
                 string.Empty);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
-            Assert.IsTrue(cuerpo.Contains(MensajeCodigoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoMensajeCodigoEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaVarianteEspanolUsaEspanol()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanolVariante);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanolVariante);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaVarianteInglesUsaIngles()
         {
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaInglesVariante);
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaInglesVariante);
 
-            Assert.IsTrue(cuerpo.Contains(SaludoIngles));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoIngles));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_IdiomaDesconocidoUsaEspanol()
         {
-            string idiomaDesconocido = "fr";
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaFrances);
 
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                idiomaDesconocido);
-
-            Assert.IsTrue(cuerpo.Contains(SaludoEspanol));
+            Assert.IsTrue(cuerpoMensaje.Contains(TextoSaludoEspanol));
         }
 
         [TestMethod]
         public void Prueba_ConstruirCuerpoMensaje_ContieneEstilosCss()
         {
-            string estiloFontFamily = "font-family";
-            string estiloColor = "color";
+            string cuerpoMensaje = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
+                NombreUsuarioDestinoPrueba,
+                CodigoVerificacionPrueba,
+                CodigoIdiomaEspanol);
 
-            string cuerpo = CorreoCodigoVerificacionNotificador.ConstruirCuerpoMensaje(
-                UsuarioDestinoPrueba,
-                CodigoPrueba,
-                IdiomaEspanol);
-
-            Assert.IsTrue(cuerpo.Contains(estiloFontFamily));
-            Assert.IsTrue(cuerpo.Contains(estiloColor));
+            Assert.IsTrue(cuerpoMensaje.Contains(EstiloFontFamily));
+            Assert.IsTrue(cuerpoMensaje.Contains(EstiloColor));
         }
     }
 }

@@ -16,6 +16,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         private const string NombreJugadorExpulsado = "JugadorExpulsado";
         private const string NombreJugadorBaneado = "JugadorBaneado";
         private const string NombreCreadorSala = "CreadorSala";
+        private const string NombreUsuarioMinusculas = "jugadorprueba";
+        private const string NombreUsuarioMayusculas = "JUGADORPRUEBA";
 
         private GestorNotificacionesSalaInterna _gestor;
         private Mock<ISalasManejadorCallback> _callbackMock;
@@ -34,7 +36,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         {
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
 
-            ISalasManejadorCallback callbackObtenido = _gestor.ObtenerCallback(NombreUsuarioPrueba);
+            ISalasManejadorCallback callbackObtenido = 
+                _gestor.ObtenerCallback(NombreUsuarioPrueba);
 
             Assert.AreEqual(_callbackMock.Object, callbackObtenido);
         }
@@ -45,7 +48,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
             _gestor.Registrar(NombreUsuarioPrueba, _callbackSecundarioMock.Object);
 
-            ISalasManejadorCallback callbackObtenido = _gestor.ObtenerCallback(NombreUsuarioPrueba);
+            ISalasManejadorCallback callbackObtenido = 
+                _gestor.ObtenerCallback(NombreUsuarioPrueba);
 
             Assert.AreEqual(_callbackSecundarioMock.Object, callbackObtenido);
         }
@@ -56,7 +60,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
 
             _gestor.Remover(NombreUsuarioPrueba);
-            ISalasManejadorCallback callbackObtenido = _gestor.ObtenerCallback(NombreUsuarioPrueba);
+            ISalasManejadorCallback callbackObtenido = 
+                _gestor.ObtenerCallback(NombreUsuarioPrueba);
 
             Assert.AreNotEqual(_callbackMock.Object, callbackObtenido);
         }
@@ -78,11 +83,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
 
             _gestor.Limpiar();
 
-            ISalasManejadorCallback callback1 = _gestor.ObtenerCallback(NombreUsuarioPrueba);
-            ISalasManejadorCallback callback2 = _gestor.ObtenerCallback(NombreUsuarioSecundario);
+            ISalasManejadorCallback callbackPrimero = 
+                _gestor.ObtenerCallback(NombreUsuarioPrueba);
+            ISalasManejadorCallback callbackSegundo = 
+                _gestor.ObtenerCallback(NombreUsuarioSecundario);
 
-            Assert.AreNotEqual(_callbackMock.Object, callback1);
-            Assert.AreNotEqual(_callbackSecundarioMock.Object, callback2);
+            Assert.AreNotEqual(_callbackMock.Object, callbackPrimero);
+            Assert.AreNotEqual(_callbackSecundarioMock.Object, callbackSegundo);
         }
 
         [TestMethod]
@@ -95,7 +102,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.NotificarIngreso(CodigoSalaPrueba, NombreUsuarioPrueba, salaActualizada);
 
             _callbackSecundarioMock.Verify(
-                callback => callback.NotificarJugadorSeUnio(CodigoSalaPrueba, NombreUsuarioPrueba),
+                callback => callback.NotificarJugadorSeUnio(
+                    CodigoSalaPrueba, 
+                    NombreUsuarioPrueba),
                 Times.Once);
             _callbackMock.Verify(
                 callback => callback.NotificarSalaActualizada(salaActualizada),
@@ -130,15 +139,19 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.NotificarSalida(CodigoSalaPrueba, NombreUsuarioPrueba, salaActualizada);
 
             _callbackMock.Verify(
-                callback => callback.NotificarJugadorSalio(CodigoSalaPrueba, NombreUsuarioPrueba),
+                callback => callback.NotificarJugadorSalio(
+                    CodigoSalaPrueba, 
+                    NombreUsuarioPrueba),
                 Times.Once);
             _callbackSecundarioMock.Verify(
-                callback => callback.NotificarJugadorSalio(CodigoSalaPrueba, NombreUsuarioPrueba),
+                callback => callback.NotificarJugadorSalio(
+                    CodigoSalaPrueba, 
+                    NombreUsuarioPrueba),
                 Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_NotificarExpulsion_NotificaAlExpulsadoYActualizaALosDemas()
+        public void Prueba_NotificarExpulsion_NotificaAlExpulsadoYActualizaDemas()
         {
             var callbackExpulsadoMock = new Mock<ISalasManejadorCallback>();
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
@@ -166,7 +179,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarExpulsion_CallbackExpulsadoNuloNoLanzaExcepcion()
+        public void Prueba_NotificarExpulsion_CallbackNuloNoLanzaExcepcion()
         {
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
             SalaDTO salaActualizada = CrearSalaDtoPrueba();
@@ -205,7 +218,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarBaneo_NotificaAlBaneadoYActualizaALosDemas()
+        public void Prueba_NotificarBaneo_NotificaAlBaneadoYActualizaDemas()
         {
             var callbackBaneadoMock = new Mock<ISalasManejadorCallback>();
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
@@ -233,7 +246,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         }
 
         [TestMethod]
-        public void Prueba_NotificarBaneo_CallbackBaneadoNuloNoLanzaExcepcion()
+        public void Prueba_NotificarBaneo_CallbackNuloNoLanzaExcepcion()
         {
             _gestor.Registrar(NombreUsuarioPrueba, _callbackMock.Object);
             SalaDTO salaActualizada = CrearSalaDtoPrueba();
@@ -258,42 +271,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         [TestMethod]
         public void Prueba_ObtenerCallback_IgnoraMayusculasEnNombreUsuario()
         {
-            string nombreMinusculas = "jugadorprueba";
-            string nombreMayusculas = "JUGADORPRUEBA";
+            _gestor.Registrar(NombreUsuarioMinusculas, _callbackMock.Object);
 
-            _gestor.Registrar(nombreMinusculas, _callbackMock.Object);
-
-            ISalasManejadorCallback callbackObtenido = _gestor.ObtenerCallback(nombreMayusculas);
+            ISalasManejadorCallback callbackObtenido = 
+                _gestor.ObtenerCallback(NombreUsuarioMayusculas);
 
             Assert.AreEqual(_callbackMock.Object, callbackObtenido);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarIngreso_SinDestinatariosNoLanzaExcepcion()
-        {
-            SalaDTO salaActualizada = CrearSalaDtoPrueba();
-
-            _gestor.NotificarIngreso(CodigoSalaPrueba, NombreUsuarioPrueba, salaActualizada);
-
-            Assert.IsTrue(true);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarSalida_SinDestinatariosNoLanzaExcepcion()
-        {
-            SalaDTO salaActualizada = CrearSalaDtoPrueba();
-
-            _gestor.NotificarSalida(CodigoSalaPrueba, NombreUsuarioPrueba, salaActualizada);
-
-            Assert.IsTrue(true);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCancelacion_SinDestinatariosNoLanzaExcepcion()
-        {
-            _gestor.NotificarCancelacion(CodigoSalaPrueba);
-
-            Assert.IsTrue(true);
         }
 
         private static SalaDTO CrearSalaDtoPrueba()

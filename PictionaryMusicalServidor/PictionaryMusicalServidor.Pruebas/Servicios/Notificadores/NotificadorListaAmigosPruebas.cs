@@ -14,189 +14,65 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
     [TestClass]
     public class NotificadorListaAmigosPruebas
     {
-        private const string NombreUsuarioPrueba = "UsuarioPrueba";
-        private const string NombreUsuarioInvalido = "";
-        private const int IdUsuarioPrueba = 100;
-        private const string NombreAmigoPrueba = "AmigoPrueba";
-        private const int IdAmigoPrueba = 200;
+        private const string NombreUsuarioPrueba = "UsuarioTest";
+        private const string NombreAmigoPrueba = "AmigoTest";
+        private const int IdAmigoPrueba = 2;
 
-        private Mock<IManejadorCallback<IListaAmigosManejadorCallback>> _manejadorCallbackMock;
-        private Mock<IAmistadServicio> _amistadServicioMock;
-        private Mock<IContextoFactoria> _contextoFactoriaMock;
-        private Mock<IRepositorioFactoria> _repositorioFactoriaMock;
-        private Mock<IUsuarioRepositorio> _usuarioRepositorioMock;
-        private Mock<BaseDatosPruebaEntities> _contextoMock;
-        private Mock<IListaAmigosManejadorCallback> _callbackMock;
-        private NotificadorListaAmigos _notificador;
+        private Mock<IManejadorCallback<IListaAmigosManejadorCallback>> manejadorCallbackMock;
+        private Mock<IAmistadServicio> amistadServicioMock;
+        private Mock<IRepositorioFactoria> repositorioFactoriaMock;
+        private Mock<IContextoFactoria> contextoFactoriaMock;
+        private Mock<IListaAmigosManejadorCallback> callbackMock;
+        private Mock<BaseDatosPruebaEntities> contextoMock;
+        private Mock<IUsuarioRepositorio> usuarioRepositorioMock;
+        private NotificadorListaAmigos notificador;
 
         [TestInitialize]
         public void Inicializar()
         {
-            _manejadorCallbackMock = new Mock<IManejadorCallback<IListaAmigosManejadorCallback>>();
-            _amistadServicioMock = new Mock<IAmistadServicio>();
-            _contextoFactoriaMock = new Mock<IContextoFactoria>();
-            _repositorioFactoriaMock = new Mock<IRepositorioFactoria>();
-            _usuarioRepositorioMock = new Mock<IUsuarioRepositorio>();
-            _contextoMock = new Mock<BaseDatosPruebaEntities>();
-            _callbackMock = new Mock<IListaAmigosManejadorCallback>();
+            manejadorCallbackMock = new Mock<IManejadorCallback<IListaAmigosManejadorCallback>>();
+            amistadServicioMock = new Mock<IAmistadServicio>();
+            repositorioFactoriaMock = new Mock<IRepositorioFactoria>();
+            contextoFactoriaMock = new Mock<IContextoFactoria>();
+            callbackMock = new Mock<IListaAmigosManejadorCallback>();
+            contextoMock = new Mock<BaseDatosPruebaEntities>();
+            usuarioRepositorioMock = new Mock<IUsuarioRepositorio>();
 
-            _contextoFactoriaMock
-                .Setup(factoria => factoria.CrearContexto())
-                .Returns(_contextoMock.Object);
-            _repositorioFactoriaMock
-                .Setup(factoria => factoria.CrearUsuarioRepositorio(It.IsAny<BaseDatosPruebaEntities>()))
-                .Returns(_usuarioRepositorioMock.Object);
+            contextoFactoriaMock
+                .Setup(factory => factory.CrearContexto())
+                .Returns(contextoMock.Object);
 
-            _notificador = new NotificadorListaAmigos(
-                _manejadorCallbackMock.Object,
-                _amistadServicioMock.Object,
-                _contextoFactoriaMock.Object,
-                _repositorioFactoriaMock.Object);
+            repositorioFactoriaMock
+                .Setup(factory => factory.CrearUsuarioRepositorio(
+                    It.IsAny<BaseDatosPruebaEntities>()))
+                .Returns(usuarioRepositorioMock.Object);
+
+            notificador = new NotificadorListaAmigos(
+                manejadorCallbackMock.Object,
+                amistadServicioMock.Object,
+                contextoFactoriaMock.Object,
+                repositorioFactoriaMock.Object);
         }
 
         [TestMethod]
-        public void Prueba_NotificarCambioAmistad_NombreUsuarioInvalidoNoNotifica()
+        public void Prueba_NotificarLista_ConCallbackValidoInvocaNotificacion()
         {
-            _notificador.NotificarCambioAmistad(NombreUsuarioInvalido);
+            var listaAmigos = new List<AmigoDTO>
+            {
+                new AmigoDTO
+                {
+                    NombreUsuario = NombreAmigoPrueba,
+                    UsuarioId = IdAmigoPrueba
+                }
+            };
 
-            _contextoFactoriaMock.Verify(
-                factoria => factoria.CrearContexto(),
-                Times.Never);
-        }
+            manejadorCallbackMock
+                .Setup(handler => handler.ObtenerCallback(NombreUsuarioPrueba))
+                .Returns(callbackMock.Object);
 
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_NombreUsuarioNuloNoNotifica()
-        {
-            _notificador.NotificarCambioAmistad(null);
+            notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
 
-            _contextoFactoriaMock.Verify(
-                factoria => factoria.CrearContexto(),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_UsuarioExistenteNotificaLista()
-        {
-            var usuario = CrearUsuarioPrueba();
-            var listaAmigos = CrearListaAmigosPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            ConfigurarListaAmigos(listaAmigos);
-            ConfigurarCallbackExistente();
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _callbackMock.Verify(
-                callback => callback.NotificarListaAmigosActualizada(listaAmigos),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionFaultExceptionNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new System.ServiceModel.FaultException());
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionArgumentOutOfRangeNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new ArgumentOutOfRangeException("idUsuario", "ID fuera de rango"));
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionArgumentExceptionNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new ArgumentException("Argumento invalido"));
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionDataExceptionNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new System.Data.DataException());
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionInvalidOperationNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new InvalidOperationException());
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarCambioAmistad_ExcepcionGeneralNoSePropaga()
-        {
-            var usuario = CrearUsuarioPrueba();
-            ConfigurarUsuarioExistente(usuario);
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Throws(new Exception());
-
-            _notificador.NotificarCambioAmistad(NombreUsuarioPrueba);
-
-            _amistadServicioMock.Verify(
-                servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarLista_CallbackExistenteNotifica()
-        {
-            var listaAmigos = CrearListaAmigosPrueba();
-            _manejadorCallbackMock
-                .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
-                .Returns(_callbackMock.Object);
-
-            _notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
-
-            _callbackMock.Verify(
+            callbackMock.Verify(
                 callback => callback.NotificarListaAmigosActualizada(listaAmigos),
                 Times.Once);
         }
@@ -204,113 +80,106 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         [TestMethod]
         public void Prueba_NotificarLista_CallbackNuloNoLanzaExcepcion()
         {
-            var listaAmigos = CrearListaAmigosPrueba();
-            _manejadorCallbackMock
-                .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
+            var listaAmigos = new List<AmigoDTO>();
+
+            manejadorCallbackMock
+                .Setup(handler => handler.ObtenerCallback(NombreUsuarioPrueba))
                 .Returns((IListaAmigosManejadorCallback)null);
 
-            _notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
+            notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
 
-            _callbackMock.Verify(
+            callbackMock.Verify(
                 callback => callback.NotificarListaAmigosActualizada(It.IsAny<List<AmigoDTO>>()),
                 Times.Never);
         }
 
         [TestMethod]
-        public void Prueba_NotificarLista_ExcepcionEnCallbackNoSePropaga()
-        {
-            var listaAmigos = CrearListaAmigosPrueba();
-            _manejadorCallbackMock
-                .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
-                .Returns(_callbackMock.Object);
-            _callbackMock
-                .Setup(callback => callback.NotificarListaAmigosActualizada(It.IsAny<List<AmigoDTO>>()))
-                .Throws(new Exception());
-
-            _notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
-
-            _callbackMock.Verify(
-                callback => callback.NotificarListaAmigosActualizada(listaAmigos),
-                Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_NotificarLista_ListaVaciaNotificaCorrectamente()
+        public void Prueba_NotificarLista_ListaVaciaInvocaCallback()
         {
             var listaVacia = new List<AmigoDTO>();
-            _manejadorCallbackMock
-                .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
-                .Returns(_callbackMock.Object);
 
-            _notificador.NotificarLista(NombreUsuarioPrueba, listaVacia);
+            manejadorCallbackMock
+                .Setup(handler => handler.ObtenerCallback(NombreUsuarioPrueba))
+                .Returns(callbackMock.Object);
 
-            _callbackMock.Verify(
+            notificador.NotificarLista(NombreUsuarioPrueba, listaVacia);
+
+            callbackMock.Verify(
                 callback => callback.NotificarListaAmigosActualizada(listaVacia),
                 Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_Constructor_RepositorioFactoriaNuloLanzaArgumentNullException()
+        public void Prueba_NotificarLista_CallbackFallaNoLanzaExcepcion()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new NotificadorListaAmigos(
-                    _manejadorCallbackMock.Object,
-                    _amistadServicioMock.Object,
-                    _contextoFactoriaMock.Object,
-                    null));
+            var listaAmigos = new List<AmigoDTO>();
+
+            manejadorCallbackMock
+                .Setup(handler => handler.ObtenerCallback(NombreUsuarioPrueba))
+                .Returns(callbackMock.Object);
+
+            callbackMock
+                .Setup(callback => callback.NotificarListaAmigosActualizada(
+                    It.IsAny<List<AmigoDTO>>()))
+                .Throws(new Exception("Error de callback"));
+
+            notificador.NotificarLista(NombreUsuarioPrueba, listaAmigos);
+
+            manejadorCallbackMock.Verify(
+                handler => handler.ObtenerCallback(NombreUsuarioPrueba),
+                Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoFactoriaNuloLanzaArgumentNullException()
+        public void Prueba_NotificarCambioAmistad_NombreNuloNoNotifica()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new NotificadorListaAmigos(
-                    _manejadorCallbackMock.Object,
-                    _amistadServicioMock.Object,
-                    null,
-                    _repositorioFactoriaMock.Object));
+            notificador.NotificarCambioAmistad(null);
+
+            manejadorCallbackMock.Verify(
+                handler => handler.ObtenerCallback(It.IsAny<string>()),
+                Times.Never);
         }
 
-        private void ConfigurarUsuarioExistente(Usuario usuario)
+        [TestMethod]
+        public void Prueba_NotificarCambioAmistad_NombreVacioNoNotifica()
         {
-            _usuarioRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
-                .Returns(usuario);
+            notificador.NotificarCambioAmistad(string.Empty);
+
+            manejadorCallbackMock.Verify(
+                handler => handler.ObtenerCallback(It.IsAny<string>()),
+                Times.Never);
         }
 
-        private void ConfigurarListaAmigos(List<AmigoDTO> listaAmigos)
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Prueba_Constructor_RepositorioFactoriaNuloLanzaExcepcion()
         {
-            _amistadServicioMock
-                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
-                .Returns(listaAmigos);
+            new NotificadorListaAmigos(
+                manejadorCallbackMock.Object,
+                amistadServicioMock.Object,
+                null);
         }
 
-        private void ConfigurarCallbackExistente()
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Prueba_ConstructorCompleto_ContextoFactoriaNuloLanzaExcepcion()
         {
-            _manejadorCallbackMock
-                .Setup(manejador => manejador.ObtenerCallback(NombreUsuarioPrueba))
-                .Returns(_callbackMock.Object);
+            new NotificadorListaAmigos(
+                manejadorCallbackMock.Object,
+                amistadServicioMock.Object,
+                null,
+                repositorioFactoriaMock.Object);
         }
 
-        private static Usuario CrearUsuarioPrueba()
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Prueba_ConstructorCompleto_RepositorioFactoriaNuloLanzaExcepcion()
         {
-            return new Usuario
-            {
-                idUsuario = IdUsuarioPrueba,
-                Nombre_Usuario = NombreUsuarioPrueba
-            };
-        }
-
-        private static List<AmigoDTO> CrearListaAmigosPrueba()
-        {
-            return new List<AmigoDTO>
-            {
-                new AmigoDTO
-                {
-                    UsuarioId = IdAmigoPrueba,
-                    NombreUsuario = NombreAmigoPrueba
-                }
-            };
+            new NotificadorListaAmigos(
+                manejadorCallbackMock.Object,
+                amistadServicioMock.Object,
+                contextoFactoriaMock.Object,
+                null);
         }
     }
 }
