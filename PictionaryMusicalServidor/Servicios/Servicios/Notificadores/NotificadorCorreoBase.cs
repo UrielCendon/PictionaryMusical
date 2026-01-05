@@ -64,14 +64,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         }
 
         /// <summary>
-        /// Valida que no se haya enviado un correo reciente a la misma direccion.
+        /// Valida que no se haya enviado un correo reciente a la misma direccion y reserva 
+        /// inmediatamente la direccion.
         /// Si se ha enviado uno en el ultimo minuto, lanza una excepcion FaultException.
+        /// Si es valido, registra inmediatamente la direccion para prevenir envios concurrentes.
         /// </summary>
-        /// <param name="correoDestino">Direccion de correo a validar.</param>
+        /// <param name="correoDestino">Direccion de correo a validar y reservar.</param>
         /// <exception cref="FaultException">
         /// Si se intenta enviar un correo antes de que transcurra el tiempo de espera.
         /// </exception>
-        protected void ValidarLimiteFrecuenciaEnvio(string correoDestino)
+        protected void ValidarYReservarEnvio(string correoDestino)
         {
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
@@ -89,12 +91,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                         );
                     throw new FaultException(MensajesError.Cliente.LimiteFrecuenciaCorreo);
                 }
+                
+                var politicaExpiracion = new CacheItemPolicy
+                {
+                    AbsoluteExpiration = DateTimeOffset.UtcNow
+                        .AddSeconds(SegundosEsperaEntreEnvios)
+                };
+                _cacheEnviosRecientes.Set(claveCache, DateTime.UtcNow, politicaExpiracion);
             }
         }
 
         /// <summary>
         /// Registra un envio de correo exitoso en el cache con expiracion automatica.
         /// El registro expira automaticamente despues de SegundosEsperaEntreEnvios.
+        /// Si el envio ya estaba reservado, este metodo mantiene la reserva.
         /// </summary>
         /// <param name="correoDestino">Direccion de correo enviada.</param>
         protected void RegistrarEnvioExitoso(string correoDestino)
@@ -115,6 +125,26 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             lock (_lockCache)
             {
                 _cacheEnviosRecientes.Set(claveCache, DateTime.UtcNow, politicaExpiracion);
+            }
+        }
+
+        /// <summary>
+        /// Libera la reserva de una direccion de correo en caso de fallo en el envio.
+        /// Solo debe usarse cuando el envio falla despues de haberse reservado con ValidarYReservarEnvio.
+        /// </summary>
+        /// <param name="correoDestino">Direccion de correo cuya reserva se debe liberar.</param>
+        protected void LiberarReservaEnvio(string correoDestino)
+        {
+            if (string.IsNullOrWhiteSpace(correoDestino))
+            {
+                return;
+            }
+
+            string claveCache = correoDestino.Trim().ToLowerInvariant();
+
+            lock (_lockCache)
+            {
+                _cacheEnviosRecientes.Remove(claveCache);
             }
         }
 

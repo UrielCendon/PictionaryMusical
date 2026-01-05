@@ -39,12 +39,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 return false;
             }
 
-            ValidarLimiteFrecuenciaEnvio(parametros.CorreoDestino);
+            ValidarYReservarEnvio(parametros.CorreoDestino);
 
             var configuracionSmtp = ObtenerConfiguracionSmtp();
             if (!configuracionSmtp.EsValida)
             {
                 _logger.Error(MensajesError.Bitacora.ConfiguracionCorreoInvalida);
+                LiberarReservaEnvio(parametros.CorreoDestino);
                 return false;
             }
 
@@ -61,9 +62,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 cuerpoHtml, 
                 configuracionSmtp);
 
-            if (enviado)
+            if (!enviado)
             {
-                RegistrarEnvioExitoso(parametros.CorreoDestino);
+                LiberarReservaEnvio(parametros.CorreoDestino);
             }
 
             return enviado;
