@@ -133,7 +133,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// Solo debe usarse cuando el envio falla despues de haberse reservado con ValidarYReservarEnvio.
         /// </summary>
         /// <param name="correoDestino">Direccion de correo cuya reserva se debe liberar.</param>
-        protected void LiberarReservaEnvio(string correoDestino)
+        protected static void LiberarReservaEnvio(string correoDestino)
         {
             if (string.IsNullOrWhiteSpace(correoDestino))
             {
