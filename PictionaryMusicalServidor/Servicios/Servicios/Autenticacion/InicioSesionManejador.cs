@@ -261,7 +261,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 when (excepcion.InnerException is KeyNotFoundException)
             {
                 _logger.Info(
-                    "Usuario no encontrado por nombre, se intentara buscar por correo electronico.");
+                    "Usuario no encontrado por nombre, se intentara buscar por correo electronico.",
+                    excepcion);
                 return BuscarPorCorreoElectronico(contexto, identificador);
             }
             catch (Exception excepcion)

@@ -17,7 +17,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
     {
         private const int IdUsuarioReportante = 1;
         private const int IdUsuarioReportado = 2;
-        private const int IdUsuarioInvalido = 0;
         private const int TotalReportesNormal = 1;
         private const int TotalReportesLimite = 3;
         private const string NombreUsuarioReportante = "UsuarioReportante";

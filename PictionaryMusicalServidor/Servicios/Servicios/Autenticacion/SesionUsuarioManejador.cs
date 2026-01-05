@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
@@ -95,21 +96,20 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
             string nombreNormalizado = nombreUsuario.Trim();
 
-            foreach (var kvp in _sesionesActivas)
+            var sesionEncontrada = _sesionesActivas.FirstOrDefault(parClaveValor =>
+                string.Equals(
+                    parClaveValor.Value.NombreUsuario,
+                    nombreNormalizado,
+                    StringComparison.OrdinalIgnoreCase));
+
+            if (sesionEncontrada.Value != null)
             {
-                if (string.Equals(
-                    kvp.Value.NombreUsuario, 
-                    nombreNormalizado, 
-                    StringComparison.OrdinalIgnoreCase))
+                SesionActiva sesionRemovida;
+                if (_sesionesActivas.TryRemove(sesionEncontrada.Key, out sesionRemovida))
                 {
-                    SesionActiva sesionRemovida;
-                    if (_sesionesActivas.TryRemove(kvp.Key, out sesionRemovida))
-                    {
-                        _logger.InfoFormat(
-                            MensajesError.Bitacora.SesionEliminadaUsuario,
-                            kvp.Key);
-                    }
-                    return;
+                    _logger.InfoFormat(
+                        MensajesError.Bitacora.SesionEliminadaUsuario,
+                        sesionEncontrada.Key);
                 }
             }
         }
