@@ -13,10 +13,6 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
-    /// <summary>
-    /// Contiene pruebas unitarias para la clase <see cref="ControladorPartida"/>.
-    /// Valida el flujo de partida, inicio, mensajes y remoción de jugadores.
-    /// </summary>
     [TestClass]
     public class ControladorPartidaPruebas
     {
@@ -51,20 +47,27 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 .Setup(proveedor => proveedor.Retrasar(It.IsAny<int>()))
                 .Returns(Task.CompletedTask);
 
-            _controlador = new ControladorPartida(
-                TiempoRonda,
-                DificultadMedia,
-                TotalRondas,
-                _catalogoMock.Object,
-                _gestorJugadoresMock.Object,
-                _gestorTiemposMock.Object,
-                _validadorMock.Object,
-                _proveedorTiempoMock.Object
-            );
+            var configuracion = new ConfiguracionPartida
+            {
+                TiempoRonda = TiempoRonda,
+                Dificultad = DificultadMedia,
+                TotalRondas = TotalRondas
+            };
+
+            var dependencias = new DependenciasPartida
+            {
+                Catalogo = _catalogoMock.Object,
+                GestorJugadores = _gestorJugadoresMock.Object,
+                GestorTiempos = _gestorTiemposMock.Object,
+                ValidadorAdivinanza = _validadorMock.Object,
+                ProveedorTiempo = _proveedorTiempoMock.Object
+            };
+
+            _controlador = new ControladorPartida(configuracion, dependencias);
         }
 
         [TestMethod]
-        public void Prueba_AgregarJugador_PartidaYaIniciadaLanzaExcepcion()
+        public void Prueba_AgregarJugador_PartidaYaIniciada()
         {
             _gestorJugadoresMock.Setup(gestor => gestor.HaySuficientesJugadores).Returns(true);
             _gestorJugadoresMock.Setup(gestor => gestor.EsHost(IdHost)).Returns(true);
@@ -81,7 +84,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_IniciarPartida_NoHostLanzaExcepcion()
+        public void Prueba_IniciarPartida_NoHost()
         {
             _gestorJugadoresMock
                 .Setup(gestor => gestor.HaySuficientesJugadores)
@@ -95,7 +98,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_IniciarPartida_FlujoCorrectoDisparaEvento()
+        public void Prueba_IniciarPartida_FlujoCorrecto()
         {
             bool eventoDisparado = false;
             _controlador.PartidaIniciada += () => eventoDisparado = true;
@@ -124,7 +127,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_ProcesarMensaje_AdivinanzaCorrectaDisparaEvento()
+        public void Prueba_ProcesarMensaje_AdivinanzaCorrecta()
         {
             _gestorJugadoresMock
                 .Setup(gestor => gestor.HaySuficientesJugadores)
@@ -167,7 +170,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_RemoverJugador_HostAbandonaCancelaPartida()
+        public void Prueba_RemoverJugador_HostAbandona()
         {
             _gestorJugadoresMock
                 .Setup(gestor => gestor.HaySuficientesJugadores)

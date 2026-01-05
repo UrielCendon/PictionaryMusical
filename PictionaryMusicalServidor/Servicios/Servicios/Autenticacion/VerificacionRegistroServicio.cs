@@ -285,7 +285,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static bool ValidarTokenReenvio(ReenvioCodigoVerificacionDTO solicitud)
         {
-            if (solicitud == null) return false;
+            if (solicitud == null)
+            {
+                return false;
+            }
+
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
             return EntradaComunValidador.EsTokenValido(token);
         }
@@ -352,7 +356,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static bool ValidarDatosConfirmacion(ConfirmacionCodigoDTO confirmacion)
         {
-            if (confirmacion == null) return false;
+            if (confirmacion == null)
+            {
+                return false;
+            }
+
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
             string codigo = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
 

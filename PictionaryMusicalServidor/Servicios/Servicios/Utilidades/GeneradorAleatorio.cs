@@ -10,8 +10,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// </summary>
     internal static class GeneradorAleatorio
     {
-        private static readonly Random _random = new Random();
-        private static readonly object _bloqueo = new object();
+        private const int LongitudCodigoPorDefecto = 6;
+        private const int BaseNumerica = 10;
+
+        private static readonly Random _generadorNumeros = new Random();
+        private static readonly object _objetoBloqueo = new object();
 
         /// <summary>
         /// Genera un token unico de sesion basado en GUID.
@@ -31,19 +34,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <returns>Codigo de verificacion numerico como cadena.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Se lanza si longitud es menor o 
         /// igual a 0.</exception>
-        public static string GenerarCodigoVerificacion(int longitud = 6)
+        public static string GenerarCodigoVerificacion(int longitud = LongitudCodigoPorDefecto)
         {
             if (longitud <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(longitud));
             }
 
-            lock (_bloqueo)
+            lock (_objetoBloqueo)
             {
-                int limiteSuperior = (int)Math.Pow(10, longitud) - 1;
-                int limiteInferior = (int)Math.Pow(10, longitud - 1);
-                int numero = _random.Next(limiteInferior, limiteSuperior);
-                return numero.ToString();
+                int valorMaximo = (int)Math.Pow(BaseNumerica, longitud) - 1;
+                int valorMinimo = (int)Math.Pow(BaseNumerica, longitud - 1);
+                int codigoGenerado = _generadorNumeros.Next(valorMinimo, valorMaximo);
+                return codigoGenerado.ToString();
             }
         }
 
@@ -55,18 +58,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">Se lanza si longitud es menor o 
         /// igual a 0.</exception>
-        public static string GenerarCodigoSala(int longitud = 6)
+        public static string GenerarCodigoSala(int longitud = LongitudCodigoPorDefecto)
         {
             if (longitud <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(longitud));
             }
 
-            lock (_bloqueo)
+            lock (_objetoBloqueo)
             {
-                int limiteSuperior = (int)Math.Pow(10, longitud);
-                int numero = _random.Next(0, limiteSuperior);
-                return numero.ToString("D" + longitud);
+                int valorMaximo = (int)Math.Pow(BaseNumerica, longitud);
+                int codigoGenerado = _generadorNumeros.Next(0, valorMaximo);
+                return codigoGenerado.ToString("D" + longitud);
             }
         }
 
@@ -84,14 +87,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
                 throw new ArgumentNullException(nameof(lista));
             }
 
-            lock (_bloqueo)
+            lock (_objetoBloqueo)
             {
-                for (int i = lista.Count - 1; i > 0; i--)
+                for (int indiceActual = lista.Count - 1; indiceActual > 0; indiceActual--)
                 {
-                    int j = _random.Next(i + 1);
-                    T temp = lista[i];
-                    lista[i] = lista[j];
-                    lista[j] = temp;
+                    int indiceAleatorio = _generadorNumeros.Next(indiceActual + 1);
+                    T elementoTemporal = lista[indiceActual];
+                    lista[indiceActual] = lista[indiceAleatorio];
+                    lista[indiceAleatorio] = elementoTemporal;
                 }
             }
         }

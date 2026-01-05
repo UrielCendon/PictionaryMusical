@@ -5,7 +5,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// Permite abstraer la obtencion de callbacks para facilitar pruebas unitarias.
     /// </summary>
     /// <typeparam name="T">Tipo de callback a obtener.</typeparam>
-    public interface IProveedorCallback<T> where T : class
+    public interface IProveedorCallback<out T> where T : class
     {
         /// <summary>
         /// Obtiene el callback actual del contexto de operacion.

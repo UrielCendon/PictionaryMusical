@@ -102,7 +102,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (!EntradaComunValidador.EsMensajeValido(nombreUsuario))
             {
-                return null;
+                return default(TCallback);
             }
 
             TCallback callback;
@@ -110,7 +110,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 return callback;
             }
-            return null;
+
+            return default(TCallback);
         }
 
         /// <summary>

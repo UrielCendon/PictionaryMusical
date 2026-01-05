@@ -193,7 +193,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                 var gestorJugadores = new GestorJugadoresPartida(generadorAleatorio);
                 var proveedorFecha = new ProveedorFecha();
 
-                int tiempoRonda = configuracion?.TiempoPorRondaSegundos ?? TiempoRondaPorDefectoSegundos;
+                int tiempoRonda = configuracion?.TiempoPorRondaSegundos 
+                    ?? TiempoRondaPorDefectoSegundos;
                 var gestorTiempos = new GestorTiemposPartida(
                     tiempoRonda,
                     TiempoTransicionPorDefectoSegundos,
@@ -389,12 +390,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (CommunicationException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(
+                    MensajesError.Bitacora.ErrorNotificandoInicioRonda, 
+                    idJugador, 
+                    excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(
+                    MensajesError.Bitacora.ErrorNotificandoInicioRonda, 
+                    idJugador, 
+                    excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (ObjectDisposedException excepcion)

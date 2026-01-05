@@ -6,10 +6,6 @@ using PictionaryMusicalServidor.Datos.Utilidades;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
-    /// <summary>
-    /// Contiene pruebas unitarias para la clase <see cref="GestorTiemposPartida"/>.
-    /// Valida el calculo de puntos segun tiempo restante y el control de rondas.
-    /// </summary>
     [TestClass]
     public class GestorTiemposPartidaPruebas
     {
@@ -17,6 +13,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         private const int DuracionTransicion = 5;
         private const int MitadDuracionRonda = 30;
         private const int TiempoExcedenteSegundos = 10;
+        private const int PuntosCero = 0;
         private readonly DateTime FechaInicio = 
             new DateTime(2026, 1, 4, 12, 0, 0, DateTimeKind.Utc);
 
@@ -38,22 +35,22 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Constructor_ProveedorFechaNuloLanzaExcepcion()
+        public void Prueba_Constructor_ProveedorFechaNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new GestorTiemposPartida(DuracionRonda, DuracionTransicion, null));
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempo_RondaNoIniciadaRetornaCero()
+        public void Prueba_CalcularPuntosPorTiempo_RondaNoIniciada()
         {
             int puntos = _gestor.CalcularPuntosPorTiempo();
 
-            Assert.AreEqual(0, puntos);
+            Assert.AreEqual(PuntosCero, puntos);
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempo_InicioRondaRetornaTotal()
+        public void Prueba_CalcularPuntosPorTiempo_InicioRonda()
         {
             _gestor.IniciarRonda();
 
@@ -67,7 +64,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempo_MitadDeTiempoRetornaMitadPuntos()
+        public void Prueba_CalcularPuntosPorTiempo_MitadDeTiempo()
         {
             _gestor.IniciarRonda();
 
@@ -82,7 +79,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_CalcularPuntosPorTiempo_TiempoExcedidoNoRetornaNegativos()
+        public void Prueba_CalcularPuntosPorTiempo_TiempoExcedido()
         {
             _gestor.IniciarRonda();
 
@@ -93,18 +90,19 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 
             int puntos = _gestor.CalcularPuntosPorTiempo();
 
-            Assert.AreEqual(0, puntos);
+            Assert.AreEqual(PuntosCero, puntos);
         }
 
         [TestMethod]
-        public void Prueba_DetenerTodo_DetieneCalculoPuntos()
+        public void Prueba_DetenerTodo_DetieneCalculo()
         {
             _gestor.IniciarRonda();
             _gestor.DetenerTodo();
 
             int puntos = _gestor.CalcularPuntosPorTiempo();
 
-            Assert.AreEqual(0, puntos);
+            Assert.AreEqual(PuntosCero, puntos);
         }
+
     }
 }

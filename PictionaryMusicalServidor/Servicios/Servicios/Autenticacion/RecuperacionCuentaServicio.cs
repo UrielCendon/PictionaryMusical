@@ -234,7 +234,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (BaseDatosExcepcion excepcion) 
                 when (excepcion.InnerException is KeyNotFoundException)
             {
-                return null;
+                return default(Usuario);
             }
         }
 
@@ -249,7 +249,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             catch (BaseDatosExcepcion excepcion) 
                 when (excepcion.InnerException is KeyNotFoundException)
             {
-                return null;
+                return default(Usuario);
             }
         }
 
@@ -327,7 +327,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static bool ValidarReenvioEntrada(ReenvioCodigoDTO solicitud)
         {
-            if (solicitud == null) return false;
+            if (solicitud == null)
+            {
+                return false;
+            }
+
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
             return EntradaComunValidador.EsTokenValido(token);
         }
@@ -385,7 +389,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static bool ValidarConfirmacionEntrada(ConfirmacionCodigoDTO confirmacion)
         {
-            if (confirmacion == null) return false;
+            if (confirmacion == null)
+            {
+                return false;
+            }
+
             string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
             string codigo = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
 
@@ -422,7 +430,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static bool ValidarActualizacionEntrada(ActualizacionContrasenaDTO solicitud)
         {
-            if (solicitud == null) return false;
+            if (solicitud == null)
+            {
+                return false;
+            }
+
             string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
             string pass = EntradaComunValidador.NormalizarTexto(solicitud.NuevaContrasena);
 

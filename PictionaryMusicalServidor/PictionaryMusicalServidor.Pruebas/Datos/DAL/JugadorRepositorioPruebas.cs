@@ -10,7 +10,7 @@ using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
 using PictionaryMusicalServidor.Datos.Excepciones;
 using Datos.Modelo;
 
-namespace PictionaryMusicalServidor.Pruebas.Datos
+namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
 {
     [TestClass]
     public class JugadorRepositorioPruebas

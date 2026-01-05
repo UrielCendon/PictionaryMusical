@@ -12,6 +12,27 @@ using System.Threading.Tasks;
 namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 {
     /// <summary>
+    /// Contiene la configuración inicial para una partida.
+    /// </summary>
+    public class ConfiguracionPartida
+    {
+        public int TiempoRonda { get; set; }
+        public string Dificultad { get; set; }
+        public int TotalRondas { get; set; }
+    }
+
+    /// <summary>
+    /// Agrupa las dependencias requeridas por el controlador de partida.
+    /// </summary>
+    public class DependenciasPartida
+    {
+        public ICatalogoCanciones Catalogo { get; set; }
+        public IGestorJugadoresPartida GestorJugadores { get; set; }
+        public IGestorTiemposPartida GestorTiempos { get; set; }
+        public IValidadorAdivinanza ValidadorAdivinanza { get; set; }
+        public IProveedorTiempo ProveedorTiempo { get; set; }
+    }
+    /// <summary>
     /// Controla el flujo de una partida, incluyendo rondas, turnos y eventos del juego.
     /// </summary>
     public class ControladorPartida
@@ -96,49 +117,62 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <summary>
         /// Inicializa una nueva instancia del controlador de partida.
         /// </summary>
-        /// <param name="tiempoRonda">Duracion de cada ronda en segundos.</param>
-        /// <param name="dificultad">Nivel de dificultad de la partida.</param>
-        /// <param name="totalRondas">Numero total de rondas a jugar.</param>
-        /// <param name="catalogo">Catalogo de canciones disponibles.</param>
-        /// <param name="gestorJugadores">Gestor de jugadores de la partida.</param>
-        /// <param name="gestorTiempos">Gestor de temporizadores.</param>
-        /// <param name="validadorAdivinanza">Validador de intentos de adivinanza.</param>
-        /// <param name="proveedorTiempo">Proveedor de operaciones de tiempo.</param>
+        /// <param name="configuracion">Configuración de la partida.</param>
+        /// <param name="dependencias">Dependencias requeridas por el controlador.</param>
+        /// <exception cref="ArgumentNullException">Si configuracion o dependencias son nulas.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Si tiempoRonda o totalRondas son menores
         /// o iguales a cero.</exception>
         /// <exception cref="ArgumentException">Si dificultad es nula o vacia.</exception>
-        /// <exception cref="ArgumentNullException">Si alguna dependencia es nula.</exception>
         public ControladorPartida(
-            int tiempoRonda,
-            string dificultad,
-            int totalRondas,
-            ICatalogoCanciones catalogo,
-            IGestorJugadoresPartida gestorJugadores,
-            IGestorTiemposPartida gestorTiempos,
-            IValidadorAdivinanza validadorAdivinanza,
-            IProveedorTiempo proveedorTiempo)
+            ConfiguracionPartida configuracion,
+            DependenciasPartida dependencias)
         {
-            if (tiempoRonda <= 0 || totalRondas <= 0)
+            if (configuracion == null)
+            {
+                throw new ArgumentNullException(nameof(configuracion));
+            }
+
+            if (dependencias == null)
+            {
+                throw new ArgumentNullException(nameof(dependencias));
+            }
+
+            if (configuracion.TiempoRonda <= 0 || configuracion.TotalRondas <= 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(tiempoRonda),
+                    nameof(configuracion),
                     "El tiempo de ronda y el número total de rondas deben ser mayores que cero.");
             }
 
-            if (string.IsNullOrWhiteSpace(dificultad))
+            if (string.IsNullOrWhiteSpace(configuracion.Dificultad))
             {
-                throw new ArgumentException(nameof(dificultad));
+                throw new ArgumentException(nameof(configuracion.Dificultad));
             }
 
-            _catalogoCanciones = catalogo ?? throw new ArgumentNullException(nameof(catalogo));
-            _gestorJugadores = gestorJugadores ?? throw new ArgumentNullException(nameof(gestorJugadores));
-            _gestorTiempos = gestorTiempos ?? throw new ArgumentNullException(nameof(gestorTiempos));
-            _validadorAdivinanza = validadorAdivinanza ?? throw new ArgumentNullException(nameof(validadorAdivinanza));
-            _proveedorTiempo = proveedorTiempo ?? throw new ArgumentNullException(nameof(proveedorTiempo));
+            _catalogoCanciones = dependencias.Catalogo 
+                ?? throw new ArgumentNullException(
+                    nameof(dependencias), 
+                    "Catalogo no puede ser nulo.");
+            _gestorJugadores = dependencias.GestorJugadores 
+                ?? throw new ArgumentNullException(
+                    nameof(dependencias), 
+                    "GestorJugadores no puede ser nulo.");
+            _gestorTiempos = dependencias.GestorTiempos 
+                ?? throw new ArgumentNullException(
+                    nameof(dependencias), 
+                    "GestorTiempos no puede ser nulo.");
+            _validadorAdivinanza = dependencias.ValidadorAdivinanza 
+                ?? throw new ArgumentNullException(
+                    nameof(dependencias), 
+                    "ValidadorAdivinanza no puede ser nulo.");
+            _proveedorTiempo = dependencias.ProveedorTiempo 
+                ?? throw new ArgumentNullException(
+                    nameof(dependencias), 
+                    "ProveedorTiempo no puede ser nulo.");
 
-            _duracionRondaSegundos = tiempoRonda;
-            _dificultad = dificultad.Trim();
-            _totalRondas = totalRondas;
+            _duracionRondaSegundos = configuracion.TiempoRonda;
+            _dificultad = configuracion.Dificultad.Trim();
+            _totalRondas = configuracion.TotalRondas;
 
             _cancionesUsadas = new HashSet<int>();
             _estadoActual = EstadoPartida.EnSalaEspera;
@@ -302,7 +336,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private ResultadoRemocionJugador ProcesarRemocionJugador(string id, out string nombreUsuarioRemovido)
+        private ResultadoRemocionJugador ProcesarRemocionJugador(string id,
+            out string nombreUsuarioRemovido)
         {
             nombreUsuarioRemovido = null;
             lock (_sincronizacion)
@@ -322,7 +357,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private ResultadoRemocionJugador DeterminarAccionPostRemocion(bool eraAnfitrion, bool eraDibujante)
+        private ResultadoRemocionJugador DeterminarAccionPostRemocion(bool eraAnfitrion,
+            bool eraDibujante)
         {
             if (_estadoActual != EstadoPartida.Jugando)
             {
@@ -439,7 +475,10 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
                 if (!_gestorJugadores.QuedanDibujantesPendientes())
                 {
-                    if (_rondaActual >= _totalRondas) finJuego = true;
+                    if (_rondaActual >= _totalRondas)
+                    {
+                        finJuego = true;
+                    }
                     else
                     {
                         _rondaActual++;
@@ -450,7 +489,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 if (!finJuego)
                 {
                     _gestorJugadores.SeleccionarSiguienteDibujante();
-                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, _cancionesUsadas);
+                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, 
+                        _cancionesUsadas);
                     _cancionActualId = cancion.Id;
                     _cancionesUsadas.Add(cancion.Id);
                     rondaDto = CrearRondaDto(cancion);
@@ -498,7 +538,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private void FinalizarRondaActual(bool forzarPorAciertos = false, bool tiempoAgotado = false)
+        private void FinalizarRondaActual(bool forzarPorAciertos = false,
+            bool tiempoAgotado = false)
         {
             lock (_sincronizacion)
             {
@@ -579,7 +620,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (debeNotificar)
             {
-                string mensajeFinal = mensajeCancelacion ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
+                string mensajeFinal = mensajeCancelacion 
+                    ?? MensajesError.Cliente.PartidaCanceladaFaltaJugadores;
                 FinPartida?.Invoke(new ResultadoPartidaDTO
                 {
                     Clasificacion = _gestorJugadores.GenerarClasificacion(),
@@ -590,7 +632,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void NotificarFinPartida()
         {
-            FinPartida?.Invoke(new ResultadoPartidaDTO { Clasificacion = _gestorJugadores.GenerarClasificacion() });
+            FinPartida?.Invoke(new ResultadoPartidaDTO { Clasificacion = 
+                _gestorJugadores.GenerarClasificacion() });
         }
 
         private void SuscribirEventosTiempo()
@@ -646,9 +689,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             public bool DebeAvanzarDirecto { get; private set; }
             public string MensajeCancelacion { get; private set; }
             public static ResultadoRemocionJugador SinAccion() => new ResultadoRemocionJugador();
-            public static ResultadoRemocionJugador Cancelar(string mensaje) => new ResultadoRemocionJugador { DebeCancelar = true, MensajeCancelacion = mensaje };
-            public static ResultadoRemocionJugador AvanzarRonda() => new ResultadoRemocionJugador { DebeAvanzar = true };
-            public static ResultadoRemocionJugador AvanzarRondaDirecto() => new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
+            public static ResultadoRemocionJugador Cancelar(string mensaje) => 
+                new ResultadoRemocionJugador { DebeCancelar = true, MensajeCancelacion = mensaje };
+            public static ResultadoRemocionJugador AvanzarRonda() => 
+                new ResultadoRemocionJugador { DebeAvanzar = true };
+            public static ResultadoRemocionJugador AvanzarRondaDirecto() => 
+                new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
         }
     }
 }

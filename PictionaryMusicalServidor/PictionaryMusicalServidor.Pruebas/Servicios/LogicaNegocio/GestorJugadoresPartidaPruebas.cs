@@ -7,10 +7,6 @@ using PictionaryMusicalServidor.Datos.Utilidades;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
-    /// <summary>
-    /// Contiene pruebas unitarias para la clase <see cref="GestorJugadoresPartida"/>.
-    /// Valida la gestion de jugadores, cola de dibujantes, adivinanzas y clasificacion.
-    /// </summary>
     [TestClass]
     public class GestorJugadoresPartidaPruebas
     {
@@ -22,6 +18,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         private const string NuevoNombre = "NombreCambiado";
         private const int PuntajeAlto = 100;
         private const int PuntajeBajo = 50;
+        private const int CantidadEsperadaUno = 1;
+        private const int IndicePrimero = 0;
+        private const int IndiceSegundo = 1;
 
         private Mock<IGeneradorAleatorio> _generadorMock;
         private GestorJugadoresPartida _gestor;
@@ -38,14 +37,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Constructor_GeneradorNuloLanzaExcepcion()
+        public void Prueba_Constructor_GeneradorNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new GestorJugadoresPartida(null));
         }
 
         [TestMethod]
-        public void Prueba_Agregar_JugadorNuevoSeRegistraCorrectamente()
+        public void Prueba_Agregar_JugadorNuevo()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
@@ -57,7 +56,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Agregar_JugadorExistenteActualizaDatos()
+        public void Prueba_Agregar_JugadorExistente()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
@@ -69,7 +68,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_HaySuficientesJugadores_MenosDeDosRetornaFalse()
+        public void Prueba_HaySuficientesJugadores_MenosDeDos()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
@@ -77,7 +76,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_HaySuficientesJugadores_DosOMasRetornaTrue()
+        public void Prueba_HaySuficientesJugadores_DosOMas()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
@@ -86,13 +85,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Remover_JugadorExistenteRetornaTrueYDatosSalida()
+        public void Prueba_Remover_JugadorExistente()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
-            bool eraDibujante;
-            string nombreSalida;
-
-            bool resultado = _gestor.Remover(IdJugadorUno, out eraDibujante, out nombreSalida);
+            
+            bool resultado = _gestor.Remover(IdJugadorUno, out _, out string nombreSalida);
 
             Assert.IsTrue(resultado);
             Assert.AreEqual(NombreJugadorUno, nombreSalida);
@@ -100,19 +97,16 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Remover_JugadorInexistenteRetornaFalse()
+        public void Prueba_Remover_JugadorInexistente()
         {
-            bool eraDibujante;
-            string nombreSalida;
-
-            bool resultado = _gestor.Remover(IdInexistente, out eraDibujante, out nombreSalida);
+            bool resultado = _gestor.Remover(IdInexistente, out _, out string nombreSalida);
 
             Assert.IsFalse(resultado);
             Assert.IsNull(nombreSalida);
         }
 
         [TestMethod]
-        public void Prueba_EsHost_JugadorHostRetornaTrue()
+        public void Prueba_EsHost_JugadorHost()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
@@ -120,7 +114,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_PrepararColaDibujantes_InvocaMezcladorYLlenaCola()
+        public void Prueba_PrepararColaDibujantes_InvocaMezclador()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
@@ -132,7 +126,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_SeleccionarSiguienteDibujante_AsignaRolDibujante()
+        public void Prueba_SeleccionarSiguienteDibujante_AsignaRol()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.PrepararColaDibujantes();
@@ -146,7 +140,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_TodosAdivinaron_FaltaAlguienRetornaFalse()
+        public void Prueba_TodosAdivinaron_FaltaAlguien()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
@@ -158,7 +152,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_TodosAdivinaron_TodosListosRetornaTrue()
+        public void Prueba_TodosAdivinaron_TodosListos()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
@@ -173,7 +167,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_GenerarClasificacion_OrdenaDescendentePorPuntos()
+        public void Prueba_GenerarClasificacion_OrdenaDescendente()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
             _gestor.Agregar(IdJugadorDos, NombreJugadorDos, false);
@@ -186,18 +180,18 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 
             var clasificacion = _gestor.GenerarClasificacion();
 
-            Assert.AreEqual(NombreJugadorDos, clasificacion[0].Usuario);
-            Assert.AreEqual(NombreJugadorUno, clasificacion[1].Usuario);
+            Assert.AreEqual(NombreJugadorDos, clasificacion[IndicePrimero].Usuario);
+            Assert.AreEqual(NombreJugadorUno, clasificacion[IndiceSegundo].Usuario);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerCopiaLista_RetornaNuevaColeccion()
+        public void Prueba_ObtenerCopiaLista_RetornaCopia()
         {
             _gestor.Agregar(IdJugadorUno, NombreJugadorUno, true);
 
             var copia = _gestor.ObtenerCopiaLista();
 
-            Assert.AreEqual(1, copia.Count);
+            Assert.AreEqual(CantidadEsperadaUno, copia.Count);
             Assert.AreNotSame(_gestor.Obtener(IdJugadorUno), copia);
         }
     }

@@ -8,10 +8,6 @@ using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 {
-    /// <summary>
-    /// Contiene pruebas unitarias para la clase <see cref="ValidadorAdivinanza"/>.
-    /// Valida la logica de verificacion de aciertos y permisos de adivinanza.
-    /// </summary>
     [TestClass]
     public class ValidadorAdivinanzaPruebas
     {
@@ -19,8 +15,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         private const string MensajeCorrecto = "Respuesta Correcta";
         private const string MensajeIncorrecto = "Respuesta Incorrecta";
         private const string MensajeProtocolo = "ACIERTO:1:50";
+        private const string MensajeVacio = "";
         private const int PuntosTiempo = 100;
         private const int PuntosProtocolo = 50;
+        private const int PuntosCero = 0;
 
         private Mock<ICatalogoCanciones> _catalogoMock;
         private Mock<IGestorTiemposPartida> _gestorTiemposMock;
@@ -36,14 +34,39 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_Constructor_DependenciasNulasLanzaExcepcion()
+        public void Prueba_Constructor_CatalogoNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new ValidadorAdivinanza(null, _gestorTiemposMock.Object));
         }
 
         [TestMethod]
-        public void Prueba_JugadorPuedeAdivinar_CondicionesIdealesRetornaTrue()
+        public void Prueba_Constructor_GestorTiemposNulo()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new ValidadorAdivinanza(_catalogoMock.Object, null));
+        }
+
+        [TestMethod]
+        public void Prueba_JugadorPuedeAdivinar_JugadorNulo()
+        {
+            bool resultado = _validador.JugadorPuedeAdivinar(null, EstadoPartida.Jugando);
+
+            Assert.IsFalse(resultado);
+        }
+
+        [TestMethod]
+        public void Prueba_JugadorPuedeAdivinar_EstadoNoJugando()
+        {
+            var jugador = new JugadorPartida { EsDibujante = false, YaAdivino = false };
+
+            bool resultado = _validador.JugadorPuedeAdivinar(jugador, EstadoPartida.EnSalaEspera);
+
+            Assert.IsFalse(resultado);
+        }
+
+        [TestMethod]
+        public void Prueba_JugadorPuedeAdivinar_CondicionesIdeales()
         {
             var jugador = new JugadorPartida { EsDibujante = false, YaAdivino = false };
 
@@ -53,7 +76,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_JugadorPuedeAdivinar_EsDibujanteRetornaFalse()
+        public void Prueba_JugadorPuedeAdivinar_EsDibujante()
         {
             var jugador = new JugadorPartida { EsDibujante = true, YaAdivino = false };
 
@@ -63,7 +86,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_JugadorPuedeAdivinar_YaAdivinoRetornaFalse()
+        public void Prueba_JugadorPuedeAdivinar_YaAdivino()
         {
             var jugador = new JugadorPartida { EsDibujante = false, YaAdivino = true };
 
@@ -73,7 +96,16 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_VerificarAcierto_RespuestaCorrectaCalculaPuntosDelTiempo()
+        public void Prueba_VerificarAcierto_MensajeVacio()
+        {
+            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeVacio, out int puntos);
+
+            Assert.IsFalse(resultado);
+            Assert.AreEqual(PuntosCero, puntos);
+        }
+
+        [TestMethod]
+        public void Prueba_VerificarAcierto_RespuestaCorrecta()
         {
             _catalogoMock
                 .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeCorrecto))
@@ -82,8 +114,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 .Setup(gestor => gestor.CalcularPuntosPorTiempo())
                 .Returns(PuntosTiempo);
 
-            int puntos;
-            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeCorrecto, out puntos);
+            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeCorrecto, out int puntos);
 
             Assert.IsTrue(resultado);
             Assert.AreEqual(PuntosTiempo, puntos);
@@ -93,35 +124,40 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         }
 
         [TestMethod]
-        public void Prueba_VerificarAcierto_RespuestaIncorrectaRetornaFalse()
+        public void Prueba_VerificarAcierto_RespuestaIncorrecta()
         {
             _catalogoMock
                 .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeIncorrecto))
                 .Returns(false);
 
-            int puntos;
-            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeIncorrecto, out puntos);
+            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeIncorrecto, out int puntos);
 
             Assert.IsFalse(resultado);
-            Assert.AreEqual(0, puntos);
+            Assert.AreEqual(PuntosCero, puntos);
         }
 
         [TestMethod]
-        public void Prueba_VerificarAcierto_MensajeProtocoloValidoRetornaPuntosProtocolo()
+        public void Prueba_VerificarAcierto_MensajeProtocoloValido()
         {
             _catalogoMock
                 .Setup(catalogo => catalogo.ValidarRespuesta(IdCancion, MensajeProtocolo))
                 .Returns(false);
 
-            int puntos;
-            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeProtocolo, out puntos);
+            bool resultado = _validador.VerificarAcierto(IdCancion, MensajeProtocolo, out int puntos);
 
             Assert.IsTrue(resultado);
             Assert.AreEqual(PuntosProtocolo, puntos);
         }
 
         [TestMethod]
-        public void Prueba_RegistrarAcierto_ActualizaEstadoYPuntosJugador()
+        public void Prueba_RegistrarAcierto_JugadorNulo()
+        {
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                _validador.RegistrarAcierto(null, PuntosTiempo));
+        }
+
+        [TestMethod]
+        public void Prueba_RegistrarAcierto_JugadorValido()
         {
             var jugador = new JugadorPartida { YaAdivino = false, PuntajeTotal = 0 };
 
