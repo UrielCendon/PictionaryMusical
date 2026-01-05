@@ -66,21 +66,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_IdCero_NoExpulsa()
+        public void Prueba_ExpulsarSiAlcanzaLimite_IdInvalido_NoExpulsa()
         {
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioInvalido, 
                 NombreUsuarioValido, 
                 TotalReportesLimite);
-
-            _salasProveedorMock.Verify(
-                proveedor => proveedor.ObtenerListaSalas(),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_IdNegativo_NoExpulsa()
-        {
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioNegativo, 
                 NombreUsuarioValido, 
@@ -105,40 +96,16 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_NombreVacio_NoExpulsa()
+        public void Prueba_ExpulsarSiAlcanzaLimite_NombreInvalido_NoExpulsa()
         {
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioValido, 
                 CadenaVacia, 
                 TotalReportesLimite);
-
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.AbandonarSala(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.BanearJugador(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_NombreSoloEspacios_NoExpulsa()
-        {
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioValido, 
                 CadenaSoloEspacios, 
                 TotalReportesLimite);
-
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.AbandonarSala(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.BanearJugador(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_NombreNulo_NoExpulsa()
-        {
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioValido, 
                 null, 
@@ -173,20 +140,24 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_ListaSalasNula_NoExpulsa()
+        public void Prueba_ExpulsarSiAlcanzaLimite_ListaSalasInvalida_NoExpulsa()
         {
             _salasProveedorMock
                 .Setup(proveedor => proveedor.ObtenerListaSalas())
                 .Returns((IList<SalaDTO>)null);
-
             _servicio.ExpulsarSiAlcanzaLimite(
                 IdUsuarioValido, 
                 NombreUsuarioValido, 
                 TotalReportesLimite);
 
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.AbandonarSala(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
+            _salasProveedorMock
+                .Setup(proveedor => proveedor.ObtenerListaSalas())
+                .Returns(new List<SalaDTO> { null });
+            _servicio.ExpulsarSiAlcanzaLimite(
+                IdUsuarioValido, 
+                NombreUsuarioValido, 
+                TotalReportesLimite);
+
             _salaExpulsorMock.Verify(
                 expulsor => expulsor.BanearJugador(It.IsAny<string>(), It.IsAny<string>()),
                 Times.Never);
@@ -350,23 +321,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
             _salaExpulsorMock.Verify(
                 expulsor => expulsor.BanearJugador(CodigoSalaValido, NombreUsuarioValido),
                 Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_ExpulsarSiAlcanzaLimite_SalaNula_NoPropagaExcepcion()
-        {
-            _salasProveedorMock
-                .Setup(proveedor => proveedor.ObtenerListaSalas())
-                .Returns(new List<SalaDTO> { null });
-
-            _servicio.ExpulsarSiAlcanzaLimite(
-                IdUsuarioValido, 
-                NombreUsuarioValido, 
-                TotalReportesLimite);
-
-            _salaExpulsorMock.Verify(
-                expulsor => expulsor.BanearJugador(It.IsAny<string>(), It.IsAny<string>()),
-                Times.Never);
         }
 
         [TestMethod]

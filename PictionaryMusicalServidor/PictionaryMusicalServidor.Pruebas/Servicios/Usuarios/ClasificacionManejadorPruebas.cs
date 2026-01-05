@@ -125,7 +125,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerTopJugadores_ListaValida_RetornaClasificacionesCorrectas()
+        public void Prueba_ObtenerTopJugadores_ListaConJugadores_RetornaCantidadCorrecta()
         {
             IList<Usuario> usuariosTop = CrearListaUsuariosTop();
             _clasificacionRepositorioMock
@@ -138,7 +138,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerTopJugadores_ListaValida_RetornaPrimerJugadorCorrecto()
+        public void Prueba_ObtenerTopJugadores_ListaConJugadores_RetornaDatosCorrectos()
         {
             IList<Usuario> usuariosTop = CrearListaUsuariosTop();
             _clasificacionRepositorioMock
@@ -150,18 +150,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
             Assert.AreEqual(NombreUsuarioPrimero, resultado[0].Usuario);
             Assert.AreEqual(PuntosPrimero, resultado[0].Puntos);
             Assert.AreEqual(RondasPrimero, resultado[0].RondasGanadas);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerTopJugadores_ListaValida_RetornaSegundoJugadorCorrecto()
-        {
-            IList<Usuario> usuariosTop = CrearListaUsuariosTop();
-            _clasificacionRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerMejoresJugadores(LimiteTopJugadores))
-                .Returns(usuariosTop);
-
-            IList<ClasificacionUsuarioDTO> resultado = _manejador.ObtenerTopJugadores();
-
             Assert.AreEqual(NombreUsuarioSegundo, resultado[1].Usuario);
             Assert.AreEqual(PuntosSegundo, resultado[1].Puntos);
             Assert.AreEqual(RondasSegundo, resultado[1].RondasGanadas);
@@ -262,7 +250,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerTopJugadores_RepositorioLlamadoConLimiteCorrecto()
+        public void Prueba_ObtenerTopJugadores_Invocacion_UtilizaRepositorioYContexto()
         {
             _clasificacionRepositorioMock
                 .Setup(repositorio => repositorio.ObtenerMejoresJugadores(LimiteTopJugadores))
@@ -273,17 +261,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
             _clasificacionRepositorioMock.Verify(
                 repositorio => repositorio.ObtenerMejoresJugadores(LimiteTopJugadores),
                 Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerTopJugadores_ContextoDispuesto_LlamaCrearContexto()
-        {
-            _clasificacionRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerMejoresJugadores(LimiteTopJugadores))
-                .Returns(new List<Usuario>());
-
-            _manejador.ObtenerTopJugadores();
-
             _contextoFactoriaMock.Verify(
                 fabrica => fabrica.CrearContexto(),
                 Times.Once);

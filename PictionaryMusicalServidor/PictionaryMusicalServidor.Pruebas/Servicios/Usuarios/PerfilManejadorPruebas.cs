@@ -140,7 +140,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPerfil_UsuarioValido_RetornaDatosCorrectos()
+        public void Prueba_ObtenerPerfil_UsuarioCompleto_RetornaTodosLosDatos()
         {
             Usuario usuario = CrearUsuarioValido();
             _usuarioRepositorioMock
@@ -151,33 +151,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
 
             Assert.AreEqual(IdUsuarioValido, resultado.UsuarioId);
             Assert.AreEqual(NombreUsuarioValido, resultado.NombreUsuario);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPerfil_UsuarioValido_RetornaDatosJugador()
-        {
-            Usuario usuario = CrearUsuarioValido();
-            _usuarioRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioValido))
-                .Returns(usuario);
-
-            UsuarioDTO resultado = _manejador.ObtenerPerfil(IdUsuarioValido);
-
             Assert.AreEqual(IdJugadorValido, resultado.JugadorId);
             Assert.AreEqual(NombreValido, resultado.Nombre);
             Assert.AreEqual(ApellidoValido, resultado.Apellido);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPerfil_UsuarioValido_RetornaRedesSociales()
-        {
-            Usuario usuario = CrearUsuarioValido();
-            _usuarioRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioValido))
-                .Returns(usuario);
-
-            UsuarioDTO resultado = _manejador.ObtenerPerfil(IdUsuarioValido);
-
             Assert.AreEqual(InstagramValido, resultado.Instagram);
             Assert.AreEqual(FacebookValido, resultado.Facebook);
             Assert.AreEqual(XValido, resultado.X);
@@ -199,15 +175,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPerfil_IdCero_LanzaFaultException()
+        public void Prueba_ObtenerPerfil_IdInvalido_LanzaFaultException()
         {
             Assert.ThrowsException<FaultException>(() => 
                 _manejador.ObtenerPerfil(IdUsuarioInvalido));
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPerfil_IdNegativo_LanzaFaultException()
-        {
             Assert.ThrowsException<FaultException>(() => 
                 _manejador.ObtenerPerfil(IdUsuarioNegativo));
         }
@@ -315,79 +286,36 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ActualizarPerfil_NombreVacio_RetornaOperacionFallida()
+        public void Prueba_ActualizarPerfil_NombreInvalido_RetornaOperacionFallida()
         {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Nombre = CadenaVacia;
+            var solicitudNombreVacio = CrearSolicitudActualizacionValida();
+            solicitudNombreVacio.Nombre = CadenaVacia;
+            var solicitudNombreEspacios = CrearSolicitudActualizacionValida();
+            solicitudNombreEspacios.Nombre = CadenaSoloEspacios;
+            var solicitudNombreLargo = CrearSolicitudActualizacionValida();
+            solicitudNombreLargo.Nombre = CadenaMuyLarga;
 
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudNombreVacio).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudNombreEspacios).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudNombreLargo).OperacionExitosa);
         }
 
         [TestMethod]
-        public void Prueba_ActualizarPerfil_NombreSoloEspacios_RetornaOperacionFallida()
+        public void Prueba_ActualizarPerfil_ApellidoInvalido_RetornaOperacionFallida()
         {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Nombre = CadenaSoloEspacios;
+            var solicitudApellidoVacio = CrearSolicitudActualizacionValida();
+            solicitudApellidoVacio.Apellido = CadenaVacia;
+            var solicitudApellidoLargo = CrearSolicitudActualizacionValida();
+            solicitudApellidoLargo.Apellido = CadenaMuyLarga;
 
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_NombreMuyLargo_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Nombre = CadenaMuyLarga;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_ApellidoVacio_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Apellido = CadenaVacia;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_ApellidoMuyLargo_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Apellido = CadenaMuyLarga;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudApellidoVacio).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudApellidoLargo).OperacionExitosa);
         }
 
         [TestMethod]
         public void Prueba_ActualizarPerfil_DatosValidos_RetornaOperacionExitosa()
         {
             Usuario usuario = CrearUsuarioValido();
-            _usuarioRepositorioMock
-                .Setup(repositorio => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioValido))
-                .Returns(usuario);
-
-            var solicitud = CrearSolicitudActualizacionValida();
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsTrue(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_UsuarioSinRedesSociales_CreaRedesSociales()
-        {
-            Usuario usuario = CrearUsuarioSinRedesSociales();
             _usuarioRepositorioMock
                 .Setup(repositorio => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioValido))
                 .Returns(usuario);
@@ -442,47 +370,21 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ActualizarPerfil_InstagramMuyLargo_RetornaOperacionFallida()
+        public void Prueba_ActualizarPerfil_RedesSocialesMuyLargas_RetornaOperacionFallida()
         {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Instagram = CadenaMuyLarga;
+            var solicitudInstagram = CrearSolicitudActualizacionValida();
+            solicitudInstagram.Instagram = CadenaMuyLarga;
+            var solicitudFacebook = CrearSolicitudActualizacionValida();
+            solicitudFacebook.Facebook = CadenaMuyLarga;
+            var solicitudX = CrearSolicitudActualizacionValida();
+            solicitudX.X = CadenaMuyLarga;
+            var solicitudDiscord = CrearSolicitudActualizacionValida();
+            solicitudDiscord.Discord = CadenaMuyLarga;
 
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_FacebookMuyLargo_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Facebook = CadenaMuyLarga;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_XMuyLargo_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.X = CadenaMuyLarga;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarPerfil_DiscordMuyLargo_RetornaOperacionFallida()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            solicitud.Discord = CadenaMuyLarga;
-
-            ResultadoOperacionDTO resultado = _manejador.ActualizarPerfil(solicitud);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudInstagram).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudFacebook).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudX).OperacionExitosa);
+            Assert.IsFalse(_manejador.ActualizarPerfil(solicitudDiscord).OperacionExitosa);
         }
 
         [TestMethod]

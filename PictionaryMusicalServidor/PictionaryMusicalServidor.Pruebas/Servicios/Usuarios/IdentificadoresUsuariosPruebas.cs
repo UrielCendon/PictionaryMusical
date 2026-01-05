@@ -13,29 +13,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         private const int ValorPorDefecto = 0;
 
         [TestMethod]
-        public void Prueba_IdReportante_AsignarYRecuperar_ValorCorrecto()
-        {
-            var identificadores = new IdentificadoresUsuarios
-            {
-                IdReportante = IdReportanteValido
-            };
-
-            Assert.AreEqual(IdReportanteValido, identificadores.IdReportante);
-        }
-
-        [TestMethod]
-        public void Prueba_IdReportado_AsignarYRecuperar_ValorCorrecto()
-        {
-            var identificadores = new IdentificadoresUsuarios
-            {
-                IdReportado = IdReportadoValido
-            };
-
-            Assert.AreEqual(IdReportadoValido, identificadores.IdReportado);
-        }
-
-        [TestMethod]
-        public void Prueba_AmbosIdentificadores_AsignarYRecuperar_ValoresCrrectos()
+        public void Prueba_AmbosIdentificadores_AsignarYRecuperar_ValoresCorrectos()
         {
             var identificadores = new IdentificadoresUsuarios
             {
@@ -48,67 +26,52 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_IdReportante_ModificarValor_NuevoValorCorrecto()
+        public void Prueba_ModificarIdentificadores_NuevosValores_ValoresActualizados()
         {
             var identificadores = new IdentificadoresUsuarios
             {
-                IdReportante = IdReportanteValido
-            };
-
-            identificadores.IdReportante = IdReportanteDiferente;
-
-            Assert.AreEqual(IdReportanteDiferente, identificadores.IdReportante);
-        }
-
-        [TestMethod]
-        public void Prueba_IdReportado_ModificarValor_NuevoValorCorrecto()
-        {
-            var identificadores = new IdentificadoresUsuarios
-            {
+                IdReportante = IdReportanteValido,
                 IdReportado = IdReportadoValido
             };
 
+            identificadores.IdReportante = IdReportanteDiferente;
             identificadores.IdReportado = IdReportadoDiferente;
 
+            Assert.AreEqual(IdReportanteDiferente, identificadores.IdReportante);
             Assert.AreEqual(IdReportadoDiferente, identificadores.IdReportado);
         }
 
         [TestMethod]
-        public void Prueba_Constructor_SinAsignacion_IdReportantePorDefecto()
+        public void Prueba_Constructor_SinAsignacion_ValoresPorDefecto()
         {
             var identificadores = new IdentificadoresUsuarios();
 
             Assert.AreEqual(ValorPorDefecto, identificadores.IdReportante);
-        }
-
-        [TestMethod]
-        public void Prueba_Constructor_SinAsignacion_IdReportadoPorDefecto()
-        {
-            var identificadores = new IdentificadoresUsuarios();
-
             Assert.AreEqual(ValorPorDefecto, identificadores.IdReportado);
         }
 
         [TestMethod]
-        public void Prueba_Identificadores_DiferentesInstancias_NoCompartenEstado()
+        public void Prueba_DiferentesInstancias_AsignarValores_NoCompartenEstado()
         {
-            var identificadores1 = new IdentificadoresUsuarios
+            var primeraInstancia = new IdentificadoresUsuarios
             {
                 IdReportante = IdReportanteValido,
                 IdReportado = IdReportadoValido
             };
-            var identificadores2 = new IdentificadoresUsuarios
+            var segundaInstancia = new IdentificadoresUsuarios
             {
                 IdReportante = IdReportanteDiferente,
                 IdReportado = IdReportadoDiferente
             };
 
-            Assert.AreEqual(IdReportanteValido, identificadores1.IdReportante);
-            Assert.AreEqual(IdReportanteDiferente, identificadores2.IdReportante);
+            Assert.AreEqual(IdReportanteValido, primeraInstancia.IdReportante);
+            Assert.AreEqual(IdReportanteDiferente, segundaInstancia.IdReportante);
+            Assert.AreEqual(IdReportadoValido, primeraInstancia.IdReportado);
+            Assert.AreEqual(IdReportadoDiferente, segundaInstancia.IdReportado);
         }
 
         [TestMethod]
-        public void Prueba_Identificadores_MismoValorEnAmbos_PermiteAsignacion()
+        public void Prueba_MismoValorEnAmbosIds_AsignarIgual_PermiteAsignacion()
         {
             var identificadores = new IdentificadoresUsuarios
             {

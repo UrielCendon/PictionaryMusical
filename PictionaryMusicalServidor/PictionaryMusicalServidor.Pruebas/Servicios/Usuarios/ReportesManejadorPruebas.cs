@@ -151,69 +151,45 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
         }
 
         [TestMethod]
-        public void Prueba_ReportarJugador_NombreReportanteVacio_RetornaOperacionFallida()
+        public void Prueba_ReportarJugador_NombreReportanteInvalido_RetornaOperacionFallida()
         {
-            var reporte = CrearReporteValido();
-            reporte.NombreUsuarioReportante = CadenaVacia;
+            var reporteVacio = CrearReporteValido();
+            reporteVacio.NombreUsuarioReportante = CadenaVacia;
+            var reporteEspacios = CrearReporteValido();
+            reporteEspacios.NombreUsuarioReportante = CadenaSoloEspacios;
+            var reporteNulo = CrearReporteValido();
+            reporteNulo.NombreUsuarioReportante = null;
 
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteVacio).OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteEspacios).OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteNulo).OperacionExitosa);
         }
 
         [TestMethod]
-        public void Prueba_ReportarJugador_NombreReportanteEspacios_RetornaOperacionFallida()
+        public void Prueba_ReportarJugador_NombreReportadoInvalido_RetornaOperacionFallida()
         {
-            var reporte = CrearReporteValido();
-            reporte.NombreUsuarioReportante = CadenaSoloEspacios;
+            var reporteVacio = CrearReporteValido();
+            reporteVacio.NombreUsuarioReportado = CadenaVacia;
+            var reporteNulo = CrearReporteValido();
+            reporteNulo.NombreUsuarioReportado = null;
 
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteVacio).OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteNulo).OperacionExitosa);
         }
 
         [TestMethod]
-        public void Prueba_ReportarJugador_NombreReportadoVacio_RetornaOperacionFallida()
+        public void Prueba_ReportarJugador_MotivoInvalido_RetornaOperacionFallida()
         {
-            var reporte = CrearReporteValido();
-            reporte.NombreUsuarioReportado = CadenaVacia;
+            var reporteMotivoVacio = CrearReporteValido();
+            reporteMotivoVacio.Motivo = CadenaVacia;
+            var reporteMotivoNulo = CrearReporteValido();
+            reporteMotivoNulo.Motivo = null;
+            var reporteMotivoLargo = CrearReporteValido();
+            reporteMotivoLargo.Motivo = MotivoMuyLargo;
 
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ReportarJugador_MotivoVacio_RetornaOperacionFallida()
-        {
-            var reporte = CrearReporteValido();
-            reporte.Motivo = CadenaVacia;
-
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ReportarJugador_MotivoNulo_RetornaOperacionFallida()
-        {
-            var reporte = CrearReporteValido();
-            reporte.Motivo = null;
-
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ReportarJugador_MotivoMuyLargo_RetornaOperacionFallida()
-        {
-            var reporte = CrearReporteValido();
-            reporte.Motivo = MotivoMuyLargo;
-
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteMotivoVacio).OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteMotivoNulo).OperacionExitosa);
+            Assert.IsFalse(_manejador.ReportarJugador(reporteMotivoLargo).OperacionExitosa);
         }
 
         [TestMethod]
@@ -431,28 +407,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
             _reporteRepositorioMock.Verify(
                 repositorio => repositorio.ContarReportesRecibidos(IdUsuarioReportado),
                 Times.Once);
-        }
-
-        [TestMethod]
-        public void Prueba_ReportarJugador_NombreReportanteNulo_RetornaOperacionFallida()
-        {
-            var reporte = CrearReporteValido();
-            reporte.NombreUsuarioReportante = null;
-
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
-        }
-
-        [TestMethod]
-        public void Prueba_ReportarJugador_NombreReportadoNulo_RetornaOperacionFallida()
-        {
-            var reporte = CrearReporteValido();
-            reporte.NombreUsuarioReportado = null;
-
-            ResultadoOperacionDTO resultado = _manejador.ReportarJugador(reporte);
-
-            Assert.IsFalse(resultado.OperacionExitosa);
         }
     }
 }
