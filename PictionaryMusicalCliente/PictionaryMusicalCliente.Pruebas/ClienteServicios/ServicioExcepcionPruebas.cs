@@ -9,6 +9,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
     [TestClass]
     public class ServicioExcepcionPruebas
     {
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_ConTipoYMensaje_CreaInstancia()
         {
@@ -22,6 +23,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.AreEqual(mensaje, excepcion.Message);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_ConCausaInterna_IncluyeCausa()
         {
@@ -35,6 +37,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.AreEqual(causaInterna, excepcion.InnerException);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_MensajeNulo_CreaInstanciaSinMensaje()
         {
@@ -189,6 +192,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsTrue(capturada);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_TipoErrorServicio_ContieneTodosLosValores()
         {

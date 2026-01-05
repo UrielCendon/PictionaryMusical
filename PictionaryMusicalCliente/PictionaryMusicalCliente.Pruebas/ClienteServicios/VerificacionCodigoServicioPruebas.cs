@@ -88,6 +88,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRegistroAsync_SolicitudValida_RetornaExito()
         {
@@ -175,6 +176,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_SolicitarCodigoRegistroAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRegistroAsync_FaultException_TipoFallaServicio()
         {
@@ -404,6 +406,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReenviarCodigoRegistroAsync_FaultException_TipoFallaServicio()
         {
@@ -443,6 +446,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReenviarCodigoRegistroAsync_CommunicationException_TipoComunicacion()
         {
@@ -476,6 +480,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReenviarCodigoRegistroAsync_TimeoutException_TipoTiempoAgotado()
         {

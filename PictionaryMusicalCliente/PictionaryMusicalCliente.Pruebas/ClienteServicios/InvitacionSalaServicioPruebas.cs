@@ -144,6 +144,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_InvitarPorCorreoAsync_CorreoInvalido_RetornaFallo()
         {
@@ -169,6 +170,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsFalse(resultado.Exitoso);
         }
 
+        //fix múltiples responsabilidades
         [TestMethod]
         public async Task Prueba_InvitarPorCorreoAsync_CorreoValido_InvocaServicio()
         {

@@ -176,6 +176,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));
         }
 
+        //fix múltiples responsabilidades
         [TestMethod]
         public void Prueba_SolicitudesPendientes_RetornaListaDelAdministrador()
         {
@@ -201,6 +202,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 Times.Once);
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public void Prueba_SolicitudesPendientes_SinSolicitudes_RetornaListaVacia()
         {

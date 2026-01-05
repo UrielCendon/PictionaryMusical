@@ -221,6 +221,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public void Prueba_ListaSalasActual_InicialmenteVacia_RetornaListaVacia()
         {

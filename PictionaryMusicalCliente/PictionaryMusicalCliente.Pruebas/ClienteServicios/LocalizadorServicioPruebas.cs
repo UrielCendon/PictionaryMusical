@@ -140,6 +140,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsFalse(string.IsNullOrEmpty(resultado));
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public void Prueba_Localizar_MensajeAutoSolicitudAmistad_RetornaTraducido()
         {

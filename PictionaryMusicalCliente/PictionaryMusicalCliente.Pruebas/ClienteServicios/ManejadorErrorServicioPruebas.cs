@@ -114,6 +114,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsNotNull(resultado);
         }
 
+        //fix múltiples responsabilidades
         [TestMethod]
         public void Prueba_ObtenerMensaje_ExcepcionNoGenerica_RetornaMensajeLocalizado()
         {

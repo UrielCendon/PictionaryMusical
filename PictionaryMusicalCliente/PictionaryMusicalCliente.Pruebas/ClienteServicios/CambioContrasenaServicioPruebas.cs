@@ -113,6 +113,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRecuperacionAsync_Exitoso_RetornaResultado()
         {
@@ -151,6 +152,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsFalse(resultado.CuentaEncontrada);
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRecuperacionAsync_ResultadoNulo_RetornaVacio()
         {
@@ -482,6 +484,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ActualizarContrasenaAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ActualizarContrasenaAsync_FaultException_TipoFallaServicio()
         {

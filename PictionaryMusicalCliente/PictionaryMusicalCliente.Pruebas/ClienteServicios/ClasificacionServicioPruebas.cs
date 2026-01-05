@@ -83,6 +83,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix multiples asserts considerar usar BeEmpty() o verificar solo el conteo
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_Exitoso_RetornaLista()
         {
@@ -96,6 +97,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             resultado.Should().HaveCount(3);
         }
 
+        //fix múltiples asserts, verifica Usuario y Puntos
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_Exitoso_DatosCorrectos()
         {
@@ -109,6 +111,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.AreEqual(1000, resultado[0].Puntos);
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_ListaVacia_RetornaVacia()
         {
@@ -122,6 +125,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             resultado.Should().BeEmpty();
         }
 
+        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_ResultadoNulo_RetornaVacia()
         {
@@ -152,6 +156,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_FaultException_TipoFallaServicio()
         {
@@ -189,6 +194,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_CommunicationException_TipoComunicacion()
         {
@@ -220,6 +226,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_TimeoutException_TipoTiempoAgotado()
         {
@@ -252,6 +259,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada ya se verifica en Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_TipoInvalida()
         {

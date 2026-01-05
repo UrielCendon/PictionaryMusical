@@ -80,6 +80,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_SolicitudValida_RetornaExito()
         {
@@ -98,6 +99,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.AreEqual("Cuenta registrada exitosamente", resultado.Mensaje);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_CorreoDuplicado_RetornaFallo()
         {
@@ -162,6 +164,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_FaultException_LanzaServicioExcepcion
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_FaultException_TipoErrorFallaServicio()
         {
@@ -201,6 +204,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_CommunicationException_TipoComunicacion()
         {
@@ -234,6 +238,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_TimeoutException_TipoTiempoAgotado()
         {
@@ -268,6 +273,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_InvalidOperationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_InvalidOperationException_TipoInvalida()
         {

@@ -197,6 +197,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_FaultException_TipoFallaServicio()
         {
@@ -236,6 +237,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_CommunicationException_TipoComunicacion()
         {
@@ -269,6 +271,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_TimeoutException_TipoTiempoAgotado()
         {
@@ -303,6 +306,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_InvalidOperationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_InvalidOperationException_TipoInvalida()
         {

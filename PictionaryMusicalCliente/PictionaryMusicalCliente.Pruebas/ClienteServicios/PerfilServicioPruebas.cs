@@ -80,6 +80,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_UsuarioExistente_RetornaPerfil()
         {
@@ -139,6 +140,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_FaultException_TipoFallaServicio()
         {
@@ -178,6 +180,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_CommunicationException_TipoComunicacion()
         {
@@ -211,6 +214,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_TimeoutException_TipoTiempoAgotado()
         {
@@ -320,6 +324,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_ActualizarPerfilAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_ActualizarPerfilAsync_FaultException_TipoFallaServicio()
         {

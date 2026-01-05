@@ -21,6 +21,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             _generador = new NombreInvitadoGenerador();
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Generar_SinParametros_RetornaExito()
         {
@@ -181,6 +182,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             generacionesExitosas.Should().BeGreaterThan(0, "Se esperaba al menos una generación exitosa en ejecución concurrente");
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_Exito_PropiedadesCorrectas()
         {
@@ -191,6 +193,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             Assert.AreEqual(MotivoFalloGeneracion.Ninguno, resultado.Motivo);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_Fallo_PropiedadesCorrectas()
         {
@@ -201,6 +204,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             Assert.AreEqual(MotivoFalloGeneracion.NombresAgotados, resultado.Motivo);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_FalloRecursoNoEncontrado_MotivoCorrecto()
         {
@@ -210,6 +214,7 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             Assert.AreEqual(MotivoFalloGeneracion.RecursoNoEncontrado, resultado.Motivo);
         }
 
+        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_FalloListaVacia_MotivoCorecto()
         {

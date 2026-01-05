@@ -204,6 +204,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_FaultException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_FaultException_TipoFallaServicio()
         {
@@ -245,6 +246,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_CommunicationException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_CommunicationException_TipoComunicacion()
         {
@@ -280,6 +282,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_TimeoutException_LanzaExcepcion
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_TimeoutException_TipoTiempoAgotado()
         {
@@ -316,6 +319,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
+        //fix - Prueba duplicada: Ya se verifica en Prueba_EnviarInvitacionAsync_InvalidOperationException_LanzaExcepcion. Unificar en una sola prueba
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_InvalidOperationException_TipoInvalida()
         {
