@@ -3,18 +3,11 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase LocalizadorServicio.
-    /// Verifica el comportamiento del servicio de localizacion de mensajes de error.
-    /// </summary>
     [TestClass]
     public class LocalizadorServicioPruebas
     {
         private LocalizadorServicio _localizador;
 
-        /// <summary>
-        /// Inicializa el localizador antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {

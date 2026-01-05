@@ -7,19 +7,12 @@ using System.ServiceModel;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase ManejadorErrorServicio.
-    /// Verifica el comportamiento del manejador de errores de servicios WCF.
-    /// </summary>
     [TestClass]
     public class ManejadorErrorServicioPruebas
     {
         private Mock<ILocalizadorServicio> _localizadorMock;
         private ManejadorErrorServicio _manejador;
 
-        /// <summary>
-        /// Inicializa los mocks y el manejador antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {

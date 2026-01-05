@@ -10,10 +10,6 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase CambioContrasenaServicio.
-    /// Verifica el comportamiento del servicio de cambio y recuperacion de contrasena.
-    /// </summary>
     [TestClass]
     public class CambioContrasenaServicioPruebas
     {
@@ -27,9 +23,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _clienteCambioContrasenaMock;
         private CambioContrasenaServicio _servicio;
 
-        /// <summary>
-        /// Inicializa los mocks y el servicio antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {
@@ -62,9 +55,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 _localizadorMock.Object);
         }
 
-        /// <summary>
-        /// Limpia los recursos despues de cada prueba.
-        /// </summary>
         [TestCleanup]
         public void Limpiar()
         {

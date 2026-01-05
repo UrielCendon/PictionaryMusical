@@ -139,6 +139,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
                 new PerfilManejador(_contextoFactoriaMock.Object, null));
         }
 
+        // Fix prueba innecesaria
         [TestMethod]
         public void Prueba_ObtenerPerfil_UsuarioCompleto_RetornaTodosLosDatos()
         {
