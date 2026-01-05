@@ -9,6 +9,20 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
     /// </summary>
     public sealed class OpcionesPartidaManejador
     {
+        private const int MinimoRondas = 2;
+        private const int RondasMedia = 3;
+        private const int MaximoRondas = 4;
+        private const int IndiceRondasPredeterminado = 0;
+
+        private const int TiempoRondaCorto = 30;
+        private const int TiempoRondaMedio = 60;
+        private const int TiempoRondaLargo = 90;
+        private const int TiempoRondaExtendido = 120;
+        private const int IndiceTiempoPredeterminado = 1;
+
+        private const int IndiceIdiomaPredeterminado = 0;
+        private const int IndiceDificultadPredeterminada = 0;
+
         /// <summary>
         /// Inicializa una nueva instancia de 
         /// <see cref="OpcionesPartidaManejador"/>.
@@ -70,23 +84,23 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
         {
             NumeroRondasOpciones = new ObservableCollection<OpcionEntero>
             {
-                new OpcionEntero(2),
-                new OpcionEntero(3),
-                new OpcionEntero(4)
+                new OpcionEntero(MinimoRondas),
+                new OpcionEntero(RondasMedia),
+                new OpcionEntero(MaximoRondas)
             };
-            NumeroRondasPredeterminado = NumeroRondasOpciones[2];
+            NumeroRondasPredeterminado = NumeroRondasOpciones[IndiceRondasPredeterminado];
         }
 
         private void CargarOpcionesTiempo()
         {
             TiempoRondaOpciones = new ObservableCollection<OpcionEntero>
             {
-                new OpcionEntero(30),
-                new OpcionEntero(60),
-                new OpcionEntero(90),
-                new OpcionEntero(120)
+                new OpcionEntero(TiempoRondaCorto),
+                new OpcionEntero(TiempoRondaMedio),
+                new OpcionEntero(TiempoRondaLargo),
+                new OpcionEntero(TiempoRondaExtendido)
             };
-            TiempoRondaPredeterminado = TiempoRondaOpciones[1];
+            TiempoRondaPredeterminado = TiempoRondaOpciones[IndiceTiempoPredeterminado];
         }
 
         private void CargarOpcionesIdioma()
@@ -97,7 +111,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
                 new IdiomaOpcion("en-US", Lang.idiomaTextoIngles),
                 new IdiomaOpcion("mixto", Lang.principalTextoMixto)
             };
-            IdiomaPredeterminado = IdiomasDisponibles[0];
+            IdiomaPredeterminado = IdiomasDisponibles[IndiceIdiomaPredeterminado];
         }
 
         private void CargarOpcionesDificultad()
@@ -108,7 +122,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
                 new OpcionTexto("media", Lang.principalTextoMedia),
                 new OpcionTexto("dificil", Lang.principalTextoDificil)
             };
-            DificultadPredeterminada = DificultadesDisponibles[0];
+            DificultadPredeterminada = DificultadesDisponibles[IndiceDificultadPredeterminada];
         }
     }
 }

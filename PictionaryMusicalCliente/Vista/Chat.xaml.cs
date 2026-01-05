@@ -11,6 +11,8 @@ namespace PictionaryMusicalCliente.Vista
     /// </summary>
     public partial class Chat : UserControl
     {
+        private const int MargenVerticalMensaje = 2;
+
         /// <summary>
         /// Constructor por defecto.
         /// </summary>
@@ -72,7 +74,7 @@ namespace PictionaryMusicalCliente.Vista
                 Foreground = new SolidColorBrush(color),
                 TextWrapping = TextWrapping.Wrap,
                 FontFamily = new FontFamily("Comic Sans MS"),
-                Margin = new Thickness(0, 2, 0, 2)
+                Margin = new Thickness(0, MargenVerticalMensaje, 0, MargenVerticalMensaje)
             };
 
             panelApilableChat.Children.Add(textoBloque);

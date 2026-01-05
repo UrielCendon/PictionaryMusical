@@ -12,6 +12,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
     /// </summary>
     public class AjustesPartidaVistaModelo : BaseVistaModelo
     {
+        private const double ToleranciaComparacionVolumen = 0.0001;
+
         private readonly CancionManejador _cancionManejador;
         private readonly SonidoManejador _sonidoManejador;
 
@@ -51,7 +53,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Ajustes
             get => _cancionManejador.Volumen;
             set
             {
-                if (Math.Abs(_cancionManejador.Volumen - value) > 0.0001)
+                if (Math.Abs(_cancionManejador.Volumen - value) > ToleranciaComparacionVolumen)
                 {
                     _cancionManejador.Volumen = value;
                     NotificarCambio(nameof(Volumen));

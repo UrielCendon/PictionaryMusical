@@ -26,8 +26,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
         private readonly SonidoManejador _sonidoManejador;
 
         private const int SegundosEsperaReenvio = 60;
+        private const int MinutosExpiracionCodigo = 5;
         private static readonly TimeSpan TiempoExpiracionCodigo = 
-            TimeSpan.FromMinutes(5);
+            TimeSpan.FromMinutes(MinutosExpiracionCodigo);
 
         private readonly ICodigoVerificacionServicio _codigoVerificacionServicio;
         private string _tokenCodigo;

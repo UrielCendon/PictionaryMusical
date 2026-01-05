@@ -38,7 +38,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const int MaximoJugadoresSala = 4;
+        private const int MinimoJugadoresParaIniciar = 2;
         private const int SegundosCierreCanal = 2;
+        private const int MinimoPartesAcierto = 3;
+        private const int IndicePuntosAdivinador = 2;
 
         private ISalasServicio _salasServicio;
         private IInvitacionSalaServicio _invitacionSalaServicio;
@@ -1143,7 +1146,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
-            if (Jugadores.Count < 2)
+            if (Jugadores.Count < MinimoJugadoresParaIniciar)
             {
                 _sonidoManejador.ReproducirError();
                 _avisoServicio.Mostrar(Lang.errorTextoPartidaUnJugador);
@@ -1592,7 +1595,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private bool IntentarProcesarAciertoDesdeMensaje(string mensaje)
         {
             string[] partes = mensaje?.Split(':');
-            if (partes == null || partes.Length < 3)
+            if (partes == null || partes.Length < MinimoPartesAcierto)
             {
                 return false;
             }
@@ -1603,7 +1606,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return false;
             }
 
-            if (!int.TryParse(partes[2], out int puntosAdivinador))
+            if (!int.TryParse(partes[IndicePuntosAdivinador], out int puntosAdivinador))
             {
                 return false;
             }
