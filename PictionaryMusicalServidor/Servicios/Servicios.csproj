@@ -110,7 +110,6 @@
     <Compile Include="LogicaNegocio\IProveedorTiempo.cs" />
     <Compile Include="LogicaNegocio\IValidadorAdivinanza.cs" />
     <Compile Include="LogicaNegocio\ProveedorTiempo.cs" />
-    <Compile Include="Servicios\Autenticacion\ReemplazadorSesion.cs" />
     <Compile Include="Servicios\Autenticacion\SesionUsuarioManejador.cs" />
     <Compile Include="Servicios\Notificadores\BaneoNotificacionParametros.cs" />
     <Compile Include="Servicios\Notificadores\ExpulsionNotificacionParametros.cs" />
