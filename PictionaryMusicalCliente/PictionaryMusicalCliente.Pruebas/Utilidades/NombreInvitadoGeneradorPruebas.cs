@@ -8,23 +8,13 @@ using System.Threading;
 
 namespace PictionaryMusicalCliente.Pruebas.Utilidades
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase NombreInvitadoGenerador.
-    /// Verifica el comportamiento del generador de nombres aleatorios para invitados.
-    /// </summary>
     [TestClass]
     public class NombreInvitadoGeneradorPruebas
     {
         private NombreInvitadoGenerador _generador;
 
-        /// <summary>
-        /// Obtiene o establece el contexto de la prueba.
-        /// </summary>
         public TestContext TestContext { get; set; }
 
-        /// <summary>
-        /// Inicializa el generador antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {

@@ -150,6 +150,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Usuarios
             Assert.IsFalse(resultado.OperacionExitosa);
         }
 
+        // Fix podría ser individual para cada tipo de fallo
         [TestMethod]
         public void Prueba_ReportarJugador_NombreReportanteInvalido_RetornaOperacionFallida()
         {

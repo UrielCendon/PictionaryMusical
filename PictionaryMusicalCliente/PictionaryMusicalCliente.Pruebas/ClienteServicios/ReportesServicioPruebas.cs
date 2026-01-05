@@ -10,10 +10,6 @@ using DTOs = PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase ReportesServicio.
-    /// Verifica el comportamiento del servicio de reportes de jugadores.
-    /// </summary>
     [TestClass]
     public class ReportesServicioPruebas
     {
@@ -24,9 +20,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private Mock<PictionaryServidorServicioReportes.IReportesManejador> _clienteReportesMock;
         private ReportesServicio _servicio;
 
-        /// <summary>
-        /// Inicializa los mocks y el servicio antes de cada prueba.
-        /// </summary>
         [TestInitialize]
         public void Inicializar()
         {
@@ -52,9 +45,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 _localizadorMock.Object);
         }
 
-        /// <summary>
-        /// Limpia los recursos despues de cada prueba.
-        /// </summary>
         [TestCleanup]
         public void Limpiar()
         {

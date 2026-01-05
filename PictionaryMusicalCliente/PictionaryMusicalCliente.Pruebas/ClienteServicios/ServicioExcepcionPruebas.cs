@@ -6,10 +6,6 @@ using System.Linq;
 
 namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase ServicioExcepcion.
-    /// Verifica el comportamiento de la excepcion personalizada para servicios WCF.
-    /// </summary>
     [TestClass]
     public class ServicioExcepcionPruebas
     {

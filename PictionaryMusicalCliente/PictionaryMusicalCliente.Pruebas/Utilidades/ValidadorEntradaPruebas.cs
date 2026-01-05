@@ -3,10 +3,6 @@ using PictionaryMusicalCliente.Utilidades;
 
 namespace PictionaryMusicalCliente.Pruebas.Utilidades
 {
-    /// <summary>
-    /// Contiene las pruebas unitarias para la clase ValidadorEntrada.
-    /// Verifica el comportamiento de los metodos de validacion de entrada de usuario.
-    /// </summary>
     [TestClass]
     public class ValidadorEntradaPruebas
     {
