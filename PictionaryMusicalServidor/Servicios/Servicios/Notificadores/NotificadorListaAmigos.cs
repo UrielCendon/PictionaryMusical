@@ -18,7 +18,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     internal class NotificadorListaAmigos : INotificadorListaAmigos
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorListaAmigos));
-        private readonly ManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
+        private readonly IManejadorCallback<IListaAmigosManejadorCallback> _manejadorCallback;
         private readonly IAmistadServicio _amistadServicio;
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
@@ -30,7 +30,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="repositorioFactoria">Factoria de repositorios.</param>
         public NotificadorListaAmigos(
-            ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
+            IManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
             IAmistadServicio amistadServicio,
             IRepositorioFactoria repositorioFactoria)
         {
@@ -45,7 +45,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// Constructor completo con inyeccion de dependencias para pruebas unitarias.
         /// </summary>
         public NotificadorListaAmigos(
-            ManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
+            IManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
             IAmistadServicio amistadServicio,
             IContextoFactoria contextoFactoria,
             IRepositorioFactoria repositorioFactoria)

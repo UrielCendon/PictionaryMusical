@@ -31,6 +31,7 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IProveedorTiempo.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\IValidadorAdivinanza.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\LogicaNegocio\ProveedorTiempo.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\SesionUsuarioManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\BaneoNotificacionParametros.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\ExpulsionNotificacionParametros.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\NotificacionCallbackParametros.cs
@@ -40,6 +41,10 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\ExpulsionPorReportesServicio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\IExpulsionPorReportesServicio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\IdentificadoresUsuarios.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\ISalaExpulsor.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\ISalasProveedor.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\SalaExpulsorPorDefecto.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\SalasProveedorPorDefecto.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Usuarios\ReportesManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\CallbacksCompartidos.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\IContextoFactoria.cs
@@ -94,7 +99,6 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\INotificadorPartida.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\NotificadorPartida.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\InicioSesionManejador.cs
-C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\SesionesActivasRegistro.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\CambioContrasenaManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Partida\ChatManejador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\GestorNotificacionesSalaInterna.cs
@@ -119,8 +123,11 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servic
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\CorreoInvitacionNotificador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Notificadores\ICodigoVerificacionNotificador.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\GeneradorAleatorio.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\IManejadorCallback.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\IProveedorCallback.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\IRepositorioFactoria.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\ManejadorCallback.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\ProveedorCallback.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Utilidades\RepositorioFactoria.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\Servicios\Autenticacion\VerificacionRegistroServicio.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Servicios\App.config

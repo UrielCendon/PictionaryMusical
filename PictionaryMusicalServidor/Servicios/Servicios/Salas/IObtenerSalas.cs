@@ -5,7 +5,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
     /// <summary>
     /// Interfaz para obtener la coleccion de salas internas.
     /// </summary>
-    internal interface IObtenerSalas
+    public interface IObtenerSalas
     {
         /// <summary>
         /// Obtiene todas las salas internas activas.

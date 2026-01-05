@@ -120,6 +120,10 @@
     <Compile Include="Servicios\Usuarios\ExpulsionPorReportesServicio.cs" />
     <Compile Include="Servicios\Usuarios\IExpulsionPorReportesServicio.cs" />
     <Compile Include="Servicios\Usuarios\IdentificadoresUsuarios.cs" />
+    <Compile Include="Servicios\Usuarios\ISalaExpulsor.cs" />
+    <Compile Include="Servicios\Usuarios\ISalasProveedor.cs" />
+    <Compile Include="Servicios\Usuarios\SalaExpulsorPorDefecto.cs" />
+    <Compile Include="Servicios\Usuarios\SalasProveedorPorDefecto.cs" />
     <Compile Include="Servicios\Usuarios\ReportesManejador.cs" />
     <Compile Include="Servicios\Utilidades\CallbacksCompartidos.cs" />
     <Compile Include="Servicios\Utilidades\IContextoFactoria.cs" />

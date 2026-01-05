@@ -16,10 +16,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
     internal class NotificadorAmigos : INotificadorAmigos
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(NotificadorAmigos));
-        private readonly ManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
+        private readonly IManejadorCallback<IAmigosManejadorCallback> _manejadorCallback;
         private readonly IAmistadServicio _amistadServicio;
 
-        public NotificadorAmigos(ManejadorCallback<IAmigosManejadorCallback> manejadorCallback, 
+        public NotificadorAmigos(IManejadorCallback<IAmigosManejadorCallback> manejadorCallback, 
             IAmistadServicio amistadServicio)
         {
             _manejadorCallback = manejadorCallback;

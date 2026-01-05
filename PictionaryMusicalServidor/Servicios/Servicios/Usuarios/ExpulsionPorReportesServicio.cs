@@ -4,7 +4,6 @@ using System.ServiceModel;
 using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Salas;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
@@ -18,6 +17,33 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
         private const int LimiteReportesParaExpulsion = 3;
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(ExpulsionPorReportesServicio));
+
+        private readonly ISalasProveedor _salasProveedor;
+        private readonly ISalaExpulsor _salaExpulsor;
+
+        /// <summary>
+        /// Constructor por defecto para uso en WCF.
+        /// </summary>
+        public ExpulsionPorReportesServicio() : this(
+            new SalasProveedorPorDefecto(),
+            new SalaExpulsorPorDefecto())
+        {
+        }
+
+        /// <summary>
+        /// Constructor con inyeccion de dependencias para pruebas unitarias.
+        /// </summary>
+        /// <param name="salasProveedor">Proveedor de salas.</param>
+        /// <param name="salaExpulsor">Expulsor de salas.</param>
+        public ExpulsionPorReportesServicio(
+            ISalasProveedor salasProveedor,
+            ISalaExpulsor salaExpulsor)
+        {
+            _salasProveedor = salasProveedor ?? 
+                throw new ArgumentNullException(nameof(salasProveedor));
+            _salaExpulsor = salaExpulsor ?? 
+                throw new ArgumentNullException(nameof(salaExpulsor));
+        }
 
         /// <summary>
         /// Expulsa a un jugador de todas las salas activas si alcanza el limite de reportes.
@@ -60,9 +86,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
         }
 
-        private static void ExpulsarDeSalasActivas(string nombreUsuario)
+        private void ExpulsarDeSalasActivas(string nombreUsuario)
         {
-            var salas = SalasManejador.ObtenerListaSalas();
+            var salas = _salasProveedor.ObtenerListaSalas();
             if (salas == null || salas.Count == 0)
             {
                 return;
@@ -88,14 +114,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
         }
 
-        private static void ExpulsarDeSalaIndividual(
+        private void ExpulsarDeSalaIndividual(
             SalaDTO sala, 
             string nombreUsuario)
         {
             try
             {
-                var salasManejador = new SalasManejador();
-
                 string creadorNormalizado = EntradaComunValidador.NormalizarTexto(sala?.Creador);
                 string usuarioNormalizado = EntradaComunValidador.NormalizarTexto(nombreUsuario);
 
@@ -107,11 +131,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 
                 if (esCreador)
                 {
-                    salasManejador.AbandonarSala(sala.Codigo, nombreUsuario);
+                    _salaExpulsor.AbandonarSala(sala.Codigo, nombreUsuario);
                 }
                 else
                 {
-                    salasManejador.BanearJugador(sala.Codigo, nombreUsuario);
+                    _salaExpulsor.BanearJugador(sala.Codigo, nombreUsuario);
                 }
             }
             catch (FaultException excepcion)

@@ -100,6 +100,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <returns>Callback registrado si existe, null en caso contrario.</returns>
         public TCallback ObtenerCallback(string nombreUsuario)
         {
+            if (!EntradaComunValidador.EsMensajeValido(nombreUsuario))
+            {
+                return null;
+            }
+
             TCallback callback;
             if (_suscripciones.TryGetValue(nombreUsuario, out callback))
             {

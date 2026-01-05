@@ -13,7 +13,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
     /// Representa una sala de juego interna con su estado y jugadores.
     /// Gestiona el estado de los jugadores y delega las notificaciones al gestor inyectado.
     /// </summary>
-    internal sealed class SalaInternaManejador
+    public sealed class SalaInternaManejador
     {
         private const int MaximoJugadores = 4;
 

@@ -26,6 +26,8 @@ C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Properties\AssemblyInfo.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\Conexion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\GeneradorAleatorioDatos.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\IProveedorConexion.cs
+C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\ProveedorConexion.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\CatalogoCanciones.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Utilidades\ProveedorFecha.cs
 C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\Datos\Modelo\BaseDatosPictionaryMusical.Context.tt

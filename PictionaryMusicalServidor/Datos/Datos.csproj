@@ -113,6 +113,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilidades\Conexion.cs" />
     <Compile Include="Utilidades\GeneradorAleatorioDatos.cs" />
+    <Compile Include="Utilidades\IProveedorConexion.cs" />
+    <Compile Include="Utilidades\ProveedorConexion.cs" />
     <Compile Include="CatalogoCanciones.cs" />
     <Compile Include="Utilidades\ProveedorFecha.cs" />
   </ItemGroup>
