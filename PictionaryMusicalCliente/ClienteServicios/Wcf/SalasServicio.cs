@@ -108,11 +108,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             DTOs.ConfiguracionPartidaDTO configuracion)
         {
             ValidarCreacionSala(nombreCreador, configuracion);
-
-            if (_desechado)
-            {
-                return null;
-            }
+            VerificarServicioActivo();
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -150,11 +146,7 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         public async Task<DTOs.SalaDTO> UnirseSalaAsync(string codigoSala, string nombreUsuario)
         {
             ValidarDatosSalaUsuario(codigoSala, nombreUsuario);
-
-            if (_desechado)
-            {
-                return null;
-            }
+            VerificarServicioActivo();
             await _semaforo.WaitAsync().ConfigureAwait(false);
             try
             {
@@ -632,6 +624,16 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             {
                 throw new ServicioExcepcion(
                     TipoErrorServicio.Comunicacion,
+                    Lang.errorTextoServidorNoDisponible);
+            }
+        }
+
+        private void VerificarServicioActivo()
+        {
+            if (_desechado)
+            {
+                throw new ObjectDisposedException(
+                    nameof(SalasServicio),
                     Lang.errorTextoServidorNoDisponible);
             }
         }
