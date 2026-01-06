@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PictionaryMusicalCliente.Utilidades.Abstracciones
+﻿namespace PictionaryMusicalCliente.Utilidades.Abstracciones
 {
     /// <summary>
     /// Contrato para gestionar la apertura, cierre y mensajeria de ventanas

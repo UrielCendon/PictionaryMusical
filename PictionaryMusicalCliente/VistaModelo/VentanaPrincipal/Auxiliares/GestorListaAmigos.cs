@@ -1,6 +1,5 @@
 using log4net;
 using PictionaryMusicalCliente.ClienteServicios.Abstracciones;
-using PictionaryMusicalCliente.Modelo;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,7 +27,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
         private bool _canalDisponible;
         private bool _desconexionProcesada;
         private bool _actualizacionEnProgreso;
-        private bool _disposed;
+        private bool _desechado;
 
         /// <summary>
         /// Inicializa una nueva instancia de <see cref="GestorListaAmigos"/>.
@@ -225,13 +224,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
         /// </summary>
         public void Dispose()
         {
-            if (_disposed)
+            if (_desechado)
             {
                 return;
             }
 
             DesuscribirEventos();
-            _disposed = true;
+            _desechado = true;
         }
 
         private void SuscribirEventos()
