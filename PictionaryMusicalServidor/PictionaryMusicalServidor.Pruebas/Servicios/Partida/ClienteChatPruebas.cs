@@ -43,15 +43,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Partida
         }
 
         [TestMethod]
-        public void Prueba_NombreJugador_EsInmutable()
-        {
-            var mockCallback = new Mock<IChatManejadorCallback>();
-            var cliente = new ClienteChat(NombreJugadorPrueba, mockCallback.Object);
-
-            Assert.AreEqual(NombreJugadorPrueba, cliente.NombreJugador);
-        }
-
-        [TestMethod]
         public void Prueba_Constructor_AceptaCallbackNulo()
         {
             var cliente = new ClienteChat(NombreJugadorPrueba, null);

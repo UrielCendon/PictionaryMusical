@@ -176,27 +176,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         }
 
         [TestMethod]
-        public void Prueba_PartidaIniciada_PermiteCambiarValor()
-        {
-            _salaInterna.PartidaIniciada = true;
-
-            Assert.IsTrue(_salaInterna.PartidaIniciada);
-        }
-
-        [TestMethod]
-        public void Prueba_PartidaFinalizada_PermiteCambiarValor()
-        {
-            _salaInterna.PartidaFinalizada = true;
-
-            Assert.IsTrue(_salaInterna.PartidaFinalizada);
-        }
-
-        [TestMethod]
         public void Prueba_ConvertirADto_RetornaConfiguracion()
         {
             var dto = _salaInterna.ConvertirADto();
 
-            Assert.IsNotNull(dto.Configuracion);
+            Assert.AreEqual(typeof(ConfiguracionPartidaDTO), dto.Configuracion.GetType());
         }
 
         [TestMethod]

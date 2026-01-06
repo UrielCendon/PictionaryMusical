@@ -122,7 +122,6 @@
     <Compile Include="Servicios\Utilidades\RepositorioFactoriaPruebas.cs" />
     <Compile Include="Servicios\Usuarios\ClasificacionManejadorPruebas.cs" />
     <Compile Include="Servicios\Usuarios\ExpulsionPorReportesServicioPruebas.cs" />
-    <Compile Include="Servicios\Usuarios\IdentificadoresUsuariosPruebas.cs" />
     <Compile Include="Servicios\Usuarios\PerfilManejadorPruebas.cs" />
     <Compile Include="Servicios\Usuarios\ReportesManejadorPruebas.cs" />
     <Compile Include="Servicios\Partida\ClienteChatPruebas.cs" />

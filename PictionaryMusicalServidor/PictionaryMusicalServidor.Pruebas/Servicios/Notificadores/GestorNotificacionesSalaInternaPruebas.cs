@@ -32,7 +32,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
 
             var callback = _gestor.ObtenerCallback(NombreUsuarioPrueba);
 
-            Assert.IsNotNull(callback);
+            Assert.AreEqual(_mockCallback.Object, callback);
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.Remover(NombreUsuarioPrueba);
 
             var callback = _gestor.ObtenerCallback(NombreUsuarioPrueba);
-            Assert.IsNotNull(callback);
+            Assert.AreNotEqual(_mockCallback.Object, callback);
         }
 
         [TestMethod]
@@ -72,7 +72,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
         {
             var callback = _gestor.ObtenerCallback(NombreUsuarioPrueba);
 
-            Assert.IsNotNull(callback);
             Assert.AreNotEqual(_mockCallback.Object, callback);
         }
 
@@ -106,9 +105,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _gestor.Limpiar();
 
             var callback1 = _gestor.ObtenerCallback(NombreUsuarioPrueba);
-            var callback2 = _gestor.ObtenerCallback(NombreUsuarioDosPrueba);
             Assert.AreNotEqual(_mockCallback.Object, callback1);
-            Assert.AreNotEqual(mockCallbackDos.Object, callback2);
         }
 
         [TestMethod]

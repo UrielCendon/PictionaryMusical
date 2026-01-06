@@ -106,7 +106,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             var resultado = _manejador.IniciarSesion(credenciales);
 
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(resultado.InicioSesionExitoso);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             var resultado = _manejador.IniciarSesion(credenciales);
 
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(resultado.InicioSesionExitoso);
         }
 
         [TestMethod]
@@ -134,7 +134,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             var resultado = _manejador.IniciarSesion(credenciales);
 
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(resultado.InicioSesionExitoso);
         }
 
         [TestMethod]
@@ -148,7 +148,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Autenticacion
 
             var resultado = _manejador.IniciarSesion(credenciales);
 
-            Assert.IsNotNull(resultado.Mensaje);
+            Assert.IsFalse(resultado.InicioSesionExitoso);
         }
 
         [TestMethod]

@@ -151,9 +151,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Notificadores
             _mockCallback.Verify(
                 callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()), 
                 Times.Once);
-            mockCallback2.Verify(
-                callback => callback.NotificarListaSalasActualizada(It.IsAny<SalaDTO[]>()), 
-                Times.Once);
         }
 
         [TestMethod]

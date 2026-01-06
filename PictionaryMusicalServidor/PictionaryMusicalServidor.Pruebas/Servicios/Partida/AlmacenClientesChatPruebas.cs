@@ -36,7 +36,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Partida
         {
             var clientes = _almacen.ObtenerOCrearListaClientes(IdSalaPrueba);
 
-            Assert.IsNotNull(clientes);
+            Assert.AreEqual(0, clientes.Count);
         }
 
         [TestMethod]

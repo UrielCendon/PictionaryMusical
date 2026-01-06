@@ -41,11 +41,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         [TestMethod]
         public void Prueba_Crear_RetornaSalaConConfiguracionCorrecta()
         {
-            var configuracion = new ConfiguracionPartidaDTO { NumeroRondas = 5 };
+            const int NumeroRondasEsperado = 5;
+            var configuracion = new ConfiguracionPartidaDTO { NumeroRondas = NumeroRondasEsperado };
 
             var sala = _factoria.Crear(CodigoSalaPrueba, CreadorPrueba, configuracion);
 
-            Assert.IsNotNull(sala.Configuracion);
+            Assert.AreEqual(NumeroRondasEsperado, sala.Configuracion.NumeroRondas);
         }
 
         [TestMethod]
