@@ -103,7 +103,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_Localizar_MensajeCorreoInvalido_RetornaTraducido()
         {
-            string mensaje = "El correo electronico es obligatorio, debe tener un formato valido y no debe exceder 50 caracteres.";
+            string mensaje = 
+                "El correo electronico es obligatorio, debe tener un formato valido y no debe exceder 50 caracteres.";
 
             var resultado = _localizador.Localizar(mensaje, "default");
 
@@ -113,7 +114,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_Localizar_MensajeCodigoExpirado_RetornaTraducido()
         {
-            string mensaje = "El codigo de verificacion ha expirado. Inicie el proceso nuevamente.";
+            string mensaje = 
+                "El codigo de verificacion ha expirado. Inicie el proceso nuevamente.";
 
             var resultado = _localizador.Localizar(mensaje, "default");
 

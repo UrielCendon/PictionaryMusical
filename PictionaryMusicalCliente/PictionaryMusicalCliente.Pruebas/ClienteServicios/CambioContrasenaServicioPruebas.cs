@@ -31,7 +31,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _manejadorErrorMock = new Mock<IManejadorErrorServicio>();
             _localizadorMock = new Mock<ILocalizadorServicio>();
             _clienteVerificacionMock =
-                new Mock<PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador>();
+                new Mock<PictionaryServidorServicioCodigoVerificacion.
+                ICodigoVerificacionManejador>();
             _clienteCambioContrasenaMock =
                 new Mock<PictionaryServidorServicioCambioContrasena.ICambioContrasenaManejador>();
 
@@ -44,7 +45,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 .Returns(_clienteCambioContrasenaMock.Object);
 
             _localizadorMock
-                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), 
+                It.IsAny<string>()))
                 .Returns((string mensaje, string predeterminado) => 
                     string.IsNullOrWhiteSpace(mensaje) ? predeterminado : mensaje);
 
@@ -163,7 +165,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         }
 
         [TestMethod]
-        public async Task Prueba_SolicitarCodigoRecuperacionAsync_IdentificadorNulo_LanzaExcepcion()
+        public async 
+            Task Prueba_SolicitarCodigoRecuperacionAsync_IdentificadorNulo_LanzaExcepcion()
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
@@ -172,7 +175,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         }
 
         [TestMethod]
-        public async Task Prueba_SolicitarCodigoRecuperacionAsync_IdentificadorVacio_LanzaExcepcion()
+        public async 
+            Task Prueba_SolicitarCodigoRecuperacionAsync_IdentificadorVacio_LanzaExcepcion()
         {
             await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
@@ -541,7 +545,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ActualizarContrasenaAsync(tokenCodigo, nuevaContrasena);
 
-            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteCambioContrasena(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteCambioContrasena(),
+                Times.Once);
         }
 
         private void ConfigurarEjecutorSolicitarRecuperacionExitoso(

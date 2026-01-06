@@ -177,7 +177,8 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
 
             System.Threading.Tasks.Task.WaitAll(tareas, cancellationToken);
 
-            generacionesExitosas.Should().BeGreaterThan(0, "Se esperaba al menos una generación exitosa en ejecución concurrente");
+            generacionesExitosas.Should().BeGreaterThan(0, 
+                "Se esperaba al menos una generación exitosa en ejecución concurrente");
         }
 
         [TestMethod]
