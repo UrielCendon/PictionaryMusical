@@ -17,7 +17,6 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         private const int PuntosObtenidosPrueba = 100;
         private const int PuntosInicialesPrueba = 50;
         private const int RondasInicialesPrueba = 5;
-        private const int CantidadMejoresPrueba = 10;
         private const int ValorInicialCero = 0;
 
         [TestMethod]
@@ -260,7 +259,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
-        private Mock<DbSet<Clasificacion>> CrearMockDbSetConAdd(List<Clasificacion> lista)
+        private static Mock<DbSet<Clasificacion>> CrearMockDbSetConAdd(List<Clasificacion> lista)
         {
             var datos = lista.AsQueryable();
             var mockDbSet = new Mock<DbSet<Clasificacion>>();
@@ -282,7 +281,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             return mockDbSet;
         }
 
-        private Mock<DbSet<Jugador>> CrearMockDbSetJugador(IQueryable<Jugador> datos)
+        private static Mock<DbSet<Jugador>> CrearMockDbSetJugador(IQueryable<Jugador> datos)
         {
             var mockDbSet = new Mock<DbSet<Jugador>>();
             mockDbSet.As<IQueryable<Jugador>>()

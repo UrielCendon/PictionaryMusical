@@ -84,11 +84,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Datos\CatalogoCancionesPruebas.cs" />
     <Compile Include="Datos\DAL\AmigoRepositorioPruebas.cs" />
     <Compile Include="Datos\DAL\ClasificacionRepositorioPruebas.cs" />
     <Compile Include="Datos\DAL\JugadorRepositorioPruebas.cs" />
     <Compile Include="Datos\DAL\ReporteRepositorioPruebas.cs" />
     <Compile Include="Datos\DAL\UsuarioRepositorioPruebas.cs" />
+    <Compile Include="Datos\Utilidades\GeneradorAleatorioDatosPruebas.cs" />
+    <Compile Include="Datos\Utilidades\ProveedorFechaPruebas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

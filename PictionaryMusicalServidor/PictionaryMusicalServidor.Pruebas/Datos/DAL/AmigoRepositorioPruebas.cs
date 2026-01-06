@@ -277,7 +277,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
                 () => repositorio.ObtenerAmigos(IdUsuarioNegativo));
         }
 
-        private Mock<DbSet<Amigo>> CrearMockDbSet(IQueryable<Amigo> datos)
+        private static Mock<DbSet<Amigo>> CrearMockDbSet(IQueryable<Amigo> datos)
         {
             var mockDbSet = new Mock<DbSet<Amigo>>();
             mockDbSet.As<IQueryable<Amigo>>()
@@ -295,7 +295,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             return mockDbSet;
         }
 
-        private Mock<DbSet<Amigo>> CrearMockDbSetConAdd(List<Amigo> listaAmigos)
+        private static Mock<DbSet<Amigo>> CrearMockDbSetConAdd(List<Amigo> listaAmigos)
         {
             var datos = listaAmigos.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);

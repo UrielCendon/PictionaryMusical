@@ -15,11 +15,8 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         private const string NombreUsuarioPrueba = "UsuarioPrueba";
         private const string NombreUsuarioInexistente = "UsuarioInexistente";
         private const string ContrasenaPrueba = "Contrasena123!";
-        private const string CorreoPrueba = "usuario@correo.com";
-        private const string CorreoInexistente = "inexistente@correo.com";
         private const string NuevaContrasenaPrueba = "NuevaContrasena456!";
         private const int IdUsuarioPrueba = 1;
-        private const int IdUsuarioInexistente = 999;
         private const int IdUsuarioInvalido = 0;
         private const int IdUsuarioNegativo = -1;
         private const int IdJugadorPrueba = 1;
@@ -350,7 +347,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
                 () => repositorio.ObtenerPorNombreConJugador("   "));
         }
 
-        private Mock<DbSet<Usuario>> CrearMockDbSet(IQueryable<Usuario> datos)
+        private static Mock<DbSet<Usuario>> CrearMockDbSet(IQueryable<Usuario> datos)
         {
             var mockDbSet = new Mock<DbSet<Usuario>>();
             mockDbSet.As<IQueryable<Usuario>>()
@@ -368,7 +365,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             return mockDbSet;
         }
 
-        private Mock<DbSet<Usuario>> CrearMockDbSetConAdd(List<Usuario> listaUsuarios)
+        private static Mock<DbSet<Usuario>> CrearMockDbSetConAdd(List<Usuario> listaUsuarios)
         {
             var datos = listaUsuarios.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);

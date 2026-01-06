@@ -175,7 +175,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             Assert.AreEqual(CorreoExistentePrueba, resultado.Correo);
         }
 
-        private Mock<DbSet<Jugador>> CrearMockDbSet(IQueryable<Jugador> datos)
+        private static Mock<DbSet<Jugador>> CrearMockDbSet(IQueryable<Jugador> datos)
         {
             var mockDbSet = new Mock<DbSet<Jugador>>();
             mockDbSet.As<IQueryable<Jugador>>()
@@ -193,7 +193,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             return mockDbSet;
         }
 
-        private Mock<DbSet<Jugador>> CrearMockDbSetConAdd(List<Jugador> listaJugadores)
+        private static Mock<DbSet<Jugador>> CrearMockDbSetConAdd(List<Jugador> listaJugadores)
         {
             var datos = listaJugadores.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);

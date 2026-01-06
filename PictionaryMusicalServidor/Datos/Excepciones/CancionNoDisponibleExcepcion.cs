@@ -15,7 +15,7 @@ namespace PictionaryMusicalServidor.Datos.Excepciones
         }
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/> 
+        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/>
         /// con un mensaje especifico.
         /// </summary>
         /// <param name="mensaje">Mensaje descriptivo del error.</param>
@@ -25,7 +25,7 @@ namespace PictionaryMusicalServidor.Datos.Excepciones
         }
 
         /// <summary>
-        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/> 
+        /// Inicializa una nueva instancia de la clase <see cref="CancionNoDisponibleExcepcion"/>
         /// con un mensaje y una excepcion interna.
         /// </summary>
         /// <param name="mensaje">Mensaje descriptivo del error.</param>
