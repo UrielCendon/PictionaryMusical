@@ -43,10 +43,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return _contexto.Amigo.Any(relacionAmistad =>
-                    (relacionAmistad.UsuarioEmisor == usuarioAId 
-                        && relacionAmistad.UsuarioReceptor == usuarioBId) ||
-                    (relacionAmistad.UsuarioEmisor == usuarioBId 
-                        && relacionAmistad.UsuarioReceptor == usuarioAId));
+                    (relacionAmistad.UsuarioEmisor == usuarioAId && 
+                        relacionAmistad.UsuarioReceptor == usuarioBId) ||
+                    (relacionAmistad.UsuarioEmisor == usuarioBId && 
+                        relacionAmistad.UsuarioReceptor == usuarioAId));
             }
             catch (Exception excepcion)
             {
@@ -91,10 +91,10 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 var relacionEncontrada = _contexto.Amigo.FirstOrDefault(relacionAmistad =>
-                    (relacionAmistad.UsuarioEmisor == usuarioAId 
-                        && relacionAmistad.UsuarioReceptor == usuarioBId) ||
-                    (relacionAmistad.UsuarioEmisor == usuarioBId 
-                        && relacionAmistad.UsuarioReceptor == usuarioAId));
+                    (relacionAmistad.UsuarioEmisor == usuarioAId && 
+                        relacionAmistad.UsuarioReceptor == usuarioBId) ||
+                    (relacionAmistad.UsuarioEmisor == usuarioBId && 
+                        relacionAmistad.UsuarioReceptor == usuarioAId));
 
                 if (relacionEncontrada == null)
                 {
@@ -141,9 +141,9 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 return _contexto.Amigo
-                    .Where(solicitudAmistad => !solicitudAmistad.Estado 
-                        && (solicitudAmistad.UsuarioEmisor == usuarioId
-                            || solicitudAmistad.UsuarioReceptor == usuarioId))
+                    .Where(solicitudAmistad => !solicitudAmistad.Estado && 
+                        (solicitudAmistad.UsuarioEmisor == usuarioId ||
+                            solicitudAmistad.UsuarioReceptor == usuarioId))
                     .Include(solicitudAmistad => solicitudAmistad.Usuario)
                     .Include(solicitudAmistad => solicitudAmistad.Usuario1)
                     .ToList();
@@ -255,12 +255,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             try
             {
                 var identificadoresAmigos = _contexto.Amigo
-                    .Where(relacionAmistad => relacionAmistad.Estado 
-                        && (relacionAmistad.UsuarioEmisor == usuarioId
-                            || relacionAmistad.UsuarioReceptor == usuarioId))
-                    .Select(relacionAmistad => relacionAmistad.UsuarioEmisor == usuarioId 
-                        ? relacionAmistad.UsuarioReceptor
-                        : relacionAmistad.UsuarioEmisor)
+                    .Where(relacionAmistad => relacionAmistad.Estado && 
+                        (relacionAmistad.UsuarioEmisor == usuarioId ||
+                            relacionAmistad.UsuarioReceptor == usuarioId))
+                    .Select(relacionAmistad => relacionAmistad.UsuarioEmisor == usuarioId ? 
+                        relacionAmistad.UsuarioReceptor :
+                        relacionAmistad.UsuarioEmisor)
                     .Distinct()
                     .ToList();
 

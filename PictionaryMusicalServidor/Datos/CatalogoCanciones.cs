@@ -13,7 +13,6 @@ using System.Text;
 namespace PictionaryMusicalServidor.Datos
 {
     /// <summary>
-    /// 
     /// Proporciona el acceso al catalogo interno de canciones disponibles para las partidas.
     /// </summary>
     public class CatalogoCanciones : ICatalogoCanciones
@@ -310,11 +309,36 @@ namespace PictionaryMusicalServidor.Datos
                 string idiomaBusqueda = NormalizarTexto(idiomaInterno);
                 var idsRechazados = idsExcluidos ?? new HashSet<int>();
 
-                var candidatos = ObtenerCandidatos(idiomaBusqueda, idsRechazados);
+                var candidatos = new List<Cancion>();
+                foreach (var cancion in _canciones.Values)
+                {
+                    if (idsRechazados.Contains(cancion.Id))
+                    {
+                        continue;
+                    }
+
+                    bool esMixto = string.Equals(
+                        idiomaBusqueda, 
+                        "mixto", 
+                        StringComparison.OrdinalIgnoreCase);
+                    bool coincideIdioma = string.Equals(
+                        NormalizarTexto(cancion.Idioma), 
+                        idiomaBusqueda, 
+                        StringComparison.OrdinalIgnoreCase);
+
+                    if (esMixto || coincideIdioma)
+                    {
+                        candidatos.Add(cancion);
+                    }
+                }
 
                 if (!candidatos.Any())
                 {
-                    RegistrarErrorFaltaCanciones(idioma, idiomaInterno, idiomaBusqueda);
+                    _logger.WarnFormat(
+                        "Fallo al buscar cancion. Idioma original: {0}, mapeado: {1}, normalizado: {2}.",
+                        idioma, 
+                        idiomaInterno, 
+                        idiomaBusqueda);
                     throw new CancionNoDisponibleExcepcion(
                         MensajesErrorDatos.Cancion.CancionesNoDisponibles);
                 }
@@ -400,7 +424,9 @@ namespace PictionaryMusicalServidor.Datos
                 return false;
             }
 
-            return string.Equals(intentoNormalizado, _canciones[idCancion].NombreNormalizado, 
+            return string.Equals(
+                intentoNormalizado, 
+                _canciones[idCancion].NombreNormalizado, 
                 StringComparison.Ordinal);
         }
 
@@ -434,44 +460,6 @@ namespace PictionaryMusicalServidor.Datos
             return idiomaEntrada;
         }
 
-        private static List<Cancion> ObtenerCandidatos(string idiomaNormalizado, 
-            HashSet<int> idsRechazados)
-        {
-            var candidatos = new List<Cancion>();
-            foreach (var cancion in _canciones.Values)
-            {
-                if (idsRechazados.Contains(cancion.Id))
-                {
-                    continue;
-                }
-
-                bool esMixto = string.Equals(idiomaNormalizado, "mixto", StringComparison.OrdinalIgnoreCase);
-                bool coincideIdioma = string.Equals(NormalizarTexto(cancion.Idioma), idiomaNormalizado, 
-                    StringComparison.OrdinalIgnoreCase);
-
-                if (esMixto || coincideIdioma)
-                {
-                    candidatos.Add(cancion);
-                }
-            }
-
-            return candidatos;
-        }
-
-        private static void RegistrarErrorFaltaCanciones(
-            string idiomaOriginal, 
-            string idiomaMapeado, 
-            string idiomaNormalizado)
-        {
-            _logger.WarnFormat(
-                "Fallo al buscar cancion. Idioma original: {0}, mapeado: {1}, normalizado: {2}.",
-                idiomaOriginal, 
-                idiomaMapeado, 
-                idiomaNormalizado);
-        }
-
-
-
         private static string NormalizarTexto(string texto)
         {
             if (string.IsNullOrWhiteSpace(texto))
@@ -498,7 +486,8 @@ namespace PictionaryMusicalServidor.Datos
             }
 
             var textoSinAcentos = constructor.ToString().Normalize(NormalizationForm.FormC);
-            var partes = textoSinAcentos.Split(new[] { ' ' }, 
+            var partes = textoSinAcentos.Split(
+                new[] { ' ' }, 
                 StringSplitOptions.RemoveEmptyEntries);
             return string.Join(" ", partes);
         }
