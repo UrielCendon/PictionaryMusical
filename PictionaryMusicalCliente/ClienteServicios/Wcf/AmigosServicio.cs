@@ -146,22 +146,22 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
         /// Envia una nueva peticion de amistad al servidor.
         /// </summary>
         public Task EnviarSolicitudAsync(string nombreUsuarioEmisor, string nombreUsuarioReceptor) 
-            => EjecutarOperacionAsync(c => 
-            c.EnviarSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
+            => EjecutarOperacionAsync(cliente => 
+            cliente.EnviarSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Responde a una peticion existente (aceptar/rechazar).
         /// </summary>
         public Task ResponderSolicitudAsync
             (string nombreUsuarioEmisor, string nombreUsuarioReceptor) =>
-            EjecutarOperacionAsync(c => 
-            c.ResponderSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
+            EjecutarOperacionAsync(cliente => 
+            cliente.ResponderSolicitudAmistadAsync(nombreUsuarioEmisor, nombreUsuarioReceptor));
 
         /// <summary>
         /// Elimina a un amigo de la lista de contactos.
         /// </summary>
         public Task EliminarAmigoAsync(string nombreUsuarioA, string nombreUsuarioB) =>
-            EjecutarOperacionAsync(c => c.EliminarAmigoAsync(nombreUsuarioA, nombreUsuarioB));
+            EjecutarOperacionAsync(cliente => cliente.EliminarAmigoAsync(nombreUsuarioA, nombreUsuarioB));
 
         /// <summary>
         /// Callback del servidor: Notifica que una solicitud cambio de estado.

@@ -734,8 +734,8 @@ namespace PictionaryMusicalCliente.VistaModelo.InicioSesion
             }
 
             IdiomaSeleccionado = IdiomasDisponibles
-                .FirstOrDefault(i => string.Equals(
-                    i.Codigo,
+                .FirstOrDefault(idioma => string.Equals(
+                    idioma.Codigo,
                     culturaActual,
                     StringComparison.OrdinalIgnoreCase))
                 ?? IdiomasDisponibles.FirstOrDefault();

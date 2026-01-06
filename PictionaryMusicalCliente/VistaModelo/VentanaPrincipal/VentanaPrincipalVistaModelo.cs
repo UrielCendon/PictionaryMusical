@@ -94,7 +94,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void SuscribirEventosConectividad()
         {
-            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += EnConexionInternetPerdida;
             DesconexionDetectada += ManejarDesconexion;
         }
 
@@ -391,7 +391,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         {
             _gestorAmigos.CanalDesconectado -= OnCanalAmigosDesconectado;
             _gestorAmigos.SolicitudesActualizadas -= OnSolicitudesActualizadas;
-            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= EnConexionInternetPerdida;
             DesconexionDetectada -= ManejarDesconexion;
         }
 
@@ -829,7 +829,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarError(mensaje);
         }
 
-        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        private void EnConexionInternetPerdida(object remitente, EventArgs argumentos)
         {
             if (_desconexionInternetProcesada || _gestorAmigos.DesconexionProcesada)
             {

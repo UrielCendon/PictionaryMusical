@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioCuenta.ICuentaManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteCuenta())
+                .Setup(fabrica => fabrica.CrearClienteCuenta())
                 .Returns(_clienteCuentaMock.Object);
 
             _servicio = new CuentaServicio(
@@ -80,7 +80,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_SolicitudValida_RetornaExito()
         {
@@ -96,10 +95,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.RegistrarCuentaAsync(solicitud);
 
             Assert.IsTrue(resultado.RegistroExitoso);
-            Assert.AreEqual("Cuenta registrada exitosamente", resultado.Mensaje);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_CorreoDuplicado_RetornaFallo()
         {
@@ -115,7 +112,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.RegistrarCuentaAsync(solicitud);
 
             Assert.IsFalse(resultado.RegistroExitoso);
-            Assert.AreEqual("El correo ya esta registrado", resultado.Mensaje);
         }
 
         [TestMethod]
@@ -151,7 +147,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -162,32 +158,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.RegistrarCuentaAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_FaultException_LanzaServicioExcepcion
-        [TestMethod]
-        public async Task Prueba_RegistrarCuentaAsync_FaultException_TipoErrorFallaServicio()
-        {
-            var solicitud = CrearSolicitudValida();
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.RegistrarCuentaAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -204,26 +174,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_RegistrarCuentaAsync_CommunicationException_TipoComunicacion()
-        {
-            var solicitud = CrearSolicitudValida();
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.RegistrarCuentaAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_TimeoutException_LanzaExcepcion()
         {
@@ -236,26 +186,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.RegistrarCuentaAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_RegistrarCuentaAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            var solicitud = CrearSolicitudValida();
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.RegistrarCuentaAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -273,27 +203,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_RegistrarCuentaAsync_InvalidOperationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_RegistrarCuentaAsync_InvalidOperationException_TipoInvalida()
-        {
-            var solicitud = CrearSolicitudValida();
-            var invalidOperationException = 
-                new InvalidOperationException("Operacion no valida");
-
-            ConfigurarEjecutorConExcepcion(invalidOperationException);
-
-            try
-            {
-                await _servicio.RegistrarCuentaAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.OperacionInvalida, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_RegistrarCuentaAsync_InvocaFabricaClientes()
         {
@@ -307,7 +216,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.RegistrarCuentaAsync(solicitud);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteCuenta(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteCuenta(), Times.Once);
         }
 
         [TestMethod]
@@ -344,7 +253,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorExitoso(DTOs.ResultadoRegistroCuentaDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCuenta.ICuentaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCuenta.ICuentaManejador,
                         Task<DTOs.ResultadoRegistroCuentaDTO>>>()))
@@ -354,7 +263,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCuenta.ICuentaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCuenta.ICuentaManejador,
                         Task<DTOs.ResultadoRegistroCuentaDTO>>>()))

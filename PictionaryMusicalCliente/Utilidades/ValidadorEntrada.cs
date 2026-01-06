@@ -173,8 +173,8 @@ namespace PictionaryMusicalCliente.Utilidades
 
             string[] nombresCultura = recurso
                 .Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(n => n.Trim())
-                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(nombre => nombre.Trim())
+                .Where(nombre => !string.IsNullOrWhiteSpace(nombre))
                 .ToArray();
 
             foreach (string nombre in nombresCultura)

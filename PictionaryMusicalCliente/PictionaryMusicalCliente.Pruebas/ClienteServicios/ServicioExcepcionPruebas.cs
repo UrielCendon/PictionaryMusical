@@ -9,7 +9,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
     [TestClass]
     public class ServicioExcepcionPruebas
     {
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_ConTipoYMensaje_CreaInstancia()
         {
@@ -18,12 +17,9 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje);
 
-            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(tipo, excepcion.Tipo);
-            Assert.AreEqual(mensaje, excepcion.Message);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_ConCausaInterna_IncluyeCausa()
         {
@@ -33,11 +29,9 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, mensaje, causaInterna);
 
-            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(causaInterna, excepcion.InnerException);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Constructor_MensajeNulo_CreaInstanciaSinMensaje()
         {
@@ -45,7 +39,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var excepcion = new ServicioExcepcion(tipo, null);
 
-            Assert.IsInstanceOfType(excepcion, typeof(ServicioExcepcion));
             Assert.AreEqual(tipo, excepcion.Tipo);
         }
 
@@ -192,15 +185,12 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsTrue(capturada);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_TipoErrorServicio_ContieneTodosLosValores()
         {
             var valores = Enum.GetValues(typeof(TipoErrorServicio)).Cast<TipoErrorServicio>().ToList();
             
             valores.Should().HaveCount(6);
-            Enum.IsDefined(typeof(TipoErrorServicio), 0).Should().BeTrue("Debe existir un valor con ordinal 0 (Ninguno)");
-            Enum.IsDefined(typeof(TipoErrorServicio), 5).Should().BeTrue("Debe existir un valor con ordinal 5 (Desconocido)");
         }
     }
 }

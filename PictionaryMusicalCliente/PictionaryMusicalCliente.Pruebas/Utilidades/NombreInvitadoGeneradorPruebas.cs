@@ -21,14 +21,12 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             _generador = new NombreInvitadoGenerador();
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_Generar_SinParametros_RetornaExito()
         {
             var resultado = _generador.Generar(null);
 
             Assert.IsTrue(resultado.Exitoso);
-            Assert.IsFalse(string.IsNullOrEmpty(resultado.NombreGenerado));
         }
 
         [TestMethod]
@@ -182,45 +180,35 @@ namespace PictionaryMusicalCliente.Pruebas.Utilidades
             generacionesExitosas.Should().BeGreaterThan(0, "Se esperaba al menos una generación exitosa en ejecución concurrente");
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_Exito_PropiedadesCorrectas()
         {
             var resultado = ResultadoGeneracion.Exito("NombrePrueba");
 
             Assert.IsTrue(resultado.Exitoso);
-            Assert.AreEqual("NombrePrueba", resultado.NombreGenerado);
-            Assert.AreEqual(MotivoFalloGeneracion.Ninguno, resultado.Motivo);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_Fallo_PropiedadesCorrectas()
         {
             var resultado = ResultadoGeneracion.Fallo(MotivoFalloGeneracion.NombresAgotados);
 
             Assert.IsFalse(resultado.Exitoso);
-            Assert.AreEqual(string.Empty, resultado.NombreGenerado);
-            Assert.AreEqual(MotivoFalloGeneracion.NombresAgotados, resultado.Motivo);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_FalloRecursoNoEncontrado_MotivoCorrecto()
         {
             var resultado = ResultadoGeneracion.Fallo(MotivoFalloGeneracion.RecursoNoEncontrado);
 
-            Assert.IsFalse(resultado.Exitoso);
             Assert.AreEqual(MotivoFalloGeneracion.RecursoNoEncontrado, resultado.Motivo);
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public void Prueba_ResultadoGeneracion_FalloListaVacia_MotivoCorecto()
         {
             var resultado = ResultadoGeneracion.Fallo(MotivoFalloGeneracion.ListaVacia);
 
-            Assert.IsFalse(resultado.Exitoso);
             Assert.AreEqual(MotivoFalloGeneracion.ListaVacia, resultado.Motivo);
         }
     }

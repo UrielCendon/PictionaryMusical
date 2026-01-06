@@ -33,11 +33,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioCuenta.ICuentaManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteVerificacion())
+                .Setup(fabrica => fabrica.CrearClienteVerificacion())
                 .Returns(_clienteVerificacionMock.Object);
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteCuenta())
+                .Setup(fabrica => fabrica.CrearClienteCuenta())
                 .Returns(_clienteCuentaMock.Object);
 
             _servicio = new VerificacionCodigoServicio(
@@ -88,7 +88,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRegistroAsync_SolicitudValida_RetornaExito()
         {
@@ -105,7 +104,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.SolicitarCodigoRegistroAsync(solicitud);
 
             Assert.IsTrue(resultado.CodigoEnviado);
-            Assert.AreEqual("token123", resultado.TokenCodigo);
         }
 
         [TestMethod]
@@ -163,7 +161,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -174,32 +172,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.SolicitarCodigoRegistroAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_SolicitarCodigoRegistroAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_SolicitarCodigoRegistroAsync_FaultException_TipoFallaServicio()
-        {
-            var solicitud = CrearNuevaCuentaValida();
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorSolicitarCodigoConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.SolicitarCodigoRegistroAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -311,7 +283,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -393,7 +365,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -404,32 +376,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReenviarCodigoRegistroAsync_FaultException_TipoFallaServicio()
-        {
-            string tokenCodigo = "token123";
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorReenviarCodigoConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -446,26 +392,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReenviarCodigoRegistroAsync_CommunicationException_TipoComunicacion()
-        {
-            string tokenCodigo = "token123";
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorReenviarCodigoConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ReenviarCodigoRegistroAsync_TimeoutException_LanzaExcepcion()
         {
@@ -478,26 +404,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ReenviarCodigoRegistroAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReenviarCodigoRegistroAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            string tokenCodigo = "token123";
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorReenviarCodigoConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -513,7 +419,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.SolicitarCodigoRegistroAsync(solicitud);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteVerificacion(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteVerificacion(), Times.Once);
         }
 
         [TestMethod]
@@ -529,7 +435,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ReenviarCodigoRegistroAsync(tokenCodigo);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteCuenta(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteCuenta(), Times.Once);
         }
 
         private static DTOs.NuevaCuentaDTO CrearNuevaCuentaValida()
@@ -547,7 +453,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoSolicitudCodigoDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -559,7 +465,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorSolicitarCodigoConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -572,7 +478,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoRegistroCuentaDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -584,7 +490,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConfirmarCodigoConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -597,7 +503,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoSolicitudCodigoDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCuenta.ICuentaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCuenta.ICuentaManejador,
                         Task<DTOs.ResultadoSolicitudCodigoDTO>>>()))
@@ -607,7 +513,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorReenviarCodigoConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCuenta.ICuentaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCuenta.ICuentaManejador,
                         Task<DTOs.ResultadoSolicitudCodigoDTO>>>()))

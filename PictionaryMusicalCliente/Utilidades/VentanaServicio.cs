@@ -92,7 +92,7 @@ namespace PictionaryMusicalCliente.Utilidades
         public void CerrarVentana(object vistaModelo)
         {
             var ventana = Application.Current.Windows.OfType<Window>()
-                .FirstOrDefault(v => v.DataContext == vistaModelo);
+                .FirstOrDefault(elemento => elemento.DataContext == vistaModelo);
 
             ventana?.Close();
         }
@@ -104,7 +104,7 @@ namespace PictionaryMusicalCliente.Utilidades
         public void CerrarTodasLasVentanas()
         {
             var ventanasAbiertas = Application.Current?.Windows.OfType<Window>()
-                .Where(v => v.IsVisible && !(v is Vista.InicioSesion))
+                .Where(elemento => elemento.IsVisible && !(elemento is Vista.InicioSesion))
                 .ToList();
 
             if (ventanasAbiertas == null)

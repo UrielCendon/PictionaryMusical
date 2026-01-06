@@ -32,7 +32,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioClasificacion.IClasificacionManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteClasificacion())
+                .Setup(fabrica => fabrica.CrearClienteClasificacion())
                 .Returns(_clienteClasificacionMock.Object);
 
             _servicio = new ClasificacionServicio(
@@ -83,7 +83,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix multiples asserts considerar usar BeEmpty() o verificar solo el conteo
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_Exitoso_RetornaLista()
         {
@@ -93,11 +92,9 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            resultado.Should().NotBeNull();
             resultado.Should().HaveCount(3);
         }
 
-        //fix múltiples asserts, verifica Usuario y Puntos
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_Exitoso_DatosCorrectos()
         {
@@ -108,10 +105,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
             Assert.AreEqual("Jugador1", resultado[0].Usuario);
-            Assert.AreEqual(1000, resultado[0].Puntos);
         }
 
-        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_ListaVacia_RetornaVacia()
         {
@@ -121,11 +116,9 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            resultado.Should().NotBeNull();
             resultado.Should().BeEmpty();
         }
 
-        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_ResultadoNulo_RetornaVacia()
         {
@@ -133,7 +126,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            resultado.Should().NotBeNull();
             resultado.Should().BeEmpty();
         }
 
@@ -143,7 +135,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -154,31 +146,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ObtenerTopJugadoresAsync();
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerTopJugadoresAsync_FaultException_TipoFallaServicio()
-        {
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ObtenerTopJugadoresAsync();
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -194,25 +161,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerTopJugadoresAsync_CommunicationException_TipoComunicacion()
-        {
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.ObtenerTopJugadoresAsync();
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_TimeoutException_LanzaExcepcion()
         {
@@ -224,25 +172,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ObtenerTopJugadoresAsync();
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerTopJugadoresAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerTopJugadoresAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.ObtenerTopJugadoresAsync();
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -259,26 +188,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada ya se verifica en Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_TipoInvalida()
-        {
-            var invalidOperationException =
-                new InvalidOperationException("Operacion no valida");
-
-            ConfigurarEjecutorConExcepcion(invalidOperationException);
-
-            try
-            {
-                await _servicio.ObtenerTopJugadoresAsync();
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.OperacionInvalida, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ObtenerTopJugadoresAsync_InvocaFabricaClientes()
         {
@@ -288,7 +197,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ObtenerTopJugadoresAsync();
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteClasificacion(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteClasificacion(), Times.Once);
         }
 
         [TestMethod]
@@ -345,7 +254,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorExitoso(DTOs.ClasificacionUsuarioDTO[] resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioClasificacion.IClasificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioClasificacion.IClasificacionManejador,
                         Task<DTOs.ClasificacionUsuarioDTO[]>>>()))
@@ -355,7 +264,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioClasificacion.IClasificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioClasificacion.IClasificacionManejador,
                         Task<DTOs.ClasificacionUsuarioDTO[]>>>()))

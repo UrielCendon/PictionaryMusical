@@ -30,7 +30,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioInvitaciones.IInvitacionesManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteInvitaciones())
+                .Setup(fabrica => fabrica.CrearClienteInvitaciones())
                 .Returns(_clienteInvitacionesMock.Object);
 
             _servicio = new InvitacionesServicio(
@@ -191,7 +191,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -202,33 +202,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_EnviarInvitacionAsync_FaultException_TipoFallaServicio()
-        {
-            string codigoSala = "ABC123";
-            string correoDestino = "invitado@ejemplo.com";
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -246,27 +219,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_EnviarInvitacionAsync_CommunicationException_TipoComunicacion()
-        {
-            string codigoSala = "ABC123";
-            string correoDestino = "invitado@ejemplo.com";
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_TimeoutException_LanzaExcepcion()
         {
@@ -280,27 +232,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_EnviarInvitacionAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_EnviarInvitacionAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            string codigoSala = "ABC123";
-            string correoDestino = "invitado@ejemplo.com";
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -319,28 +250,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix - Prueba duplicada: Ya se verifica en Prueba_EnviarInvitacionAsync_InvalidOperationException_LanzaExcepcion. Unificar en una sola prueba
-        [TestMethod]
-        public async Task Prueba_EnviarInvitacionAsync_InvalidOperationException_TipoInvalida()
-        {
-            string codigoSala = "ABC123";
-            string correoDestino = "invitado@ejemplo.com";
-            var invalidOperationException =
-                new InvalidOperationException("Operacion no valida");
-
-            ConfigurarEjecutorConExcepcion(invalidOperationException);
-
-            try
-            {
-                await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.OperacionInvalida, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_EnviarInvitacionAsync_InvocaFabricaClientes()
         {
@@ -355,7 +264,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteInvitaciones(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteInvitaciones(), Times.Once);
         }
 
         [TestMethod]
@@ -373,7 +282,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             await _servicio.EnviarInvitacionAsync(codigoSala, correoDestino);
 
             _ejecutorMock.Verify(
-                e => e.EjecutarAsincronoAsync(
+                ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioInvitaciones.IInvitacionesManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioInvitaciones.IInvitacionesManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()),
@@ -421,7 +330,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorExitoso(DTOs.ResultadoOperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioInvitaciones.IInvitacionesManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioInvitaciones.IInvitacionesManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))
@@ -431,7 +340,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioInvitaciones.IInvitacionesManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioInvitaciones.IInvitacionesManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))

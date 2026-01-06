@@ -518,8 +518,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 return new ResultadoUnionInvitado(EstadoUnionInvitado.NombreDuplicado)
                 {
-                    JugadoresActuales = jugadores?.Where(j => !string.IsNullOrWhiteSpace(j))
-                        .Select(jugadores => jugadores.Trim())
+                    JugadoresActuales = jugadores?
+                        .Where(jugador => !string.IsNullOrWhiteSpace(jugador))
+                        .Select(jugador => jugador.Trim())
                         .Distinct(StringComparer.OrdinalIgnoreCase)
                         .ToArray()
                 };

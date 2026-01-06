@@ -379,9 +379,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares
                 return;
             }
 
-            bool amigoExiste = amigos != null && amigos.Any(a =>
+            bool amigoExiste = amigos != null && amigos.Any(amigo =>
                 string.Equals(
-                    a.NombreUsuario,
+                    amigo.NombreUsuario,
                     AmigoSeleccionado.NombreUsuario,
                     StringComparison.OrdinalIgnoreCase));
 

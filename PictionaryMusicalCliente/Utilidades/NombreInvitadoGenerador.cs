@@ -113,10 +113,10 @@ namespace PictionaryMusicalCliente.Utilidades
             }
 
             var conjuntoExcluidos = new HashSet<string>(
-                excluidos.Where(n => !string.IsNullOrWhiteSpace(n)),
+                excluidos.Where(nombre => !string.IsNullOrWhiteSpace(nombre)),
                 StringComparer.OrdinalIgnoreCase);
 
-            return todos.Where(n => !conjuntoExcluidos.Contains(n)).ToArray();
+            return todos.Where(nombre => !conjuntoExcluidos.Contains(nombre)).ToArray();
         }
 
         private string SeleccionarAleatorio(string[] opciones)

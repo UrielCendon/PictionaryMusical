@@ -95,9 +95,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador
 
         private bool RemoverSiCoincide(string usuarioEmisor, string usuarioReceptor)
         {
-            int indice = _solicitudes.FindIndex(s =>
-                s.UsuarioEmisor == usuarioEmisor &&
-                s.UsuarioReceptor == usuarioReceptor);
+            int indice = _solicitudes.FindIndex(solicitud =>
+                solicitud.UsuarioEmisor == usuarioEmisor &&
+                solicitud.UsuarioReceptor == usuarioReceptor);
 
             if (indice < 0)
             {
@@ -120,9 +120,9 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf.Administrador
                 return false;
             }
 
-            int indice = _solicitudes.FindIndex(s =>
-                s.UsuarioEmisor == solicitud.UsuarioEmisor &&
-                s.UsuarioReceptor == usuarioActual);
+            int indice = _solicitudes.FindIndex(elemento =>
+                elemento.UsuarioEmisor == solicitud.UsuarioEmisor &&
+                elemento.UsuarioReceptor == usuarioActual);
 
             if (indice >= 0)
             {

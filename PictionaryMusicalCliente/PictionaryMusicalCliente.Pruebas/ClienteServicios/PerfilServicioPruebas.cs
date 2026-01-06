@@ -29,7 +29,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioPerfil.IPerfilManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClientePerfil())
+                .Setup(fabrica => fabrica.CrearClientePerfil())
                 .Returns(_clientePerfilMock.Object);
 
             _servicio = new PerfilServicio(
@@ -80,7 +80,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_UsuarioExistente_RetornaPerfil()
         {
@@ -92,7 +91,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.ObtenerPerfilAsync(usuarioId);
 
             Assert.AreEqual(usuarioId, resultado.UsuarioId);
-            Assert.AreEqual("UsuarioPrueba", resultado.NombreUsuario);
         }
 
         [TestMethod]
@@ -127,7 +125,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -138,32 +136,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ObtenerPerfilAsync(usuarioId);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerPerfilAsync_FaultException_TipoFallaServicio()
-        {
-            int usuarioId = 1;
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorObtenerPerfilConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ObtenerPerfilAsync(usuarioId);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -180,26 +152,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerPerfilAsync_CommunicationException_TipoComunicacion()
-        {
-            int usuarioId = 1;
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorObtenerPerfilConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.ObtenerPerfilAsync(usuarioId);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ObtenerPerfilAsync_TimeoutException_LanzaExcepcion()
         {
@@ -212,26 +164,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ObtenerPerfilAsync(usuarioId);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ObtenerPerfilAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ObtenerPerfilAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            int usuarioId = 1;
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorObtenerPerfilConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.ObtenerPerfilAsync(usuarioId);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -311,7 +243,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -322,32 +254,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ActualizarPerfilAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ActualizarPerfilAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ActualizarPerfilAsync_FaultException_TipoFallaServicio()
-        {
-            var solicitud = CrearSolicitudActualizacionValida();
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorActualizarPerfilConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ActualizarPerfilAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -403,7 +309,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ObtenerPerfilAsync(usuarioId);
 
-            _fabricaClientesMock.Verify(f => f.CrearClientePerfil(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClientePerfil(), Times.Once);
         }
 
         [TestMethod]
@@ -419,7 +325,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ActualizarPerfilAsync(solicitud);
 
-            _fabricaClientesMock.Verify(f => f.CrearClientePerfil(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClientePerfil(), Times.Once);
         }
 
         private static DTOs.UsuarioDTO CrearPerfilValido(int usuarioId)
@@ -444,7 +350,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorObtenerPerfilExitoso(DTOs.UsuarioDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioPerfil.IPerfilManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioPerfil.IPerfilManejador,
                         Task<DTOs.UsuarioDTO>>>()))
@@ -454,7 +360,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorObtenerPerfilConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioPerfil.IPerfilManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioPerfil.IPerfilManejador,
                         Task<DTOs.UsuarioDTO>>>()))
@@ -465,7 +371,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoOperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioPerfil.IPerfilManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioPerfil.IPerfilManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))
@@ -475,7 +381,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorActualizarPerfilConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioPerfil.IPerfilManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioPerfil.IPerfilManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))

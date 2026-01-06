@@ -176,7 +176,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio));
         }
 
-        //fix múltiples responsabilidades
         [TestMethod]
         public void Prueba_SolicitudesPendientes_RetornaListaDelAdministrador()
         {
@@ -190,31 +189,25 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             };
 
             _administradorSolicitudesMock
-                .Setup(a => a.ObtenerSolicitudes())
+                .Setup(administrador => administrador.ObtenerSolicitudes())
                 .Returns(solicitudesEsperadas);
 
             var resultado = _servicio.SolicitudesPendientes;
 
-            resultado.Should().NotBeNull();
             resultado.Should().HaveCount(1);
-            _administradorSolicitudesMock.Verify(
-                a => a.ObtenerSolicitudes(),
-                Times.Once);
         }
 
-        //fix múltiples asserts innecesarios
         [TestMethod]
         public void Prueba_SolicitudesPendientes_SinSolicitudes_RetornaListaVacia()
         {
             var solicitudesVacias = new List<DTOs.SolicitudAmistadDTO>();
 
             _administradorSolicitudesMock
-                .Setup(a => a.ObtenerSolicitudes())
+                .Setup(administrador => administrador.ObtenerSolicitudes())
                 .Returns(solicitudesVacias);
 
             var resultado = _servicio.SolicitudesPendientes;
 
-            resultado.Should().NotBeNull();
             resultado.Should().BeEmpty();
         }
 

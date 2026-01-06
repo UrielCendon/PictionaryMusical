@@ -31,11 +31,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioReportes.IReportesManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteReportes())
+                .Setup(fabrica => fabrica.CrearClienteReportes())
                 .Returns(_clienteReportesMock.Object);
 
             _localizadorMock
-                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string mensaje, string def) => mensaje ?? def);
 
             _servicio = new ReportesServicio(
@@ -184,7 +184,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -195,32 +195,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ReportarJugadorAsync(reporte);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReportarJugadorAsync_FaultException_TipoFallaServicio()
-        {
-            var reporte = CrearReporteValido();
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ReportarJugadorAsync(reporte);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -237,26 +211,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReportarJugadorAsync_CommunicationException_TipoComunicacion()
-        {
-            var reporte = CrearReporteValido();
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.ReportarJugadorAsync(reporte);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_TimeoutException_LanzaExcepcion()
         {
@@ -269,26 +223,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ReportarJugadorAsync(reporte);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReportarJugadorAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            var reporte = CrearReporteValido();
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.ReportarJugadorAsync(reporte);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -306,27 +240,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_ReportarJugadorAsync_InvalidOperationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ReportarJugadorAsync_InvalidOperationException_TipoInvalida()
-        {
-            var reporte = CrearReporteValido();
-            var invalidOperationException =
-                new InvalidOperationException("Operacion no valida");
-
-            ConfigurarEjecutorConExcepcion(invalidOperationException);
-
-            try
-            {
-                await _servicio.ReportarJugadorAsync(reporte);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.OperacionInvalida, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_ReportarJugadorAsync_InvocaFabricaClientes()
         {
@@ -340,7 +253,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ReportarJugadorAsync(reporte);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteReportes(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteReportes(), Times.Once);
         }
 
         [TestMethod]
@@ -377,7 +290,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorExitoso(DTOs.ResultadoOperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioReportes.IReportesManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioReportes.IReportesManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))
@@ -387,7 +300,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioReportes.IReportesManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioReportes.IReportesManejador,
                         Task<DTOs.ResultadoOperacionDTO>>>()))

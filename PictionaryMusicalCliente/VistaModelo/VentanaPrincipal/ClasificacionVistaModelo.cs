@@ -59,13 +59,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void ConfigurarEventoDesconexion()
         {
             DesconexionDetectada += ManejarDesconexionServidor;
-            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += EnConexionInternetPerdida;
         }
 
         private void DesuscribirEventosDesconexion()
         {
             DesconexionDetectada -= ManejarDesconexionServidor;
-            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= EnConexionInternetPerdida;
         }
 
         private void ManejarDesconexionServidor(string mensaje)
@@ -79,7 +79,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             });
         }
 
-        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        private void EnConexionInternetPerdida(object remitente, EventArgs argumentos)
         {
             EjecutarEnDispatcher(() =>
             {
@@ -219,7 +219,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private void ActualizarClasificacion(
             IEnumerable<DTOs.ClasificacionUsuarioDTO> clasificacion)
         {
-            var elementosValidos = clasificacion?.Where(c => c != null)
+            var elementosValidos = clasificacion?
+                .Where(elemento => elemento != null)
                 ?? Enumerable.Empty<DTOs.ClasificacionUsuarioDTO>();
 
             Clasificacion = new ObservableCollection<DTOs.ClasificacionUsuarioDTO>(
@@ -235,10 +236,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = 
                 _clasificacionOriginal
-                    .Where(c => c != null)
-                    .OrderByDescending(c => c.RondasGanadas)
-                    .ThenByDescending(c => c.Puntos)
-                    .ThenBy(c => c.Usuario);
+                    .Where(clasificacion => clasificacion != null)
+                    .OrderByDescending(clasificacion => clasificacion.RondasGanadas)
+                    .ThenByDescending(clasificacion => clasificacion.Puntos)
+                    .ThenBy(clasificacion => clasificacion.Usuario);
 
             ActualizarClasificacion(ordenados);
         }
@@ -252,10 +253,10 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             IEnumerable<DTOs.ClasificacionUsuarioDTO> ordenados = 
                 _clasificacionOriginal
-                    .Where(c => c != null)
-                    .OrderByDescending(c => c.Puntos)
-                    .ThenByDescending(c => c.RondasGanadas)
-                    .ThenBy(c => c.Usuario);
+                    .Where(clasificacion => clasificacion != null)
+                    .OrderByDescending(clasificacion => clasificacion.Puntos)
+                    .ThenByDescending(clasificacion => clasificacion.RondasGanadas)
+                    .ThenBy(clasificacion => clasificacion.Usuario);
 
             ActualizarClasificacion(ordenados);
         }

@@ -175,8 +175,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// <returns>True si se elimino, false en caso contrario.</returns>
         public bool EliminarJugador(string nombreJugador)
         {
-            var jugador = _jugadores.FirstOrDefault(j => string.Equals(
-                j.Nombre,
+            var jugador = _jugadores.FirstOrDefault(elemento => string.Equals(
+                elemento.Nombre,
                 nombreJugador,
                 StringComparison.OrdinalIgnoreCase));
 
@@ -209,8 +209,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas.Auxiliares
         /// <param name="puntos">Puntos a agregar.</param>
         public void AgregarPuntos(string nombreJugador, int puntos)
         {
-            var jugador = _jugadores.FirstOrDefault(j => string.Equals(
-                j.Nombre,
+            var jugador = _jugadores.FirstOrDefault(elemento => string.Equals(
+                elemento.Nombre,
                 nombreJugador,
                 StringComparison.OrdinalIgnoreCase));
 

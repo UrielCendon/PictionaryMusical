@@ -15,7 +15,7 @@ namespace PictionaryMusicalCliente.Modelo.Catalogos
         private static readonly IReadOnlyList<ObjetoAvatar> _listaAvatares =
             InicializarAvatares();
         private static readonly Dictionary<int, ObjetoAvatar> _diccionarioAvatares =
-            _listaAvatares.ToDictionary(a => a.Id);
+            _listaAvatares.ToDictionary(avatar => avatar.Id);
 
         /// <summary>
         /// Obtiene la lista completa de avatares cargados en memoria.

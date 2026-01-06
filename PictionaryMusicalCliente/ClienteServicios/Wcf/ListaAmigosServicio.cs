@@ -553,11 +553,11 @@ namespace PictionaryMusicalCliente.ClienteServicios.Wcf
             }
 
             var lista = amigos
-                .Where(a => !string.IsNullOrWhiteSpace(a?.NombreUsuario))
-                .Select(a => new DTOs.AmigoDTO
+                .Where(amigo => !string.IsNullOrWhiteSpace(amigo?.NombreUsuario))
+                .Select(amigo => new DTOs.AmigoDTO
                 {
-                    UsuarioId = a.UsuarioId,
-                    NombreUsuario = a.NombreUsuario
+                    UsuarioId = amigo.UsuarioId,
+                    NombreUsuario = amigo.NombreUsuario
                 })
                 .ToList();
 

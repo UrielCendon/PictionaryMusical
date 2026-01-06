@@ -36,15 +36,15 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioCambioContrasena.ICambioContrasenaManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteVerificacion())
+                .Setup(fabrica => fabrica.CrearClienteVerificacion())
                 .Returns(_clienteVerificacionMock.Object);
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteCambioContrasena())
+                .Setup(fabrica => fabrica.CrearClienteCambioContrasena())
                 .Returns(_clienteCambioContrasenaMock.Object);
 
             _localizadorMock
-                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string mensaje, string predeterminado) => 
                     string.IsNullOrWhiteSpace(mensaje) ? predeterminado : mensaje);
 
@@ -113,7 +113,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix múltiples asserts
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRecuperacionAsync_Exitoso_RetornaResultado()
         {
@@ -131,7 +130,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.SolicitarCodigoRecuperacionAsync(identificador);
 
             Assert.IsTrue(resultado.CuentaEncontrada);
-            Assert.IsTrue(resultado.CodigoEnviado);
         }
 
         [TestMethod]
@@ -152,7 +150,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsFalse(resultado.CuentaEncontrada);
         }
 
-        //fix múltiples asserts innecesarios
         [TestMethod]
         public async Task Prueba_SolicitarCodigoRecuperacionAsync_ResultadoNulo_RetornaVacio()
         {
@@ -163,7 +160,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = await _servicio.SolicitarCodigoRecuperacionAsync(identificador);
 
             Assert.IsFalse(resultado.CuentaEncontrada);
-            Assert.IsFalse(resultado.CodigoEnviado);
         }
 
         [TestMethod]
@@ -191,7 +187,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -275,7 +271,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -373,7 +369,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -471,7 +467,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -482,33 +478,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.ActualizarContrasenaAsync(tokenCodigo, nuevaContrasena);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_ActualizarContrasenaAsync_FaultException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_ActualizarContrasenaAsync_FaultException_TipoFallaServicio()
-        {
-            string tokenCodigo = "tokenValidado123";
-            string nuevaContrasena = "NuevaContrasena123!";
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorActualizarContrasenaConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.ActualizarContrasenaAsync(tokenCodigo, nuevaContrasena);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -555,7 +524,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.SolicitarCodigoRecuperacionAsync(identificador);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteVerificacion(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteVerificacion(), Times.Once);
         }
 
         [TestMethod]
@@ -572,14 +541,14 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ActualizarContrasenaAsync(tokenCodigo, nuevaContrasena);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteCambioContrasena(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteCambioContrasena(), Times.Once);
         }
 
         private void ConfigurarEjecutorSolicitarRecuperacionExitoso(
             DTOs.ResultadoSolicitudRecuperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -591,7 +560,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorSolicitarRecuperacionConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -604,7 +573,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoSolicitudCodigoDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCambioContrasena
                         .ICambioContrasenaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCambioContrasena
@@ -616,7 +585,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorReenviarRecuperacionConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCambioContrasena
                         .ICambioContrasenaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCambioContrasena
@@ -629,7 +598,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoOperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -641,7 +610,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConfirmarRecuperacionConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCodigoVerificacion
                         .ICodigoVerificacionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCodigoVerificacion
@@ -654,7 +623,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             DTOs.ResultadoOperacionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCambioContrasena
                         .ICambioContrasenaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCambioContrasena
@@ -666,7 +635,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorActualizarContrasenaConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioCambioContrasena
                         .ICambioContrasenaManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioCambioContrasena

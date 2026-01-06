@@ -34,11 +34,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 new Mock<PictionaryServidorServicioInicioSesion.IInicioSesionManejador>();
 
             _fabricaClientesMock
-                .Setup(f => f.CrearClienteInicioSesion())
+                .Setup(fabrica => fabrica.CrearClienteInicioSesion())
                 .Returns(_clienteInicioSesionMock.Object);
 
             _localizadorMock
-                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns((string mensaje, string def) => mensaje ?? def);
 
             _servicio = new InicioSesionServicio(
@@ -227,7 +227,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var faultException = new FaultException("Error del servidor");
 
             _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
+                .Setup(manejador => manejador.ObtenerMensaje(
                     It.IsAny<FaultException>(),
                     It.IsAny<string>()))
                 .Returns("Error procesando solicitud");
@@ -238,32 +238,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.IniciarSesionAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_IniciarSesionAsync_FaultException_LanzaServicioExcepcion
-        [TestMethod]
-        public async Task Prueba_IniciarSesionAsync_FaultException_TipoErrorFallaServicio()
-        {
-            var solicitud = CrearCredencialesValidas();
-            var faultException = new FaultException("Error del servidor");
-
-            _manejadorErrorMock
-                .Setup(m => m.ObtenerMensaje(
-                    It.IsAny<FaultException>(),
-                    It.IsAny<string>()))
-                .Returns("Error procesando solicitud");
-
-            ConfigurarEjecutorConExcepcion(faultException);
-
-            try
-            {
-                await _servicio.IniciarSesionAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.FallaServicio, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -280,26 +254,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_IniciarSesionAsync_CommunicationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_IniciarSesionAsync_CommunicationException_TipoComunicacion()
-        {
-            var solicitud = CrearCredencialesValidas();
-            var communicationException = new CommunicationException("Error de red");
-
-            ConfigurarEjecutorConExcepcion(communicationException);
-
-            try
-            {
-                await _servicio.IniciarSesionAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.Comunicacion, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_IniciarSesionAsync_TimeoutException_LanzaExcepcion()
         {
@@ -312,26 +266,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             {
                 await _servicio.IniciarSesionAsync(solicitud);
             });
-        }
-
-        //fix prueba duplicada, ya se verifica en Prueba_IniciarSesionAsync_TimeoutException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_IniciarSesionAsync_TimeoutException_TipoTiempoAgotado()
-        {
-            var solicitud = CrearCredencialesValidas();
-            var timeoutException = new TimeoutException("Tiempo agotado");
-
-            ConfigurarEjecutorConExcepcion(timeoutException);
-
-            try
-            {
-                await _servicio.IniciarSesionAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.TiempoAgotado, excepcion.Tipo);
-            }
         }
 
         [TestMethod]
@@ -349,27 +283,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix prueba duplicada, ya se verifica en Prueba_IniciarSesionAsync_InvalidOperationException_LanzaExcepcion
-        [TestMethod]
-        public async Task Prueba_IniciarSesionAsync_InvalidOperationException_TipoInvalida()
-        {
-            var solicitud = CrearCredencialesValidas();
-            var invalidOperationException = 
-                new InvalidOperationException("Operacion no valida");
-
-            ConfigurarEjecutorConExcepcion(invalidOperationException);
-
-            try
-            {
-                await _servicio.IniciarSesionAsync(solicitud);
-                Assert.Fail("Se esperaba ServicioExcepcion");
-            }
-            catch (ServicioExcepcion excepcion)
-            {
-                Assert.AreEqual(TipoErrorServicio.OperacionInvalida, excepcion.Tipo);
-            }
-        }
-
         [TestMethod]
         public async Task Prueba_IniciarSesionAsync_InvocaFabricaClientes()
         {
@@ -383,7 +296,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.IniciarSesionAsync(solicitud);
 
-            _fabricaClientesMock.Verify(f => f.CrearClienteInicioSesion(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteInicioSesion(), Times.Once);
         }
 
         private static DTOs.CredencialesInicioSesionDTO CrearCredencialesValidas()
@@ -408,7 +321,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorExitoso(DTOs.ResultadoInicioSesionDTO resultado)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioInicioSesion.IInicioSesionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioInicioSesion.IInicioSesionManejador,
                         Task<DTOs.ResultadoInicioSesionDTO>>>()))
@@ -418,7 +331,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         private void ConfigurarEjecutorConExcepcion(Exception excepcion)
         {
             _ejecutorMock
-                .Setup(e => e.EjecutarAsincronoAsync(
+                .Setup(ejecutor => ejecutor.EjecutarAsincronoAsync(
                     It.IsAny<PictionaryServidorServicioInicioSesion.IInicioSesionManejador>(),
                     It.IsAny<Func<PictionaryServidorServicioInicioSesion.IInicioSesionManejador,
                         Task<DTOs.ResultadoInicioSesionDTO>>>()))

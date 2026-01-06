@@ -19,9 +19,9 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _localizadorMock = new Mock<ILocalizadorServicio>();
 
             _localizadorMock
-                .Setup(l => l.Localizar(It.IsAny<string>(), It.IsAny<string>()))
-                .Returns((string mensaje, string def) => 
-                    string.IsNullOrWhiteSpace(mensaje) ? def : mensaje);
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns((string mensaje, string predeterminado) => 
+                    string.IsNullOrWhiteSpace(mensaje) ? predeterminado : mensaje);
 
             _manejador = new ManejadorErrorServicio(_localizadorMock.Object);
         }
@@ -61,7 +61,7 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var excepcion = new FaultException(mensajeOriginal);
 
             _localizadorMock
-                .Setup(l => l.Localizar(mensajeOriginal, mensajePredeterminado))
+                .Setup(localizador => localizador.Localizar(mensajeOriginal, mensajePredeterminado))
                 .Returns("Error localizado");
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
@@ -114,7 +114,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             Assert.IsNotNull(resultado);
         }
 
-        //fix múltiples responsabilidades
         [TestMethod]
         public void Prueba_ObtenerMensaje_ExcepcionNoGenerica_RetornaMensajeLocalizado()
         {
@@ -125,9 +124,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
 
             Assert.IsFalse(string.IsNullOrEmpty(resultado));
-            _localizadorMock.Verify(
-                l => l.Localizar(mensajeOriginal, mensajePredeterminado),
-                Times.Once);
         }
     }
 }

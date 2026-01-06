@@ -152,12 +152,12 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void SuscribirMonitorConectividad()
         {
-            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida += EnConexionInternetPerdida;
         }
 
         private void DesuscribirMonitorConectividad()
         {
-            ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
+            ConectividadRedMonitor.Instancia.ConexionPerdida -= EnConexionInternetPerdida;
         }
 
         private void DesuscribirEventosDesconexion()
@@ -166,7 +166,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             DesuscribirMonitorConectividad();
         }
 
-        private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
+        private void EnConexionInternetPerdida(object remitente, EventArgs argumentos)
         {
             if (_desconexionInternetProcesada || _aplicacionCerrando || 
                 _expulsionNavegada || _cancelacionNavegada)
@@ -1437,8 +1437,8 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
         private void ManejarJugadorSeUnio(string nombreJugador)
         {
-            if (Jugadores.Any(j => string.Equals(
-                j.Nombre,
+            if (Jugadores.Any(jugador => string.Equals(
+                jugador.Nombre,
                 nombreJugador,
                 StringComparison.OrdinalIgnoreCase)))
             {

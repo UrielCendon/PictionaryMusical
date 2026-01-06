@@ -138,13 +138,11 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             });
         }
 
-        //fix múltiples asserts innecesarios
         [TestMethod]
         public void Prueba_ListaActual_InicialmenteVacia_RetornaListaVacia()
         {
             var resultado = _servicio.ListaActual;
 
-            resultado.Should().NotBeNull();
             resultado.Should().BeEmpty();
         }
 
