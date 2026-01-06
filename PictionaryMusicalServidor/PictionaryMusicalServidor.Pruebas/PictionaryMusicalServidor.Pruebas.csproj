@@ -125,6 +125,17 @@
     <Compile Include="Servicios\Usuarios\IdentificadoresUsuariosPruebas.cs" />
     <Compile Include="Servicios\Usuarios\PerfilManejadorPruebas.cs" />
     <Compile Include="Servicios\Usuarios\ReportesManejadorPruebas.cs" />
+    <Compile Include="Servicios\Partida\ClienteChatPruebas.cs" />
+    <Compile Include="Servicios\Partida\AlmacenClientesChatPruebas.cs" />
+    <Compile Include="Servicios\Partida\ActualizadorClasificacionPartidaPruebas.cs" />
+    <Compile Include="Servicios\Partida\NotificadorPartidaPruebas.cs" />
+    <Compile Include="Servicios\Partida\ChatManejadorPruebas.cs" />
+    <Compile Include="Servicios\Partida\CursoPartidaManejadorPruebas.cs" />
+    <Compile Include="Servicios\Salas\GeneradorCodigoSalaPruebas.cs" />
+    <Compile Include="Servicios\Salas\SalaInternaFactoriaPruebas.cs" />
+    <Compile Include="Servicios\Salas\SalaInternaManejadorPruebas.cs" />
+    <Compile Include="Servicios\Salas\SalasManejadorPruebas.cs" />
+    <Compile Include="Servicios\Salas\InvitacionesManejadorPruebas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
