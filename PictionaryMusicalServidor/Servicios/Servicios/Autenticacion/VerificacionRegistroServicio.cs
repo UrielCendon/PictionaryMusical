@@ -345,7 +345,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             };
         }
 
-        private ResultadoSolicitudCodigoDTO CrearFalloReenvio(string mensaje)
+        private static ResultadoSolicitudCodigoDTO CrearFalloReenvio(string mensaje)
         {
             return VerificacionCodigoUtilidades.CrearFalloReenvio(mensaje);
         }
