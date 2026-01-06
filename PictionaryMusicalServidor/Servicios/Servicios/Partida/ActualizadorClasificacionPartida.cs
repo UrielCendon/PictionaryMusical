@@ -97,7 +97,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (DataException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarClasificaciones, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorDatosActualizarClasificaciones, 
+                    excepcion);
                 resultado.Mensaje = MensajesErrorDatos.Clasificacion.ErrorActualizarClasificacion;
             }
             catch (Exception excepcion)

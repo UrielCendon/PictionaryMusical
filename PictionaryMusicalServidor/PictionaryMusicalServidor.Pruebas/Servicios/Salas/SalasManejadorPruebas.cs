@@ -7,6 +7,7 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Salas;
+using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
 {

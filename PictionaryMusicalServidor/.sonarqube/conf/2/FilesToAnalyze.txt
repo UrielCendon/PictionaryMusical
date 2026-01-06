@@ -1,5 +1,5 @@
-﻿C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\Principal.cs
-C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\Properties\AssemblyInfo.cs
-C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\App.config
-C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\log4net.config
-C:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\packages.config
+﻿c:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\Principal.cs
+c:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\Properties\AssemblyInfo.cs
+c:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\App.config
+c:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\log4net.config
+c:\Users\Usuario\source\repos\PictionaryMusical\PictionaryMusicalServidor\HostServidor\packages.config

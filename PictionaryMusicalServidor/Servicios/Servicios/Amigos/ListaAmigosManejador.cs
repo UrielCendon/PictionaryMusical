@@ -43,10 +43,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
             new RepositorioFactoria(),
             new AmistadServicio(),
             new NotificadorListaAmigos(
-                CallbacksCompartidos.ListaAmigos,
+                CallbacksCompartidos.ListaAmigosCompartido,
                 new AmistadServicio(),
                 new RepositorioFactoria()),
-            CallbacksCompartidos.ListaAmigos,
+            CallbacksCompartidos.ListaAmigosCompartido,
             new ProveedorCallback<IListaAmigosManejadorCallback>())
         {
         }

@@ -8,7 +8,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
     /// </summary>
     public class SalaInternaFactoria : ISalaInternaFactoria
     {
-        /// <inheritdoc/>
+        /// <summary>
+        /// Crea una nueva instancia de sala interna.
+        /// </summary>
+        /// <param name="codigo">Codigo unico de la sala.</param>
+        /// <param name="creador">Nombre del creador de la sala.</param>
+        /// <param name="configuracion">Configuracion de la partida.</param>
+        /// <returns>Nueva instancia de sala interna.</returns>
         public SalaInternaManejador Crear(
             string codigo,
             string creador,

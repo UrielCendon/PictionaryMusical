@@ -19,8 +19,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
     /// Maneja suscripciones para notificaciones, envio y respuesta de solicitudes de amistad,
     /// y eliminacion de relaciones de amistad con notificaciones en tiempo real via callbacks.
     /// </summary>
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, ConcurrencyMode =
-        ConcurrencyMode.Multiple)]
+    [ServiceBehavior(
+        InstanceContextMode = InstanceContextMode.Single,
+        ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class AmigosManejador : IAmigosManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(AmigosManejador));
@@ -36,70 +37,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// Usa CallbacksCompartidos para asegurar que las notificaciones lleguen
         /// a todos los clientes suscritos en ListaAmigosManejador.
         /// </summary>
-        public AmigosManejador() : this(CrearDependenciasPorDefecto())
-        {
-        }
-
-        private static (IAmistadServicio, IOperacionAmistadServicio, INotificadorListaAmigos,
-            INotificadorAmigos, IManejadorCallback<IAmigosManejadorCallback>,
-            IProveedorCallback<IAmigosManejadorCallback>) CrearDependenciasPorDefecto()
+        public AmigosManejador()
         {
             var amistadServicio = new AmistadServicio();
             var manejadorCallback = 
                 new ManejadorCallback<IAmigosManejadorCallback>(StringComparer.OrdinalIgnoreCase);
-            
-            return (
-                amistadServicio,
-                new OperacionAmistadServicio(),
-                new NotificadorListaAmigos(
-                    CallbacksCompartidos.ListaAmigos,
-                    amistadServicio,
-                    new RepositorioFactoria()),
-                new NotificadorAmigos(manejadorCallback, amistadServicio),
-                manejadorCallback,
-                new ProveedorCallback<IAmigosManejadorCallback>()
-            );
-        }
 
-        private AmigosManejador(
-            (IAmistadServicio amistadServicio, 
-             IOperacionAmistadServicio operacionAmistadServicio,
-             INotificadorListaAmigos notificadorLista,
-             INotificadorAmigos notificadorAmigos,
-             IManejadorCallback<IAmigosManejadorCallback> manejadorCallback,
-             IProveedorCallback<IAmigosManejadorCallback> proveedorCallback) dependencias)
-            : this(
-                dependencias.amistadServicio,
-                dependencias.operacionAmistadServicio,
-                dependencias.notificadorLista,
-                dependencias.notificadorAmigos,
-                dependencias.manejadorCallback,
-                dependencias.proveedorCallback)
-        {
+            _operacionAmistadServicio = new OperacionAmistadServicio();
+            _notificadorListaAmigos = new NotificadorListaAmigos(
+                CallbacksCompartidos.ListaAmigosCompartido,
+                amistadServicio,
+                new RepositorioFactoria());
+            _notificador = new NotificadorAmigos(manejadorCallback, amistadServicio);
+            _manejadorCallback = manejadorCallback;
+            _proveedorCallback = new ProveedorCallback<IAmigosManejadorCallback>();
         }
 
         /// <summary>
         /// Constructor con inyeccion de dependencias para pruebas unitarias.
         /// </summary>
-        /// <param name="amistadServicio">Servicio de amistad.</param>
         /// <param name="operacionAmistadServicio">Servicio de operaciones de amistad.</param>
         /// <param name="notificadorLista">Notificador de lista de amigos.</param>
         /// <param name="notificadorAmigos">Notificador de eventos de amistad.</param>
         /// <param name="manejadorCallback">Manejador de callbacks de amigos.</param>
         /// <param name="proveedorCallback">Proveedor de callback actual.</param>
         public AmigosManejador(
-            IAmistadServicio amistadServicio,
             IOperacionAmistadServicio operacionAmistadServicio,
             INotificadorListaAmigos notificadorLista,
             INotificadorAmigos notificadorAmigos,
             IManejadorCallback<IAmigosManejadorCallback> manejadorCallback,
             IProveedorCallback<IAmigosManejadorCallback> proveedorCallback)
         {
-            if (amistadServicio == null)
-            {
-                throw new ArgumentNullException(nameof(amistadServicio));
-            }
-
             _operacionAmistadServicio = operacionAmistadServicio ??
                 throw new ArgumentNullException(nameof(operacionAmistadServicio));
 
@@ -199,13 +167,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     nombreUsuarioEmisor,
                     nombreUsuarioReceptor);
 
-                var datosNotificacion = new DatosNotificacionSolicitud
-                {
-                    NombreEmisorOriginal = nombreUsuarioEmisor,
-                    NombreReceptorOriginal = nombreUsuarioReceptor
-                };
-
-                NotificarSolicitudNueva(resultado, datosNotificacion);
+                NotificarSolicitudNueva(resultado, nombreUsuarioEmisor, nombreUsuarioReceptor);
             }
             catch (Datos.Excepciones.BaseDatosExcepcion excepcion)
             {
@@ -299,8 +261,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                     nombreUsuarioReceptor);
 
                 EjecutarNotificacionesRespuesta(
-                    resultado.NombreNormalizadoEmisor,
-                    resultado.NombreNormalizadoReceptor);
+                    resultado.NombrePrimerUsuario,
+                    resultado.NombreSegundoUsuario);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -429,15 +391,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 
         private void NotificarSolicitudNueva(
             ResultadoCreacionSolicitud resultado,
-            DatosNotificacionSolicitud datosNotificacion)
+            string nombreEmisorOriginal,
+            string nombreReceptorOriginal)
         {
             string nombreEmisor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                 resultado.Emisor.Nombre_Usuario,
-                datosNotificacion.NombreEmisorOriginal);
+                nombreEmisorOriginal);
 
             string nombreReceptor = EntradaComunValidador.ObtenerNombreUsuarioNormalizado(
                 resultado.Receptor.Nombre_Usuario,
-                datosNotificacion.NombreReceptorOriginal);
+                nombreReceptorOriginal);
 
             var solicitud = new SolicitudAmistadDTO
             {
@@ -473,13 +436,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         {
             NotificarEliminacion(
                 resultado.Relacion,
-                resultado.NombrePrimerUsuarioNormalizado,
-                resultado.NombreSegundoUsuarioNormalizado);
+                resultado.NombrePrimerUsuario,
+                resultado.NombreSegundoUsuario);
 
             _notificadorListaAmigos.NotificarCambioAmistad(
-                resultado.NombrePrimerUsuarioNormalizado);
+                resultado.NombrePrimerUsuario);
             _notificadorListaAmigos.NotificarCambioAmistad(
-                resultado.NombreSegundoUsuarioNormalizado);
+                resultado.NombreSegundoUsuario);
         }
 
         private void NotificarEliminacion(

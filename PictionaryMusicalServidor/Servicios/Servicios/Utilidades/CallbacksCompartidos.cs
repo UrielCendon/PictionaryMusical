@@ -4,23 +4,43 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
     /// <summary>
-    /// Contenedor singleton para callbacks compartidos entre servicios.
+    /// Implementacion singleton de callbacks compartidos entre servicios.
     /// Permite que servicios como AmigosManejador y ListaAmigosManejador
     /// compartan los mismos callbacks de notificacion.
     /// </summary>
-    internal static class CallbacksCompartidos
+    public sealed class CallbacksCompartidos : ICallbacksCompartidos
     {
-        private static readonly Lazy<ManejadorCallback<IListaAmigosManejadorCallback>> 
-            _listaAmigosCallback = new Lazy<ManejadorCallback<IListaAmigosManejadorCallback>>(
-                () => new ManejadorCallback<IListaAmigosManejadorCallback>(
-                    StringComparer.OrdinalIgnoreCase));
+        private static readonly Lazy<CallbacksCompartidos> _instancia =
+            new Lazy<CallbacksCompartidos>(() => new CallbacksCompartidos());
+
+        private readonly ManejadorCallback<IListaAmigosManejadorCallback> _listaAmigosCallback;
+
+        /// <summary>
+        /// Obtiene la instancia singleton de CallbacksCompartidos.
+        /// </summary>
+        public static CallbacksCompartidos Instancia => _instancia.Value;
+
+        /// <summary>
+        /// Constructor privado para patron singleton.
+        /// </summary>
+        private CallbacksCompartidos()
+        {
+            _listaAmigosCallback = new ManejadorCallback<IListaAmigosManejadorCallback>(
+                StringComparer.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Obtiene el manejador de callbacks compartido para la lista de amigos.
         /// Esta instancia es utilizada por AmigosManejador y ListaAmigosManejador
         /// para asegurar que las notificaciones lleguen a todos los clientes suscritos.
         /// </summary>
-        public static ManejadorCallback<IListaAmigosManejadorCallback> ListaAmigos =>
-            _listaAmigosCallback.Value;
+        public IManejadorCallback<IListaAmigosManejadorCallback> ListaAmigos => 
+            _listaAmigosCallback;
+
+        /// <summary>
+        /// Acceso estatico al manejador de lista de amigos para compatibilidad.
+        /// </summary>
+        public static IManejadorCallback<IListaAmigosManejadorCallback> ListaAmigosCompartido =>
+            Instancia.ListaAmigos;
     }
 }

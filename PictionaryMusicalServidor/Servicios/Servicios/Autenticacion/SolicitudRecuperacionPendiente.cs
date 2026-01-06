@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
+﻿namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
     /// Clase interna que representa una solicitud de recuperacion de cuenta pendiente.
     /// Almacena los datos temporales durante el proceso de recuperacion de contrasena.
     /// </summary>
-    internal class SolicitudRecuperacionPendiente
+    internal class SolicitudRecuperacionPendiente : SolicitudPendienteBase
     {
         /// <summary>
         /// Identificador del usuario que solicita la recuperacion.
@@ -24,23 +22,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         public string NombreUsuario { get; set; }
 
         /// <summary>
-        /// Codigo de verificacion generado.
-        /// </summary>
-        public string Codigo { get; set; }
-
-        /// <summary>
-        /// Fecha y hora de expiracion del codigo.
-        /// </summary>
-        public DateTime Expira { get; set; }
-
-        /// <summary>
         /// Indica si el codigo ha sido confirmado por el usuario.
         /// </summary>
         public bool Confirmado { get; set; }
-
-        /// <summary>
-        /// Idioma preferido del usuario para las notificaciones.
-        /// </summary>
-        public string Idioma { get; set; }
     }
 }

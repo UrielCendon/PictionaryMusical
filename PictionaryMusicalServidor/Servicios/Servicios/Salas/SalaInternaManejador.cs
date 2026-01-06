@@ -243,7 +243,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         /// <param name="nombreJugadorAExpulsar">Nombre del jugador a expulsar.</param>
         public void ExpulsarJugador(string nombreAnfitrion, string nombreJugadorAExpulsar)
         {
-            ExpulsionNotificacionParametros parametrosExpulsion;
+            AccionJugadorSalaParametros parametrosAccion;
 
             lock (_sincrono)
             {
@@ -255,16 +255,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 _jugadores.Remove(nombreJugadorAExpulsar);
                 _gestorNotificaciones.Remover(nombreJugadorAExpulsar);
 
-                parametrosExpulsion = new ExpulsionNotificacionParametros
+                parametrosAccion = new AccionJugadorSalaParametros
                 {
+                    TipoAccion = TipoAccionJugador.Expulsion,
                     CodigoSala = Codigo,
-                    NombreExpulsado = nombreJugadorAExpulsar,
-                    CallbackExpulsado = callbackExpulsado,
+                    NombreJugadorAfectado = nombreJugadorAExpulsar,
+                    CallbackAfectado = callbackExpulsado,
                     SalaActualizada = ConvertirADtoInterno()
                 };
             }
 
-            _gestorNotificaciones.NotificarExpulsion(parametrosExpulsion);
+            _gestorNotificaciones.NotificarAccionJugador(parametrosAccion);
 
             _logger.InfoFormat(
                 "Sala '{0}': Jugador expulsado y notificado exitosamente.",
@@ -279,7 +280,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         /// <param name="nombreJugadorABanear">Nombre del jugador a banear.</param>
         public void BanearJugador(string nombreJugadorABanear)
         {
-            BaneoNotificacionParametros parametrosBaneo;
+            AccionJugadorSalaParametros parametrosAccion;
             bool debeBanear;
 
             lock (_sincrono)
@@ -295,11 +296,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 _jugadores.Remove(nombreJugadorABanear);
                 _gestorNotificaciones.Remover(nombreJugadorABanear);
 
-                parametrosBaneo = new BaneoNotificacionParametros
+                parametrosAccion = new AccionJugadorSalaParametros
                 {
+                    TipoAccion = TipoAccionJugador.Baneo,
                     CodigoSala = Codigo,
-                    NombreBaneado = nombreJugadorABanear,
-                    CallbackBaneado = callbackBaneado,
+                    NombreJugadorAfectado = nombreJugadorABanear,
+                    CallbackAfectado = callbackBaneado,
                     SalaActualizada = ConvertirADtoInterno()
                 };
                 debeBanear = true;
@@ -307,7 +309,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
             if (debeBanear)
             {
-                _gestorNotificaciones.NotificarBaneo(parametrosBaneo);
+                _gestorNotificaciones.NotificarAccionJugador(parametrosAccion);
 
                 _logger.InfoFormat(
                     "Sala '{0}': Jugador baneado por reportes y notificado.",

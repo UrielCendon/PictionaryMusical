@@ -108,40 +108,69 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         }
 
         /// <summary>
-        /// Notifica una expulsion especifica al afectado y actualiza a los demas.
+        /// Notifica una accion sobre un jugador (expulsion o baneo) al afectado y actualiza 
+        /// a los demas.
         /// </summary>
         /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
-        public void NotificarExpulsion(ExpulsionNotificacionParametros parametros)
+        public void NotificarAccionJugador(AccionJugadorSalaParametros parametros)
         {
+            string tipoAccion = parametros.TipoAccion == TipoAccionJugador.Baneo 
+                ? "baneo" 
+                : "expulsion";
+
             _logger.InfoFormat(
-                "Notificando expulsion en sala '{0}' a todos los clientes.",
+                "Notificando {0} en sala '{1}' a todos los clientes.",
+                tipoAccion,
                 parametros.CodigoSala);
 
             var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
-            foreach (var callback in todosLosDestinatarios)
+
+            if (parametros.TipoAccion == TipoAccionJugador.Baneo)
             {
-                NotificarJugadorExpulsadoSeguro(
-                    callback, 
-                    parametros.CodigoSala, 
-                    parametros.NombreExpulsado);
+                foreach (var callback in todosLosDestinatarios)
+                {
+                    NotificarJugadorBaneadoSeguro(
+                        callback, 
+                        parametros.CodigoSala, 
+                        parametros.NombreJugadorAfectado);
+                }
+
+                if (parametros.CallbackAfectado != null)
+                {
+                    NotificarJugadorBaneadoSeguro(
+                        parametros.CallbackAfectado, 
+                        parametros.CodigoSala, 
+                        parametros.NombreJugadorAfectado);
+                }
+            }
+            else
+            {
+                foreach (var callback in todosLosDestinatarios)
+                {
+                    NotificarJugadorExpulsadoSeguro(
+                        callback, 
+                        parametros.CodigoSala, 
+                        parametros.NombreJugadorAfectado);
+                }
+
+                if (parametros.CallbackAfectado != null)
+                {
+                    NotificarJugadorExpulsadoSeguro(
+                        parametros.CallbackAfectado, 
+                        parametros.CodigoSala, 
+                        parametros.NombreJugadorAfectado);
+                }
             }
 
-            if (parametros.CallbackExpulsado != null)
-            {
-                NotificarJugadorExpulsadoSeguro(
-                    parametros.CallbackExpulsado, 
-                    parametros.CodigoSala, 
-                    parametros.NombreExpulsado);
-            }
-
-            var destinatarios = ObtenerDestinatariosExcluyendo(parametros.NombreExpulsado);
+            var destinatarios = ObtenerDestinatariosExcluyendo(parametros.NombreJugadorAfectado);
             foreach (var callback in destinatarios)
             {
                 NotificarSalaActualizadaSeguro(callback, parametros.SalaActualizada);
             }
 
             _logger.InfoFormat(
-                "Expulsion notificada a todos los clientes en sala '{0}'.",
+                "{0} notificada a todos los clientes en sala '{1}'.",
+                tipoAccion,
                 parametros.CodigoSala);
         }
 
@@ -155,44 +184,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             {
                 NotificarSalaCanceladaSeguro(callback, codigoSala);
             }
-        }
-
-        /// <summary>
-        /// Notifica a todos los integrantes que un jugador fue baneado por reportes.
-        /// </summary>
-        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
-        public void NotificarBaneo(BaneoNotificacionParametros parametros)
-        {
-            _logger.InfoFormat(
-                "Notificando baneo de jugador en sala '{0}'.",
-                parametros.CodigoSala);
-
-            var todosLosDestinatarios = ObtenerTodosLosDestinatarios();
-            foreach (var callback in todosLosDestinatarios)
-            {
-                NotificarJugadorBaneadoSeguro(
-                    callback, 
-                    parametros.CodigoSala, 
-                    parametros.NombreBaneado);
-            }
-
-            if (parametros.CallbackBaneado != null)
-            {
-                NotificarJugadorBaneadoSeguro(
-                    parametros.CallbackBaneado, 
-                    parametros.CodigoSala, 
-                    parametros.NombreBaneado);
-            }
-
-            var destinatarios = ObtenerDestinatariosExcluyendo(parametros.NombreBaneado);
-            foreach (var callback in destinatarios)
-            {
-                NotificarSalaActualizadaSeguro(callback, parametros.SalaActualizada);
-            }
-
-            _logger.InfoFormat(
-                "Baneo notificado a todos los clientes en sala '{0}'.",
-                parametros.CodigoSala);
         }
 
         private List<ISalasManejadorCallback> ObtenerDestinatariosExcluyendo(
@@ -245,19 +236,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala,
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala,
+                    excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala,
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala,
+                    excepcion);
             }
         }
 
@@ -272,19 +271,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala,
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala,
+                    excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala,
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala,
+                    excepcion);
             }
         }
 
@@ -298,19 +305,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala,
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala,
+                    excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala,
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala,
+                    excepcion);
             }
         }
 
@@ -325,19 +340,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala,
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala,
+                    excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala,
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala,
+                    excepcion);
             }
         }
 
@@ -351,19 +374,27 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (CommunicationException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorComunicacionNotificarClienteSala,
+                    excepcion);
             }
             catch (TimeoutException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorTimeoutNotificarClienteSala,
+                    excepcion);
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.Warn(MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala, excepcion);
+                _logger.Warn(
+                    MensajesError.Bitacora.ErrorCanalCerradoNotificarClienteSala,
+                    excepcion);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoNotificarClienteSala,
+                    excepcion);
             }
         }
 

@@ -29,17 +29,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         private readonly IProveedorContextoOperacion _proveedorContexto;
         private readonly ISalaInternaFactoria _salaFactoria;
         private readonly IGeneradorCodigoSala _generadorCodigo;
+        private readonly ISesionUsuarioManejador _sesionManejador;
 
         /// <summary>
         /// Constructor por defecto que inicializa las dependencias.
         /// </summary>
         public SalasManejador()
         {
-            _almacenSalas = new AlmacenSalasEstatico();
+            _almacenSalas = AlmacenSalasEstatico.Instancia;
             _proveedorContexto = new ProveedorContextoOperacion();
             _salaFactoria = new SalaInternaFactoria();
             _generadorCodigo = new GeneradorCodigoSala(_almacenSalas);
             _notificador = new NotificadorSalas(this);
+            _sesionManejador = SesionUsuarioManejador.Instancia;
         }
 
         /// <summary>
@@ -50,7 +52,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             IAlmacenSalas almacenSalas,
             IProveedorContextoOperacion proveedorContexto,
             ISalaInternaFactoria salaFactoria,
-            IGeneradorCodigoSala generadorCodigo)
+            IGeneradorCodigoSala generadorCodigo,
+            ISesionUsuarioManejador sesionManejador = null)
         {
             _notificador = notificador ??
                 throw new ArgumentNullException(nameof(notificador));
@@ -62,6 +65,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 throw new ArgumentNullException(nameof(salaFactoria));
             _generadorCodigo = generadorCodigo ??
                 throw new ArgumentNullException(nameof(generadorCodigo));
+            _sesionManejador = sesionManejador ?? SesionUsuarioManejador.Instancia;
         }
 
         /// <summary>
@@ -102,7 +106,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                 EntradaComunValidador.ValidarConfiguracionPartida(configuracion);
 
                 string codigo = _generadorCodigo.GenerarCodigo();
-                var callback = _proveedorContexto.ObtenerCallback();
+                var callback = _proveedorContexto.ObtenerCallbackChannel<ISalasManejadorCallback>();
 
                 var sala = _salaFactoria.Crear(
                     codigo,
@@ -185,7 +189,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
                     throw new FaultException(MensajesError.Cliente.PartidaComenzo);
                 }
 
-                var callback = _proveedorContexto.ObtenerCallback();
+                var callback = _proveedorContexto.ObtenerCallbackChannel<ISalasManejadorCallback>();
 
                 var resultado = sala.AgregarJugador(
                     nombreUsuario.Trim(),
@@ -238,11 +242,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         /// Obtiene la lista de todas las salas de juego disponibles.
         /// </summary>
         /// <returns> Lista de salas disponibles.</returns>
-        public static IList<SalaDTO> ObtenerListaSalas()
+        public IList<SalaDTO> ObtenerListaSalas()
         {
             try
             {
-                return AlmacenSalasEstatico.ObtenerSalasEstaticas()
+                return _almacenSalas.Valores
                     .Select(sala => sala.ConvertirADto())
                     .ToList();
             }
@@ -321,10 +325,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             try
             {
-                var callback = _proveedorContexto.ObtenerCallback();
+                var callback = _proveedorContexto.ObtenerCallbackChannel<ISalasManejadorCallback>();
                 var sesionId = _notificador.Suscribir(callback);
 
-                var canal = _proveedorContexto.ObtenerCanal();
+                var canal = _proveedorContexto.ObtenerCanalActual();
                 if (canal != null)
                 {
                     EventHandler manejadorClosed = null;
@@ -375,7 +379,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             try
             {
-                var callback = _proveedorContexto.ObtenerCallback();
+                var callback = _proveedorContexto.ObtenerCallbackChannel<ISalasManejadorCallback>();
                 _notificador.DesuscribirPorCallback(callback);
             }
             catch (InvalidOperationException excepcion)
@@ -566,7 +570,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
 
         private void SuscribirEventosDesconexionCanal(string codigoSala, string nombreUsuario)
         {
-            var canal = _proveedorContexto.ObtenerCanal();
+            var canal = _proveedorContexto.ObtenerCanalActual();
             if (canal == null)
             {
                 return;
@@ -659,7 +663,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             try
             {
-                SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
+                _sesionManejador.EliminarSesionPorNombre(nombreUsuario);
 
                 SalaInternaManejador sala;
                 if (!_almacenSalas.IntentarObtener(codigoSala, out sala))

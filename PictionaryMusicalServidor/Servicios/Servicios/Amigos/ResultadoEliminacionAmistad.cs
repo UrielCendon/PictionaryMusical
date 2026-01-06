@@ -4,22 +4,13 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
 {
     /// <summary>
     /// Contiene los datos resultantes de una operacion de eliminacion de amistad.
+    /// Hereda los nombres normalizados de ResultadoOperacionAmistad.
     /// </summary>
-    public class ResultadoEliminacionAmistad
+    public class ResultadoEliminacionAmistad : ResultadoOperacionAmistad
     {
         /// <summary>
         /// Relacion de amistad que fue eliminada.
         /// </summary>
         public Amigo Relacion { get; set; }
-
-        /// <summary>
-        /// Nombre del primer usuario normalizado.
-        /// </summary>
-        public string NombrePrimerUsuarioNormalizado { get; set; }
-
-        /// <summary>
-        /// Nombre del segundo usuario normalizado.
-        /// </summary>
-        public string NombreSegundoUsuarioNormalizado { get; set; }
     }
 }

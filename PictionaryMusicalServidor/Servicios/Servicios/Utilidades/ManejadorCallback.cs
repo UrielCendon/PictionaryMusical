@@ -18,12 +18,19 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(ManejadorCallback<TCallback>));
         private readonly ConcurrentDictionary<string, TCallback> _suscripciones;
+        private readonly ISesionUsuarioManejador _sesionManejador;
 
         public ManejadorCallback(StringComparer comparer = null)
+            : this(comparer, SesionUsuarioManejador.Instancia)
+        {
+        }
+
+        public ManejadorCallback(StringComparer comparer, ISesionUsuarioManejador sesionManejador)
         {
             _suscripciones = comparer != null 
                 ? new ConcurrentDictionary<string, TCallback>(comparer)
                 : new ConcurrentDictionary<string, TCallback>(StringComparer.OrdinalIgnoreCase);
+            _sesionManejador = sesionManejador ?? SesionUsuarioManejador.Instancia;
         }
 
         /// <summary>
@@ -63,7 +70,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
                 manejadorFaulted = delegate(object remitente, EventArgs argumentos)
                 {
-                    _logger.Warn("Canal fallado (Faulted). Desuscribiendo cliente y eliminando sesion.");
+                    _logger.Warn(
+                        "Canal fallado (Faulted). Desuscribiendo cliente y eliminando sesion.");
                     LimpiarSesionYDesuscribir(nombreUsuario);
                 };
 
@@ -75,7 +83,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         private void LimpiarSesionYDesuscribir(string nombreUsuario)
         {
             Desuscribir(nombreUsuario);
-            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
+            _sesionManejador.EliminarSesionPorNombre(nombreUsuario);
         }
 
         /// <summary>

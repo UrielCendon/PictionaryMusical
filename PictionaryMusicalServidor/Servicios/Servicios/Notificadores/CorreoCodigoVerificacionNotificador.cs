@@ -1,11 +1,10 @@
 ﻿using log4net;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
-using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
+namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 {
     /// <summary>
     /// Servicio para el envio de codigos de verificacion por correo electronico.

@@ -33,12 +33,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             IManejadorCallback<IListaAmigosManejadorCallback> manejadorCallback, 
             IAmistadServicio amistadServicio,
             IRepositorioFactoria repositorioFactoria)
+            : this(manejadorCallback, amistadServicio, new ContextoFactoria(), repositorioFactoria)
         {
-            _manejadorCallback = manejadorCallback;
-            _amistadServicio = amistadServicio;
-            _repositorioFactoria = repositorioFactoria 
-                ?? throw new ArgumentNullException(nameof(repositorioFactoria));
-            _contextoFactoria = new ContextoFactoria();
         }
 
         /// <summary>
@@ -112,7 +108,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         /// <param name="amigos">Lista actualizada de amigos.</param>
         public void NotificarLista(string nombreUsuario, List<AmigoDTO> amigos)
         {
-            IListaAmigosManejadorCallback callback = _manejadorCallback.ObtenerCallback(nombreUsuario);
+            IListaAmigosManejadorCallback callback = 
+                _manejadorCallback.ObtenerCallback(nombreUsuario);
             if (callback != null)
             {
                 try
@@ -121,7 +118,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn(MensajesError.Bitacora.ErrorNotificarListaAmigosActualizada, excepcion);
+                    _logger.Warn(
+                        MensajesError.Bitacora.ErrorNotificarListaAmigosActualizada, 
+                        excepcion);
                 }
             }
         }

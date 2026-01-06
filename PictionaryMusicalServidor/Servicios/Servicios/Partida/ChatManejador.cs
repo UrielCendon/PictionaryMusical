@@ -23,12 +23,16 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         private readonly IAlmacenClientesChat _almacenClientes;
         private readonly IProveedorContextoOperacion _proveedorContexto;
+        private readonly ISesionUsuarioManejador _sesionManejador;
 
         /// <summary>
         /// Constructor por defecto para WCF.
         /// </summary>
         public ChatManejador()
-            : this(_almacenGlobal, new ProveedorContextoOperacion())
+            : this(
+                _almacenGlobal, 
+                new ProveedorContextoOperacion(), 
+                SesionUsuarioManejador.Instancia)
         {
         }
 
@@ -37,14 +41,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         /// </summary>
         /// <param name="almacenClientes">Almacen de clientes de chat.</param>
         /// <param name="proveedorContexto">Proveedor de contexto de operacion.</param>
+        /// <param name="sesionManejador">Manejador de sesiones de usuario.</param>
         public ChatManejador(
             IAlmacenClientesChat almacenClientes,
-            IProveedorContextoOperacion proveedorContexto)
+            IProveedorContextoOperacion proveedorContexto,
+            ISesionUsuarioManejador sesionManejador = null)
         {
             _almacenClientes = almacenClientes
                 ?? throw new ArgumentNullException(nameof(almacenClientes));
             _proveedorContexto = proveedorContexto
                 ?? throw new ArgumentNullException(nameof(proveedorContexto));
+            _sesionManejador = sesionManejador ?? SesionUsuarioManejador.Instancia;
         }
 
         /// <summary>
@@ -276,7 +283,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
 
         private void RemoverCliente(string idSala, string nombreJugador)
         {
-            var clientesANotificar = _almacenClientes.ObtenerClientesExcluyendo(idSala, nombreJugador);
+            var clientesANotificar = _almacenClientes.ObtenerClientesExcluyendo(
+                idSala, 
+                nombreJugador);
             _almacenClientes.RemoverCliente(idSala, nombreJugador);
 
             if (clientesANotificar != null && clientesANotificar.Count > 0)
@@ -425,7 +434,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             _almacenClientes.RemoverCliente(idSala, nombreJugador);
 
             _logger.Info("Eliminando sesion por cliente inalcanzable en chat.");
-            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreJugador);
+            _sesionManejador.EliminarSesionPorNombre(nombreJugador);
         }
     }
 }

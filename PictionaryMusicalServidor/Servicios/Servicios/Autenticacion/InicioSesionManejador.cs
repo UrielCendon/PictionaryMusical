@@ -26,11 +26,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private readonly IContextoFactoria _contextoFactoria;
         private readonly IRepositorioFactoria _repositorioFactoria;
+        private readonly ISesionUsuarioManejador _sesionManejador;
 
         /// <summary>
         /// Constructor por defecto para uso en WCF.
         /// </summary>
-        public InicioSesionManejador() : this(new ContextoFactoria(), new RepositorioFactoria())
+        public InicioSesionManejador() : this(
+            new ContextoFactoria(), 
+            new RepositorioFactoria(),
+            SesionUsuarioManejador.Instancia)
         {
         }
 
@@ -39,14 +43,18 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
         /// </summary>
         /// <param name="contextoFactoria">Factoria para crear contextos de base de datos.</param>
         /// <param name="repositorioFactoria">Factoria para crear repositorios.</param>
+        /// <param name="sesionManejador">Manejador de sesiones de usuario.</param>
         public InicioSesionManejador(
             IContextoFactoria contextoFactoria,
-            IRepositorioFactoria repositorioFactoria)
+            IRepositorioFactoria repositorioFactoria,
+            ISesionUsuarioManejador sesionManejador)
         {
             _contextoFactoria = contextoFactoria ??
                 throw new ArgumentNullException(nameof(contextoFactoria));
             _repositorioFactoria = repositorioFactoria ??
                 throw new ArgumentNullException(nameof(repositorioFactoria));
+            _sesionManejador = sesionManejador ??
+                throw new ArgumentNullException(nameof(sesionManejador));
         }
 
         /// <summary>
@@ -114,7 +122,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 return;
             }
 
-            SesionUsuarioManejador.Instancia.EliminarSesionPorNombre(nombreUsuario);
+            _sesionManejador.EliminarSesionPorNombre(nombreUsuario);
             _logger.Info("Sesion cerrada correctamente.");
         }
 
@@ -193,7 +201,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 };
             }
 
-            if (!SesionUsuarioManejador.Instancia.IntentarRegistrarSesion(
+            if (!_sesionManejador.IntentarRegistrarSesion(
                 usuario.idUsuario, 
                 usuario.Nombre_Usuario))
             {

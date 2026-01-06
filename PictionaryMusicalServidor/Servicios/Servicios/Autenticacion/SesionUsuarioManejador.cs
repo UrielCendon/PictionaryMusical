@@ -7,11 +7,12 @@ using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
     /// <summary>
-    /// Singleton thread-safe que gestiona las sesiones activas de usuarios.
+    /// Manejador thread-safe que gestiona las sesiones activas de usuarios.
     /// Permite registrar, verificar y eliminar sesiones para prevenir inicios de sesion 
     /// duplicados.
+    /// Implementa ISesionUsuarioManejador para permitir inyeccion de dependencias.
     /// </summary>
-    internal sealed class SesionUsuarioManejador
+    public sealed class SesionUsuarioManejador : ISesionUsuarioManejador
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SesionUsuarioManejador));
         private static readonly Lazy<SesionUsuarioManejador> _instancia = 
@@ -19,13 +20,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private readonly ConcurrentDictionary<int, SesionActiva> _sesionesActivas;
 
-        private SesionUsuarioManejador()
+        /// <summary>
+        /// Constructor publico para inyeccion de dependencias.
+        /// </summary>
+        public SesionUsuarioManejador()
         {
             _sesionesActivas = new ConcurrentDictionary<int, SesionActiva>();
         }
 
         /// <summary>
-        /// Obtiene la instancia unica del manejador de sesiones.
+        /// Obtiene la instancia unica del manejador de sesiones (para compatibilidad).
+        /// Se recomienda usar inyeccion de dependencias en lugar de esta propiedad.
         /// </summary>
         public static SesionUsuarioManejador Instancia => _instancia.Value;
 

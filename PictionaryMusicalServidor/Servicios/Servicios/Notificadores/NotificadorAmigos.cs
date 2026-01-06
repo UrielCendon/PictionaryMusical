@@ -43,7 +43,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
                 }
                 catch (Exception excepcion)
                 {
-                    _logger.Warn(MensajesError.Bitacora.ErrorNotificarSolicitudActualizada, excepcion);
+                    _logger.Warn(
+                        MensajesError.Bitacora.ErrorNotificarSolicitudActualizada,
+                        excepcion);
                 }
             }
         }

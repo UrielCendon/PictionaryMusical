@@ -26,7 +26,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
             _almacenSalas = almacenSalas;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Genera un codigo unico para una sala.
+        /// </summary>
+        /// <returns>Codigo generado.</returns>
         public string GenerarCodigo()
         {
             for (int i = 0; i < MaximoIntentos; i++)

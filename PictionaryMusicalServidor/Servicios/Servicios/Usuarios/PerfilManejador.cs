@@ -142,7 +142,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (DbUpdateException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorActualizacionBDActualizarPerfil, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorActualizacionBDActualizarPerfil, 
+                    excepcion);
                 return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (EntityException excepcion)

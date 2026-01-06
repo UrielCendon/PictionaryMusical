@@ -112,7 +112,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
         /// <param name="nombreEmisor">Nombre del usuario emisor.</param>
         /// <param name="nombreReceptor">Nombre del usuario receptor.</param>
         /// <returns>Objeto con los nombres normalizados de ambos usuarios.</returns>
-        public ResultadoAceptacionSolicitud EjecutarAceptacionSolicitud(
+        public ResultadoOperacionAmistad EjecutarAceptacionSolicitud(
             string nombreEmisor,
             string nombreReceptor)
         {
@@ -137,10 +137,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                         usuarioReceptor.Nombre_Usuario,
                         nombreReceptor);
 
-                return new ResultadoAceptacionSolicitud
+                return new ResultadoOperacionAmistad
                 {
-                    NombreNormalizadoEmisor = nombreNormalizadoEmisor,
-                    NombreNormalizadoReceptor = nombreNormalizadoReceptor
+                    NombrePrimerUsuario = nombreNormalizadoEmisor,
+                    NombreSegundoUsuario = nombreNormalizadoReceptor
                 };
             }
         }
@@ -179,8 +179,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Amigos
                 return new ResultadoEliminacionAmistad
                 {
                     Relacion = relacion,
-                    NombrePrimerUsuarioNormalizado = nombrePrimerUsuarioNormalizado,
-                    NombreSegundoUsuarioNormalizado = nombreSegundoUsuarioNormalizado
+                    NombrePrimerUsuario = nombrePrimerUsuarioNormalizado,
+                    NombreSegundoUsuario = nombreSegundoUsuarioNormalizado
                 };
             }
         }

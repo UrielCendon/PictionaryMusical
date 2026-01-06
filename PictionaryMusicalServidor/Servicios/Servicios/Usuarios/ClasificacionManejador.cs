@@ -57,7 +57,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
         /// de usuario.
         /// </summary>
         /// <returns>Lista de clasificaciones de los mejores jugadores.</returns>
-        /// <exception cref="FaultException">Si hay errores al consultar la base de datos.</exception>
+        /// <exception cref="FaultException">
+        /// Si hay errores al consultar la base de datos.
+        /// </exception>
         public IList<ClasificacionUsuarioDTO> ObtenerTopJugadores()
         {
             try
@@ -98,13 +100,17 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             }
             catch (InvalidOperationException excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.OperacionInvalidaObtenerClasificacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.OperacionInvalidaObtenerClasificacion, 
+                    excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoObtenerClasificacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoObtenerClasificacion, 
+                    excepcion);
                 throw new FaultException(
                     MensajesErrorDatos.Clasificacion.ErrorConsultarMejores);
             }

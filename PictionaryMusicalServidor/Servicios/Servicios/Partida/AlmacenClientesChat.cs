@@ -145,7 +145,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
         /// <param name="idSala">Identificador de la sala.</param>
         /// <param name="nombreJugadorExcluir">Nombre del jugador a excluir.</param>
         /// <returns>Lista de clientes excluyendo al jugador especificado.</returns>
-        public List<ClienteChat> ObtenerClientesExcluyendo(string idSala, string nombreJugadorExcluir)
+        public List<ClienteChat> ObtenerClientesExcluyendo(
+            string idSala, 
+            string nombreJugadorExcluir)
         {
             lock (_sincronizacion)
             {
@@ -186,7 +188,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             lock (_sincronizacion)
             {
                 List<ClienteChat> clientesSala;
-                if (_clientesPorSala.TryGetValue(idSala, out clientesSala) && clientesSala.Count == 0)
+                bool existeSala = _clientesPorSala.TryGetValue(idSala, out clientesSala);
+                if (existeSala && clientesSala.Count == 0)
                 {
                     _clientesPorSala.Remove(idSala);
                 }

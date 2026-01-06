@@ -1,5 +1,4 @@
-﻿using System;
-using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
+﻿using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 {
@@ -8,21 +7,11 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
     /// registro.
     /// Almacena los datos temporales durante el proceso de verificacion de nueva cuenta.
     /// </summary>
-    internal class SolicitudCodigoPendiente
+    internal class SolicitudCodigoPendiente : SolicitudPendienteBase
     {
         /// <summary>
         /// Datos de la nueva cuenta que se esta verificando.
         /// </summary>
         public NuevaCuentaDTO DatosCuenta { get; set; }
-
-        /// <summary>
-        /// Codigo de verificacion generado.
-        /// </summary>
-        public string Codigo { get; set; }
-
-        /// <summary>
-        /// Fecha y hora de expiracion del codigo.
-        /// </summary>
-        public DateTime Expira { get; set; }
     }
 }

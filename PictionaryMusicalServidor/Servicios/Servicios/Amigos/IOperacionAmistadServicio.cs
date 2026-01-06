@@ -30,7 +30,7 @@
         /// <param name="nombreEmisor">Nombre del usuario emisor.</param>
         /// <param name="nombreReceptor">Nombre del usuario receptor.</param>
         /// <returns>Objeto con los nombres normalizados de ambos usuarios.</returns>
-        ResultadoAceptacionSolicitud EjecutarAceptacionSolicitud(
+        ResultadoOperacionAmistad EjecutarAceptacionSolicitud(
             string nombreEmisor, 
             string nombreReceptor);
 

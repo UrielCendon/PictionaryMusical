@@ -18,7 +18,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private readonly IProveedorFecha _proveedorFecha;
         private DateTime _inicioRonda;
         private readonly int _duracionRondaSegundos;
-        private bool _disposed = false;
+        private bool _desechado = false;
 
         /// <summary>
         /// Evento que se dispara cuando el tiempo de la ronda se agota.
@@ -58,12 +58,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             _temporizadorTransicion.Elapsed += ManejarTiempoTransicionAgotado;
         }
 
-        private void ManejarTiempoRondaAgotado(object sender, ElapsedEventArgs argumentos)
+        private void ManejarTiempoRondaAgotado(object emisor, ElapsedEventArgs argumentos)
         {
             TiempoRondaAgotado?.Invoke();
         }
 
-        private void ManejarTiempoTransicionAgotado(object sender, ElapsedEventArgs argumentos)
+        private void ManejarTiempoTransicionAgotado(object emisor, ElapsedEventArgs argumentos)
         {
             TiempoTransicionAgotado?.Invoke();
         }
@@ -127,21 +127,21 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         /// <summary>
         /// Libera los recursos gestionados y no gestionados.
         /// </summary>
-        /// <param name="disposing">Indica si se estan liberando recursos gestionados.</param>
-        protected virtual void Dispose(bool disposing)
+        /// <param name="liberando">Indica si se estan liberando recursos gestionados.</param>
+        protected virtual void Dispose(bool liberando)
         {
-            if (_disposed)
+            if (_desechado)
             {
                 return;
             }
 
-            if (disposing)
+            if (liberando)
             {
                 _temporizadorRonda?.Dispose();
                 _temporizadorTransicion?.Dispose();
             }
 
-            _disposed = true;
+            _desechado = true;
         }
 
         private void DetenerRonda()

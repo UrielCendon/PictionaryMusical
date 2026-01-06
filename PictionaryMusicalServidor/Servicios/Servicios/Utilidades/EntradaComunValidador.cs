@@ -27,7 +27,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         internal const int TiempoRondaMaximoSegundos = 120;
 
         private static readonly Regex CorreoRegex = new Regex(
-            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
+            @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]" +
+            @"(?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" +
+            @"(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
             TimeSpan.FromSeconds(1));
 
@@ -574,7 +576,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// <returns>True si el mensaje supera el limite de caracteres.</returns>
         public static bool SuperaLimiteCaracteresMensaje(string mensaje)
         {
-            return !string.IsNullOrWhiteSpace(mensaje) && mensaje.Length > LongitudMaximaMensajeChat;
+            return !string.IsNullOrWhiteSpace(mensaje) && 
+                mensaje.Length > LongitudMaximaMensajeChat;
         }
 
         /// <summary>
@@ -582,7 +585,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// </summary>
         /// <param name="mensaje">Mensaje a validar.</param>
         /// <param name="idSala">Identificador de sala.</param>
-        /// <exception cref="FaultException">Se lanza si el mensaje o sala no son validos.</exception>
+        /// <exception cref="FaultException">
+        /// Se lanza si el mensaje o sala no son validos.
+        /// </exception>
         public static void ValidarMensajeJuego(string mensaje, string idSala)
         {
             ValidarIdSala(idSala);
@@ -651,7 +656,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         /// Valida que el identificador de usuario sea un valor positivo.
         /// </summary>
         /// <param name="idUsuario">Identificador de usuario a validar.</param>
-        /// <exception cref="ArgumentException">Se lanza si el identificador no es valido.</exception>
+        /// <exception cref="ArgumentException">
+        /// Se lanza si el identificador no es valido.
+        /// </exception>
         public static void ValidarIdUsuario(int idUsuario)
         {
             if (idUsuario <= 0)

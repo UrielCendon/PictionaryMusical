@@ -21,7 +21,10 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
         private const string VariableEntornoUsuario = "BD_USUARIO";
         private const string VariableEntornoContrasena = "BD_CONTRASENA";
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Obtiene la cadena de conexion para la base de datos.
+        /// </summary>
+        /// <returns>Cadena de conexion formateada.</returns>
         public string ObtenerConexion()
         {
             string usuario = Environment.GetEnvironmentVariable(VariableEntornoUsuario);
@@ -29,6 +32,8 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
 
             if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena))
             {
+                throw new InvalidOperationException(
+                    "Las variables de entorno BD_USUARIO y BD_CONTRASENA deben estar configuradas.");
             }
 
             var constructorSql = new SqlConnectionStringBuilder

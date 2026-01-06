@@ -11,31 +11,52 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
     /// </summary>
     public class RepositorioFactoria : IRepositorioFactoria
     {
-        /// <inheritdoc/>
+        /// <summary>
+        /// Crea una instancia del repositorio de usuarios.
+        /// </summary>
+        /// <param name="contexto">Contexto de base de datos a utilizar.</param>
+        /// <returns>Instancia del repositorio de usuarios.</returns>
         public IUsuarioRepositorio CrearUsuarioRepositorio(BaseDatosPruebaEntities contexto)
         {
             return new UsuarioRepositorio(contexto);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Crea una instancia del repositorio de amigos.
+        /// </summary>
+        /// <param name="contexto">Contexto de base de datos a utilizar.</param>
+        /// <returns>Instancia del repositorio de amigos.</returns>
         public IAmigoRepositorio CrearAmigoRepositorio(BaseDatosPruebaEntities contexto)
         {
             return new AmigoRepositorio(contexto);
         }
 
-        /// <inheritdoc/>
-        public IClasificacionRepositorio CrearClasificacionRepositorio(BaseDatosPruebaEntities contexto)
+        /// <summary>
+        /// Crea una instancia del repositorio de clasificaciones.
+        /// </summary>
+        /// <param name="contexto">Contexto de base de datos a utilizar.</param>
+        /// <returns>Instancia del repositorio de clasificaciones.</returns>
+        public IClasificacionRepositorio CrearClasificacionRepositorio(
+            BaseDatosPruebaEntities contexto)
         {
             return new ClasificacionRepositorio(contexto);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Crea una instancia del repositorio de reportes.
+        /// </summary>
+        /// <param name="contexto">Contexto de base de datos a utilizar.</param>
+        /// <returns>Instancia del repositorio de reportes.</returns>
         public IReporteRepositorio CrearReporteRepositorio(BaseDatosPruebaEntities contexto)
         {
             return new ReporteRepositorio(contexto);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Crea una instancia del repositorio de jugadores.
+        /// </summary>
+        /// <param name="contexto">Contexto de base de datos a utilizar.</param>
+        /// <returns>Instancia del repositorio de jugadores.</returns>
         public IJugadorRepositorio CrearJugadorRepositorio(BaseDatosPruebaEntities contexto)
         {
             return new JugadorRepositorio(contexto);

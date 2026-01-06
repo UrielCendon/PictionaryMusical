@@ -41,20 +41,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
         void NotificarSalida(string codigoSala, string nombreUsuario, SalaDTO salaActualizada);
 
         /// <summary>
-        /// Notifica una expulsion especifica al afectado y actualiza a los demas.
+        /// Notifica una accion sobre un jugador (expulsion o baneo) al afectado y actualiza 
+        /// a los demas.
         /// </summary>
         /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
-        void NotificarExpulsion(ExpulsionNotificacionParametros parametros);
+        void NotificarAccionJugador(AccionJugadorSalaParametros parametros);
 
         /// <summary>
         /// Notifica a todos los integrantes que la sala ha sido cancelada.
         /// </summary>
         void NotificarCancelacion(string codigoSala);
-
-        /// <summary>
-        /// Notifica a todos los integrantes que un jugador fue baneado por reportes.
-        /// </summary>
-        /// <param name="parametros">Objeto con los datos necesarios para la notificacion.</param>
-        void NotificarBaneo(BaneoNotificacionParametros parametros);
     }
 }

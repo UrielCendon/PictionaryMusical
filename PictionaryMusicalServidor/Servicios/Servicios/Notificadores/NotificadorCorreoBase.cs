@@ -130,7 +130,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
 
         /// <summary>
         /// Libera la reserva de una direccion de correo en caso de fallo en el envio.
-        /// Solo debe usarse cuando el envio falla despues de haberse reservado con ValidarYReservarEnvio.
+        /// Solo debe usarse cuando el envio falla despues de haberse reservado con 
+        /// ValidarYReservarEnvio.
         /// </summary>
         /// <param name="correoDestino">Direccion de correo cuya reserva se debe liberar.</param>
         protected static void LiberarReservaEnvio(string correoDestino)
@@ -238,7 +239,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Notificadores
             }
             catch (Exception excepcion)
             {
-                Logger.Error(MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo, excepcion);
+                Logger.Error(
+                    MensajesError.Bitacora.ErrorCriticoEnviarNotificacionCodigo,
+                    excepcion);
                 return false;
             }
         }

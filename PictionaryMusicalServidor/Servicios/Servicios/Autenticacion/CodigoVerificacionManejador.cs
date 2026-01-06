@@ -2,6 +2,7 @@
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using PictionaryMusicalServidor.Servicios.Servicios.Notificadores;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
 using System;
 using System.Data;
@@ -397,7 +398,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             }
             catch (Exception excepcion)
             {
-                _logger.Error(MensajesError.Bitacora.ErrorInesperadoConfirmarRecuperacion, excepcion);
+                _logger.Error(
+                    MensajesError.Bitacora.ErrorInesperadoConfirmarRecuperacion,
+                    excepcion);
                 return new ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,

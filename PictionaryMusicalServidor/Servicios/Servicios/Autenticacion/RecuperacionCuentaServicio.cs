@@ -137,7 +137,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                     MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
-            if (pendiente.Expira < DateTime.UtcNow)
+            if (pendiente.EstaExpirado)
             {
                 SolicitudRecuperacionPendiente solicitudDescartada;
                 _solicitudesRecuperacion.TryRemove(solicitud.TokenCodigo, out solicitudDescartada);
@@ -332,8 +332,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                 return false;
             }
 
-            string token = EntradaComunValidador.NormalizarTexto(solicitud.TokenCodigo);
-            return EntradaComunValidador.EsTokenValido(token);
+            return VerificacionCodigoUtilidades.ValidarToken(solicitud.TokenCodigo);
         }
 
         private ResultadoSolicitudCodigoDTO ProcesarReenvio(
@@ -380,25 +379,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private ResultadoSolicitudCodigoDTO CrearFalloReenvio(string mensaje)
         {
-            return new ResultadoSolicitudCodigoDTO
-            {
-                CodigoEnviado = false,
-                Mensaje = mensaje
-            };
+            return VerificacionCodigoUtilidades.CrearFalloReenvio(mensaje);
         }
 
         private static bool ValidarConfirmacionEntrada(ConfirmacionCodigoDTO confirmacion)
         {
-            if (confirmacion == null)
-            {
-                return false;
-            }
-
-            string token = EntradaComunValidador.NormalizarTexto(confirmacion.TokenCodigo);
-            string codigo = EntradaComunValidador.NormalizarTexto(confirmacion.CodigoIngresado);
-
-            return EntradaComunValidador.EsTokenValido(token) &&
-                   EntradaComunValidador.EsCodigoVerificacionValido(codigo);
+            return VerificacionCodigoUtilidades.ValidarDatosConfirmacion(confirmacion);
         }
 
         private static ResultadoOperacionDTO VerificarCodigo(
@@ -406,7 +392,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
             string token,
             string codigoIngresado)
         {
-            if (pendiente.Expira < DateTime.UtcNow)
+            if (pendiente.EstaExpirado)
             {
                 SolicitudRecuperacionPendiente solicitudDescartada;
                 _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
@@ -454,7 +440,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
                     MensajesError.Cliente.SolicitudRecuperacionNoEncontrada);
             }
 
-            if (pendiente.Expira < DateTime.UtcNow)
+            if (pendiente.EstaExpirado)
             {
                 SolicitudRecuperacionPendiente solicitudDescartada;
                 _solicitudesRecuperacion.TryRemove(token, out solicitudDescartada);
@@ -513,11 +499,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Autenticacion
 
         private static ResultadoOperacionDTO CrearFalloOperacion(string mensaje)
         {
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = false,
-                Mensaje = mensaje
-            };
+            return VerificacionCodigoUtilidades.CrearFalloOperacion(mensaje);
         }
     }
 }

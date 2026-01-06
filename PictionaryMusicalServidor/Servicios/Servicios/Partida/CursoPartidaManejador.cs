@@ -200,7 +200,9 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                     TiempoTransicionPorDefectoSegundos,
                     proveedorFecha);
 
-                var validadorAdivinanza = new ValidadorAdivinanza(_catalogoCanciones, gestorTiempos);
+                var validadorAdivinanza = new ValidadorAdivinanza(
+                    _catalogoCanciones, 
+                    gestorTiempos);
                 var proveedorTiempo = new ProveedorTiempo();
 
                 var configuracionPartida = new ConfiguracionPartida
@@ -416,7 +418,10 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
             }
             catch (ObjectDisposedException excepcion)
             {
-                _logger.WarnFormat(MensajesError.Bitacora.ErrorNotificandoInicioRonda, idJugador, excepcion);
+                _logger.WarnFormat(
+                    MensajesError.Bitacora.ErrorNotificandoInicioRonda, 
+                    idJugador, 
+                    excepcion);
                 RemoverCallback(idSala, idJugador);
             }
             catch (Exception excepcion)
@@ -538,7 +543,8 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Partida
                         callbacksSala,
                         StringComparer.OrdinalIgnoreCase);
                 }
-                return new Dictionary<string, ICursoPartidaManejadorCallback>(StringComparer.OrdinalIgnoreCase);
+                return new Dictionary<string, ICursoPartidaManejadorCallback>(
+                    StringComparer.OrdinalIgnoreCase);
             }
         }
 
