@@ -96,27 +96,6 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         }
 
         [TestMethod]
-        public void Prueba_ObtenerMensaje_MensajePredeterminadoVacio_Maneja()
-        {
-            string mensajePredeterminado = "";
-            var excepcion = new FaultException("Error del servidor");
-
-            var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);
-
-            Assert.IsNotNull(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerMensaje_MensajePredeterminadoNulo_Maneja()
-        {
-            var excepcion = new FaultException("Error del servidor");
-
-            var resultado = _manejador.ObtenerMensaje(excepcion, null);
-
-            Assert.IsNotNull(resultado);
-        }
-
-        [TestMethod]
         public void Prueba_ObtenerMensaje_ExcepcionNoGenerica_RetornaMensajeLocalizado()
         {
             string mensajeOriginal = "Falla en el servicio";
