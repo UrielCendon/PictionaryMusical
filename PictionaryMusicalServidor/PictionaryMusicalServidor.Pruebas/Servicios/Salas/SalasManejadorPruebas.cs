@@ -151,7 +151,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         public void Prueba_ObtenerSalas_SinSalas_RetornaListaVacia()
         {
             _almacenSalasMock
-                .Setup(almacen => almacen.Values)
+                .Setup(almacen => almacen.Valores)
                 .Returns(new List<SalaInternaManejador>());
 
             IList<SalaDTO> resultado = _manejador.ObtenerSalas();
@@ -164,7 +164,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             var salaInterna = CrearSalaInternaMock();
             _almacenSalasMock
-                .Setup(almacen => almacen.Values)
+                .Setup(almacen => almacen.Valores)
                 .Returns(new List<SalaInternaManejador> { salaInterna });
 
             IList<SalaDTO> resultado = _manejador.ObtenerSalas();
@@ -203,7 +203,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
                 .Returns(salaInterna);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryAdd(CodigoSalaValido, salaInterna))
+                .Setup(almacen => almacen.IntentarAgregar(CodigoSalaValido, salaInterna))
                 .Returns(true);
 
             SalaDTO resultado = _manejador.CrearSala(NombreCreadorValido, configuracion);
@@ -226,7 +226,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
                 .Returns(salaInterna);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryAdd(CodigoSalaValido, salaInterna))
+                .Setup(almacen => almacen.IntentarAgregar(CodigoSalaValido, salaInterna))
                 .Returns(true);
 
             _manejador.CrearSala(NombreCreadorValido, configuracion);
@@ -250,7 +250,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
                 .Returns(salaInterna);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryAdd(It.IsAny<string>(), It.IsAny<SalaInternaManejador>()))
+                .Setup(almacen => almacen.IntentarAgregar(It.IsAny<string>(), It.IsAny<SalaInternaManejador>()))
                 .Returns(false);
 
             Assert.ThrowsException<FaultException>(() =>
@@ -276,7 +276,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             Assert.ThrowsException<FaultException>(() =>
@@ -290,7 +290,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             salaInterna.PartidaIniciada = true;
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             Assert.ThrowsException<FaultException>(() =>
@@ -303,7 +303,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.UnirseSala(CodigoSalaValido, NombreJugadorValido);
@@ -325,7 +325,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             Assert.ThrowsException<FaultException>(() =>
@@ -344,14 +344,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             salaInterna.AgregarJugador(NombreCreadorValido, _callbackMock.Object, false);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.AbandonarSala(CodigoSalaValido, NombreCreadorValido);
 
             SalaInternaManejador salaRemovida;
             _almacenSalasMock.Verify(
-                almacen => almacen.TryRemove(CodigoSalaValido, out salaRemovida),
+                almacen => almacen.IntentarRemover(CodigoSalaValido, out salaRemovida),
                 Times.Once);
         }
 
@@ -361,7 +361,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.AbandonarSala(CodigoSalaValido, NombreJugadorValido);
@@ -386,7 +386,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             Assert.ThrowsException<FaultException>(() =>
@@ -413,7 +413,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             salaInterna.AgregarJugador(NombreJugadorValido, _callbackMock.Object, false);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.ExpulsarJugador(CodigoSalaValido, NombreCreadorValido, NombreJugadorValido);
@@ -438,7 +438,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             _manejador.BanearJugador(CodigoSalaValido, NombreJugadorValido);
@@ -465,7 +465,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             salaInterna.AgregarJugador(NombreJugadorValido, _callbackMock.Object, false);
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.BanearJugador(CodigoSalaValido, NombreJugadorValido);
@@ -487,7 +487,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             Assert.ThrowsException<InvalidOperationException>(() =>
@@ -500,7 +500,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             SalaDTO resultado = _manejador.ObtenerSalaPorCodigo(CodigoSalaValido);
@@ -514,7 +514,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.MarcarPartidaComoIniciada(CodigoSalaValido);
@@ -527,13 +527,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             _manejador.MarcarPartidaComoIniciada(CodigoSalaValido);
 
             _almacenSalasMock.Verify(
-                almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut),
+                almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut),
                 Times.Once);
         }
 
@@ -543,7 +543,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.MarcarPartidaComoFinalizada(CodigoSalaValido);
@@ -557,14 +557,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.MarcarPartidaComoFinalizada(CodigoSalaValido);
 
             SalaInternaManejador salaRemovida;
             _almacenSalasMock.Verify(
-                almacen => almacen.TryRemove(CodigoSalaValido, out salaRemovida),
+                almacen => almacen.IntentarRemover(CodigoSalaValido, out salaRemovida),
                 Times.Once);
             _notificadorMock.Verify(
                 notificador => notificador.NotificarListaSalasATodos(),
@@ -602,7 +602,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
             var salaInterna = CrearSalaInternaMock();
 
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaInterna))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaInterna))
                 .Returns(true);
 
             _manejador.NotificarDesconexionJugador(CodigoSalaValido, NombreJugadorValido);
@@ -617,7 +617,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Salas
         {
             SalaInternaManejador salaOut;
             _almacenSalasMock
-                .Setup(almacen => almacen.TryGetValue(CodigoSalaValido, out salaOut))
+                .Setup(almacen => almacen.IntentarObtener(CodigoSalaValido, out salaOut))
                 .Returns(false);
 
             _manejador.NotificarDesconexionJugador(CodigoSalaValido, NombreJugadorValido);
