@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8501/Pictionary/Cuenta" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Cuenta3.xsd" MetadataType="Schema" ID="c600a1dd-0031-45a1-8489-0afb2580cff8" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd0" />
-    <MetadataFile FileName="Cuenta31.xsd" MetadataType="Schema" ID="29b97084-e11b-46d4-b6ec-cd5f3f27d354" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd2" />
-    <MetadataFile FileName="Cuenta1.disco" MetadataType="Disco" ID="9d5e2d43-2c58-44c8-95e3-68c8d4804e0c" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?disco" />
-    <MetadataFile FileName="CuentaManejador1.wsdl" MetadataType="Wsdl" ID="f62cec0f-6885-4be8-af95-74626010052b" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?wsdl" />
-    <MetadataFile FileName="Cuenta32.xsd" MetadataType="Schema" ID="c8613c7e-6c6a-41f9-9ac9-38dba7f7e69d" SourceId="1" SourceUrl="http://192.168.1.71:8501/Pictionary/Cuenta?xsd=xsd1" />
+    <MetadataFile FileName="Cuenta.disco" MetadataType="Disco" ID="49763ce8-6340-4f09-b809-025cfa08b545" SourceId="1" SourceUrl="http://10.83.41.1:8501/Pictionary/Cuenta?disco" />
+    <MetadataFile FileName="Cuenta.xsd" MetadataType="Schema" ID="a8bec1c7-cf16-453b-a0f5-659fccbf44d1" SourceId="1" SourceUrl="http://10.83.41.1:8501/Pictionary/Cuenta?xsd=xsd1" />
+    <MetadataFile FileName="Cuenta1.xsd" MetadataType="Schema" ID="7f2c0283-ec75-45a6-8f06-6ca56aae59c2" SourceId="1" SourceUrl="http://10.83.41.1:8501/Pictionary/Cuenta?xsd=xsd2" />
+    <MetadataFile FileName="Cuenta2.xsd" MetadataType="Schema" ID="8e2f146f-80ce-4b58-bc91-52702d060d51" SourceId="1" SourceUrl="http://10.83.41.1:8501/Pictionary/Cuenta?xsd=xsd0" />
+    <MetadataFile FileName="CuentaManejador.wsdl" MetadataType="Wsdl" ID="54ff8fa9-e825-434f-aa10-de75b93b1304" SourceId="1" SourceUrl="http://10.83.41.1:8501/Pictionary/Cuenta?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

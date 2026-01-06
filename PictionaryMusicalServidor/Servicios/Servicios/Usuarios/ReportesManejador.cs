@@ -5,11 +5,11 @@ using System.Data.Entity.Core;
 using System.ServiceModel;
 using Datos.Modelo;
 using log4net;
-using PictionaryMusicalServidor.Datos.DAL.Interfaces;
 using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 {
@@ -75,7 +75,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
 
                     if (idsUsuarios.IdReportante == idsUsuarios.IdReportado)
                     {
-                        return CrearResultadoFallo(
+                        return CreadorResultado.CrearResultadoFallo(
                             MensajesError.Cliente.ReporteMismoUsuario);
                     }
 
@@ -83,7 +83,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                         idsUsuarios.IdReportante,
                         idsUsuarios.IdReportado))
                     {
-                        return CrearResultadoFallo(
+                        return CreadorResultado.CrearResultadoFallo(
                             MensajesError.Cliente.ReporteDuplicado);
                     }
 
@@ -114,37 +114,37 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             catch (FaultException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ValidacionFallidaReporte, excepcion);
-                return CrearResultadoFallo(excepcion.Message);
+                return CreadorResultado.CrearResultadoFallo(excepcion.Message);
             }
             catch (ArgumentException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.DatosInvalidosReporte, excepcion);
-                return CrearResultadoFallo(excepcion.Message);
+                return CreadorResultado.CrearResultadoFallo(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.OperacionInvalidaReporte, excepcion);
-                return CrearResultadoFallo(excepcion.Message);
+                return CreadorResultado.CrearResultadoFallo(excepcion.Message);
             }
             catch (KeyNotFoundException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.UsuariosNoEncontradosReporte, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.UsuariosNoEncontrados);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.UsuariosNoEncontrados);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorBaseDatosReporte, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorDatosReporte, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorInesperadoReporte, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorCrearReporte);
             }
         }
 
@@ -193,15 +193,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
                 _logger.Warn(MensajesError.Bitacora.ErrorObtenerIdUsuariosReporte, excepcion);
                 throw;
             }
-        }
-
-        private ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
-        {
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = false,
-                Mensaje = mensaje
-            };
         }
     }
 }

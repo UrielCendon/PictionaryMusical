@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.Text.RegularExpressions;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
+using Servicios.Servicios.Utilidades;
 
 namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 {
@@ -232,7 +233,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (nuevaCuenta == null)
             {
-                return CrearResultadoOperacion(false, MensajesError.Cliente.DatosInvalidos);
+                return CreadorResultado.CrearResultadoOperacion(false, MensajesError.Cliente.DatosInvalidos);
             }
 
             ResultadoValidacionCampo resultadoUsuario = ValidarCampoObligatorio(
@@ -290,7 +291,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             nuevaCuenta.Contrasena = resultadoContrasena.ValorNormalizado;
 
-            return CrearResultadoOperacion(true);
+            return CreadorResultado.CrearResultadoOperacion(true);
         }
 
         public static ResultadoOperacionDTO ValidarActualizacionPerfil(
@@ -298,12 +299,12 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             if (solicitud == null || solicitud.UsuarioId <= 0)
             {
-                return CrearResultadoOperacion(false, MensajesError.Cliente.DatosInvalidos);
+                return CreadorResultado.CrearResultadoOperacion(false, MensajesError.Cliente.DatosInvalidos);
             }
 
             if (solicitud.AvatarId <= 0)
             {
-                return CrearResultadoOperacion(false, MensajesError.Cliente.AvatarInvalido);
+                return CreadorResultado.CrearResultadoOperacion(false, MensajesError.Cliente.AvatarInvalido);
             }
 
             var resultadoDatos = ValidarDatosPersonalesPerfil(solicitud);
@@ -340,7 +341,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             solicitud.Apellido = resultadoApellido.ValorNormalizado;
 
-            return CrearResultadoOperacion(true);
+            return CreadorResultado.CrearResultadoOperacion(true);
         }
 
         private static ResultadoOperacionDTO ValidarRedesSociales(ActualizacionPerfilDTO solicitud)
@@ -382,7 +383,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             }
             solicitud.Discord = resultadoDiscord.ValorNormalizado;
 
-            return CrearResultadoOperacion(true);
+            return CreadorResultado.CrearResultadoOperacion(true);
         }
 
         private static ResultadoValidacionCampo ValidarCampoObligatorio(
@@ -395,14 +396,14 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 return new ResultadoValidacionCampo
                 {
-                    Resultado = CrearResultadoOperacion(false, mensajeError),
+                    Resultado = CreadorResultado.CrearResultadoOperacion(false, mensajeError),
                     ValorNormalizado = null
                 };
             }
 
             return new ResultadoValidacionCampo
             {
-                Resultado = CrearResultadoOperacion(true),
+                Resultado = CreadorResultado.CrearResultadoOperacion(true),
                 ValorNormalizado = campoNormalizado
             };
         }
@@ -414,7 +415,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 return new ResultadoValidacionRedSocial
                 {
-                    Resultado = CrearResultadoOperacion(true),
+                    Resultado = CreadorResultado.CrearResultadoOperacion(true),
                     ValorNormalizado = null
                 };
             }
@@ -423,7 +424,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
             {
                 return new ResultadoValidacionRedSocial
                 {
-                    Resultado = CrearResultadoOperacion(
+                    Resultado = CreadorResultado.CrearResultadoOperacion(
                         false,
                         string.Format("El identificador de {0} no debe exceder {1} caracteres.",
                             nombre, LongitudMaximaTexto)),
@@ -433,7 +434,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
 
             return new ResultadoValidacionRedSocial
             {
-                Resultado = CrearResultadoOperacion(true),
+                Resultado = CreadorResultado.CrearResultadoOperacion(true),
                 ValorNormalizado = valorNormalizado
             };
         }
@@ -448,16 +449,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Utilidades
         {
             public ResultadoOperacionDTO Resultado { get; set; }
             public string ValorNormalizado { get; set; }
-        }
-
-        private static ResultadoOperacionDTO CrearResultadoOperacion(bool exitoso,
-            string mensaje = null)
-        {
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = exitoso,
-                Mensaje = mensaje
-            };
         }
 
         /// <summary>

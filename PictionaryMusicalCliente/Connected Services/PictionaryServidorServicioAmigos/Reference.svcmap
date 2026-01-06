@@ -22,11 +22,11 @@
     <MetadataSource Address="http://localhost:8515/Pictionary/Amigos" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="Amigos1.disco" MetadataType="Disco" ID="a702aeca-9f40-4520-b3a2-02a554b7577d" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?disco" />
-    <MetadataFile FileName="Amigos3.xsd" MetadataType="Schema" ID="742d106d-7f43-4e7b-9593-ec2d5f32344b" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd2" />
-    <MetadataFile FileName="AmigosManejador1.wsdl" MetadataType="Wsdl" ID="42b07ff7-fdee-4c1a-aad9-90496fd94c5a" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?wsdl" />
-    <MetadataFile FileName="Amigos31.xsd" MetadataType="Schema" ID="22c7b416-ae4f-40a6-b90d-ed407899100f" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd1" />
-    <MetadataFile FileName="Amigos32.xsd" MetadataType="Schema" ID="e5bb1dcf-1178-446f-9e42-e4227a78f370" SourceId="1" SourceUrl="http://192.168.1.71:8515/Pictionary/Amigos?xsd=xsd0" />
+    <MetadataFile FileName="Amigos.xsd" MetadataType="Schema" ID="e8e54d90-936d-44fd-8616-b2fbedda03b8" SourceId="1" SourceUrl="http://10.83.41.1:8515/Pictionary/Amigos?xsd=xsd0" />
+    <MetadataFile FileName="Amigos1.xsd" MetadataType="Schema" ID="ce4e896e-9422-4c40-8d09-d7db64e4aab8" SourceId="1" SourceUrl="http://10.83.41.1:8515/Pictionary/Amigos?xsd=xsd1" />
+    <MetadataFile FileName="Amigos.disco" MetadataType="Disco" ID="574b41e2-0b13-4dda-adbb-37036d1ce888" SourceId="1" SourceUrl="http://10.83.41.1:8515/Pictionary/Amigos?disco" />
+    <MetadataFile FileName="AmigosManejador.wsdl" MetadataType="Wsdl" ID="1f8d1adc-f6af-439e-972a-462dc9674f70" SourceId="1" SourceUrl="http://10.83.41.1:8515/Pictionary/Amigos?wsdl" />
+    <MetadataFile FileName="Amigos2.xsd" MetadataType="Schema" ID="f4b62d40-da76-4c8a-ad00-10485a6f8716" SourceId="1" SourceUrl="http://10.83.41.1:8515/Pictionary/Amigos?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

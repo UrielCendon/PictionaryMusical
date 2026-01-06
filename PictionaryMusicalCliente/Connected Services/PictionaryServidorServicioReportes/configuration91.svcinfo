@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="xL+LJemHs2pw4Kv3DZK7RxPQZnpm0zRxrDFeVWr5a8A=">
+<SavedWcfConfigurationInformation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="9.1" CheckSum="dnp7jFSe2H81/j/l5outT2t61RmpYxS7rtsP/M4ESjk=">
   <bindingConfigurations>
     <bindingConfiguration bindingType="basicHttpBinding" name="BasicHttpBinding_IReportesManejador1">
       <properties>
@@ -230,10 +230,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="BasicHttpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="basicHttpBinding" address="http://192.168.1.71:8527/Pictionary/Reportes/Reportes" bindingConfiguration="BasicHttpBinding_IReportesManejador1">
+    <endpoint name="BasicHttpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="basicHttpBinding" address="http://10.83.41.1:8527/Pictionary/Reportes/Reportes" bindingConfiguration="BasicHttpBinding_IReportesManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>http://192.168.1.71:8527/Pictionary/Reportes/Reportes</serializedValue>
+          <serializedValue>http://10.83.41.1:8527/Pictionary/Reportes/Reportes</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -315,10 +315,10 @@
         </property>
       </properties>
     </endpoint>
-    <endpoint name="NetTcpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="netTcpBinding" address="net.tcp://192.168.1.71:8528/Pictionary/Reportes/Reportes" bindingConfiguration="NetTcpBinding_IReportesManejador1">
+    <endpoint name="NetTcpBinding_IReportesManejador1" contract="PictionaryServidorServicioReportes.IReportesManejador" bindingType="netTcpBinding" address="net.tcp://10.83.41.1:8528/Pictionary/Reportes/Reportes" bindingConfiguration="NetTcpBinding_IReportesManejador1">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>net.tcp://192.168.1.71:8528/Pictionary/Reportes/Reportes</serializedValue>
+          <serializedValue>net.tcp://10.83.41.1:8528/Pictionary/Reportes/Reportes</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

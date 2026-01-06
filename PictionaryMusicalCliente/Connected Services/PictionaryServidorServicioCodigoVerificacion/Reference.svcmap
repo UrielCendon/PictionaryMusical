@@ -24,11 +24,11 @@
     <MetadataSource Address="http://localhost:8503/Pictionary/CodigoVerificacion" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="CodigoVerificacionManejador1.wsdl" MetadataType="Wsdl" ID="31e49cfd-a65e-405c-80f8-6cd7df951835" SourceId="1" SourceUrl="http://192.168.1.71:8503/Pictionary/CodigoVerificacion?wsdl" />
-    <MetadataFile FileName="CodigoVerificacion1.disco" MetadataType="Disco" ID="c09b6508-27a1-4d02-a63c-b08ab5bf61bf" SourceId="1" SourceUrl="http://192.168.1.71:8503/Pictionary/CodigoVerificacion?disco" />
-    <MetadataFile FileName="CodigoVerificacion3.xsd" MetadataType="Schema" ID="6c2e4c1f-e470-4257-beb5-55e33cf0f24c" SourceId="1" SourceUrl="http://192.168.1.71:8503/Pictionary/CodigoVerificacion?xsd=xsd2" />
-    <MetadataFile FileName="CodigoVerificacion31.xsd" MetadataType="Schema" ID="383d0158-0167-4b79-8682-a0fcfd2df615" SourceId="1" SourceUrl="http://192.168.1.71:8503/Pictionary/CodigoVerificacion?xsd=xsd1" />
-    <MetadataFile FileName="CodigoVerificacion32.xsd" MetadataType="Schema" ID="b1dd408b-4647-4f20-9958-6803c27dcfc3" SourceId="1" SourceUrl="http://192.168.1.71:8503/Pictionary/CodigoVerificacion?xsd=xsd0" />
+    <MetadataFile FileName="CodigoVerificacionManejador.wsdl" MetadataType="Wsdl" ID="3d29be2e-6096-49a0-a348-c2e9dd8110e2" SourceId="1" SourceUrl="http://10.83.41.1:8503/Pictionary/CodigoVerificacion?wsdl" />
+    <MetadataFile FileName="CodigoVerificacion.xsd" MetadataType="Schema" ID="8ce08667-e459-4581-81a5-aeed1113b422" SourceId="1" SourceUrl="http://10.83.41.1:8503/Pictionary/CodigoVerificacion?xsd=xsd2" />
+    <MetadataFile FileName="CodigoVerificacion1.xsd" MetadataType="Schema" ID="d416e04b-52e4-439a-8210-b4ac541b7c0f" SourceId="1" SourceUrl="http://10.83.41.1:8503/Pictionary/CodigoVerificacion?xsd=xsd1" />
+    <MetadataFile FileName="CodigoVerificacion2.xsd" MetadataType="Schema" ID="f259b54a-a6f1-423f-a27a-04bb10339798" SourceId="1" SourceUrl="http://10.83.41.1:8503/Pictionary/CodigoVerificacion?xsd=xsd0" />
+    <MetadataFile FileName="CodigoVerificacion.disco" MetadataType="Disco" ID="a919feed-e7be-4ad3-adaa-7359d7ef1df4" SourceId="1" SourceUrl="http://10.83.41.1:8503/Pictionary/CodigoVerificacion?disco" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

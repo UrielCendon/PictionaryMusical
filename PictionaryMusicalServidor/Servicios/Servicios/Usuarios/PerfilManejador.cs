@@ -5,6 +5,7 @@ using PictionaryMusicalServidor.Servicios.Contratos;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
 using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.Servicios.Utilidades;
+using Servicios.Servicios.Utilidades;
 using System;
 using System.Data;
 using System.Data.Entity.Core;
@@ -123,44 +124,44 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             catch (ArgumentException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.ArgumentoInvalidoActualizarPerfil, excepcion);
-                return CrearResultadoFallo(excepcion.Message);
+                return CreadorResultado.CrearResultadoFallo(excepcion.Message);
             }
             catch (InvalidOperationException excepcion)
             {
                 _logger.Warn(MensajesError.Bitacora.OperacionInvalidaActualizarPerfil, excepcion);
-                return CrearResultadoFallo(excepcion.Message);
+                return CreadorResultado.CrearResultadoFallo(excepcion.Message);
             }
             catch (DbEntityValidationException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ValidacionEntidadActualizarPerfil, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DbUpdateConcurrencyException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorConcurrenciaActualizarPerfil, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DbUpdateException excepcion)
             {
                 _logger.Error(
                     MensajesError.Bitacora.ErrorActualizacionBDActualizarPerfil, 
                     excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (EntityException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorBaseDatosActualizarPerfil, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (DataException excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorDatosActualizarPerfil, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
             catch (Exception excepcion)
             {
                 _logger.Error(MensajesError.Bitacora.ErrorInesperadoActualizarPerfil, excepcion);
-                return CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
+                return CreadorResultado.CrearResultadoFallo(MensajesError.Cliente.ErrorActualizarPerfil);
             }
         }
 
@@ -270,15 +271,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Usuarios
             redSocial.facebook = solicitud.Facebook;
             redSocial.x = solicitud.X;
             redSocial.discord = solicitud.Discord;
-        }
-
-        private static ResultadoOperacionDTO CrearResultadoFallo(string mensaje)
-        {
-            return new ResultadoOperacionDTO
-            {
-                OperacionExitosa = false,
-                Mensaje = mensaje
-            };
         }
     }
 }
