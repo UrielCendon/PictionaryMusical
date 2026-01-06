@@ -276,7 +276,11 @@
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaEventosManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\SalaInvitacionesManejador.cs" />
     <Compile Include="VistaModelo\Salas\Auxiliares\PartidaTemporizadores.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\GestorSesionPartida.cs" />
+    <Compile Include="VistaModelo\Salas\Auxiliares\GestorSesionPartidaParametros.cs" />
     <Compile Include="VistaModelo\VentanaPrincipal\Auxiliares\OpcionesPartidaManejador.cs" />
+    <Compile Include="VistaModelo\VentanaPrincipal\Auxiliares\GestorListaAmigos.cs" />
+    <Compile Include="VistaModelo\VentanaPrincipal\Auxiliares\GestorListaAmigosParametros.cs" />
     <Compile Include="VistaModelo\Salas\SalaVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\PartidaVistaModelo.cs" />
     <Compile Include="VistaModelo\Salas\ChatVistaModelo.cs" />

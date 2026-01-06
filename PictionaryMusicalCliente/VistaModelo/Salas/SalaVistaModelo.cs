@@ -5,7 +5,6 @@ using PictionaryMusicalCliente.ClienteServicios.Wcf.Chat;
 using PictionaryMusicalCliente.Comandos;
 using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
-using PictionaryMusicalCliente.PictionaryServidorServicioCursoPartida;
 using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.Utilidades;
 using PictionaryMusicalCliente.Utilidades.Abstracciones;
@@ -29,17 +28,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
     /// ViewModel que gestiona la logica de una sala de juego.
     /// Coordina la comunicacion entre jugadores, el chat y el estado de la partida.
     /// </summary>
-    [CallbackBehavior(
-        ConcurrencyMode = ConcurrencyMode.Reentrant,
-        UseSynchronizationContext = false)]
-    public class SalaVistaModelo : BaseVistaModelo, ICursoPartidaManejadorCallback
+    public class SalaVistaModelo : BaseVistaModelo
     {
         private static readonly ILog _logger = LogManager.GetLogger(
             System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private const int MaximoJugadoresSala = 4;
         private const int MinimoJugadoresParaIniciar = 2;
-        private const int SegundosCierreCanal = 2;
         private const int MinimoPartesAcierto = 3;
         private const int IndicePuntosAdivinador = 2;
 
@@ -65,8 +60,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         private SalaEventosManejador _eventosManejador;
         private SalaInvitacionesManejador _invitacionesManejador;
         private SalaJugadoresManejador _jugadoresManejador;
-
-        private ICursoPartidaManejador _proxyJuego;
+        private GestorSesionPartida _gestorSesion;
 
         private string _textoBotonIniciarPartida;
         private bool _botonIniciarPartidaHabilitado;
@@ -146,7 +140,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             InicializarEstadoInicial();
             InicializarComandos();
             ConfigurarPermisos();
-            InicializarProxyPartida();
+            InicializarGestorSesion();
             ConfigurarEventoDesconexion();
             SuscribirMonitorConectividad();
         }
@@ -235,11 +229,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             try
             {
-                if (_proxyJuego is ICommunicationObject canal)
-                {
-                    canal.Abort();
-                    _proxyJuego = null;
-                }
+                _gestorSesion?.AbortarCanal();
             }
             catch (Exception excepcion)
             {
@@ -763,104 +753,69 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             EjecutarEnviarMensajeChat();
         }
 
-        private void InicializarProxyPartida()
+        private void InicializarGestorSesion()
         {
-            try
-            {
-                var contexto = new InstanceContext(this);
-                _proxyJuego = _fabricaClientes.CrearClienteCursoPartida(contexto);
+            var parametros = new GestorSesionPartidaParametros(
+                _fabricaClientes,
+                _codigoSala,
+                _idJugador,
+                _nombreUsuarioSesion,
+                _esHost);
 
-                SuscribirEventosCanalPartida();
+            _gestorSesion = new GestorSesionPartida(parametros);
+            SuscribirEventosGestorSesion();
 
-                var suscripcion = new DTOs.SuscripcionJugadorDTO
-                {
-                    IdSala = _codigoSala,
-                    IdJugador = _idJugador,
-                    NombreUsuario = _nombreUsuarioSesion,
-                    EsHost = _esHost
-                };
-                _proxyJuego.SuscribirJugador(suscripcion);
-            }
-            catch (FaultException excepcion)
+            if (!_gestorSesion.Inicializar())
             {
-                _logger.Error(
-                    "Fallo del servicio al suscribir al jugador en la partida.",
-                    excepcion);
-                MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
-            }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Error(
-                    "Canal en estado fallido al suscribir al jugador.",
-                    excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationObjectAbortedException excepcion)
-            {
-                _logger.Error(
-                    "Canal abortado al suscribir al jugador.",
-                    excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Error(
-                    "Error de comunicacion al suscribir al jugador en la partida.",
-                    excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoDesconexionServidor);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error(
-                    "Se agoto el tiempo para inicializar el proxy de partida.",
-                    excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoTiempoAgotadoConexion);
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Error(
-                    "Operacion invalida al inicializar el proxy de partida.",
-                    excepcion);
                 MostrarErrorEnUI(Lang.errorTextoErrorProcesarSolicitud);
             }
         }
 
-        private void SuscribirEventosCanalPartida()
+        private void SuscribirEventosGestorSesion()
         {
-            if (_proxyJuego is ICommunicationObject canal)
+            _gestorSesion.PartidaIniciada += ManejarPartidaIniciada;
+            _gestorSesion.RondaIniciada += ManejarRondaIniciada;
+            _gestorSesion.JugadorAdivino += ManejarJugadorAdivino;
+            _gestorSesion.MensajeChatRecibido += ManejarMensajeChatRecibido;
+            _gestorSesion.TrazoRecibido += ManejarTrazoRecibido;
+            _gestorSesion.RondaFinalizada += ManejarRondaFinalizada;
+            _gestorSesion.PartidaFinalizada += ManejarPartidaFinalizada;
+            _gestorSesion.CanalFallido += ManejarCanalFallido;
+            _gestorSesion.ErrorComunicacion += ManejarErrorComunicacionGestor;
+        }
+
+        private void DesuscribirEventosGestorSesion()
+        {
+            if (_gestorSesion == null)
             {
-                canal.Faulted += CanalPartida_Faulted;
-                canal.Closed += CanalPartida_Closed;
+                return;
+            }
+
+            _gestorSesion.PartidaIniciada -= ManejarPartidaIniciada;
+            _gestorSesion.RondaIniciada -= ManejarRondaIniciada;
+            _gestorSesion.JugadorAdivino -= ManejarJugadorAdivino;
+            _gestorSesion.MensajeChatRecibido -= ManejarMensajeChatRecibido;
+            _gestorSesion.TrazoRecibido -= ManejarTrazoRecibido;
+            _gestorSesion.RondaFinalizada -= ManejarRondaFinalizada;
+            _gestorSesion.PartidaFinalizada -= ManejarPartidaFinalizada;
+            _gestorSesion.CanalFallido -= ManejarCanalFallido;
+            _gestorSesion.ErrorComunicacion -= ManejarErrorComunicacionGestor;
+        }
+
+        private void ManejarCanalFallido()
+        {
+            if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
+            {
+                string mensajeServidorCaido = _esInvitado
+                    ? Lang.errorTextoSesionExpiradaGenerico
+                    : Lang.errorTextoServidorNoDisponible;
+                ManejarDesconexionConVerificacionInternet(mensajeServidorCaido);
             }
         }
 
-        private void DesuscribirEventosCanalPartida()
+        private void ManejarErrorComunicacionGestor(string mensaje)
         {
-            if (_proxyJuego is ICommunicationObject canal)
-            {
-                canal.Faulted -= CanalPartida_Faulted;
-                canal.Closed -= CanalPartida_Closed;
-            }
-        }
-
-        private void CanalPartida_Faulted(object remitente, EventArgs argumentosEvento)
-        {
-            _logger.Error("El canal de comunicacion con el servidor entro en estado Faulted.");
-            EjecutarEnDispatcher(() =>
-            {
-                if (!_aplicacionCerrando && !_expulsionNavegada && !_cancelacionNavegada)
-                {
-                    string mensajeServidorCaido = _esInvitado
-                        ? Lang.errorTextoSesionExpiradaGenerico
-                        : Lang.errorTextoServidorNoDisponible;
-                    ManejarDesconexionConVerificacionInternet(mensajeServidorCaido);
-                }
-            });
-        }
-
-        private static void CanalPartida_Closed(object remitente, EventArgs argumentosEvento)
-        {
-            _logger.Info("El canal de comunicacion con el servidor fue cerrado.");
+            ManejarDesconexionConVerificacionInternet(mensaje);
         }
 
         private string ObtenerIdentificadorJugador()
@@ -993,14 +948,13 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
         {
             try
             {
-                if (_proxyJuego == null)
+                if (_gestorSesion == null || !_gestorSesion.ProxyDisponible)
                 {
-                    _logger.Warn("Proxy de juego no disponible para enviar mensaje.");
+                    _logger.Warn("Gestor de sesion no disponible para enviar mensaje.");
                     return;
                 }
 
-                await _proxyJuego.EnviarMensajeJuegoAsync(mensaje, _codigoSala, _idJugador)
-                    .ConfigureAwait(false);
+                await _gestorSesion.EnviarMensajeAsync(mensaje).ConfigureAwait(false);
             }
             catch (FaultException excepcion)
             {
@@ -1009,25 +963,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 EjecutarEnDispatcher(() => 
                     _avisoServicio.Mostrar(Lang.errorTextoEnviarMensaje));
             }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Error("Canal fallido al enviar mensaje de juego.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationObjectAbortedException excepcion)
-            {
-                _logger.Error("Canal abortado al enviar mensaje de juego.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
             catch (CommunicationException excepcion)
             {
-                _logger.Error("No se pudo enviar el mensaje de juego.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error("Tiempo agotado al enviar mensaje de juego.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoServidorNoDisponible);
+                _logger.Error("Error de comunicacion al enviar mensaje de juego.", excepcion);
             }
             catch (InvalidOperationException excepcion)
             {
@@ -1036,8 +974,10 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
-        private async Task EjecutarRegistrarAciertoAsync(string nombreJugador, 
-            int puntosAdivinador, int puntosDibujante)
+        private async Task EjecutarRegistrarAciertoAsync(
+            string nombreJugador, 
+            int puntosAdivinador, 
+            int puntosDibujante)
         {
             if (string.IsNullOrWhiteSpace(nombreJugador))
             {
@@ -1057,10 +997,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     puntosAdivinador,
                     puntosDibujante);
 
-                if (_proxyJuego != null)
+                if (_gestorSesion != null && _gestorSesion.ProxyDisponible)
                 {
-                    await _proxyJuego.EnviarMensajeJuegoAsync(mensajeAcierto, _codigoSala, 
-                        _idJugador)
+                    await _gestorSesion.EnviarMensajeAsync(mensajeAcierto)
                         .ConfigureAwait(false);
                 }
             }
@@ -1069,24 +1008,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _logger.Error("Fallo del servicio al registrar acierto.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Error("Canal fallido al registrar acierto.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationObjectAbortedException excepcion)
-            {
-                _logger.Error("Canal abortado al registrar acierto.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
             catch (CommunicationException excepcion)
             {
                 _logger.Error("No se pudo registrar el acierto en el servidor.", excepcion);
-                _sonidoManejador.ReproducirError();
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error("Tiempo agotado al registrar acierto.", excepcion);
                 _sonidoManejador.ReproducirError();
             }
             catch (InvalidOperationException excepcion)
@@ -1107,36 +1031,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return;
             }
 
-            try
-            {
-                _proxyJuego?.EnviarTrazo(trazo, _codigoSala, _idJugador);
-            }
-            catch (FaultException excepcion)
-            {
-                _logger.Error("Fallo del servicio al enviar trazo al servidor.", excepcion);
-            }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Error("Canal fallido al enviar trazo.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationObjectAbortedException excepcion)
-            {
-                _logger.Error("Canal abortado al enviar trazo.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationException excepcion)
-            {
-                _logger.Error("No se pudo enviar el trazo al servidor.", excepcion);
-            }
-            catch (TimeoutException excepcion)
-            {
-                _logger.Error("Tiempo agotado al enviar trazo al servidor.", excepcion);
-            }
-            catch (InvalidOperationException excepcion)
-            {
-                _logger.Error("Operacion invalida al enviar trazo al servidor.", excepcion);
-            }
+            _gestorSesion?.EnviarTrazo(trazo);
         }
 
         private async Task EjecutarIniciarPartidaAsync()
@@ -1157,10 +1052,9 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             {
                 BotonIniciarPartidaHabilitado = false;
 
-                if (_proxyJuego != null)
+                if (_gestorSesion != null && _gestorSesion.ProxyDisponible)
                 {
-                    await _proxyJuego.IniciarPartidaAsync(_codigoSala, _idJugador)
-                        .ConfigureAwait(true);
+                    await _gestorSesion.IniciarPartidaAsync().ConfigureAwait(true);
                 }
                 else
                 {
@@ -1173,16 +1067,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 _sonidoManejador.ReproducirError();
                 _avisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
                 BotonIniciarPartidaHabilitado = true;
-            }
-            catch (CommunicationObjectFaultedException excepcion)
-            {
-                _logger.Error("Canal fallido al iniciar la partida.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
-            }
-            catch (CommunicationObjectAbortedException excepcion)
-            {
-                _logger.Error("Canal abortado al iniciar la partida.", excepcion);
-                ManejarDesconexionConVerificacionInternet(Lang.errorTextoConexionInterrumpida);
             }
             catch (CommunicationException excepcion)
             {
@@ -1213,33 +1097,17 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             }
         }
 
-        /// <summary>
-        /// Notifica que la partida ha iniciado. Callback del servicio WCF.
-        /// </summary>
-        public void NotificarPartidaIniciada()
+        private void ManejarPartidaIniciada()
         {
-            var dispatcher = Application.Current?.Dispatcher;
-            if (dispatcher == null)
-            {
-                return;
-            }
-
-            dispatcher.BeginInvoke(new Action(() =>
-            {
-                AplicarInicioVisualPartida();
-                _partidaVistaModelo.NotificarPartidaIniciada();
-                BotonIniciarPartidaHabilitado = false;
-                TextoBotonIniciarPartida = string.Empty;
-                PuedeInvitarAmigos = false;
-                PuedeInvitarPorCorreo = false;
-            }));
+            AplicarInicioVisualPartida();
+            _partidaVistaModelo.NotificarPartidaIniciada();
+            BotonIniciarPartidaHabilitado = false;
+            TextoBotonIniciarPartida = string.Empty;
+            PuedeInvitarAmigos = false;
+            PuedeInvitarPorCorreo = false;
         }
 
-        /// <summary>
-        /// Notifica el inicio de una nueva ronda. Callback del servicio WCF.
-        /// </summary>
-        /// <param name="ronda">Datos de la ronda.</param>
-        public void NotificarInicioRonda(DTOs.RondaDTO ronda)
+        private void ManejarRondaIniciada(DTOs.RondaDTO ronda)
         {
             _adivinadoresQuienYaAcertaron.Clear();
             _rondaTerminadaTemprano = false;
@@ -1249,45 +1117,33 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _partidaVistaModelo.NotificarInicioRonda(ronda, Jugadores?.Count ?? 0);
         }
 
-        /// <summary>
-        /// Notifica que un jugador ha adivinado correctamente. Callback del servicio WCF.
-        /// </summary>
-        /// <param name="nombreJugador">Nombre del jugador que adivino.</param>
-        /// <param name="puntos">Puntos obtenidos.</param>
-        public void NotificarJugadorAdivino(string nombreJugador, int puntos)
+        private void ManejarJugadorAdivino(string nombreJugador, int puntos)
         {
-            var dispatcher = Application.Current?.Dispatcher;
-            if (dispatcher == null)
+            if (Jugadores != null && puntos > 0)
             {
-                return;
-            }
+                _jugadoresManejador.AgregarPuntos(nombreJugador, puntos);
 
-            dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (Jugadores != null && puntos > 0)
+                if (!_adivinadoresQuienYaAcertaron.Contains(nombreJugador))
                 {
-                    _jugadoresManejador.AgregarPuntos(nombreJugador, puntos);
+                    _adivinadoresQuienYaAcertaron.Add(nombreJugador);
 
-                    if (!_adivinadoresQuienYaAcertaron.Contains(nombreJugador))
+                    int puntosBonusDibujante = (int)(puntos * PorcentajePuntosDibujante);
+
+                    AgregarPuntosAlDibujante(puntosBonusDibujante);
+
+                    if (TodosLosAdivinadoresAcertaron() && !_rondaTerminadaTemprano)
                     {
-                        _adivinadoresQuienYaAcertaron.Add(nombreJugador);
-
-                        int puntosBonusDibujante = (int)(puntos * PorcentajePuntosDibujante);
-
-                        AgregarPuntosAlDibujante(puntosBonusDibujante);
-
-                        if (TodosLosAdivinadoresAcertaron() && !_rondaTerminadaTemprano)
-                        {
-                            _rondaTerminadaTemprano = true;
-                            _partidaVistaModelo.NotificarFinRondaTemprano();
-                        }
+                        _rondaTerminadaTemprano = true;
+                        _partidaVistaModelo.NotificarFinRondaTemprano();
                     }
                 }
+            }
 
-                _chatVistaModelo.NotificarJugadorAdivinoEnChat(nombreJugador);
-                _partidaVistaModelo.NotificarJugadorAdivino(nombreJugador, puntos, 
-                    _nombreUsuarioSesion);
-            }));
+            _chatVistaModelo.NotificarJugadorAdivinoEnChat(nombreJugador);
+            _partidaVistaModelo.NotificarJugadorAdivino(
+                nombreJugador, 
+                puntos, 
+                _nombreUsuarioSesion);
         }
 
         private void AgregarPuntosAlDibujante(int puntosBonusDibujante)
@@ -1312,12 +1168,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 && _adivinadoresQuienYaAcertaron.Count >= totalAdivinadores;
         }
 
-        /// <summary>
-        /// Notifica la recepcion de un mensaje de chat. Callback del servicio WCF.
-        /// </summary>
-        /// <param name="nombreJugador">Nombre del jugador que envio el mensaje.</param>
-        /// <param name="mensaje">Contenido del mensaje.</param>
-        public void NotificarMensajeChat(string nombreJugador, string mensaje)
+        private void ManejarMensajeChatRecibido(string nombreJugador, string mensaje)
         {
             if (EsMensajeAcierto(mensaje) && IntentarProcesarAciertoDesdeMensaje(mensaje))
             {
@@ -1326,58 +1177,27 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
             _chatVistaModelo.NotificarMensajeChat(nombreJugador, mensaje);
         }
 
-        /// <summary>
-        /// Notifica la recepcion de un trazo de dibujo. Callback del servicio WCF.
-        /// </summary>
-        /// <param name="trazo">Datos del trazo.</param>
-        public void NotificarTrazoRecibido(DTOs.TrazoDTO trazo)
+        private void ManejarTrazoRecibido(DTOs.TrazoDTO trazo)
         {
             _partidaVistaModelo.NotificarTrazoRecibido(trazo);
         }
 
-        /// <summary>
-        /// Notifica la finalizacion de la ronda actual. Callback del servicio WCF.
-        /// </summary>
-        /// <param name="tiempoAgotado">Indica si la ronda termino por tiempo agotado.</param>
-        public void NotificarFinRonda(bool tiempoAgotado)
+        private void ManejarRondaFinalizada(bool tiempoAgotado)
         {
-            var dispatcher = Application.Current?.Dispatcher;
-            if (dispatcher == null)
+            if (_rondaTerminadaTemprano)
             {
                 return;
             }
 
-            dispatcher.BeginInvoke(new Action(() =>
-            {
-                if (_rondaTerminadaTemprano)
-                {
-                    return;
-                }
-
-                _partidaVistaModelo.NotificarFinRonda(tiempoAgotado);
-            }));
+            _partidaVistaModelo.NotificarFinRonda(tiempoAgotado);
         }
 
-        /// <summary>
-        /// Notifica la finalizacion de la partida y gestiona la navegacion posterior.
-        /// </summary>
-        /// <param name="resultado">Resultado de la partida.</param>
-        public void NotificarFinPartida(DTOs.ResultadoPartidaDTO resultado)
+        private void ManejarPartidaFinalizada(DTOs.ResultadoPartidaDTO resultado)
         {
-            var dispatcher = Application.Current?.Dispatcher;
-            if (dispatcher == null)
-            {
-                return;
-            }
-
             var contextoFinPartida = CrearContextoFinPartida(resultado);
-
-            dispatcher.BeginInvoke(new Action(() =>
-            {
-                _resultadoPartidaPendiente = resultado;
-                _contextoFinPartidaPendiente = contextoFinPartida;
-                _partidaVistaModelo.NotificarFinPartida();
-            }));
+            _resultadoPartidaPendiente = resultado;
+            _contextoFinPartidaPendiente = contextoFinPartida;
+            _partidaVistaModelo.NotificarFinPartida();
         }
 
         private void ManejarFinPartidaListoParaMostrar()
@@ -1611,7 +1431,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                 return false;
             }
 
-            NotificarJugadorAdivino(nombreJugador, puntosAdivinador);
+            ManejarJugadorAdivino(nombreJugador, puntosAdivinador);
             return true;
         }
 
@@ -1771,9 +1591,14 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
 
             _eventosManejador?.Dispose();
 
-            DesuscribirEventosCanalPartida();
+            DesuscribirEventosGestorSesion();
 
-            await CerrarCanalPartidaAsync().ConfigureAwait(false);
+            if (_gestorSesion != null)
+            {
+                await _gestorSesion.CerrarCanalAsync().ConfigureAwait(false);
+                _gestorSesion.Dispose();
+                _gestorSesion = null;
+            }
 
             if (_sala != null && !string.IsNullOrWhiteSpace(_sala.Codigo)
                 && !string.IsNullOrWhiteSpace(_nombreUsuarioSesion))
@@ -1789,57 +1614,6 @@ namespace PictionaryMusicalCliente.VistaModelo.Salas
                     _logger.WarnFormat("Error al abandonar sala en finalizacion: {0}",
 						excepcion.Message);
                 }
-            }
-        }
-
-        private async Task CerrarCanalPartidaAsync()
-        {
-            if (!(_proxyJuego is ICommunicationObject canal))
-            {
-                return;
-            }
-
-            try
-            {
-                if (canal.State == CommunicationState.Faulted)
-                {
-                    canal.Abort();
-                    return;
-                }
-
-                var cierreCompletado = await Task.Run(() =>
-                {
-                    try
-                    {
-                        canal.Close(TimeSpan.FromSeconds(SegundosCierreCanal));
-                        return true;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }).ConfigureAwait(false);
-
-                if (!cierreCompletado)
-                {
-                    canal.Abort();
-                }
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn("Error al cerrar canal de partida, abortando.", excepcion);
-                try
-                {
-                    canal.Abort();
-                }
-                catch (Exception excepcionAbortar)
-                {
-                    _logger.Warn("Error al abortar canal de partida.", excepcionAbortar);
-                }
-            }
-            finally
-            {
-                _proxyJuego = null;
             }
         }
 

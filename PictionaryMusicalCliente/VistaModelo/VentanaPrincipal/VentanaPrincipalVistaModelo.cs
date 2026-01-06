@@ -5,9 +5,7 @@ using PictionaryMusicalCliente.Properties.Langs;
 using PictionaryMusicalCliente.VistaModelo.Dependencias;
 using PictionaryMusicalCliente.VistaModelo.VentanaPrincipal.Auxiliares;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using log4net;
@@ -33,23 +31,17 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         private OpcionEntero _tiempoRondaSeleccionada;
         private IdiomaOpcion _idiomaSeleccionado;
         private OpcionTexto _dificultadSeleccionada;
-        private ObservableCollection<DTOs.AmigoDTO> _amigos;
-        private DTOs.AmigoDTO _amigoSeleccionado;
 
         private readonly string _nombreUsuarioSesion;
         private readonly ILocalizacionServicio _localizacion;
-        private readonly IListaAmigosServicio _listaAmigosServicio;
         private readonly IAmigosServicio _amigosServicio;
         private readonly ISalasServicio _salasServicio;
         private readonly SonidoManejador _sonidoManejador;
         private readonly IUsuarioAutenticado _usuarioSesion;
         private readonly OpcionesPartidaManejador _opcionesPartida;
+        private readonly GestorListaAmigos _gestorAmigos;
 
-        private bool _suscripcionActiva;
-        private bool _canalAmigosDisponible;
-        private bool _desconexionProcesada;
         private bool _desconexionInternetProcesada;
-        private bool _actualizacionAmigosEnProgreso;
 
         public VentanaPrincipalVistaModelo(
             IVentanaServicio ventana,
@@ -63,25 +55,47 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             }
 
             _localizacion = dependencias.LocalizacionServicio;
-            _listaAmigosServicio = dependencias.ListaAmigosServicio;
             _amigosServicio = dependencias.AmigosServicio;
             _salasServicio = dependencias.SalasServicio;
             _sonidoManejador = dependencias.SonidoManejador;
             _usuarioSesion = dependencias.UsuarioSesion;
 
-            _listaAmigosServicio.ListaActualizada += ListaActualizada;
-            _amigosServicio.SolicitudesActualizadas += SolicitudesAmistadActualizadas;
-            _listaAmigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
-            _amigosServicio.CanalDesconectado += CanalAmigos_Desconectado;
-            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
-            DesconexionDetectada += ManejarDesconexion;
-
             _nombreUsuarioSesion = _usuarioSesion.NombreUsuario ?? string.Empty;
             _opcionesPartida = new OpcionesPartidaManejador();
+
+            _gestorAmigos = CrearGestorAmigos(dependencias);
+            SuscribirEventosGestorAmigos();
+            SuscribirEventosConectividad();
 
             CargarDatosUsuario();
             InicializarOpcionesSeleccionadas();
             InicializarComandos();
+        }
+
+        private GestorListaAmigos CrearGestorAmigos(
+            VentanaPrincipalDependencias dependencias)
+        {
+            var parametros = new GestorListaAmigosParametros
+            {
+                ListaAmigosServicio = dependencias.ListaAmigosServicio,
+                AmigosServicio = dependencias.AmigosServicio,
+                NombreUsuario = _nombreUsuarioSesion,
+                EjecutarEnDispatcher = EjecutarEnDispatcher
+            };
+
+            return new GestorListaAmigos(parametros);
+        }
+
+        private void SuscribirEventosGestorAmigos()
+        {
+            _gestorAmigos.CanalDesconectado += OnCanalAmigosDesconectado;
+            _gestorAmigos.SolicitudesActualizadas += OnSolicitudesActualizadas;
+        }
+
+        private void SuscribirEventosConectividad()
+        {
+            ConectividadRedMonitor.Instancia.ConexionPerdida += OnConexionInternetPerdida;
+            DesconexionDetectada += ManejarDesconexion;
         }
 
         private void InicializarComandos()
@@ -268,21 +282,18 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <summary>
         /// Obtiene la coleccion de amigos del usuario autenticado.
         /// </summary>
-        public ObservableCollection<DTOs.AmigoDTO> Amigos
-        {
-            get => _amigos;
-            private set => EstablecerPropiedad(ref _amigos, value);
-        }
+        public ObservableCollection<DTOs.AmigoDTO> Amigos => _gestorAmigos.Amigos;
 
         /// <summary>
         /// Obtiene o establece el amigo seleccionado en la lista.
         /// </summary>
         public DTOs.AmigoDTO AmigoSeleccionado
         {
-            get => _amigoSeleccionado;
+            get => _gestorAmigos.AmigoSeleccionado;
             set
             {
-                EstablecerPropiedad(ref _amigoSeleccionado, value);
+                _gestorAmigos.SeleccionarAmigo(value);
+                NotificarCambio(nameof(AmigoSeleccionado));
             }
         }
 
@@ -337,48 +348,24 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
         /// <returns>Tarea que representa la operacion asincrona.</returns>
         public async Task InicializarAsync()
         {
-            if (!ValidarCondicionesInicializacion())
-            {
-                return;
-            }
-
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
-                await SuscribirAServiciosAsync();
-                MarcarSuscripcionActiva();
-                await CargarListaAmigosInicialAsync();
+                await _gestorAmigos.InicializarAsync().ConfigureAwait(false);
             });
         }
 
-        private bool ValidarCondicionesInicializacion()
+        private void OnCanalAmigosDesconectado(object remitente, EventArgs argumentosEvento)
         {
-            return !_suscripcionActiva && !string.IsNullOrWhiteSpace(_nombreUsuarioSesion);
+            EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
         }
 
-        private async Task SuscribirAServiciosAsync()
+        private void OnSolicitudesActualizadas(object remitente, EventArgs argumentosEvento)
         {
-            _desconexionProcesada = false;
-            _actualizacionAmigosEnProgreso = false;
-            await _listaAmigosServicio.SuscribirAsync(_nombreUsuarioSesion).
-                ConfigureAwait(false);
-            await _amigosServicio.SuscribirAsync(_nombreUsuarioSesion).ConfigureAwait(false);
-            _canalAmigosDisponible = true;
-        }
-
-        private void MarcarSuscripcionActiva()
-        {
-            _suscripcionActiva = true;
-        }
-
-        private async Task CargarListaAmigosInicialAsync()
-        {
-            EjecutarEnDispatcher(ActualizarAmigosConListaActual);
-            await Task.CompletedTask;
-        }
-
-        private void ActualizarAmigosConListaActual()
-        {
-            ActualizarAmigos(_listaAmigosServicio.ListaActual);
+            _ = EjecutarOperacionConDesconexionAsync(async () =>
+            {
+                await _gestorAmigos.ActualizarListaAmigosDesdeServidorAsync()
+                    .ConfigureAwait(false);
+            });
         }
 
         /// <summary>
@@ -396,43 +383,16 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             await EjecutarOperacionAsync(async () =>
             {
-                await CancelarSuscripcionesAsync();
-                MarcarSuscripcionInactiva();
+                await _gestorAmigos.FinalizarAsync().ConfigureAwait(false);
             });
         }
 
         private void DesuscribirEventos()
         {
-            _listaAmigosServicio.ListaActualizada -= ListaActualizada;
-            _amigosServicio.SolicitudesActualizadas -= SolicitudesAmistadActualizadas;
-            _listaAmigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
-            _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
+            _gestorAmigos.CanalDesconectado -= OnCanalAmigosDesconectado;
+            _gestorAmigos.SolicitudesActualizadas -= OnSolicitudesActualizadas;
             ConectividadRedMonitor.Instancia.ConexionPerdida -= OnConexionInternetPerdida;
             DesconexionDetectada -= ManejarDesconexion;
-        }
-
-        private void CanalAmigos_Desconectado(object remitente, EventArgs argumentosEvento)
-        {
-            if (_desconexionProcesada)
-            {
-                return;
-            }
-
-            _desconexionProcesada = true;
-            _logger.Error(
-                "Modulo: VentanaPrincipalVistaModelo - Se detecto desconexion del " +
-                "canal de amigos. El servidor de WCF no esta disponible o cerro " +
-                "la conexion por inactividad. Se procedera a reiniciar servicios.");
-            _canalAmigosDisponible = false;
-            
-            DesuscribirEventosCanalesAmigos();
-            EjecutarEnDispatcher(ManejarDesconexionCanalAmigos);
-        }
-
-        private void DesuscribirEventosCanalesAmigos()
-        {
-            _listaAmigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
-            _amigosServicio.CanalDesconectado -= CanalAmigos_Desconectado;
         }
 
         private void ManejarDesconexionCanalAmigos()
@@ -446,23 +406,9 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarError(mensaje);
         }
 
-        private async Task CancelarSuscripcionesAsync()
-        {
-            await _listaAmigosServicio.CancelarSuscripcionAsync(
-                _nombreUsuarioSesion).ConfigureAwait(false);
-            await _amigosServicio.CancelarSuscripcionAsync(
-                _nombreUsuarioSesion).ConfigureAwait(false);
-        }
-
-        private void MarcarSuscripcionInactiva()
-        {
-            _suscripcionActiva = false;
-        }
-
         private void CargarDatosUsuario()
         {
             CodigoSala = string.Empty;
-            Amigos = new ObservableCollection<DTOs.AmigoDTO>();
             NombreUsuario = _nombreUsuarioSesion;
         }
 
@@ -472,106 +418,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             TiempoRondaSeleccionada = _opcionesPartida.TiempoRondaPredeterminado;
             IdiomaSeleccionado = _opcionesPartida.IdiomaPredeterminado;
             DificultadSeleccionada = _opcionesPartida.DificultadPredeterminada;
-        }
-
-        private void ListaActualizada(object remitente, IReadOnlyList<DTOs.AmigoDTO> amigos)
-        {
-            EjecutarEnDispatcher(() => ActualizarAmigos(amigos));
-        }
-
-        private void SolicitudesAmistadActualizadas(
-            object remitente,
-            IReadOnlyCollection<DTOs.SolicitudAmistadDTO> solicitudes)
-        {
-            if (!_canalAmigosDisponible || _desconexionProcesada || _actualizacionAmigosEnProgreso)
-            {
-                return;
-            }
-
-            _ = ActualizarListaAmigosDesdeServidorAsync();
-        }
-
-        private void ActualizarAmigos(IReadOnlyList<DTOs.AmigoDTO> amigos)
-        {
-            InicializarListaAmigos();
-            LimpiarListaAmigos();
-            AgregarAmigosValidos(amigos);
-            ValidarAmigoSeleccionado(amigos);
-        }
-
-        private void InicializarListaAmigos()
-        {
-            if (Amigos == null)
-            {
-                Amigos = new ObservableCollection<DTOs.AmigoDTO>();
-            }
-        }
-
-        private void LimpiarListaAmigos()
-        {
-            Amigos.Clear();
-        }
-
-        private void AgregarAmigosValidos(IReadOnlyList<DTOs.AmigoDTO> amigos)
-        {
-            if (amigos != null)
-            {
-                foreach (var amigo in amigos.Where(a =>
-                    !string.IsNullOrWhiteSpace(a?.NombreUsuario)))
-                {
-                    Amigos.Add(amigo);
-                }
-            }
-        }
-
-        private void ValidarAmigoSeleccionado(IReadOnlyList<DTOs.AmigoDTO> amigos)
-        {
-            if (AmigoSeleccionado != null
-                && (amigos == null || !amigos.Any(a => string.Equals(
-                    a.NombreUsuario,
-                    AmigoSeleccionado.NombreUsuario,
-                    StringComparison.OrdinalIgnoreCase))))
-            {
-                AmigoSeleccionado = null;
-            }
-        }
-
-        private async Task ActualizarListaAmigosDesdeServidorAsync()
-        {
-            if (!ValidarSesionParaActualizarAmigos() || _actualizacionAmigosEnProgreso)
-            {
-                return;
-            }
-
-            _actualizacionAmigosEnProgreso = true;
-            try
-            {
-                await EjecutarOperacionConDesconexionAsync(async () =>
-                {
-                    var amigos = await ObtenerAmigosDelServidorAsync();
-                    ActualizarListaEnDispatcher(amigos);
-                });
-            }
-            finally
-            {
-                _actualizacionAmigosEnProgreso = false;
-            }
-        }
-
-        private bool ValidarSesionParaActualizarAmigos()
-        {
-            return !string.IsNullOrWhiteSpace(_nombreUsuarioSesion);
-        }
-
-        private async Task<IReadOnlyList<DTOs.AmigoDTO>> ObtenerAmigosDelServidorAsync()
-        {
-            return await _listaAmigosServicio.ObtenerAmigosAsync(
-                _nombreUsuarioSesion).ConfigureAwait(false);
-        }
-
-        private void ActualizarListaEnDispatcher(IReadOnlyList<DTOs.AmigoDTO> amigos)
-        {
-            EjecutarEnDispatcher(() => ActualizarAmigos(amigos));
         }
 
         private async Task EjecutarEliminarAmigoAsync(DTOs.AmigoDTO amigo)
@@ -594,8 +440,8 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             await EjecutarOperacionConDesconexionAsync(async () =>
             {
-                await EliminarAmigoEnServidorAsync(amigo.NombreUsuario);
-                await ActualizarListaTrasEliminacion();
+                await _gestorAmigos.EliminarAmigoAsync(amigo.NombreUsuario)
+                    .ConfigureAwait(true);
                 MostrarExitoEliminacion();
             });
         }
@@ -626,18 +472,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _logger.Warn("Intento de eliminar amigo sin sesion activa.");
             _sonidoManejador.ReproducirError();
             App.AvisoServicio.Mostrar(Lang.errorTextoErrorProcesarSolicitud);
-        }
-
-        private async Task EliminarAmigoEnServidorAsync(string nombreAmigo)
-        {
-            await _amigosServicio.EliminarAmigoAsync(
-                _nombreUsuarioSesion,
-                nombreAmigo).ConfigureAwait(true);
-        }
-
-        private async Task ActualizarListaTrasEliminacion()
-        {
-            await ActualizarListaAmigosDesdeServidorAsync().ConfigureAwait(true);
         }
 
         private void MostrarExitoEliminacion()
@@ -674,12 +508,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarReinicioAplicacion(bool esVoluntario)
         {
-            if (_desconexionProcesada)
+            if (_gestorAmigos.DesconexionProcesada)
             {
                 return;
             }
 
-            _desconexionProcesada = true;
+            _gestorAmigos.MarcarDesconexionProcesada();
             ReiniciarAplicacion();
 
             if (!esVoluntario)
@@ -698,7 +532,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 "Reinicializando servicios de conexion.");
             
             DesuscribirEventos();
-            AbortarCanalesAmigos();
+            _gestorAmigos.AbortarConexiones();
             IntentarCerrarSesionEnServidor();
             _usuarioSesion.Limpiar();
             App.ReinicializarServiciosConexion();
@@ -724,27 +558,6 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
             _ventana.MostrarVentana(inicioVistaModelo);
             _ventana.CerrarTodasLasVentanas();
             _ventana.CerrarVentana(this);
-        }
-
-        private void AbortarCanalesAmigos()
-        {
-            try
-            {
-                _listaAmigosServicio.AbortarConexion();
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn("Error al abortar canal de lista de amigos.", excepcion);
-            }
-
-            try
-            {
-                _amigosServicio.AbortarConexion();
-            }
-            catch (Exception excepcion)
-            {
-                _logger.Warn("Error al abortar canal de amigos.", excepcion);
-            }
         }
 
         private void IntentarCerrarSesionEnServidor()
@@ -815,13 +628,13 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void EjecutarAbrirSolicitudes()
         {
-            if (!_canalAmigosDisponible || _amigosServicio.HuboErrorCargaSolicitudes)
+            if (!_gestorAmigos.CanalDisponible || _gestorAmigos.HuboErrorCargaSolicitudes)
             {
                 App.AvisoServicio.Mostrar(Lang.amigosErrorObtenerSolicitudes);
                 return;
             }
 
-            var solicitudesPendientes = _amigosServicio?.SolicitudesPendientes;
+            var solicitudesPendientes = _gestorAmigos.SolicitudesPendientes;
 
             if (solicitudesPendientes == null || solicitudesPendientes.Count == 0)
             {
@@ -948,7 +761,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
             var invitacionSalaServicio = new InvitacionSalaServicio(
                 App.InvitacionesServicio,
-                _listaAmigosServicio,
+                _gestorAmigos.ListaAmigosServicio,
                 App.PerfilServicio,
                 _sonidoManejador,
                 App.AvisoServicio,
@@ -961,7 +774,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
                 App.WcfFabrica);
 
             var perfiles = new PerfilesSalaDependencias(
-                _listaAmigosServicio,
+                _gestorAmigos.ListaAmigosServicio,
                 App.PerfilServicio,
                 App.ReportesServicio,
                 _usuarioSesion);
@@ -1004,12 +817,12 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void ManejarDesconexion(string mensaje)
         {
-            if (_desconexionProcesada || _desconexionInternetProcesada)
+            if (_gestorAmigos.DesconexionProcesada || _desconexionInternetProcesada)
             {
                 return;
             }
 
-            _desconexionProcesada = true;
+            _gestorAmigos.MarcarDesconexionProcesada();
             _logger.WarnFormat("Desconexion detectada: {0}", mensaje);
             _sonidoManejador.ReproducirError();
             ReiniciarAplicacion();
@@ -1018,7 +831,7 @@ namespace PictionaryMusicalCliente.VistaModelo.VentanaPrincipal
 
         private void OnConexionInternetPerdida(object remitente, EventArgs argumentos)
         {
-            if (_desconexionInternetProcesada || _desconexionProcesada)
+            if (_desconexionInternetProcesada || _gestorAmigos.DesconexionProcesada)
             {
                 return;
             }
