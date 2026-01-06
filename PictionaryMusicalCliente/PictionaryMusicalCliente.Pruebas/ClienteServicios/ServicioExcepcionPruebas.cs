@@ -188,7 +188,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         [TestMethod]
         public void Prueba_TipoErrorServicio_ContieneTodosLosValores()
         {
-            var valores = Enum.GetValues(typeof(TipoErrorServicio)).Cast<TipoErrorServicio>().ToList();
+            var valores = Enum.GetValues(typeof(TipoErrorServicio)).Cast<TipoErrorServicio>().
+                ToList();
             
             valores.Should().HaveCount(6);
         }

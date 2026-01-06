@@ -238,7 +238,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             
             servicioLocal.Dispose();
 
-            Assert.IsInstanceOfType(servicioLocal, typeof(SalasServicio), "El servicio debe ser una instancia válida después de Dispose");
+            Assert.IsInstanceOfType(servicioLocal, typeof(SalasServicio), 
+                "El servicio debe ser una instancia válida después de Dispose");
         }
 
         [TestMethod]

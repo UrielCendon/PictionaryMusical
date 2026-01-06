@@ -19,7 +19,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _localizadorMock = new Mock<ILocalizadorServicio>();
 
             _localizadorMock
-                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), 
+                It.IsAny<string>()))
                 .Returns((string mensaje, string predeterminado) => 
                     string.IsNullOrWhiteSpace(mensaje) ? predeterminado : mensaje);
 
@@ -61,7 +62,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             var excepcion = new FaultException(mensajeOriginal);
 
             _localizadorMock
-                .Setup(localizador => localizador.Localizar(mensajeOriginal, mensajePredeterminado))
+                .Setup(localizador => localizador.Localizar(mensajeOriginal, 
+                mensajePredeterminado))
                 .Returns("Error localizado");
 
             var resultado = _manejador.ObtenerMensaje(excepcion, mensajePredeterminado);

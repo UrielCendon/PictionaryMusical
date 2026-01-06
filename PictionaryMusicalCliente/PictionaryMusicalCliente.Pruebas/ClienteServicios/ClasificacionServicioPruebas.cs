@@ -175,7 +175,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         }
 
         [TestMethod]
-        public async Task Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_LanzaExcepcion()
+        public async 
+            Task Prueba_ObtenerTopJugadoresAsync_InvalidOperationException_LanzaExcepcion()
         {
             var invalidOperationException =
                 new InvalidOperationException("Operacion no valida");
@@ -197,7 +198,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             await _servicio.ObtenerTopJugadoresAsync();
 
-            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteClasificacion(), Times.Once);
+            _fabricaClientesMock.Verify(fabrica => fabrica.CrearClienteClasificacion(), 
+                Times.Once);
         }
 
         [TestMethod]
@@ -226,7 +228,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
 
             var resultado = await _servicio.ObtenerTopJugadoresAsync();
 
-            Assert.IsInstanceOfType(resultado, typeof(IReadOnlyList<DTOs.ClasificacionUsuarioDTO>));
+            Assert.IsInstanceOfType(resultado, 
+                typeof(IReadOnlyList<DTOs.ClasificacionUsuarioDTO>));
         }
 
         private static DTOs.ClasificacionUsuarioDTO[] CrearClasificacionValida()

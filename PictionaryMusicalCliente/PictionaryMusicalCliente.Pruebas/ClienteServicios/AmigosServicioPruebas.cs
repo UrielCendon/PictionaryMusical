@@ -217,7 +217,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _servicio.Dispose();
             _servicio.Dispose();
 
-            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio), "El servicio debe mantener su tipo después de Dispose");
+            Assert.IsInstanceOfType(_servicio, typeof(AmigosServicio), 
+                "El servicio debe mantener su tipo después de Dispose");
         }
     }
 }

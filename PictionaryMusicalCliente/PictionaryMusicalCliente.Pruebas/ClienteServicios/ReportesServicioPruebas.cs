@@ -35,7 +35,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
                 .Returns(_clienteReportesMock.Object);
 
             _localizadorMock
-                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), 
+                It.IsAny<string>()))
                 .Returns((string mensaje, string def) => mensaje ?? def);
 
             _servicio = new ReportesServicio(

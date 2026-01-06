@@ -28,7 +28,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _fabricaClientesMock = new Mock<IWcfClienteFabrica>();
             _manejadorErrorMock = new Mock<IManejadorErrorServicio>();
             _clienteVerificacionMock =
-                new Mock<PictionaryServidorServicioCodigoVerificacion.ICodigoVerificacionManejador>();
+                new Mock<PictionaryServidorServicioCodigoVerificacion.
+                ICodigoVerificacionManejador>();
             _clienteCuentaMock =
                 new Mock<PictionaryServidorServicioCuenta.ICuentaManejador>();
 
@@ -175,7 +176,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
         }
 
         [TestMethod]
-        public async Task Prueba_SolicitarCodigoRegistroAsync_CommunicationException_LanzaExcepcion()
+        public async 
+            Task Prueba_SolicitarCodigoRegistroAsync_CommunicationException_LanzaExcepcion()
         {
             var solicitud = CrearNuevaCuentaValida();
             var communicationException = new CommunicationException("Error de red");

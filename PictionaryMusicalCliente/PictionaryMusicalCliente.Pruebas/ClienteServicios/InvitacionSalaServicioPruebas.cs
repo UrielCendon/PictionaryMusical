@@ -32,7 +32,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _localizadorServicioMock = new Mock<ILocalizadorServicio>();
 
             _localizadorServicioMock
-                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), It.IsAny<string>()))
+                .Setup(localizador => localizador.Localizar(It.IsAny<string>(), 
+                It.IsAny<string>()))
                 .Returns((string mensaje, string predeterminado) => predeterminado);
 
             _servicio = new InvitacionSalaServicio(
@@ -175,7 +176,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             string correo = "usuario@ejemplo.com";
 
             _invitacionesServicioMock
-                .Setup(servicioInvitaciones => servicioInvitaciones.EnviarInvitacionAsync(codigoSala, correo))
+                .Setup(servicioInvitaciones => servicioInvitaciones.
+                EnviarInvitacionAsync(codigoSala, correo))
                 .ReturnsAsync(new DTOs.ResultadoOperacionDTO
                 {
                     OperacionExitosa = true,
@@ -194,7 +196,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             string correo = "usuario@ejemplo.com";
 
             _invitacionesServicioMock
-                .Setup(servicioInvitaciones => servicioInvitaciones.EnviarInvitacionAsync(codigoSala, correo))
+                .Setup(servicioInvitaciones => servicioInvitaciones.
+                EnviarInvitacionAsync(codigoSala, correo))
                 .ReturnsAsync(new DTOs.ResultadoOperacionDTO
                 {
                     OperacionExitosa = false,
@@ -261,7 +264,8 @@ namespace PictionaryMusicalCliente.Pruebas.ClienteServicios
             _servicio.Dispose();
             _servicio.Dispose();
 
-            Assert.IsInstanceOfType(_servicio, typeof(InvitacionSalaServicio), "El servicio debe mantener su tipo después de Dispose");
+            Assert.IsInstanceOfType(_servicio, typeof(InvitacionSalaServicio), 
+                "El servicio debe mantener su tipo después de Dispose");
         }
     }
 }
