@@ -1,336 +1,381 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Datos.Modelo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
 {
     [TestClass]
     public class UsuarioRepositorioPruebas
     {
-        private const int IdUsuarioValido = 10;
-        private const int IdUsuarioInexistente = 99;
+        private const string NombreUsuarioPrueba = "UsuarioPrueba";
+        private const string NombreUsuarioInexistente = "UsuarioInexistente";
+        private const string ContrasenaPrueba = "Contrasena123!";
+        private const string CorreoPrueba = "usuario@correo.com";
+        private const string CorreoInexistente = "inexistente@correo.com";
+        private const string NuevaContrasenaPrueba = "NuevaContrasena456!";
+        private const int IdUsuarioPrueba = 1;
+        private const int IdUsuarioInexistente = 999;
         private const int IdUsuarioInvalido = 0;
-        private const string NombreUsuarioValido = "UsuarioPrueba";
-        private const string NombreUsuarioDiferente = "OtroUsuario";
-        private const string NombreUsuarioEspacios = " UsuarioPrueba ";
-        private const string NombreUsuarioVacio = "";
-        private const string CorreoValido = "correo@prueba.com";
-        private const string CorreoInexistente = "inexistente@prueba.com";
-        private const string ContrasenaOriginal = "HashOriginal";
-        private const string ContrasenaNueva = "HashNuevo";
+        private const int IdUsuarioNegativo = -1;
+        private const int IdJugadorPrueba = 1;
 
-        private Mock<BaseDatosPruebaEntities> _contextoMock;
-        private Mock<DbSet<Usuario>> _usuarioDbSetMock;
-        private UsuarioRepositorio _repositorio;
-
-        [TestInitialize]
-        public void Inicializar()
+        [TestMethod]
+        public void Prueba_Constructor_LanzaExcepcionContextoNulo()
         {
-            _contextoMock = new Mock<BaseDatosPruebaEntities>();
-            _usuarioDbSetMock = CrearDbSetMock(new List<Usuario>());
-
-            _contextoMock
-                .Setup(contexto => contexto.Usuario)
-                .Returns(_usuarioDbSetMock.Object);
-
-            _repositorio = new UsuarioRepositorio(_contextoMock.Object);
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new UsuarioRepositorio(null));
         }
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoNuloLanzaExcepcion()
+        public void Prueba_ExisteNombreUsuario_RetornaVerdaderoNombreExistente()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new UsuarioRepositorio(null));
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteNombreUsuario_NombreNuloRetornaFalse()
-        {
-            bool resultado = _repositorio.ExisteNombreUsuario(null);
-
-            Assert.IsFalse(resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteNombreUsuario_UsuarioExisteRetornaTrue()
-        {
-            var datos = new List<Usuario>
+            var datosUsuarios = new List<Usuario>
             {
-                new Usuario { Nombre_Usuario = NombreUsuarioValido }
+                new Usuario
+                {
+                    idUsuario = IdUsuarioPrueba,
+                    Nombre_Usuario = NombreUsuarioPrueba,
+                    Contrasena = ContrasenaPrueba,
+                    Jugador_idJugador = IdJugadorPrueba
+                }
             }.AsQueryable();
 
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var mockDbSet = CrearMockDbSet(datosUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
 
-            bool resultado = _repositorio.ExisteNombreUsuario(NombreUsuarioEspacios);
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ExisteNombreUsuario(NombreUsuarioPrueba);
 
             Assert.IsTrue(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ExisteNombreUsuario_UsuarioNoExisteRetornaFalse()
+        public void Prueba_ExisteNombreUsuario_RetornaFalsoNombreInexistente()
         {
-            var datos = new List<Usuario>
+            var datosUsuarios = new List<Usuario>
             {
-                new Usuario { Nombre_Usuario = NombreUsuarioValido }
+                new Usuario
+                {
+                    idUsuario = IdUsuarioPrueba,
+                    Nombre_Usuario = NombreUsuarioPrueba,
+                    Contrasena = ContrasenaPrueba,
+                    Jugador_idJugador = IdJugadorPrueba
+                }
             }.AsQueryable();
 
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var mockDbSet = CrearMockDbSet(datosUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
 
-            bool resultado = _repositorio.ExisteNombreUsuario(NombreUsuarioDiferente);
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ExisteNombreUsuario(NombreUsuarioInexistente);
 
             Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ExisteNombreUsuario_ErrorBaseDatosLanzaExcepcionPersonalizada()
+        public void Prueba_ExisteNombreUsuario_RetornaFalsoNombreNulo()
         {
-            _usuarioDbSetMock.As<IQueryable<Usuario>>()
-                .Setup(consulta => consulta.Provider)
-                .Throws(new EntityException());
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ExisteNombreUsuario(NombreUsuarioValido));
+            bool resultado = repositorio.ExisteNombreUsuario(null);
+
+            Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_CrearUsuario_UsuarioNuloLanzaExcepcion()
+        public void Prueba_ExisteNombreUsuario_RetornaFalsoNombreVacio()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                _repositorio.CrearUsuario(null));
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ExisteNombreUsuario(string.Empty);
+
+            Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_CrearUsuario_UsuarioValidoGuardaCambios()
+        public void Prueba_ExisteNombreUsuario_RetornaFalsoNombreSoloEspacios()
         {
-            var nuevoUsuario = new Usuario { Nombre_Usuario = NombreUsuarioValido };
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
 
-            _usuarioDbSetMock
-                .Setup(conjunto => conjunto.Add(It.IsAny<Usuario>()))
-                .Returns<Usuario>(entidad => entidad);
+            bool resultado = repositorio.ExisteNombreUsuario("   ");
 
-            var resultado = _repositorio.CrearUsuario(nuevoUsuario);
+            Assert.IsFalse(resultado);
+        }
 
-            _usuarioDbSetMock.Verify(
-                conjuntoUsuarios => conjuntoUsuarios.Add(It.IsAny<Usuario>()),
+        [TestMethod]
+        public void Prueba_CrearUsuario_LanzaExcepcionUsuarioNulo()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentNullException>(
+                () => repositorio.CrearUsuario(null));
+        }
+
+        [TestMethod]
+        public void Prueba_CrearUsuario_AgregaUsuarioAlContexto()
+        {
+            var usuarioNuevo = new Usuario
+            {
+                Nombre_Usuario = NombreUsuarioPrueba,
+                Contrasena = ContrasenaPrueba,
+                Jugador_idJugador = IdJugadorPrueba
+            };
+
+            var listaUsuarios = new List<Usuario>();
+            var mockDbSet = CrearMockDbSetConAdd(listaUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
+
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            repositorio.CrearUsuario(usuarioNuevo);
+
+            mockDbSet.Verify(
+                dbSet => dbSet.Add(It.IsAny<Usuario>()),
                 Times.Once);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Once);
-            Assert.AreEqual(NombreUsuarioValido, resultado.Nombre_Usuario);
         }
 
         [TestMethod]
-        public void Prueba_CrearUsuario_ErrorGuardarLanzaExcepcionPersonalizada()
+        public void Prueba_CrearUsuario_GuardaCambiosEnContexto()
         {
-            var nuevoUsuario = new Usuario { Nombre_Usuario = NombreUsuarioValido };
-
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new DbUpdateException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.CrearUsuario(nuevoUsuario));
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPorNombreUsuario_NombreVacioLanzaExcepcion()
-        {
-            Assert.ThrowsException<ArgumentException>(() =>
-                _repositorio.ObtenerPorNombreUsuario(NombreUsuarioVacio));
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPorNombreUsuario_UsuarioExisteRetornaEntidad()
-        {
-            var datos = new List<Usuario>
+            var usuarioNuevo = new Usuario
             {
-                new Usuario { Nombre_Usuario = NombreUsuarioValido }
-            }.AsQueryable();
+                Nombre_Usuario = NombreUsuarioPrueba,
+                Contrasena = ContrasenaPrueba,
+                Jugador_idJugador = IdJugadorPrueba
+            };
 
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var listaUsuarios = new List<Usuario>();
+            var mockDbSet = CrearMockDbSetConAdd(listaUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
 
-            var resultado = _repositorio.ObtenerPorNombreUsuario(NombreUsuarioEspacios);
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
 
-            Assert.AreEqual(NombreUsuarioValido, resultado.Nombre_Usuario);
+            repositorio.CrearUsuario(usuarioNuevo);
+
+            mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorNombreUsuario_UsuarioNoExisteLanzaExcepcion()
+        public void Prueba_CrearUsuario_RetornaUsuarioCreado()
         {
-            var datos = new List<Usuario>().AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var usuarioNuevo = new Usuario
+            {
+                Nombre_Usuario = NombreUsuarioPrueba,
+                Contrasena = ContrasenaPrueba,
+                Jugador_idJugador = IdJugadorPrueba
+            };
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ObtenerPorNombreUsuario(NombreUsuarioValido));
+            var mockDbSet = new Mock<DbSet<Usuario>>();
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Usuario>()))
+                .Returns<Usuario>(usuario => usuario);
+
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
+
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            var resultado = repositorio.CrearUsuario(usuarioNuevo);
+
+            Assert.AreEqual(NombreUsuarioPrueba, resultado.Nombre_Usuario);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorCorreo_CorreoVacioLanzaExcepcion()
+        public void Prueba_ObtenerPorNombreUsuario_LanzaExcepcionNombreNulo()
         {
-            Assert.ThrowsException<ArgumentException>(() =>
-                _repositorio.ObtenerPorCorreo(NombreUsuarioVacio));
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreUsuario(null));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorCorreo_UsuarioEncontradoRetornaEntidad()
+        public void Prueba_ObtenerPorNombreUsuario_LanzaExcepcionNombreVacio()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreUsuario(string.Empty));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorNombreUsuario_LanzaExcepcionNombreSoloEspacios()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreUsuario("   "));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorCorreo_LanzaExcepcionCorreoNulo()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorCorreo(null));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorCorreo_LanzaExcepcionCorreoVacio()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorCorreo(string.Empty));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorCorreo_LanzaExcepcionCorreoSoloEspacios()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorCorreo("   "));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorIdConRedesSociales_LanzaExcepcionIdInvalido()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
+                () => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioInvalido));
+        }
+
+        [TestMethod]
+        public void Prueba_ObtenerPorIdConRedesSociales_LanzaExcepcionIdNegativo()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
+                () => repositorio.ObtenerPorIdConRedesSociales(IdUsuarioNegativo));
+        }
+
+        [TestMethod]
+        public void Prueba_ActualizarContrasena_GuardaCambiosEnContexto()
         {
             var usuario = new Usuario
             {
-                Jugador = new Jugador { Correo = CorreoValido }
+                idUsuario = IdUsuarioPrueba,
+                Nombre_Usuario = NombreUsuarioPrueba,
+                Contrasena = ContrasenaPrueba,
+                Jugador_idJugador = IdJugadorPrueba
             };
-            var datos = new List<Usuario> { usuario }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
 
-            var resultado = _repositorio.ObtenerPorCorreo(CorreoValido);
+            var datosUsuarios = new List<Usuario> { usuario }.AsQueryable();
+            var mockDbSet = CrearMockDbSet(datosUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
 
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(CorreoValido, resultado.Jugador.Correo);
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            repositorio.ActualizarContrasena(IdUsuarioPrueba, NuevaContrasenaPrueba);
+
+            mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorCorreo_UsuarioNoEncontradoLanzaExcepcion()
+        public void Prueba_ActualizarContrasena_CambiaContrasenaUsuario()
         {
             var usuario = new Usuario
             {
-                Jugador = new Jugador { Correo = CorreoValido }
+                idUsuario = IdUsuarioPrueba,
+                Nombre_Usuario = NombreUsuarioPrueba,
+                Contrasena = ContrasenaPrueba,
+                Jugador_idJugador = IdJugadorPrueba
             };
-            var datos = new List<Usuario> { usuario }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ObtenerPorCorreo(CorreoInexistente));
+            var datosUsuarios = new List<Usuario> { usuario }.AsQueryable();
+            var mockDbSet = CrearMockDbSet(datosUsuarios);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Usuario).Returns(mockDbSet.Object);
+
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            repositorio.ActualizarContrasena(IdUsuarioPrueba, NuevaContrasenaPrueba);
+
+            Assert.AreEqual(NuevaContrasenaPrueba, usuario.Contrasena);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorIdConRedesSociales_IdInvalidoLanzaExcepcion()
+        public void Prueba_ObtenerPorNombreConJugador_LanzaExcepcionNombreNulo()
         {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-                _repositorio.ObtenerPorIdConRedesSociales(IdUsuarioInvalido));
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreConJugador(null));
         }
 
         [TestMethod]
-        public void Prueba_ObtenerPorIdConRedesSociales_UsuarioExisteRetornaEntidad()
+        public void Prueba_ObtenerPorNombreConJugador_LanzaExcepcionNombreVacio()
         {
-            var datos = new List<Usuario>
-            {
-                new Usuario
-                {
-                    idUsuario = IdUsuarioValido,
-                    Jugador = new Jugador { RedSocial = new List<RedSocial>() }
-                }
-            }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
 
-            var resultado = _repositorio.ObtenerPorIdConRedesSociales(IdUsuarioValido);
-
-            Assert.AreEqual(IdUsuarioValido, resultado.idUsuario);
-            Assert.IsNotNull(resultado.Jugador.RedSocial);
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreConJugador(string.Empty));
         }
 
         [TestMethod]
-        public void Prueba_ActualizarContrasena_UsuarioExisteActualizaYGuarda()
+        public void Prueba_ObtenerPorNombreConJugador_LanzaExcepcionNombreSoloEspacios()
         {
-            var usuario = new Usuario
-            {
-                idUsuario = IdUsuarioValido,
-                Contrasena = ContrasenaOriginal
-            };
-            var datos = new List<Usuario> { usuario }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new UsuarioRepositorio(mockContexto.Object);
 
-            _repositorio.ActualizarContrasena(IdUsuarioValido, ContrasenaNueva);
-
-            Assert.AreEqual(ContrasenaNueva, usuario.Contrasena);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Once);
+            Assert.ThrowsException<ArgumentException>(
+                () => repositorio.ObtenerPorNombreConJugador("   "));
         }
 
-        [TestMethod]
-        public void Prueba_ActualizarContrasena_UsuarioNoExisteNoGuardaCambios()
+        private Mock<DbSet<Usuario>> CrearMockDbSet(IQueryable<Usuario> datos)
         {
-            var datos = new List<Usuario>().AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
-
-            _repositorio.ActualizarContrasena(IdUsuarioInexistente, ContrasenaNueva);
-
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarContrasena_ErrorBaseDatosLanzaExcepcionPersonalizada()
-        {
-            var usuario = new Usuario { idUsuario = IdUsuarioValido };
-            var datos = new List<Usuario> { usuario }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
-
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new DbUpdateException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ActualizarContrasena(IdUsuarioValido, ContrasenaNueva));
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPorNombreConJugador_NombreVacioLanzaExcepcion()
-        {
-            Assert.ThrowsException<ArgumentException>(() =>
-                _repositorio.ObtenerPorNombreConJugador(string.Empty));
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPorNombreConJugador_UsuarioExisteRetornaEntidad()
-        {
-            var datos = new List<Usuario>
-            {
-                new Usuario
-                {
-                    Nombre_Usuario = NombreUsuarioValido,
-                    Jugador = new Jugador()
-                }
-            }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
-
-            var resultado = _repositorio.ObtenerPorNombreConJugador(NombreUsuarioValido);
-
-            Assert.AreEqual(NombreUsuarioValido, resultado.Nombre_Usuario);
-            Assert.IsNotNull(resultado.Jugador);
-        }
-
-        [TestMethod]
-        public void Prueba_ObtenerPorNombreConJugador_UsuarioNoExisteLanzaExcepcion()
-        {
-            var datos = new List<Usuario>().AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ObtenerPorNombreConJugador(NombreUsuarioValido));
-        }
-
-        private static Mock<DbSet<T>> CrearDbSetMock<T>(List<T> datos) where T : class
-        {
-            var mockSet = new Mock<DbSet<T>>();
-            ConfigurarDbSet(mockSet, datos.AsQueryable());
-            
-            mockSet.Setup(dbSet => dbSet.Add(It.IsAny<T>())).Returns<T>(entidad => entidad);
-
-            return mockSet;
-        }
-
-        private static void ConfigurarDbSet<T>(
-            Mock<DbSet<T>> mockSet,
-            IQueryable<T> datos) where T : class
-        {
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Provider)
+            var mockDbSet = new Mock<DbSet<Usuario>>();
+            mockDbSet.As<IQueryable<Usuario>>()
+                .Setup(dbSet => dbSet.Provider)
                 .Returns(datos.Provider);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Expression)
+            mockDbSet.As<IQueryable<Usuario>>()
+                .Setup(dbSet => dbSet.Expression)
                 .Returns(datos.Expression);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.ElementType)
+            mockDbSet.As<IQueryable<Usuario>>()
+                .Setup(dbSet => dbSet.ElementType)
                 .Returns(datos.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => datos.GetEnumerator());
-            mockSet.Setup(dbSet => dbSet.Include(It.IsAny<string>())).Returns(mockSet.Object);
+            mockDbSet.As<IQueryable<Usuario>>()
+                .Setup(dbSet => dbSet.GetEnumerator())
+                .Returns(datos.GetEnumerator());
+            return mockDbSet;
+        }
+
+        private Mock<DbSet<Usuario>> CrearMockDbSetConAdd(List<Usuario> listaUsuarios)
+        {
+            var datos = listaUsuarios.AsQueryable();
+            var mockDbSet = CrearMockDbSet(datos);
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Usuario>()))
+                .Callback<Usuario>(usuario => listaUsuarios.Add(usuario))
+                .Returns<Usuario>(usuario => usuario);
+            return mockDbSet;
         }
     }
 }

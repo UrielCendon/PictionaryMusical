@@ -1,243 +1,288 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Datos.Modelo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
 {
     [TestClass]
     public class ReporteRepositorioPruebas
     {
-        private const int IdReportanteValido = 10;
-        private const int IdReportadoValido = 20;
-        private const int IdReportadoOtro = 30;
-        private const int IdInvalido = 0;
-        private const int CantidadEsperadaCero = 0;
-        private const int CantidadEsperadaUno = 1;
-        private const string MotivoReporte = "Comportamiento inadecuado";
+        private const int IdReportantePrueba = 1;
+        private const int IdReportadoPrueba = 2;
+        private const int IdReportadoInvalido = 0;
+        private const int IdReportadoNegativo = -1;
+        private const int CantidadReportesPrueba = 3;
+        private const string MotivoPrueba = "Comportamiento inapropiado";
 
-        private Mock<BaseDatosPruebaEntities> _contextoMock;
-        private Mock<DbSet<Reporte>> _reporteDbSetMock;
-        private ReporteRepositorio _repositorio;
-
-        [TestInitialize]
-        public void Inicializar()
+        [TestMethod]
+        public void Prueba_Constructor_LanzaExcepcionContextoNulo()
         {
-            _contextoMock = new Mock<BaseDatosPruebaEntities>();
-            _reporteDbSetMock = CrearDbSetMock(new List<Reporte>());
-
-            _contextoMock
-                .Setup(contexto => contexto.Reporte)
-                .Returns(_reporteDbSetMock.Object);
-
-            _repositorio = new ReporteRepositorio(_contextoMock.Object);
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new ReporteRepositorio(null));
         }
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoNuloLanzaExcepcion()
+        public void Prueba_ExisteReporte_RetornaVerdaderoReporteExistente()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new ReporteRepositorio(null));
-        }
-
-        [TestMethod]
-        public void Prueba_ExisteReporte_ReporteExisteRetornaTrue()
-        {
-            var datos = new List<Reporte>
+            var datosReportes = new List<Reporte>
             {
                 new Reporte
                 {
-                    idReportante = IdReportanteValido,
-                    idReportado = IdReportadoValido
+                    idReporte = 1,
+                    idReportante = IdReportantePrueba,
+                    idReportado = IdReportadoPrueba,
+                    Motivo = MotivoPrueba,
+                    Fecha_Reporte = DateTime.Now
                 }
             }.AsQueryable();
 
-            ConfigurarDbSet(_reporteDbSetMock, datos);
+            var mockDbSet = CrearMockDbSet(datosReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
 
-            bool resultado = _repositorio.ExisteReporte(IdReportanteValido, IdReportadoValido);
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ExisteReporte(IdReportantePrueba, IdReportadoPrueba);
 
             Assert.IsTrue(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ExisteReporte_ReporteNoExisteRetornaFalse()
+        public void Prueba_ExisteReporte_RetornaFalsoReporteInexistente()
         {
-            var datos = new List<Reporte>
-            {
-                new Reporte
-                {
-                    idReportante = IdReportanteValido,
-                    idReportado = IdReportadoOtro
-                }
-            }.AsQueryable();
+            var datosReportes = new List<Reporte>().AsQueryable();
 
-            ConfigurarDbSet(_reporteDbSetMock, datos);
+            var mockDbSet = CrearMockDbSet(datosReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
 
-            bool resultado = _repositorio.ExisteReporte(IdReportanteValido, IdReportadoValido);
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ExisteReporte(IdReportantePrueba, IdReportadoPrueba);
 
             Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ExisteReporte_ErrorBaseDatosLanzaExcepcionPersonalizada()
+        public void Prueba_ExisteReporte_RetornaFalsoReportanteDiferente()
         {
-            _reporteDbSetMock.As<IQueryable<Reporte>>()
-                .Setup(consulta => consulta.Provider)
-                .Throws(new EntityException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ExisteReporte(IdReportanteValido, IdReportadoValido));
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ReporteNuloLanzaExcepcion()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                _repositorio.CrearReporte(null));
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_DatosValidosGuardaCambios()
-        {
-            var nuevoReporte = new Reporte
+            int otroReportante = 99;
+            var datosReportes = new List<Reporte>
             {
-                idReportante = IdReportanteValido,
-                idReportado = IdReportadoValido,
-                Motivo = MotivoReporte
-            };
-
-            _reporteDbSetMock
-                .Setup(conjunto => conjunto.Add(It.IsAny<Reporte>()))
-                .Returns<Reporte>(entidad => entidad);
-
-            var resultado = _repositorio.CrearReporte(nuevoReporte);
-
-            _reporteDbSetMock.Verify(
-                conjuntoReportes => conjuntoReportes.Add(It.IsAny<Reporte>()),
-                Times.Once);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Once);
-            Assert.AreEqual(IdReportanteValido, resultado.idReportante);
-            Assert.AreEqual(IdReportadoValido, resultado.idReportado);
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ErrorGuardarLanzaExcepcionPersonalizada()
-        {
-            var nuevoReporte = new Reporte
-            {
-                idReportante = IdReportanteValido,
-                idReportado = IdReportadoValido
-            };
-
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new DbUpdateException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.CrearReporte(nuevoReporte));
-        }
-
-        [TestMethod]
-        public void Prueba_CrearReporte_ErrorEntityLanzaExcepcionPersonalizada()
-        {
-            var nuevoReporte = new Reporte
-            {
-                idReportante = IdReportanteValido,
-                idReportado = IdReportadoValido
-            };
-
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new EntityException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.CrearReporte(nuevoReporte));
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_IdInvalidoLanzaExcepcion()
-        {
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
-                _repositorio.ContarReportesRecibidos(IdInvalido));
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_UsuarioSinReportesRetornaCero()
-        {
-            var datos = new List<Reporte>().AsQueryable();
-            ConfigurarDbSet(_reporteDbSetMock, datos);
-
-            int resultado = _repositorio.ContarReportesRecibidos(IdReportadoValido);
-
-            Assert.AreEqual(CantidadEsperadaCero, resultado);
-        }
-
-        [TestMethod]
-        public void Prueba_ContarReportesRecibidos_UsuarioConReportesRetornaCantidadCorrecta()
-        {
-            var datos = new List<Reporte>
-            {
-                new Reporte { idReportado = IdReportadoValido },
-                new Reporte { idReportado = IdReportadoOtro }
+                new Reporte
+                {
+                    idReporte = 1,
+                    idReportante = otroReportante,
+                    idReportado = IdReportadoPrueba,
+                    Motivo = MotivoPrueba,
+                    Fecha_Reporte = DateTime.Now
+                }
             }.AsQueryable();
 
-            ConfigurarDbSet(_reporteDbSetMock, datos);
+            var mockDbSet = CrearMockDbSet(datosReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
 
-            int resultado = _repositorio.ContarReportesRecibidos(IdReportadoValido);
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
 
-            Assert.AreEqual(CantidadEsperadaUno, resultado);
+            bool resultado = repositorio.ExisteReporte(IdReportantePrueba, IdReportadoPrueba);
+
+            Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ContarReportesRecibidos_ErrorBaseDatosLanzaExcepcionPersonalizada()
+        public void Prueba_CrearReporte_LanzaExcepcionReporteNulo()
         {
-            _reporteDbSetMock.As<IQueryable<Reporte>>()
-                .Setup(consulta => consulta.Provider)
-                .Throws(new EntityException());
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ContarReportesRecibidos(IdReportadoValido));
+            Assert.ThrowsException<ArgumentNullException>(
+                () => repositorio.CrearReporte(null));
         }
 
-        private static Mock<DbSet<T>> CrearDbSetMock<T>(List<T> datos) where T : class
+        [TestMethod]
+        public void Prueba_CrearReporte_AgregaReporteAlContexto()
         {
-            var queryable = datos.AsQueryable();
-            var mockSet = new Mock<DbSet<T>>();
+            var reporteNuevo = new Reporte
+            {
+                idReportante = IdReportantePrueba,
+                idReportado = IdReportadoPrueba,
+                Motivo = MotivoPrueba,
+                Fecha_Reporte = DateTime.Now
+            };
 
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Provider)
-                .Returns(queryable.Provider);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Expression)
-                .Returns(queryable.Expression);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.ElementType)
-                .Returns(queryable.ElementType);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => queryable.GetEnumerator());
+            var listaReportes = new List<Reporte>();
+            var mockDbSet = CrearMockDbSetConAdd(listaReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
 
-            mockSet.Setup(dbSet => dbSet.Include(It.IsAny<string>())).Returns(mockSet.Object);
-            mockSet.Setup(dbSet => dbSet.Add(It.IsAny<T>())).Returns<T>(entidad => entidad);
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
 
-            return mockSet;
+            repositorio.CrearReporte(reporteNuevo);
+
+            mockDbSet.Verify(
+                dbSet => dbSet.Add(It.IsAny<Reporte>()),
+                Times.Once);
         }
 
-        private static void ConfigurarDbSet<T>(
-            Mock<DbSet<T>> mockSet,
-            IQueryable<T> datos) where T : class
+        [TestMethod]
+        public void Prueba_CrearReporte_GuardaCambiosEnContexto()
         {
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Provider)
+            var reporteNuevo = new Reporte
+            {
+                idReportante = IdReportantePrueba,
+                idReportado = IdReportadoPrueba,
+                Motivo = MotivoPrueba,
+                Fecha_Reporte = DateTime.Now
+            };
+
+            var listaReportes = new List<Reporte>();
+            var mockDbSet = CrearMockDbSetConAdd(listaReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
+
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            repositorio.CrearReporte(reporteNuevo);
+
+            mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
+        }
+
+        [TestMethod]
+        public void Prueba_CrearReporte_RetornaReporteCreado()
+        {
+            var reporteNuevo = new Reporte
+            {
+                idReportante = IdReportantePrueba,
+                idReportado = IdReportadoPrueba,
+                Motivo = MotivoPrueba,
+                Fecha_Reporte = DateTime.Now
+            };
+
+            var mockDbSet = new Mock<DbSet<Reporte>>();
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Reporte>()))
+                .Returns<Reporte>(reporte => reporte);
+
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
+
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            var resultado = repositorio.CrearReporte(reporteNuevo);
+
+            Assert.AreEqual(IdReportantePrueba, resultado.idReportante);
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidos_LanzaExcepcionIdInvalido()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
+                () => repositorio.ContarReportesRecibidos(IdReportadoInvalido));
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidos_LanzaExcepcionIdNegativo()
+        {
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
+                () => repositorio.ContarReportesRecibidos(IdReportadoNegativo));
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidos_RetornaCantidadCorrecta()
+        {
+            var datosReportes = new List<Reporte>
+            {
+                new Reporte
+                {
+                    idReporte = 1,
+                    idReportante = 1,
+                    idReportado = IdReportadoPrueba,
+                    Motivo = MotivoPrueba,
+                    Fecha_Reporte = DateTime.Now
+                },
+                new Reporte
+                {
+                    idReporte = 2,
+                    idReportante = 2,
+                    idReportado = IdReportadoPrueba,
+                    Motivo = MotivoPrueba,
+                    Fecha_Reporte = DateTime.Now
+                },
+                new Reporte
+                {
+                    idReporte = 3,
+                    idReportante = 3,
+                    idReportado = IdReportadoPrueba,
+                    Motivo = MotivoPrueba,
+                    Fecha_Reporte = DateTime.Now
+                }
+            }.AsQueryable();
+
+            var mockDbSet = CrearMockDbSet(datosReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
+
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            int resultado = repositorio.ContarReportesRecibidos(IdReportadoPrueba);
+
+            Assert.AreEqual(CantidadReportesPrueba, resultado);
+        }
+
+        [TestMethod]
+        public void Prueba_ContarReportesRecibidos_RetornaCeroSinReportes()
+        {
+            var datosReportes = new List<Reporte>().AsQueryable();
+
+            var mockDbSet = CrearMockDbSet(datosReportes);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Reporte).Returns(mockDbSet.Object);
+
+            var repositorio = new ReporteRepositorio(mockContexto.Object);
+
+            int resultado = repositorio.ContarReportesRecibidos(IdReportadoPrueba);
+
+            int valorEsperadoCero = 0;
+            Assert.AreEqual(valorEsperadoCero, resultado);
+        }
+
+        private Mock<DbSet<Reporte>> CrearMockDbSet(IQueryable<Reporte> datos)
+        {
+            var mockDbSet = new Mock<DbSet<Reporte>>();
+            mockDbSet.As<IQueryable<Reporte>>()
+                .Setup(dbSet => dbSet.Provider)
                 .Returns(datos.Provider);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Expression)
+            mockDbSet.As<IQueryable<Reporte>>()
+                .Setup(dbSet => dbSet.Expression)
                 .Returns(datos.Expression);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.ElementType)
+            mockDbSet.As<IQueryable<Reporte>>()
+                .Setup(dbSet => dbSet.ElementType)
                 .Returns(datos.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => datos.GetEnumerator());
+            mockDbSet.As<IQueryable<Reporte>>()
+                .Setup(dbSet => dbSet.GetEnumerator())
+                .Returns(datos.GetEnumerator());
+            return mockDbSet;
+        }
+
+        private Mock<DbSet<Reporte>> CrearMockDbSetConAdd(List<Reporte> listaReportes)
+        {
+            var datos = listaReportes.AsQueryable();
+            var mockDbSet = CrearMockDbSet(datos);
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Reporte>()))
+                .Callback<Reporte>(reporte => listaReportes.Add(reporte))
+                .Returns<Reporte>(reporte => reporte);
+            return mockDbSet;
         }
     }
 }

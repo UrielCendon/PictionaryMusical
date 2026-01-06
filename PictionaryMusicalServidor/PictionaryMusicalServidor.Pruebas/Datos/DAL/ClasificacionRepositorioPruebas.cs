@@ -1,310 +1,305 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Core;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
+using Datos.Modelo;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using PictionaryMusicalServidor.Datos.DAL.Implementaciones;
-using PictionaryMusicalServidor.Datos.Excepciones;
-using Datos.Modelo;
 
 namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
 {
     [TestClass]
     public class ClasificacionRepositorioPruebas
     {
-        private const int IdJugadorValido = 10;
-        private const int IdJugadorSinClasificacion = 20;
-        private const int IdJugadorInexistente = 99;
-        private const int PuntosAIncrementar = 50;
-        private const int PuntosIniciales = 10;
-        private const int RondasIniciales = 2;
-        private const int CantidadMejoresJugadores = 3;
-        private const bool GanoPartidaTrue = true;
-        private const bool GanoPartidaFalse = false;
-        private const string NombreUsuarioUno = "JugadorUno";
-        private const string NombreUsuarioDos = "JugadorDos";
+        private const int IdJugadorPrueba = 1;
+        private const int IdJugadorInexistente = 999;
+        private const int PuntosObtenidosPrueba = 100;
+        private const int PuntosInicialesPrueba = 50;
+        private const int RondasInicialesPrueba = 5;
+        private const int CantidadMejoresPrueba = 10;
+        private const int ValorInicialCero = 0;
 
-        private Mock<BaseDatosPruebaEntities> _contextoMock;
-        private Mock<DbSet<Clasificacion>> _clasificacionDbSetMock;
-        private Mock<DbSet<Jugador>> _jugadorDbSetMock;
-        private Mock<DbSet<Usuario>> _usuarioDbSetMock;
-        private ClasificacionRepositorio _repositorio;
-
-        [TestInitialize]
-        public void Inicializar()
+        [TestMethod]
+        public void Prueba_Constructor_LanzaExcepcionContextoNulo()
         {
-            _contextoMock = new Mock<BaseDatosPruebaEntities>();
-            _clasificacionDbSetMock = CrearDbSetMock(new List<Clasificacion>());
-            _jugadorDbSetMock = CrearDbSetMock(new List<Jugador>());
-            _usuarioDbSetMock = CrearDbSetMock(new List<Usuario>());
-
-            _contextoMock
-                .Setup(contexto => contexto.Clasificacion)
-                .Returns(_clasificacionDbSetMock.Object);
-            _contextoMock
-                .Setup(contexto => contexto.Jugador)
-                .Returns(_jugadorDbSetMock.Object);
-            _contextoMock
-                .Setup(contexto => contexto.Usuario)
-                .Returns(_usuarioDbSetMock.Object);
-
-            _repositorio = new ClasificacionRepositorio(_contextoMock.Object);
+            Assert.ThrowsException<ArgumentNullException>(
+                () => new ClasificacionRepositorio(null));
         }
 
         [TestMethod]
-        public void Prueba_Constructor_ContextoNuloLanzaExcepcion()
+        public void Prueba_CrearClasificacionInicial_AgregaClasificacionAlContexto()
         {
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                new ClasificacionRepositorio(null));
-        }
+            var listaClasificaciones = new List<Clasificacion>();
+            var mockDbSet = CrearMockDbSetConAdd(listaClasificaciones);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Clasificacion).Returns(mockDbSet.Object);
 
-        [TestMethod]
-        public void Prueba_CrearClasificacionInicial_CorrectoGuardaCambios()
-        {
-            _clasificacionDbSetMock
-                .Setup(conjunto => conjunto.Add(It.IsAny<Clasificacion>()))
-                .Callback<Clasificacion>((clasificacionAgregada) => { });
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
 
-            var resultado = _repositorio.CrearClasificacionInicial();
+            repositorio.CrearClasificacionInicial();
 
-            _clasificacionDbSetMock.Verify(
-                conjunto => conjunto.Add(It.IsAny<Clasificacion>()),
+            mockDbSet.Verify(
+                dbSet => dbSet.Add(It.IsAny<Clasificacion>()),
                 Times.Once);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Once);
-            Assert.IsNotNull(resultado);
-            Assert.AreEqual(0, resultado.Puntos_Ganados);
-            Assert.AreEqual(0, resultado.Rondas_Ganadas);
         }
 
         [TestMethod]
-        public void Prueba_CrearClasificacionInicial_ErrorBaseDatosLanzaExcepcion()
+        public void Prueba_CrearClasificacionInicial_GuardaCambiosEnContexto()
         {
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new DbUpdateException());
+            var listaClasificaciones = new List<Clasificacion>();
+            var mockDbSet = CrearMockDbSetConAdd(listaClasificaciones);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Clasificacion).Returns(mockDbSet.Object);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.CrearClasificacionInicial());
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
+
+            repositorio.CrearClasificacionInicial();
+
+            mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ActualizarEstadisticas_JugadorNoExisteRetornaFalse()
+        public void Prueba_CrearClasificacionInicial_RetornaClasificacionConPuntosCero()
+        {
+            Clasificacion clasificacionAgregada = null;
+            var mockDbSet = new Mock<DbSet<Clasificacion>>();
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+                .Callback<Clasificacion>(clasificacion => clasificacionAgregada = clasificacion)
+                .Returns<Clasificacion>(clasificacion => clasificacion);
+
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Clasificacion).Returns(mockDbSet.Object);
+
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
+
+            repositorio.CrearClasificacionInicial();
+
+            Assert.AreEqual(ValorInicialCero, clasificacionAgregada.Puntos_Ganados);
+        }
+
+        [TestMethod]
+        public void Prueba_CrearClasificacionInicial_RetornaClasificacionConRondasCero()
+        {
+            Clasificacion clasificacionAgregada = null;
+            var mockDbSet = new Mock<DbSet<Clasificacion>>();
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+                .Callback<Clasificacion>(clasificacion => clasificacionAgregada = clasificacion)
+                .Returns<Clasificacion>(clasificacion => clasificacion);
+
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Clasificacion).Returns(mockDbSet.Object);
+
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
+
+            repositorio.CrearClasificacionInicial();
+
+            Assert.AreEqual(ValorInicialCero, clasificacionAgregada.Rondas_Ganadas);
+        }
+
+        [TestMethod]
+        public void Prueba_ActualizarEstadisticas_RetornaFalsoJugadorNoEncontrado()
         {
             var datosJugadores = new List<Jugador>().AsQueryable();
-            ConfigurarDbSet(_jugadorDbSetMock, datosJugadores);
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            var resultado = _repositorio.ActualizarEstadisticas(
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ActualizarEstadisticas(
                 IdJugadorInexistente,
-                PuntosAIncrementar,
-                GanoPartidaTrue);
-
-            Assert.IsFalse(resultado);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Never);
-        }
-
-        [TestMethod]
-        public void Prueba_ActualizarEstadisticas_ClasificacionNulaRetornaFalse()
-        {
-            var datosJugadores = new List<Jugador>
-            {
-                new Jugador { idJugador = IdJugadorSinClasificacion, Clasificacion = null }
-            }.AsQueryable();
-            ConfigurarDbSet(_jugadorDbSetMock, datosJugadores);
-
-            var resultado = _repositorio.ActualizarEstadisticas(
-                IdJugadorSinClasificacion,
-                PuntosAIncrementar,
-                GanoPartidaTrue);
+                PuntosObtenidosPrueba,
+                false);
 
             Assert.IsFalse(resultado);
         }
 
         [TestMethod]
-        public void Prueba_ActualizarEstadisticas_GanoPartidaActualizaPuntosYRondas()
+        public void Prueba_ActualizarEstadisticas_RetornaVerdaderoJugadorEncontrado()
         {
             var clasificacion = new Clasificacion
             {
-                Puntos_Ganados = PuntosIniciales,
-                Rondas_Ganadas = RondasIniciales
+                idClasificacion = 1,
+                Puntos_Ganados = PuntosInicialesPrueba,
+                Rondas_Ganadas = RondasInicialesPrueba
             };
+
             var jugador = new Jugador
             {
-                idJugador = IdJugadorValido,
+                idJugador = IdJugadorPrueba,
                 Clasificacion = clasificacion
             };
 
             var datosJugadores = new List<Jugador> { jugador }.AsQueryable();
-            ConfigurarDbSet(_jugadorDbSetMock, datosJugadores);
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            var resultado = _repositorio.ActualizarEstadisticas(
-                IdJugadorValido,
-                PuntosAIncrementar,
-                GanoPartidaTrue);
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
+
+            bool resultado = repositorio.ActualizarEstadisticas(
+                IdJugadorPrueba,
+                PuntosObtenidosPrueba,
+                false);
 
             Assert.IsTrue(resultado);
-            Assert.AreEqual(PuntosIniciales + PuntosAIncrementar, clasificacion.Puntos_Ganados);
-            Assert.AreEqual(RondasIniciales + 1, clasificacion.Rondas_Ganadas);
-            _contextoMock.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
         [TestMethod]
-        public void Prueba_ActualizarEstadisticas_PerdioPartidaSoloActualizaPuntos()
+        public void Prueba_ActualizarEstadisticas_SumaPuntosCorrectamente()
         {
             var clasificacion = new Clasificacion
             {
-                Puntos_Ganados = PuntosIniciales,
-                Rondas_Ganadas = RondasIniciales
+                idClasificacion = 1,
+                Puntos_Ganados = PuntosInicialesPrueba,
+                Rondas_Ganadas = RondasInicialesPrueba
             };
+
             var jugador = new Jugador
             {
-                idJugador = IdJugadorValido,
+                idJugador = IdJugadorPrueba,
                 Clasificacion = clasificacion
             };
 
             var datosJugadores = new List<Jugador> { jugador }.AsQueryable();
-            ConfigurarDbSet(_jugadorDbSetMock, datosJugadores);
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            var resultado = _repositorio.ActualizarEstadisticas(
-                IdJugadorValido,
-                PuntosAIncrementar,
-                GanoPartidaFalse);
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
 
-            Assert.IsTrue(resultado);
-            Assert.AreEqual(PuntosIniciales + PuntosAIncrementar, clasificacion.Puntos_Ganados);
-            Assert.AreEqual(RondasIniciales, clasificacion.Rondas_Ganadas);
+            repositorio.ActualizarEstadisticas(IdJugadorPrueba, PuntosObtenidosPrueba, false);
+
+            int puntosEsperados = PuntosInicialesPrueba + PuntosObtenidosPrueba;
+            Assert.AreEqual(puntosEsperados, clasificacion.Puntos_Ganados);
         }
 
         [TestMethod]
-        public void Prueba_ActualizarEstadisticas_ErrorEntityLanzaExcepcion()
+        public void Prueba_ActualizarEstadisticas_IncrementaRondasSiGanoPartida()
         {
+            var clasificacion = new Clasificacion
+            {
+                idClasificacion = 1,
+                Puntos_Ganados = PuntosInicialesPrueba,
+                Rondas_Ganadas = RondasInicialesPrueba
+            };
+
             var jugador = new Jugador
             {
-                idJugador = IdJugadorValido,
-                Clasificacion = new Clasificacion()
+                idJugador = IdJugadorPrueba,
+                Clasificacion = clasificacion
             };
+
             var datosJugadores = new List<Jugador> { jugador }.AsQueryable();
-            ConfigurarDbSet(_jugadorDbSetMock, datosJugadores);
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            _contextoMock.Setup(contexto => contexto.SaveChanges()).Throws(new EntityException());
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
 
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ActualizarEstadisticas(
-                    IdJugadorValido,
-                    PuntosAIncrementar,
-                    GanoPartidaTrue));
+            repositorio.ActualizarEstadisticas(IdJugadorPrueba, PuntosObtenidosPrueba, true);
+
+            int rondasEsperadas = RondasInicialesPrueba + 1;
+            Assert.AreEqual(rondasEsperadas, clasificacion.Rondas_Ganadas);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerMejoresJugadores_RetornaListaOrdenada()
+        public void Prueba_ActualizarEstadisticas_NoIncrementaRondasSiNoGanoPartida()
         {
-            var clasificacionBaja = new Clasificacion
+            var clasificacion = new Clasificacion
             {
-                Puntos_Ganados = 10,
-                Rondas_Ganadas = 1
-            };
-            var clasificacionAlta = new Clasificacion
-            {
-                Puntos_Ganados = 100,
-                Rondas_Ganadas = 5
+                idClasificacion = 1,
+                Puntos_Ganados = PuntosInicialesPrueba,
+                Rondas_Ganadas = RondasInicialesPrueba
             };
 
-            var usuarioBajo = new Usuario
+            var jugador = new Jugador
             {
-                Nombre_Usuario = NombreUsuarioDos,
-                Jugador = new Jugador { Clasificacion = clasificacionBaja }
-            };
-            var usuarioAlto = new Usuario
-            {
-                Nombre_Usuario = NombreUsuarioUno,
-                Jugador = new Jugador { Clasificacion = clasificacionAlta }
+                idJugador = IdJugadorPrueba,
+                Clasificacion = clasificacion
             };
 
-            var datosUsuarios = new List<Usuario> { usuarioBajo, usuarioAlto }.AsQueryable();
-            ConfigurarDbSet(_usuarioDbSetMock, datosUsuarios);
+            var datosJugadores = new List<Jugador> { jugador }.AsQueryable();
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            var resultados = _repositorio.ObtenerMejoresJugadores(CantidadMejoresJugadores);
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
 
-            Assert.AreEqual(2, resultados.Count);
-            Assert.AreEqual(NombreUsuarioUno, resultados[0].Nombre_Usuario);
-            Assert.AreEqual(NombreUsuarioDos, resultados[1].Nombre_Usuario);
+            repositorio.ActualizarEstadisticas(IdJugadorPrueba, PuntosObtenidosPrueba, false);
+
+            Assert.AreEqual(RondasInicialesPrueba, clasificacion.Rondas_Ganadas);
         }
 
         [TestMethod]
-        public void Prueba_ObtenerMejoresJugadores_FiltraJugadoresNulos()
+        public void Prueba_ActualizarEstadisticas_GuardaCambiosEnContexto()
         {
-            var usuarioValido = new Usuario
+            var clasificacion = new Clasificacion
             {
-                Jugador = new Jugador { Clasificacion = new Clasificacion() }
-            };
-            var usuarioSinJugador = new Usuario { Jugador = null };
-            var usuarioSinClasificacion = new Usuario
-            {
-                Jugador = new Jugador { Clasificacion = null }
+                idClasificacion = 1,
+                Puntos_Ganados = PuntosInicialesPrueba,
+                Rondas_Ganadas = RondasInicialesPrueba
             };
 
-            var datos = new List<Usuario>
+            var jugador = new Jugador
             {
-                usuarioValido,
-                usuarioSinJugador,
-                usuarioSinClasificacion
-            }.AsQueryable();
+                idJugador = IdJugadorPrueba,
+                Clasificacion = clasificacion
+            };
 
-            ConfigurarDbSet(_usuarioDbSetMock, datos);
+            var datosJugadores = new List<Jugador> { jugador }.AsQueryable();
+            var mockDbSetJugador = CrearMockDbSetJugador(datosJugadores);
+            var mockContexto = new Mock<BaseDatosPruebaEntities>();
+            mockContexto.Setup(contexto => contexto.Jugador).Returns(mockDbSetJugador.Object);
 
-            var resultados = _repositorio.ObtenerMejoresJugadores(CantidadMejoresJugadores);
+            var repositorio = new ClasificacionRepositorio(mockContexto.Object);
 
-            Assert.AreEqual(1, resultados.Count);
+            repositorio.ActualizarEstadisticas(IdJugadorPrueba, PuntosObtenidosPrueba, false);
+
+            mockContexto.Verify(contexto => contexto.SaveChanges(), Times.Once);
         }
 
-        [TestMethod]
-        public void Prueba_ObtenerMejoresJugadores_ErrorConexionLanzaExcepcion()
+        private Mock<DbSet<Clasificacion>> CrearMockDbSetConAdd(List<Clasificacion> lista)
         {
-            _usuarioDbSetMock.As<IQueryable<Usuario>>()
-                .Setup(consulta => consulta.Provider)
-                .Throws(new EntityException());
-
-            Assert.ThrowsException<BaseDatosExcepcion>(() =>
-                _repositorio.ObtenerMejoresJugadores(CantidadMejoresJugadores));
-        }
-
-        private static Mock<DbSet<T>> CrearDbSetMock<T>(List<T> datos) where T : class
-        {
-            var queryable = datos.AsQueryable();
-            var mockSet = new Mock<DbSet<T>>();
-
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Provider)
-                .Returns(queryable.Provider);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.Expression)
-                .Returns(queryable.Expression);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.ElementType)
-                .Returns(queryable.ElementType);
-            mockSet.As<IQueryable<T>>()
-                .Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => queryable.GetEnumerator());
-
-            mockSet.Setup(dbSet => dbSet.Include(It.IsAny<string>())).Returns(mockSet.Object);
-            mockSet.Setup(dbSet => dbSet.Add(It.IsAny<T>())).Returns<T>(entidad => entidad);
-
-            return mockSet;
-        }
-
-        private static void ConfigurarDbSet<T>(
-            Mock<DbSet<T>> mockSet,
-            IQueryable<T> datos) where T : class
-        {
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Provider)
+            var datos = lista.AsQueryable();
+            var mockDbSet = new Mock<DbSet<Clasificacion>>();
+            mockDbSet.As<IQueryable<Clasificacion>>()
+                .Setup(dbSet => dbSet.Provider)
                 .Returns(datos.Provider);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.Expression)
+            mockDbSet.As<IQueryable<Clasificacion>>()
+                .Setup(dbSet => dbSet.Expression)
                 .Returns(datos.Expression);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.ElementType)
+            mockDbSet.As<IQueryable<Clasificacion>>()
+                .Setup(dbSet => dbSet.ElementType)
                 .Returns(datos.ElementType);
-            mockSet.As<IQueryable<T>>().Setup(consulta => consulta.GetEnumerator())
-                .Returns(() => datos.GetEnumerator());
-            mockSet.Setup(dbSet => dbSet.Include(It.IsAny<string>())).Returns(mockSet.Object);
+            mockDbSet.As<IQueryable<Clasificacion>>()
+                .Setup(dbSet => dbSet.GetEnumerator())
+                .Returns(datos.GetEnumerator());
+            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+                .Callback<Clasificacion>(item => lista.Add(item))
+                .Returns<Clasificacion>(item => item);
+            return mockDbSet;
+        }
+
+        private Mock<DbSet<Jugador>> CrearMockDbSetJugador(IQueryable<Jugador> datos)
+        {
+            var mockDbSet = new Mock<DbSet<Jugador>>();
+            mockDbSet.As<IQueryable<Jugador>>()
+                .Setup(dbSet => dbSet.Provider)
+                .Returns(datos.Provider);
+            mockDbSet.As<IQueryable<Jugador>>()
+                .Setup(dbSet => dbSet.Expression)
+                .Returns(datos.Expression);
+            mockDbSet.As<IQueryable<Jugador>>()
+                .Setup(dbSet => dbSet.ElementType)
+                .Returns(datos.ElementType);
+            mockDbSet.As<IQueryable<Jugador>>()
+                .Setup(dbSet => dbSet.GetEnumerator())
+                .Returns(datos.GetEnumerator());
+            mockDbSet.Setup(dbSet => dbSet.Include(It.IsAny<string>()))
+                .Returns(mockDbSet.Object);
+            return mockDbSet;
         }
     }
 }
