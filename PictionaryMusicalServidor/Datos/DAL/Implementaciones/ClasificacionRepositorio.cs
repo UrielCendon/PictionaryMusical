@@ -19,9 +19,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
     /// </summary>
     public class ClasificacionRepositorio : IClasificacionRepositorio
     {
-        private static readonly ILog _logger =
+        private static readonly ILog _logger = 
             LogManager.GetLogger(typeof(ClasificacionRepositorio));
-
         private readonly BaseDatosPruebaEntities _contexto;
 
         /// <summary>
@@ -115,10 +114,12 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 return _contexto.Usuario
                     .Include(usuario => usuario.Jugador.Clasificacion)
-                    .Where(usuario => usuario.Jugador != null 
-                        && usuario.Jugador.Clasificacion != null)
-                    .OrderByDescending(usuario => usuario.Jugador.Clasificacion.Puntos_Ganados)
-                    .ThenByDescending(usuario => usuario.Jugador.Clasificacion.Rondas_Ganadas)
+                    .Where(usuario => usuario.Jugador != null && 
+                        usuario.Jugador.Clasificacion != null)
+                    .OrderByDescending(usuario => 
+                        usuario.Jugador.Clasificacion.Puntos_Ganados)
+                    .ThenByDescending(usuario => 
+                        usuario.Jugador.Clasificacion.Rondas_Ganadas)
                     .ThenBy(usuario => usuario.Nombre_Usuario)
                     .Take(cantidad)
                     .ToList();

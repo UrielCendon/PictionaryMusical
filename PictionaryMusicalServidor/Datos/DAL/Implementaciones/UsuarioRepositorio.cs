@@ -54,8 +54,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 var usuarioEncontrado = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
                     usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
-                return usuarioEncontrado != null
-                    && string.Equals(
+                return usuarioEncontrado != null && 
+                    string.Equals(
                         usuarioEncontrado.Nombre_Usuario, 
                         nombreNormalizado,
                         StringComparison.Ordinal);
@@ -133,8 +133,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
                 var usuarioEncontrado = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
                     usuarioEntidad.Nombre_Usuario == nombreNormalizado);
 
-                if (usuarioEncontrado != null 
-                    && string.Equals(
+                if (usuarioEncontrado != null && 
+                    string.Equals(
                         usuarioEncontrado.Nombre_Usuario, 
                         nombreNormalizado,
                         StringComparison.Ordinal))
@@ -300,7 +300,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 var usuarioEncontrado = _contexto.Usuario
                     .Include(usuarioEntidad => usuarioEntidad.Jugador.RedSocial)
-                    .FirstOrDefault(usuarioEntidad => usuarioEntidad.idUsuario == idUsuario);
+                    .FirstOrDefault(usuarioEntidad => 
+                        usuarioEntidad.idUsuario == idUsuario);
 
                 if (usuarioEncontrado == null)
                 {
@@ -344,6 +345,7 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
             {
                 var usuario = _contexto.Usuario.FirstOrDefault(usuarioEntidad =>
                     usuarioEntidad.idUsuario == usuarioId);
+                
                 if (usuario != null)
                 {
                     usuario.Contrasena = nuevaContrasenaHash;
@@ -384,8 +386,8 @@ namespace PictionaryMusicalServidor.Datos.DAL.Implementaciones
 
                 var usuarioEncontrado = _contexto.Usuario
                     .Include(usuarioEntidad => usuarioEntidad.Jugador)
-                    .FirstOrDefault(usuarioEntidad => 
-                        usuarioEntidad.Nombre_Usuario == nombreNormalizado);
+                    .FirstOrDefault(usuarioEntidad => usuarioEntidad.Nombre_Usuario == 
+                        nombreNormalizado);
 
                 if (usuarioEncontrado == null)
                 {

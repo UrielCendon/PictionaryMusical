@@ -82,19 +82,6 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         }
 
         /// <summary>
-        /// Remueve un jugador de la partida.
-        /// </summary>
-        /// <param name="idConexion">Identificador de conexion del jugador.</param>
-        /// <param name="eraDibujante">Salida que indica si el jugador era el dibujante actual.
-        /// </param>
-        /// <returns>True si el jugador fue removido, false si no existia.</returns>
-        public bool Remover(string idConexion, out bool eraDibujante)
-        {
-            string nombreUsuario;
-            return Remover(idConexion, out eraDibujante, out nombreUsuario);
-        }
-
-        /// <summary>
         /// Remueve un jugador de la partida y obtiene su informacion.
         /// </summary>
         /// <param name="id">Identificador de conexion del jugador.</param>
@@ -220,10 +207,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 });
             }
 
-            clasificacion.Sort(delegate (ClasificacionUsuarioDTO a, ClasificacionUsuarioDTO b)
-            {
-                return b.Puntos.CompareTo(a.Puntos);
-            });
+            clasificacion.Sort((a, b) => b.Puntos.CompareTo(a.Puntos));
 
             return clasificacion;
         }

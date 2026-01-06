@@ -70,7 +70,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             bool esCorrecto = _catalogoCanciones.ValidarRespuesta(cancionId, mensaje);
 
-            if (!esCorrecto && EsMensajeAciertoProtocolo(mensaje, out int puntosProtocolo))
+            if (!esCorrecto && 
+                EsMensajeAciertoProtocolo(mensaje, out int puntosProtocolo))
             {
                 esCorrecto = true;
                 puntos = puntosProtocolo;
@@ -104,15 +105,19 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
         private static bool EsMensajeAciertoProtocolo(string mensaje, out int puntos)
         {
             puntos = 0;
-            if (!mensaje.StartsWith(PrefijoAciertoProtocolo, StringComparison.OrdinalIgnoreCase))
+            
+            if (!mensaje.StartsWith(
+                PrefijoAciertoProtocolo, 
+                StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
 
             var partes = mensaje.Split(SeparadorProtocolo);
-            return partes.Length >= MinimoPartesProtocolo 
-                && int.TryParse(partes[IndicePuntosProtocolo], out puntos) 
-                && puntos > 0;
+            
+            return partes.Length >= MinimoPartesProtocolo && 
+                int.TryParse(partes[IndicePuntosProtocolo], out puntos) && 
+                puntos > 0;
         }
     }
 }

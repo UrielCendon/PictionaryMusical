@@ -20,7 +20,9 @@ namespace PictionaryMusicalServidor.HostServidor
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(Principal));
         private static readonly List<ServiceHost> _listaHosts = new List<ServiceHost>();
-        private static int _cerrando = 0;
+        private const int EstadoActivo = 0;
+        private const int EstadoCerrando = 1;
+        private static int _cerrando = EstadoActivo;
 
         /// <summary>
         /// Punto de entrada principal de la aplicacion.
@@ -157,14 +159,17 @@ namespace PictionaryMusicalServidor.HostServidor
             }
         }
 
-        private static void ManejarExcepcionNoControlada(object sender, 
+        private static void ManejarExcepcionNoControlada(
+            object sender, 
             UnhandledExceptionEventArgs argumentos)
         {
-            _logger.Fatal("Excepcion no controlada en el dominio de la aplicacion.", 
+            _logger.Fatal(
+                "Excepcion no controlada en el dominio de la aplicacion.", 
                 (Exception)argumentos.ExceptionObject);
         }
 
-        private static void AlCancelarConsola(object remitente, 
+        private static void AlCancelarConsola(
+            object remitente, 
             ConsoleCancelEventArgs eventosCancelacion)
         {
             _logger.Info("Se detecto una interrupcion. Cerrando el servidor...");
@@ -175,7 +180,7 @@ namespace PictionaryMusicalServidor.HostServidor
 
         private static void IniciarCierreOrdenado()
         {
-            if (Interlocked.Exchange(ref _cerrando, 1) == 1)
+            if (Interlocked.Exchange(ref _cerrando, EstadoCerrando) == EstadoCerrando)
             {
                 return;
             }

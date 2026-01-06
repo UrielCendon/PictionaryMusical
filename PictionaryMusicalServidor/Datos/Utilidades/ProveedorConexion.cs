@@ -29,12 +29,6 @@ namespace PictionaryMusicalServidor.Datos.Utilidades
 
             if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(contrasena))
             {
-                // Se permite continuar si no hay credenciales, asumiendo que podria usarse 
-                // seguridad integrada o que el manejo de errores ocurrira al intentar conectar.
-                // Sin embargo, para consistencia con la clase estatica Conexion, se podria validar.
-                // Dado que esta clase implementa una interfaz, el comportamiento depende del contrato.
-                // Por ahora mantenemos el comportamiento original pero aseguramos que no falle 
-                // la construccion del builder.
             }
 
             var constructorSql = new SqlConnectionStringBuilder

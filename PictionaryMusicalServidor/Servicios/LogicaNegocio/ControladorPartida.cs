@@ -2,8 +2,8 @@
 using PictionaryMusicalServidor.Datos;
 using PictionaryMusicalServidor.Datos.Entidades;
 using PictionaryMusicalServidor.Servicios.Contratos.DTOs;
-using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using PictionaryMusicalServidor.Servicios.LogicaNegocio.Interfaces;
+using PictionaryMusicalServidor.Servicios.Servicios.Constantes;
 using System;
 using System.Collections.Generic;
 using System.Security;
@@ -302,8 +302,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             lock (_sincronizacion)
             {
                 var jugador = _gestorJugadores.Obtener(id);
-                if (_estadoActual == EstadoPartida.Jugando && !_enTransicionRonda
-                    && jugador != null && jugador.EsDibujante)
+                
+                if (_estadoActual == EstadoPartida.Jugando && 
+                    !_enTransicionRonda && 
+                    jugador != null && 
+                    jugador.EsDibujante)
                 {
                     TrazoRecibido?.Invoke(trazo);
                 }
@@ -336,7 +339,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private ResultadoRemocionJugador ProcesarRemocionJugador(string id,
+        private ResultadoRemocionJugador ProcesarRemocionJugador(
+            string id,
             out string nombreUsuarioRemovido)
         {
             nombreUsuarioRemovido = null;
@@ -353,19 +357,24 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
                 nombreUsuarioRemovido = nombreUsuario;
                 _logger.Info("Jugador removido de la partida.");
-                return DeterminarAccionPostRemocion(eraAnfitrion, eraDibujante);
+                
+                return DeterminarAccionPostRemocion(new DatosRemocionJugador
+                {
+                    EraAnfitrion = eraAnfitrion,
+                    EraDibujante = eraDibujante
+                });
             }
         }
 
-        private ResultadoRemocionJugador DeterminarAccionPostRemocion(bool eraAnfitrion,
-            bool eraDibujante)
+        private ResultadoRemocionJugador DeterminarAccionPostRemocion(
+            DatosRemocionJugador datos)
         {
             if (_estadoActual != EstadoPartida.Jugando)
             {
                 return ResultadoRemocionJugador.SinAccion();
             }
 
-            if (eraAnfitrion)
+            if (datos.EraAnfitrion)
             {
                 return ResultadoRemocionJugador.Cancelar(
                     MensajesError.Cliente.PartidaCanceladaHostSalio);
@@ -377,7 +386,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     MensajesError.Cliente.PartidaCanceladaFaltaJugadores);
             }
 
-            if (eraDibujante)
+            if (datos.EraDibujante)
             {
                 return _enTransicionRonda
                     ? ResultadoRemocionJugador.AvanzarRondaDirecto()
@@ -404,7 +413,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
             else if (resultado.DebeAvanzar)
             {
-                FinalizarRondaActual();
+                FinalizarRondaActual(new ParametrosFinalizacionRonda
+                {
+                    ForzarPorAciertos = false,
+                    TiempoAgotado = false
+                });
             }
         }
 
@@ -489,7 +502,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 if (!finJuego)
                 {
                     _gestorJugadores.SeleccionarSiguienteDibujante();
-                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(_idiomaCanciones, 
+                    var cancion = _catalogoCanciones.ObtenerCancionAleatoria(
+                        _idiomaCanciones, 
                         _cancionesUsadas);
                     _cancionActualId = cancion.Id;
                     _cancionesUsadas.Add(cancion.Id);
@@ -515,7 +529,8 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void IniciarTemporizadorRondaConRetardo()
         {
-            _proveedorTiempo.Retrasar(TiempoOverlayClienteSegundos * MilisegundosPorSegundo)
+            int milisegundosRetraso = TiempoOverlayClienteSegundos * MilisegundosPorSegundo;
+            _proveedorTiempo.Retrasar(milisegundosRetraso)
                 .ContinueWith(ManejarRetardoTemporizador);
         }
 
@@ -538,8 +553,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             }
         }
 
-        private void FinalizarRondaActual(bool forzarPorAciertos = false,
-            bool tiempoAgotado = false)
+        private void FinalizarRondaActual(ParametrosFinalizacionRonda parametros)
         {
             lock (_sincronizacion)
             {
@@ -548,7 +562,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                     return;
                 }
 
-                if (_rondaFinalizadaPorAciertos && !forzarPorAciertos)
+                if (_rondaFinalizadaPorAciertos && !parametros.ForzarPorAciertos)
                 {
                     return;
                 }
@@ -557,7 +571,7 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 _enTransicionRonda = true;
             }
 
-            FinRonda?.Invoke(tiempoAgotado);
+            FinRonda?.Invoke(parametros.TiempoAgotado);
             EvaluarContinuidadPartida();
         }
 
@@ -572,7 +586,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
             if (!yaFinalizada)
             {
-                FinalizarRondaActual(forzarPorAciertos: true, tiempoAgotado: false);
+                FinalizarRondaActual(new ParametrosFinalizacionRonda
+                {
+                    ForzarPorAciertos = true,
+                    TiempoAgotado = false
+                });
             }
         }
 
@@ -644,7 +662,11 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
 
         private void ManejarTiempoRondaAgotado()
         {
-            FinalizarRondaActual(forzarPorAciertos: false, tiempoAgotado: true);
+            FinalizarRondaActual(new ParametrosFinalizacionRonda
+            {
+                ForzarPorAciertos = false,
+                TiempoAgotado = true
+            });
         }
 
         private static bool EsMensajeInvalido(string id, string mensaje)
@@ -682,6 +704,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
             };
         }
 
+        private sealed class ParametrosFinalizacionRonda
+        {
+            public bool ForzarPorAciertos { get; set; }
+            public bool TiempoAgotado { get; set; }
+        }
+
         private sealed class ResultadoRemocionJugador
         {
             public bool DebeCancelar { get; private set; }
@@ -695,6 +723,12 @@ namespace PictionaryMusicalServidor.Servicios.LogicaNegocio
                 new ResultadoRemocionJugador { DebeAvanzar = true };
             public static ResultadoRemocionJugador AvanzarRondaDirecto() => 
                 new ResultadoRemocionJugador { DebeAvanzarDirecto = true };
+        }
+
+        private sealed class DatosRemocionJugador
+        {
+            public bool EraAnfitrion { get; set; }
+            public bool EraDibujante { get; set; }
         }
     }
 }
