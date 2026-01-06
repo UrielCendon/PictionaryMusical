@@ -263,10 +263,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreNormalizado = NombreUsuarioEmisor
             };
             _mockOperacionAmistad
-                .Setup(o => o.ObtenerDatosUsuarioSuscripcion(NombreUsuarioEmisor))
+                .Setup(operacion => operacion.ObtenerDatosUsuarioSuscripcion(NombreUsuarioEmisor))
                 .Returns(datosUsuario);
             _mockProveedorCallback
-                .Setup(p => p.ObtenerCallbackActual())
+                .Setup(proveedor => proveedor.ObtenerCallbackActual())
                 .Returns(Mock.Of<IAmigosManejadorCallback>());
         }
 
@@ -286,7 +286,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 }
             };
             _mockOperacionAmistad
-                .Setup(o => o.EjecutarCreacionSolicitud(
+                .Setup(operacion => operacion.EjecutarCreacionSolicitud(
                     NombreUsuarioEmisor, 
                     NombreUsuarioReceptor))
                 .Returns(resultado);
@@ -300,7 +300,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreSegundoUsuario = NombreUsuarioReceptor
             };
             _mockOperacionAmistad
-                .Setup(o => o.EjecutarAceptacionSolicitud(
+                .Setup(operacion => operacion.EjecutarAceptacionSolicitud(
                     NombreUsuarioEmisor, 
                     NombreUsuarioReceptor))
                 .Returns(resultado);
@@ -319,7 +319,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreSegundoUsuario = NombreUsuarioReceptor
             };
             _mockOperacionAmistad
-                .Setup(o => o.EjecutarEliminacion(
+                .Setup(operacion => operacion.EjecutarEliminacion(
                     NombreUsuarioEmisor, 
                     NombreUsuarioReceptor))
                 .Returns(resultado);

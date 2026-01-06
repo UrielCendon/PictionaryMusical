@@ -11,8 +11,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         private const int PuntajeInicialCero = 0;
         private const int PuntajeTotal = 100;
 
-        #region CopiarDatosBasicos
-
         [TestMethod]
         public void Prueba_CopiarDatosBasicos_CopiaIdConexion()
         {
@@ -85,12 +83,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             var copia = origen.CopiarDatosBasicos();
 
             Assert.AreNotSame(origen, copia);
-        }
-
-        #endregion
-
-        #region ToString
-
+        }        
+        
         [TestMethod]
         public void Prueba_ToString_ContieneNombreUsuario()
         {
@@ -120,12 +114,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             string resultado = jugador.ToString();
 
             Assert.IsTrue(resultado.Contains(IdConexionPrueba));
-        }
-
-        #endregion
-
-        #region Propiedades
-
+        }        
+        
         [TestMethod]
         public void Prueba_IdConexion_AsignaYRecuperaCorrectamente()
         {
@@ -184,12 +174,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             jugador.PuntajeTotal = PuntajeTotal;
 
             Assert.AreEqual(PuntajeTotal, jugador.PuntajeTotal);
-        }
-
-        #endregion
-
-        #region Metodos auxiliares
-
+        }       
         private JugadorPartida CrearJugadorOrigenPrueba()
         {
             return new JugadorPartida
@@ -201,8 +186,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 YaAdivino = false,
                 PuntajeTotal = PuntajeInicialCero
             };
-        }
-
-        #endregion
+        }    
     }
 }

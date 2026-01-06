@@ -27,21 +27,12 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             _mockGenerador = new Mock<IGeneradorAleatorio>();
             _gestor = new GestorJugadoresPartida(_mockGenerador.Object);
         }
-
-        #region Constructor
-
         [TestMethod]
         public void Prueba_Constructor_LanzaExcepcionGeneradorNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(
                 () => new GestorJugadoresPartida(null));
-        }
-
-        #endregion
-
-        #region HaySuficientesJugadores
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_HaySuficientesJugadores_RetornaFalsoSinJugadores()
         {
             bool resultado = _gestor.HaySuficientesJugadores;
@@ -68,13 +59,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             bool resultado = _gestor.HaySuficientesJugadores;
 
             Assert.IsTrue(resultado);
-        }
-
-        #endregion
-
-        #region Agregar
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_Agregar_AgregaJugadorNuevo()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -113,13 +98,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             JugadorPartida jugador = _gestor.Obtener(IdConexionJugadorUno);
 
             Assert.AreEqual(0, jugador.PuntajeTotal);
-        }
-
-        #endregion
-
-        #region Obtener
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_Obtener_RetornaJugadorExistente()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -135,13 +114,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             JugadorPartida resultado = _gestor.Obtener(IdConexionInexistente);
 
             Assert.IsNull(resultado);
-        }
-
-        #endregion
-
-        #region Remover
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_Remover_RetornaVerdaderoJugadorExistente()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -192,13 +165,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             _gestor.Remover(IdConexionJugadorUno, out eraDibujante, out nombreUsuario);
 
             Assert.IsNull(_gestor.Obtener(IdConexionJugadorUno));
-        }
-
-        #endregion
-
-        #region EsHost
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_EsHost_RetornaVerdaderoParaHost()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -224,13 +191,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             bool resultado = _gestor.EsHost(IdConexionInexistente);
 
             Assert.IsFalse(resultado);
-        }
-
-        #endregion
-
-        #region PrepararColaDibujantes
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_PrepararColaDibujantes_MezclaListaJugadores()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -238,16 +199,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 
             _gestor.PrepararColaDibujantes();
 
-            _mockGenerador.Verify(
-                g => g.MezclarLista(It.IsAny<IList<string>>()),
+            _mockGenerador.Verify(generador => generador.MezclarLista(It.IsAny<IList<string>>()),
                 Times.Once);
-        }
-
-        #endregion
-
-        #region SeleccionarSiguienteDibujante
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_SeleccionarSiguienteDibujante_RetornaFalsoColaVacia()
         {
             bool resultado = _gestor.SeleccionarSiguienteDibujante();
@@ -265,25 +219,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             bool resultado = _gestor.SeleccionarSiguienteDibujante();
 
             Assert.IsTrue(resultado);
-        }
-
-        #endregion
-
-        #region TodosAdivinaron
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_TodosAdivinaron_RetornaFalsoSinJugadores()
         {
             bool resultado = _gestor.TodosAdivinaron();
 
             Assert.IsFalse(resultado);
-        }
-
-        #endregion
-
-        #region GenerarClasificacion
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_GenerarClasificacion_RetornaListaOrdenadaPorPuntos()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -307,13 +249,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             var clasificacion = _gestor.GenerarClasificacion();
 
             Assert.AreEqual(MinimoJugadoresRequeridos, clasificacion.Count);
-        }
-
-        #endregion
-
-        #region ObtenerCopiaLista
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_ObtenerCopiaLista_RetornaCantidadCorrecta()
         {
             _gestor.Agregar(IdConexionJugadorUno, NombreJugadorUno, true);
@@ -322,13 +258,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             var copia = _gestor.ObtenerCopiaLista();
 
             Assert.AreEqual(MinimoJugadoresRequeridos, copia.Count);
-        }
-
-        #endregion
-
-        #region QuedanDibujantesPendientes
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_QuedanDibujantesPendientes_RetornaFalsoSinPreparar()
         {
             bool resultado = _gestor.QuedanDibujantesPendientes();
@@ -346,8 +276,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             bool resultado = _gestor.QuedanDibujantesPendientes();
 
             Assert.IsTrue(resultado);
-        }
-
-        #endregion
-    }
+        }    }
 }

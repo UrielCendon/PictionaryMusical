@@ -162,7 +162,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             };
 
             var mockDbSet = new Mock<DbSet<Jugador>>();
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Jugador>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Jugador>()))
                 .Returns<Jugador>(jugador => jugador);
 
             var mockContexto = new Mock<BaseDatosPruebaEntities>();
@@ -179,16 +179,16 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var mockDbSet = new Mock<DbSet<Jugador>>();
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.Provider)
+                .Setup(conjunto => conjunto.Provider)
                 .Returns(datos.Provider);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.Expression)
+                .Setup(conjunto => conjunto.Expression)
                 .Returns(datos.Expression);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.ElementType)
+                .Setup(conjunto => conjunto.ElementType)
                 .Returns(datos.ElementType);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.GetEnumerator())
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
             return mockDbSet;
         }
@@ -197,7 +197,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var datos = listaJugadores.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Jugador>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Jugador>()))
                 .Callback<Jugador>(jugador => listaJugadores.Add(jugador))
                 .Returns<Jugador>(jugador => jugador);
             return mockDbSet;

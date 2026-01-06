@@ -36,10 +36,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _mockUsuarioRepositorio = new Mock<IUsuarioRepositorio>();
 
             _mockContextoFactoria
-                .Setup(f => f.CrearContexto())
+                .Setup(factoria => factoria.CrearContexto())
                 .Returns(_mockContexto.Object);
             _mockRepositorioFactoria
-                .Setup(f => f.CrearUsuarioRepositorio(_mockContexto.Object))
+                .Setup(factoria => factoria.CrearUsuarioRepositorio(_mockContexto.Object))
                 .Returns(_mockUsuarioRepositorio.Object);
 
             _servicio = new OperacionAmistadServicio(
@@ -47,9 +47,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 _mockRepositorioFactoria.Object,
                 _mockAmistadServicio.Object);
         }
-
-        #region Constructor
-
         [TestMethod]
         public void Prueba_Constructor_LanzaExcepcionContextoFactoriaNulo()
         {
@@ -78,17 +75,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                     _mockContextoFactoria.Object, 
                     _mockRepositorioFactoria.Object, 
                     null));
-        }
-
-        #endregion
-
-        #region ObtenerDatosUsuarioSuscripcion
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_ObtenerDatosUsuarioSuscripcion_LanzaExcepcionUsuarioNoExiste()
         {
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
                 .Returns((Usuario)null);
 
             Assert.ThrowsException<FaultException>(
@@ -100,7 +91,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         {
             var usuario = CrearUsuarioPrueba(IdUsuarioEmisor, NombreUsuarioEmisor);
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
                 .Returns(usuario);
 
             var resultado = _servicio.ObtenerDatosUsuarioSuscripcion(NombreUsuarioEmisor);
@@ -113,19 +104,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         {
             var usuario = CrearUsuarioPrueba(IdUsuarioEmisor, NombreUsuarioEmisor);
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
                 .Returns(usuario);
 
             var resultado = _servicio.ObtenerDatosUsuarioSuscripcion(NombreUsuarioEmisor);
 
             Assert.AreEqual(NombreUsuarioEmisor, resultado.NombreNormalizado);
-        }
-
-        #endregion
-
-        #region EjecutarCreacionSolicitud
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_EjecutarCreacionSolicitud_LanzaExcepcionEmisorNoExiste()
         {
             ConfigurarUsuariosParaCreacion(null, NombreUsuarioReceptor);
@@ -141,10 +126,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
         {
             var emisor = CrearUsuarioPrueba(IdUsuarioEmisor, NombreUsuarioEmisor);
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
                 .Returns(emisor);
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
                 .Returns((Usuario)null);
 
             Assert.ThrowsException<FaultException>(
@@ -186,20 +171,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreUsuarioEmisor, 
                 NombreUsuarioReceptor);
 
-            _mockAmistadServicio.Verify(
-                s => s.CrearSolicitud(IdUsuarioEmisor, IdUsuarioReceptor),
+            _mockAmistadServicio.Verify(servicio => servicio.CrearSolicitud(IdUsuarioEmisor, IdUsuarioReceptor),
                 Times.Once);
-        }
-
-        #endregion
-
-        #region EjecutarAceptacionSolicitud
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_EjecutarAceptacionSolicitud_LanzaExcepcionEmisorNoExiste()
         {
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
                 .Returns((Usuario)null);
 
             Assert.ThrowsException<FaultException>(
@@ -241,20 +219,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreUsuarioEmisor, 
                 NombreUsuarioReceptor);
 
-            _mockAmistadServicio.Verify(
-                s => s.AceptarSolicitud(IdUsuarioEmisor, IdUsuarioReceptor),
+            _mockAmistadServicio.Verify(servicio => servicio.AceptarSolicitud(IdUsuarioEmisor, IdUsuarioReceptor),
                 Times.Once);
-        }
-
-        #endregion
-
-        #region EjecutarEliminacion
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_EjecutarEliminacion_LanzaExcepcionPrimerUsuarioNoExiste()
         {
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioInexistente))
                 .Returns((Usuario)null);
 
             Assert.ThrowsException<FaultException>(
@@ -312,16 +283,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                 NombreUsuarioEmisor, 
                 NombreUsuarioReceptor);
 
-            _mockAmistadServicio.Verify(
-                s => s.EliminarAmistad(IdUsuarioEmisor, IdUsuarioReceptor),
+            _mockAmistadServicio.Verify(servicio => servicio.EliminarAmistad(IdUsuarioEmisor, IdUsuarioReceptor),
                 Times.Once);
-        }
-
-        #endregion
-
-        #region Metodos auxiliares
-
-        private Usuario CrearUsuarioPrueba(int id, string nombre)
+        }        private Usuario CrearUsuarioPrueba(int id, string nombre)
         {
             return new Usuario
             {
@@ -336,17 +300,17 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             var receptor = CrearUsuarioPrueba(IdUsuarioReceptor, NombreUsuarioReceptor);
 
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioEmisor))
                 .Returns(emisor);
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioReceptor))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioReceptor))
                 .Returns(receptor);
         }
 
         private void ConfigurarUsuariosParaCreacion(Usuario emisor, string nombreReceptor)
         {
             _mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(It.IsAny<string>()))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(It.IsAny<string>()))
                 .Returns(emisor);
         }
 
@@ -360,12 +324,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             };
 
             _mockAmistadServicio
-                .Setup(s => s.EliminarAmistad(IdUsuarioEmisor, IdUsuarioReceptor))
+                .Setup(servicio => servicio.EliminarAmistad(IdUsuarioEmisor, IdUsuarioReceptor))
                 .Returns(relacion);
 
             return relacion;
-        }
-
-        #endregion
-    }
+        }    }
 }

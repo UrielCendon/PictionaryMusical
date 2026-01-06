@@ -165,7 +165,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             };
 
             var mockDbSet = new Mock<DbSet<Reporte>>();
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Reporte>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Reporte>()))
                 .Returns<Reporte>(reporte => reporte);
 
             var mockContexto = new Mock<BaseDatosPruebaEntities>();
@@ -261,16 +261,16 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var mockDbSet = new Mock<DbSet<Reporte>>();
             mockDbSet.As<IQueryable<Reporte>>()
-                .Setup(dbSet => dbSet.Provider)
+                .Setup(conjunto => conjunto.Provider)
                 .Returns(datos.Provider);
             mockDbSet.As<IQueryable<Reporte>>()
-                .Setup(dbSet => dbSet.Expression)
+                .Setup(conjunto => conjunto.Expression)
                 .Returns(datos.Expression);
             mockDbSet.As<IQueryable<Reporte>>()
-                .Setup(dbSet => dbSet.ElementType)
+                .Setup(conjunto => conjunto.ElementType)
                 .Returns(datos.ElementType);
             mockDbSet.As<IQueryable<Reporte>>()
-                .Setup(dbSet => dbSet.GetEnumerator())
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
             return mockDbSet;
         }
@@ -279,7 +279,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var datos = listaReportes.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Reporte>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Reporte>()))
                 .Callback<Reporte>(reporte => listaReportes.Add(reporte))
                 .Returns<Reporte>(reporte => reporte);
             return mockDbSet;

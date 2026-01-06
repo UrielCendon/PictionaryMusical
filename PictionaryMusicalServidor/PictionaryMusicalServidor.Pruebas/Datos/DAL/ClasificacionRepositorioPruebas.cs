@@ -63,7 +63,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             Clasificacion clasificacionAgregada = null;
             var mockDbSet = new Mock<DbSet<Clasificacion>>();
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Clasificacion>()))
                 .Callback<Clasificacion>(clasificacion => clasificacionAgregada = clasificacion)
                 .Returns<Clasificacion>(clasificacion => clasificacion);
 
@@ -82,7 +82,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             Clasificacion clasificacionAgregada = null;
             var mockDbSet = new Mock<DbSet<Clasificacion>>();
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Clasificacion>()))
                 .Callback<Clasificacion>(clasificacion => clasificacionAgregada = clasificacion)
                 .Returns<Clasificacion>(clasificacion => clasificacion);
 
@@ -264,18 +264,18 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
             var datos = lista.AsQueryable();
             var mockDbSet = new Mock<DbSet<Clasificacion>>();
             mockDbSet.As<IQueryable<Clasificacion>>()
-                .Setup(dbSet => dbSet.Provider)
+                .Setup(conjunto => conjunto.Provider)
                 .Returns(datos.Provider);
             mockDbSet.As<IQueryable<Clasificacion>>()
-                .Setup(dbSet => dbSet.Expression)
+                .Setup(conjunto => conjunto.Expression)
                 .Returns(datos.Expression);
             mockDbSet.As<IQueryable<Clasificacion>>()
-                .Setup(dbSet => dbSet.ElementType)
+                .Setup(conjunto => conjunto.ElementType)
                 .Returns(datos.ElementType);
             mockDbSet.As<IQueryable<Clasificacion>>()
-                .Setup(dbSet => dbSet.GetEnumerator())
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Clasificacion>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Clasificacion>()))
                 .Callback<Clasificacion>(item => lista.Add(item))
                 .Returns<Clasificacion>(item => item);
             return mockDbSet;
@@ -285,18 +285,18 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var mockDbSet = new Mock<DbSet<Jugador>>();
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.Provider)
+                .Setup(conjunto => conjunto.Provider)
                 .Returns(datos.Provider);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.Expression)
+                .Setup(conjunto => conjunto.Expression)
                 .Returns(datos.Expression);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.ElementType)
+                .Setup(conjunto => conjunto.ElementType)
                 .Returns(datos.ElementType);
             mockDbSet.As<IQueryable<Jugador>>()
-                .Setup(dbSet => dbSet.GetEnumerator())
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
-            mockDbSet.Setup(dbSet => dbSet.Include(It.IsAny<string>()))
+            mockDbSet.Setup(conjunto => conjunto.Include(It.IsAny<string>()))
                 .Returns(mockDbSet.Object);
             return mockDbSet;
         }

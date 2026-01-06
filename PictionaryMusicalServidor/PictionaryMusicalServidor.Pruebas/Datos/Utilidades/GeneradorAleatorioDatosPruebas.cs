@@ -24,9 +24,6 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         {
             _generador = new GeneradorAleatorioDatos();
         }
-
-        #region ObtenerIndiceAleatorio
-
         [TestMethod]
         public void Prueba_ObtenerIndiceAleatorio_RetornaIndiceDentroDeRango()
         {
@@ -55,13 +52,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
         {
             Assert.ThrowsException<ArgumentOutOfRangeException>(
                 () => _generador.ObtenerIndiceAleatorio(TamanoColeccionNegativo));
-        }
-
-        #endregion
-
-        #region SeleccionarAleatorio
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_SeleccionarAleatorio_LanzaExcepcionListaNula()
         {
             Assert.ThrowsException<ArgumentNullException>(
@@ -100,13 +91,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
             string resultado = _generador.SeleccionarAleatorio(lista);
 
             Assert.IsTrue(lista.Contains(resultado));
-        }
-
-        #endregion
-
-        #region MezclarLista
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_MezclarLista_LanzaExcepcionListaNula()
         {
             Assert.ThrowsException<ArgumentNullException>(
@@ -164,8 +149,5 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.Utilidades
             _generador.MezclarLista(lista);
 
             Assert.AreEqual(ElementoPruebaUno, lista[IndiceCero]);
-        }
-
-        #endregion
-    }
+        }    }
 }

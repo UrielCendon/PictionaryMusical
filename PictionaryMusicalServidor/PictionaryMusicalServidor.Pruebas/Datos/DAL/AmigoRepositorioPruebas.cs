@@ -125,7 +125,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             Amigo solicitudAgregada = null;
             var mockDbSet = new Mock<DbSet<Amigo>>();
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Amigo>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Amigo>()))
                 .Callback<Amigo>(amigo => solicitudAgregada = amigo)
                 .Returns<Amigo>(amigo => amigo);
 
@@ -233,7 +233,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
 
             repositorio.EliminarRelacion(relacion);
 
-            mockDbSet.Verify(dbSet => dbSet.Remove(relacion), Times.Once);
+            mockDbSet.Verify(conjunto => conjunto.Remove(relacion), Times.Once);
         }
 
         [TestMethod]
@@ -281,16 +281,16 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var mockDbSet = new Mock<DbSet<Amigo>>();
             mockDbSet.As<IQueryable<Amigo>>()
-                .Setup(dbSet => dbSet.Provider)
+                .Setup(conjunto => conjunto.Provider)
                 .Returns(datos.Provider);
             mockDbSet.As<IQueryable<Amigo>>()
-                .Setup(dbSet => dbSet.Expression)
+                .Setup(conjunto => conjunto.Expression)
                 .Returns(datos.Expression);
             mockDbSet.As<IQueryable<Amigo>>()
-                .Setup(dbSet => dbSet.ElementType)
+                .Setup(conjunto => conjunto.ElementType)
                 .Returns(datos.ElementType);
             mockDbSet.As<IQueryable<Amigo>>()
-                .Setup(dbSet => dbSet.GetEnumerator())
+                .Setup(conjunto => conjunto.GetEnumerator())
                 .Returns(datos.GetEnumerator());
             return mockDbSet;
         }
@@ -299,7 +299,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos.DAL
         {
             var datos = listaAmigos.AsQueryable();
             var mockDbSet = CrearMockDbSet(datos);
-            mockDbSet.Setup(dbSet => dbSet.Add(It.IsAny<Amigo>()))
+            mockDbSet.Setup(conjunto => conjunto.Add(It.IsAny<Amigo>()))
                 .Callback<Amigo>(amigo => listaAmigos.Add(amigo))
                 .Returns<Amigo>(amigo => amigo);
             return mockDbSet;

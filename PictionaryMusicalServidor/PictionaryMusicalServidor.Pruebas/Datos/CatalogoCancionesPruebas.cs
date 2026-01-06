@@ -39,21 +39,12 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
             _mockGenerador = new Mock<IGeneradorAleatorio>();
             _catalogo = new CatalogoCanciones(_mockGenerador.Object);
         }
-
-        #region Constructor
-
         [TestMethod]
         public void Prueba_Constructor_LanzaExcepcionGeneradorNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(
                 () => new CatalogoCanciones(null));
-        }
-
-        #endregion
-
-        #region ObtenerCancionAleatoria
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_ObtenerCancionAleatoria_LanzaExcepcionIdiomaNull()
         {
             Assert.ThrowsException<ArgumentException>(
@@ -153,13 +144,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
             Cancion resultado = _catalogo.ObtenerCancionAleatoria(IdiomaEspanol, null);
 
             Assert.IsTrue(resultado.Id > IndiceCero);
-        }
-
-        #endregion
-
-        #region ObtenerCancionPorId
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_ObtenerCancionPorId_RetornaCancionExistente()
         {
             Cancion resultado = _catalogo.ObtenerCancionPorId(IdCancionGasolina);
@@ -195,13 +180,7 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
             Cancion resultado = _catalogo.ObtenerCancionPorId(IdCancionBlackOrWhite);
 
             Assert.AreEqual(IdiomaIngles, resultado.Idioma);
-        }
-
-        #endregion
-
-        #region ValidarRespuesta
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_ValidarRespuesta_RetornaVerdaderoIntentoCorreecto()
         {
             bool resultado = _catalogo.ValidarRespuesta(
@@ -271,16 +250,10 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
             bool resultado = _catalogo.ValidarRespuesta(IdCancionGasolina, IntentoSoloEspacios);
 
             Assert.IsFalse(resultado);
-        }
-
-        #endregion
-
-        #region Metodos auxiliares
-
-        private void ConfigurarMockSeleccionarPrimerElemento()
+        }        private void ConfigurarMockSeleccionarPrimerElemento()
         {
             _mockGenerador
-                .Setup(g => g.SeleccionarAleatorio(It.IsAny<IList<Cancion>>()))
+                .Setup(generador => generador.SeleccionarAleatorio(It.IsAny<IList<Cancion>>()))
                 .Returns((IList<Cancion> lista) => lista[IndiceCero]);
         }
 
@@ -292,8 +265,5 @@ namespace PictionaryMusicalServidor.Pruebas.Datos
                 ids.Add(i);
             }
             return ids;
-        }
-
-        #endregion
-    }
+        }    }
 }

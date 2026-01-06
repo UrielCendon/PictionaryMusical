@@ -19,22 +19,13 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         {
             _proveedor = new ProveedorTiempo();
         }
-
-        #region Constructor
-
         [TestMethod]
         public void Prueba_Constructor_CreaInstanciaCorrectamente()
         {
             var proveedor = new ProveedorTiempo();
 
             Assert.IsInstanceOfType(proveedor, typeof(ProveedorTiempo));
-        }
-
-        #endregion
-
-        #region Retrasar
-
-        [TestMethod]
+        }        [TestMethod]
         public async Task Prueba_Retrasar_CompletaTareaConTiempoCorto()
         {
             bool completado = false;
@@ -77,8 +68,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
 
             Assert.IsTrue(
                 cronometro.ElapsedMilliseconds >= TiempoEsperaCorto - ToleranciaMargenMs);
-        }
-
-        #endregion
-    }
+        }    }
 }

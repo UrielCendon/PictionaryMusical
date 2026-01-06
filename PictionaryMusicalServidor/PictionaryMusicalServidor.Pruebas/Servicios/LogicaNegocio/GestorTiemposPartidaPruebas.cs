@@ -21,7 +21,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         {
             _mockProveedorFecha = new Mock<IProveedorFecha>();
             _mockProveedorFecha
-                .Setup(p => p.ObtenerFechaActualUtc())
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
                 .Returns(DateTime.UtcNow);
             _gestor = new GestorTiemposPartida(
                 DuracionRondaSegundos,
@@ -70,11 +70,11 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         {
             var fechaInicio = DateTime.UtcNow;
             _mockProveedorFecha
-                .Setup(p => p.ObtenerFechaActualUtc())
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
                 .Returns(fechaInicio);
             _gestor.IniciarRonda();
             _mockProveedorFecha
-                .Setup(p => p.ObtenerFechaActualUtc())
+                .Setup(proveedor => proveedor.ObtenerFechaActualUtc())
                 .Returns(fechaInicio.AddSeconds(10));
 
             int puntos = _gestor.CalcularPuntosPorTiempo();

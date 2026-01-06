@@ -45,7 +45,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _mockContexto = new Mock<BaseDatosPruebaEntities>();
 
             _mockContextoFactoria
-                .Setup(f => f.CrearContexto())
+                .Setup(factoria => factoria.CrearContexto())
                 .Returns(_mockContexto.Object);
 
             _manejador = new ListaAmigosManejador(
@@ -132,7 +132,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                     _mockNotificador.Object,
                     _mockManejadorCallback.Object,
                     null));
-        }        [TestMethod]
+        }        
+        
+        [TestMethod]
         public void Prueba_Suscribir_LanzaExcepcionNombreNulo()
         {
             Assert.ThrowsException<FaultException>(
@@ -191,7 +193,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
                     NombreUsuarioPrueba, 
                     It.IsAny<List<AmigoDTO>>()),
                 Times.Once);
-        }        [TestMethod]
+        }        
+        
+        [TestMethod]
         public void Prueba_CancelarSuscripcion_LanzaExcepcionNombreNulo()
         {
             Assert.ThrowsException<FaultException>(
@@ -213,7 +217,9 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             _mockManejadorCallback.Verify(
                 m => m.Desuscribir(NombreUsuarioPrueba),
                 Times.Once);
-        }        [TestMethod]
+        }        
+        
+        [TestMethod]
         public void Prueba_ObtenerAmigos_LanzaExcepcionNombreNulo()
         {
             Assert.ThrowsException<FaultException>(
@@ -245,7 +251,8 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             var resultado = _manejador.ObtenerAmigos(NombreUsuarioPrueba);
 
             Assert.AreEqual(NombreAmigoPrueba, resultado[0].NombreUsuario);
-        }        private void ConfigurarMocksSuscripcion()
+        }        
+        private void ConfigurarMocksSuscripcion()
         {
             var listaAmigos = new List<AmigoDTO>
             {
@@ -259,7 +266,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             ConfigurarMocksObtenerAmigosInterno(listaAmigos);
 
             _mockProveedorCallback
-                .Setup(p => p.ObtenerCallbackActual())
+                .Setup(proveedor => proveedor.ObtenerCallbackActual())
                 .Returns(Mock.Of<IListaAmigosManejadorCallback>());
         }
 
@@ -288,15 +295,16 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.Amigos
             };
 
             mockUsuarioRepositorio
-                .Setup(r => r.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
+                .Setup(repositorio => repositorio.ObtenerPorNombreUsuario(NombreUsuarioPrueba))
                 .Returns(usuario);
 
             _mockRepositorioFactoria
-                .Setup(f => f.CrearUsuarioRepositorio(_mockContexto.Object))
+                .Setup(factoria => factoria.CrearUsuarioRepositorio(_mockContexto.Object))
                 .Returns(mockUsuarioRepositorio.Object);
 
             _mockAmistadServicio
-                .Setup(s => s.ObtenerAmigosDTO(IdUsuarioPrueba))
+                .Setup(servicio => servicio.ObtenerAmigosDTO(IdUsuarioPrueba))
                 .Returns(listaAmigos);
-        }    }
+        }    
+    }
 }

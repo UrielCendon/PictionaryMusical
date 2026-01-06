@@ -36,9 +36,6 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 _mockCatalogo.Object, 
                 _mockGestorTiempos.Object);
         }
-
-        #region Constructor
-
         [TestMethod]
         public void Prueba_Constructor_LanzaExcepcionCatalogoNulo()
         {
@@ -51,13 +48,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         {
             Assert.ThrowsException<ArgumentNullException>(
                 () => new ValidadorAdivinanza(_mockCatalogo.Object, null));
-        }
-
-        #endregion
-
-        #region JugadorPuedeAdivinar
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_JugadorPuedeAdivinar_RetornaFalsoJugadorNulo()
         {
             bool resultado = _validador.JugadorPuedeAdivinar(null, EstadoPartida.Jugando);
@@ -119,13 +110,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             bool resultado = _validador.JugadorPuedeAdivinar(jugador, EstadoPartida.Jugando);
 
             Assert.IsTrue(resultado);
-        }
-
-        #endregion
-
-        #region VerificarAcierto
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_VerificarAcierto_RetornaFalsoMensajeNulo()
         {
             int puntos;
@@ -165,10 +150,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         public void Prueba_VerificarAcierto_RetornaVerdaderoRespuestaCorrecta()
         {
             _mockCatalogo
-                .Setup(c => c.ValidarRespuesta(IdCancionPrueba, MensajeCorrecto))
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancionPrueba, MensajeCorrecto))
                 .Returns(true);
             _mockGestorTiempos
-                .Setup(g => g.CalcularPuntosPorTiempo())
+                .Setup(gestor => gestor.CalcularPuntosPorTiempo())
                 .Returns(PuntosPorTiempoPrueba);
             int puntos;
 
@@ -184,10 +169,10 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         public void Prueba_VerificarAcierto_AsignaPuntosRespuestaCorrecta()
         {
             _mockCatalogo
-                .Setup(c => c.ValidarRespuesta(IdCancionPrueba, MensajeCorrecto))
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancionPrueba, MensajeCorrecto))
                 .Returns(true);
             _mockGestorTiempos
-                .Setup(g => g.CalcularPuntosPorTiempo())
+                .Setup(gestor => gestor.CalcularPuntosPorTiempo())
                 .Returns(PuntosPorTiempoPrueba);
             int puntos;
 
@@ -200,7 +185,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         public void Prueba_VerificarAcierto_RetornaFalsoRespuestaIncorrecta()
         {
             _mockCatalogo
-                .Setup(c => c.ValidarRespuesta(IdCancionPrueba, MensajeIncorrecto))
+                .Setup(catalogo => catalogo.ValidarRespuesta(IdCancionPrueba, MensajeIncorrecto))
                 .Returns(false);
             int puntos;
 
@@ -216,7 +201,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         public void Prueba_VerificarAcierto_RetornaVerdaderoMensajeProtocolo()
         {
             _mockCatalogo
-                .Setup(c => c.ValidarRespuesta(It.IsAny<int>(), It.IsAny<string>()))
+                .Setup(catalogo => catalogo.ValidarRespuesta(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(false);
             int puntos;
 
@@ -232,20 +217,14 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
         public void Prueba_VerificarAcierto_AsignaPuntosProtocolo()
         {
             _mockCatalogo
-                .Setup(c => c.ValidarRespuesta(It.IsAny<int>(), It.IsAny<string>()))
+                .Setup(catalogo => catalogo.ValidarRespuesta(It.IsAny<int>(), It.IsAny<string>()))
                 .Returns(false);
             int puntos;
 
             _validador.VerificarAcierto(IdCancionPrueba, MensajeAciertoProtocolo, out puntos);
 
             Assert.AreEqual(PuntosProtocolo, puntos);
-        }
-
-        #endregion
-
-        #region RegistrarAcierto
-
-        [TestMethod]
+        }        [TestMethod]
         public void Prueba_RegistrarAcierto_LanzaExcepcionJugadorNulo()
         {
             Assert.ThrowsException<ArgumentNullException>(
@@ -271,13 +250,7 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
             _validador.RegistrarAcierto(jugador, PuntosObtenidos);
 
             Assert.AreEqual(PuntosObtenidos, jugador.PuntajeTotal);
-        }
-
-        #endregion
-
-        #region Metodos auxiliares
-
-        private JugadorPartida CrearJugadorPrueba()
+        }        private JugadorPartida CrearJugadorPrueba()
         {
             return new JugadorPartida
             {
@@ -288,8 +261,5 @@ namespace PictionaryMusicalServidor.Pruebas.Servicios.LogicaNegocio
                 YaAdivino = false,
                 PuntajeTotal = PuntajeInicialCero
             };
-        }
-
-        #endregion
-    }
+        }    }
 }

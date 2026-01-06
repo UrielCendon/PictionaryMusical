@@ -103,6 +103,19 @@
     <Compile Include="Servicios\LogicaNegocio\JugadorPartidaPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\ProveedorTiempoPruebas.cs" />
     <Compile Include="Servicios\LogicaNegocio\ValidadorAdivinanzaPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\CambioContrasenaManejadorPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\CodigoVerificacionManejadorPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\CuentaManejadorPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\InicioSesionManejadorPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\NotificacionCodigosServicioPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\SesionUsuarioManejadorPruebas.cs" />
+    <Compile Include="Servicios\Autenticacion\VerificacionCodigoUtilidadesPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\CorreoCodigoVerificacionNotificadorPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\CorreoInvitacionNotificadorPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\GestorNotificacionesSalaInternaPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorAmigosPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorListaAmigosPruebas.cs" />
+    <Compile Include="Servicios\Notificadores\NotificadorSalasPruebas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
