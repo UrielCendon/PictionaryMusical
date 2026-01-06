@@ -233,7 +233,7 @@
     <Compile Include="Utilidades\VentanaServicio.cs" />
     <Compile Include="VistaModelo\Auxiliares\ErrorConexionParametros.cs" />
     <Compile Include="VistaModelo\Auxiliares\NavegacionSalaParametros.cs" />
-    <Compile Include="VistaModelo\Auxiliares\RedesSocialesDTO.cs" />
+    <Compile Include="Modelo\RedesSocialesDTO.cs" />
     <Compile Include="VistaModelo\BaseVistaModelo.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

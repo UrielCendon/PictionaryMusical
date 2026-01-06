@@ -1,9 +1,9 @@
-﻿namespace PictionaryMusicalCliente.VistaModelo.Auxiliares
+﻿namespace PictionaryMusicalCliente.Modelo
 {
     /// <summary>
     /// Agrupa los identificadores de redes sociales de un usuario.
     /// </summary>
-    public sealed class RedesSocialesDTO
+    public sealed class ObjetoRedSocial
     {
         /// <summary>
         /// Inicializa una nueva instancia de <see cref="RedesSocialesDTO"/>.
@@ -12,7 +12,7 @@
         /// <param name="facebook">Identificador de Facebook.</param>
         /// <param name="x">Identificador de X.</param>
         /// <param name="discord">Identificador de Discord.</param>
-        public RedesSocialesDTO(
+        public ObjetoRedSocial(
             string instagram,
             string facebook,
             string x,

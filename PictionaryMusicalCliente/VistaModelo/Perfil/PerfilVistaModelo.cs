@@ -766,7 +766,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil
 
             EstablecerAvatarPorId(perfil.AvatarId);
 
-            var redesSociales = new RedesSocialesDTO(
+            var redesSociales = new ObjetoRedSocial(
                 perfil.Instagram,
                 perfil.Facebook,
                 perfil.X,

@@ -1,7 +1,6 @@
 ﻿using PictionaryMusicalCliente.Modelo;
 using PictionaryMusicalCliente.Modelo.Catalogos;
 using PictionaryMusicalCliente.Properties.Langs;
-using PictionaryMusicalCliente.VistaModelo.Auxiliares;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -150,7 +149,7 @@ namespace PictionaryMusicalCliente.VistaModelo.Perfil.Auxiliares
         /// Carga los valores de las redes sociales desde un perfil.
         /// </summary>
         /// <param name="redesSociales">Datos de las redes sociales.</param>
-        public void CargarDesdeDTO(RedesSocialesDTO redesSociales)
+        public void CargarDesdeDTO(ObjetoRedSocial redesSociales)
         {
             if (redesSociales == null)
             {
