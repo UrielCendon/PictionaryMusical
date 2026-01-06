@@ -46,5 +46,15 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             _salas.Clear();
         }
+
+        /// <summary>
+        /// Obtiene las salas almacenadas de forma estatica.
+        /// Permite acceso desde metodos estaticos que necesitan consultar las salas.
+        /// </summary>
+        /// <returns>Coleccion de valores del diccionario de salas.</returns>
+        public static IEnumerable<SalaInternaManejador> ObtenerSalasEstaticas()
+        {
+            return _salas.Values;
+        }
     }
 }

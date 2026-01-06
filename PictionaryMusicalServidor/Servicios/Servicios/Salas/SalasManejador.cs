@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -24,10 +23,6 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
     public class SalasManejador : ISalasManejador, IObtenerSalas
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(SalasManejador));
-
-        private static readonly ConcurrentDictionary<string, SalaInternaManejador> _salas =
-            new ConcurrentDictionary<string, SalaInternaManejador>(
-                StringComparer.OrdinalIgnoreCase);
 
         private readonly INotificadorSalas _notificador;
         private readonly IAlmacenSalas _almacenSalas;
@@ -247,7 +242,7 @@ namespace PictionaryMusicalServidor.Servicios.Servicios.Salas
         {
             try
             {
-                return _salas.Values
+                return AlmacenSalasEstatico.ObtenerSalasEstaticas()
                     .Select(sala => sala.ConvertirADto())
                     .ToList();
             }
