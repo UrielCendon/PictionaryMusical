@@ -116,6 +116,15 @@
     <Compile Include="Servicios\Notificadores\NotificadorAmigosPruebas.cs" />
     <Compile Include="Servicios\Notificadores\NotificadorListaAmigosPruebas.cs" />
     <Compile Include="Servicios\Notificadores\NotificadorSalasPruebas.cs" />
+    <Compile Include="Servicios\Utilidades\GeneradorAleatorioPruebas.cs" />
+    <Compile Include="Servicios\Utilidades\EntradaComunValidadorPruebas.cs" />
+    <Compile Include="Servicios\Utilidades\ContextoFactoriaPruebas.cs" />
+    <Compile Include="Servicios\Utilidades\RepositorioFactoriaPruebas.cs" />
+    <Compile Include="Servicios\Usuarios\ClasificacionManejadorPruebas.cs" />
+    <Compile Include="Servicios\Usuarios\ExpulsionPorReportesServicioPruebas.cs" />
+    <Compile Include="Servicios\Usuarios\IdentificadoresUsuariosPruebas.cs" />
+    <Compile Include="Servicios\Usuarios\PerfilManejadorPruebas.cs" />
+    <Compile Include="Servicios\Usuarios\ReportesManejadorPruebas.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
